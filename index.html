@@ -919,6 +919,18 @@ body[data-hub="fuel"]::before { display: none !important; }
 /* Map controls can stay at their original bottom position — pill is hidden
    when the map is open, so no risk of overlap. (No override needed.) */
 
+/* Brand row scrolls horizontally on the map (same behavior as fuel row),
+   instead of wrapping into multiple lines and stealing vertical space. */
+#hub-fuel #map-brow.bandiera-row {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 0;
+}
+#hub-fuel #map-brow.bandiera-row::-webkit-scrollbar { display: none; }
+#hub-fuel #map-brow .bfb { flex-shrink: 0; }
+
 /* ── Hide pill when fullscreen modal views are open in fuel section ──
    The pill duplicates UX inside fullscreen views (map/favorites/modals)
    and steals space. We use both: native :has() (modern browsers) + a JS
