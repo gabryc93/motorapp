@@ -1401,6 +1401,199 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 #hub-fuel .map-weather-temp {font-family:var(--fd);font-size:1.1rem;font-weight:700;color:var(--tx);line-height:1.2}
 #hub-fuel .map-weather-desc {font-size:0.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin-top:1px}
 
+
+/* ════════════════════════════════════════════════════════════════════
+   HUB HOME — hero card + skeleton (must be after fuel CSS to win cascade)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB HOME — hero card + skeleton shimmer (replaces fullscreen loader)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Kill the fullscreen loader entirely — we render the app immediately */
+#hub-fuel #loader { display: none !important; }
+
+/* Hero slot — sits above "Medie nazionali" */
+#hub-fuel .hero-slot { padding: 14px 12px 0; }
+
+#hub-fuel .hero-card {
+  position: relative;
+  background:
+    linear-gradient(135deg, rgba(232,160,48,.12), rgba(232,160,48,.04) 60%, rgba(232,160,48,.08));
+  border: 1px solid rgba(232,160,48,.28);
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+  cursor: pointer;
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  overflow: hidden;
+}
+#hub-fuel .hero-card::before {
+  content: '';
+  position: absolute; top: 0; right: 0; width: 90px; height: 90px;
+  background: radial-gradient(circle at 70% 30%, rgba(232,160,48,.25), transparent 60%);
+  pointer-events: none;
+}
+#hub-fuel .hero-card:active { transform: scale(.985); }
+#hub-fuel .hero-card:hover { border-color: rgba(232,160,48,.5); }
+
+#hub-fuel .hero-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+#hub-fuel .hero-label {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--am);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+#hub-fuel .hero-icn { font-size: .85rem; line-height: 1; }
+#hub-fuel .hero-more {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  background: rgba(232,160,48,.15);
+  color: var(--am);
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(232,160,48,.3);
+}
+
+#hub-fuel .hero-main { display: flex; gap: 14px; align-items: flex-start; }
+#hub-fuel .hero-info { flex: 1; min-width: 0; }
+#hub-fuel .hero-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.08rem;
+  color: var(--tx); line-height: 1.25;
+  letter-spacing: -.01em;
+  margin-bottom: 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#hub-fuel .hero-addr {
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem; color: var(--tx2); line-height: 1.4;
+  margin-bottom: 7px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#hub-fuel .hero-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+#hub-fuel .hero-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem; font-weight: 500;
+  background: rgba(255,255,255,.05);
+  color: var(--tx2);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.08);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+
+#hub-fuel .hero-price {
+  text-align: right;
+  flex-shrink: 0;
+  padding-left: 8px;
+  border-left: 1px solid rgba(232,160,48,.18);
+}
+#hub-fuel .hero-pval {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.6rem;
+  color: var(--am); line-height: 1;
+  letter-spacing: -.02em;
+}
+#hub-fuel .hero-punit {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--tx2);
+  margin-top: 2px;
+  letter-spacing: .08em;
+}
+#hub-fuel .hero-pdate {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  color: var(--mut);
+  margin-top: 4px;
+}
+
+#hub-fuel .hero-cta {
+  font-family: 'DM Mono', monospace;
+  font-size: .6rem; color: var(--mut);
+  margin-top: 10px;
+  text-align: right;
+  letter-spacing: .04em;
+}
+
+/* Empty state hero (no favs) */
+#hub-fuel .hero-empty .hero-empty-text {
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem;
+  color: var(--tx2);
+  line-height: 1.5;
+  margin: 4px 0 12px;
+}
+#hub-fuel .hero-cta-btn {
+  width: 100%;
+  appearance: none; -webkit-appearance: none;
+  background: linear-gradient(135deg, rgba(232,160,48,.85), rgba(232,160,48,.65));
+  color: #0d0e0f;
+  border: 1px solid rgba(232,160,48,.6);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#hub-fuel .hero-cta-btn:hover { filter: brightness(1.1); }
+#hub-fuel .hero-cta-btn:active { transform: scale(.98); }
+
+/* Inline error (replaces fullscreen loader error) */
+#hub-fuel .home-error {
+  margin: 12px 12px 0;
+  padding: 12px 14px;
+  background: rgba(224,90,74,.1);
+  border: 1px solid rgba(224,90,74,.3);
+  border-radius: 10px;
+  color: #ffb4a8;
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  line-height: 1.4;
+  cursor: pointer;
+  display: none;
+}
+#hub-fuel .home-error::before { content: '⚠ '; opacity: .8; }
+#hub-fuel .home-error:hover { background: rgba(224,90,74,.15); }
+
+/* ── Skeleton shimmer for price cards ──────────────────────────── */
+#hub-fuel [data-skel].skel {
+  position: relative;
+  color: transparent !important;
+  background: rgba(255,255,255,.05);
+  border-radius: 4px;
+  overflow: hidden;
+  display: inline-block;
+  min-width: 60px;
+  vertical-align: middle;
+}
+#hub-fuel [data-skel="price"].skel { min-width: 96px; min-height: 1.5em; }
+#hub-fuel [data-skel="badge"].skel { min-width: 56px; min-height: .85em; }
+
+#hub-fuel [data-skel].skel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(232,160,48,.18) 45%,
+    rgba(232,160,48,.32) 50%,
+    rgba(232,160,48,.18) 55%,
+    transparent 100%);
+  animation: skelShimmer 1.5s ease-in-out infinite;
+  transform: translateX(-100%);
+}
+@keyframes skelShimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 </style>
 </head>
 <body data-hub="fuel">
@@ -1766,42 +1959,44 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   </header>
 
   <main>
+    <div class="hero-slot" id="hero-slot"></div>
+    <div class="home-error" id="home-error" onclick="loadMedie()">—</div>
     <div class="sect">Medie nazionali <span class="tag tag-src">MIMIT live</span></div>
     <div class="cards-grid">
       <div class="card c-bz">
         <div class="clabel">Benzina</div>
-        <div class="cprice" id="avg-bz">—</div>
+        <div class="cprice" id="avg-bz" data-skel="price">—</div>
         <div class="cunit">€/litro</div>
         <div class="cmode">
-          <span class="mb mb-s" id="s-bz">self —</span>
-          <span class="mb mb-v" id="v-bz">serv. —</span>
+          <span class="mb mb-s" id="s-bz" data-skel="badge">self —</span>
+          <span class="mb mb-v" id="v-bz" data-skel="badge">serv. —</span>
         </div>
       </div>
       <div class="card c-go">
         <div class="clabel">Diesel</div>
-        <div class="cprice" id="avg-go">—</div>
+        <div class="cprice" id="avg-go" data-skel="price">—</div>
         <div class="cunit">€/litro</div>
         <div class="cmode">
-          <span class="mb mb-s" id="s-go">self —</span>
-          <span class="mb mb-v" id="v-go">serv. —</span>
+          <span class="mb mb-s" id="s-go" data-skel="badge">self —</span>
+          <span class="mb mb-v" id="v-go" data-skel="badge">serv. —</span>
         </div>
       </div>
       <div class="card c-gpl">
         <div class="clabel">GPL</div>
-        <div class="cprice" id="avg-gpl">—</div>
+        <div class="cprice" id="avg-gpl" data-skel="price">—</div>
         <div class="cunit">€/litro</div>
         <div class="cmode">
-          <span class="mb mb-s" id="s-gpl">self —</span>
-          <span class="mb mb-v" id="v-gpl">serv. —</span>
+          <span class="mb mb-s" id="s-gpl" data-skel="badge">self —</span>
+          <span class="mb mb-v" id="v-gpl" data-skel="badge">serv. —</span>
         </div>
       </div>
       <div class="card c-met">
         <div class="clabel">Metano</div>
-        <div class="cprice" id="avg-met">—</div>
+        <div class="cprice" id="avg-met" data-skel="price">—</div>
         <div class="cunit">€/kg</div>
         <div class="cmode">
-          <span class="mb mb-s" id="s-met">self —</span>
-          <span class="mb mb-v" id="v-met">serv. —</span>
+          <span class="mb mb-s" id="s-met" data-skel="badge">self —</span>
+          <span class="mb mb-v" id="v-met" data-skel="badge">serv. —</span>
         </div>
       </div>
     </div>
@@ -2072,79 +2267,123 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 <script>
 
 /* ═══════════════════════════════════════════════════════════════════
-   HUB ROUTER
+   HUB HOME ADDON — must run AFTER fuel JS (decorates fuel functions)
+   - replaces fullscreen loader with skeleton + inline error
+   - adds hero card on home (favorite or CTA-empty state)
+   - re-renders hero whenever favorites change
    ═══════════════════════════════════════════════════════════════════ */
 (function() {
-  var fuelInitialized = false;
-  function hubGo(name) {
-    if (name !== 'diag' && name !== 'fuel') name = 'diag';
-    document.body.dataset.hub = name;
-
-    // section visibility
-    document.getElementById('hub-diag').classList.toggle('active', name === 'diag');
-    document.getElementById('hub-fuel').classList.toggle('active', name === 'fuel');
-
-    // tab buttons
-    var btns = document.querySelectorAll('.hub-tab');
-    btns.forEach(function(b) { b.classList.toggle('active', b.dataset.hub === name); });
-
-    // hash
-    if (location.hash !== '#' + name) location.hash = name;
-
-    // lazy init fuel app on first navigation
-    if (name === 'fuel' && !fuelInitialized) {
-      fuelInitialized = true;
-      try { window._fuelLazyInit && window._fuelLazyInit(); }
-      catch (e) { console.error('Fuel init failed:', e); }
-    }
+  // -- Kill the fullscreen loader entirely --
+  if (typeof window.showLoader === 'function') {
+    window.showLoader = function() { /* no-op: skeleton replaces it */ };
   }
-  window.hubGo = hubGo;
 
-  // initial route from hash — default = fuel (home)
-  document.addEventListener('DOMContentLoaded', function() {
-    var initial = (location.hash || '').replace('#', '');
-    hubGo(initial === 'diag' ? 'diag' : 'fuel');
-  });
-  window.addEventListener('hashchange', function() {
-    var n = (location.hash || '').replace('#', '');
-    hubGo(n === 'diag' ? 'diag' : 'fuel');
-  });
+  // -- Decorate startApp: don't hide the app, render hero, kick off load --
+  var _origStartApp = window.startApp;
+  window.startApp = function() {
+    var app = document.getElementById('app');
+    if (app) app.style.display = 'block';
+    _renderHomeHero();
+    if (typeof window.loadMedie === 'function') window.loadMedie();
+  };
 
-  /* ── Smart link: when user picks a fuel-engine vehicle in diagnosi,
-        preselect the matching fuel filter in carburanti ───────────── */
-  window.hubSyncFuelFromVehicle = function(motore) {
-    if (!motore) return;
-    var s = String(motore).toLowerCase();
-    var target = null;
-    if (/tdi|cdi|jtd|dci|crdi|hdi|cdti|mjet|bluehdi|ecoblue|skyactiv-d|d4d|jtdm|diesel/i.test(s)) target = 'Diesel';
-    else if (/gpl|lpg/i.test(s)) target = 'GPL';
-    else if (/metano|cng/i.test(s)) target = 'Metano';
-    else if (/bev|electric|elettric|recharge/i.test(s)) target = null; // EVs → no fuel filter
-    else target = 'Benzina';
-    if (target && typeof window.setFuel === 'function') {
-      try { window.setFuel(target); } catch(e) {}
+  // -- Replace loadMedie with a version that uses skeleton + inline error --
+  window.loadMedie = async function() {
+    var skelEls = document.querySelectorAll('#hub-fuel [data-skel]');
+    skelEls.forEach(function(el) { el.classList.add('skel'); });
+    var heroErr = document.getElementById('home-error');
+    if (heroErr) heroErr.style.display = 'none';
+    try {
+      var data = await api('/api/medie');
+      if (typeof renderMedie === 'function') renderMedie(data);
+      skelEls.forEach(function(el) { el.classList.remove('skel'); });
+    } catch (e) {
+      skelEls.forEach(function(el) { el.classList.remove('skel'); });
+      if (heroErr) {
+        heroErr.textContent = 'Errore caricamento prezzi: ' + e.message + ' · Tap per riprovare';
+        heroErr.style.display = 'block';
+      }
     }
   };
 
-  /* ── Auto-wire: every time the user picks (or runs diagnosi for) a
-        motore, sync the fuel filter on the carburanti tab ──────────── */
-  function _hubWireDiagSync() {
-    var motSel = document.getElementById('sel-motore');
-    if (motSel) {
-      motSel.addEventListener('change', function() {
-        if (this.value) window.hubSyncFuelFromVehicle(this.value);
-      });
-    }
-    if (typeof window.avviaDiagnosi === 'function') {
-      var _orig = window.avviaDiagnosi;
-      window.avviaDiagnosi = function() {
-        var v = motSel && motSel.value;
-        if (v) { try { window.hubSyncFuelFromVehicle(v); } catch(e){} }
-        return _orig.apply(this, arguments);
-      };
-    }
+  // -- Hero card render --
+  function escSafe(s) {
+    if (typeof window.esc === 'function') return window.esc(s);
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
-  document.addEventListener('DOMContentLoaded', _hubWireDiagSync);
+
+  window._renderHomeHero = function() {
+    var slot = document.getElementById('hero-slot');
+    if (!slot) return;
+    var favs = (typeof loadFavs === 'function') ? loadFavs() : [];
+
+    if (favs.length > 0) {
+      // sort by savedAt desc (most recently added first)
+      favs = favs.slice().sort(function(a, b) {
+        var ta = (typeof a.savedAt === 'number') ? a.savedAt : (Date.parse(a.savedAt) || 0);
+        var tb = (typeof b.savedAt === 'number') ? b.savedAt : (Date.parse(b.savedAt) || 0);
+        return tb - ta;
+      });
+      var f = favs[0];
+      var name = f.customName || f.nome || 'Distributore preferito';
+      var addr = (f.indirizzo || '') + (f.comune ? ' · ' + f.comune : '');
+      var tags = [];
+      if (f.bandiera) tags.push(f.bandiera);
+      if (typeof f.isSelf === 'boolean') tags.push(f.isSelf ? 'self' : 'servito');
+      if (f.carburante) tags.push(f.carburante);
+      var unit = (String(f.carburante || '').toLowerCase().indexOf('metano') >= 0) ? 'kg' : 'lt';
+      var price = (typeof f.prezzo === 'number' && !isNaN(f.prezzo)) ? f.prezzo.toFixed(3) : '—';
+      var more = favs.length > 1
+        ? '<span class="hero-more">+' + (favs.length - 1) + ' altri</span>'
+        : '';
+
+      slot.innerHTML =
+        '<div class="hero-card hero-fav" onclick="openFavView()">' +
+          '<div class="hero-row">' +
+            '<div class="hero-label"><span class="hero-icn">★</span>Il tuo preferito</div>' +
+            more +
+          '</div>' +
+          '<div class="hero-main">' +
+            '<div class="hero-info">' +
+              '<div class="hero-name">' + escSafe(name) + '</div>' +
+              (addr.trim() ? '<div class="hero-addr">' + escSafe(addr) + '</div>' : '') +
+              (tags.length
+                ? '<div class="hero-tags">' + tags.map(function(t) {
+                    return '<span class="hero-tag">' + escSafe(t) + '</span>';
+                  }).join('') + '</div>'
+                : '') +
+            '</div>' +
+            '<div class="hero-price">' +
+              '<div class="hero-pval">' + price + '</div>' +
+              '<div class="hero-punit">€/' + unit + '</div>' +
+              (f.dtComu ? '<div class="hero-pdate">' + escSafe(f.dtComu) + '</div>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="hero-cta">Tocca per vedere tutti i preferiti →</div>' +
+        '</div>';
+    } else {
+      slot.innerHTML =
+        '<div class="hero-card hero-empty">' +
+          '<div class="hero-row">' +
+            '<div class="hero-label"><span class="hero-icn">🎯</span>Trova il più conveniente</div>' +
+          '</div>' +
+          '<div class="hero-empty-text">Localizzati e scopri i distributori più economici vicino a te.</div>' +
+          '<button class="hero-cta-btn" onclick="event.stopPropagation();openMapView()">📍 Apri la mappa</button>' +
+        '</div>';
+    }
+  };
+
+  // -- Re-render hero whenever favorites change --
+  if (typeof window.saveFavs === 'function') {
+    var _origSaveFavs = window.saveFavs;
+    window.saveFavs = function(favs) {
+      var r = _origSaveFavs.apply(this, arguments);
+      try { window._renderHomeHero(); } catch(e) {}
+      return r;
+    };
+  }
 })();
 
 </script>
@@ -10550,6 +10789,128 @@ async function runCmp() {
 }
 
 
+
+</script>
+
+<!-- HUB HOME ADDON: skeleton loader + hero card (must run AFTER fuel JS) -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB HOME ADDON — must run AFTER fuel JS (decorates fuel functions)
+   - replaces fullscreen loader with skeleton + inline error
+   - adds hero card on home (favorite or CTA-empty state)
+   - re-renders hero whenever favorites change
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  // Kill the fullscreen loader entirely
+  if (typeof window.showLoader === 'function') {
+    window.showLoader = function() { /* no-op: skeleton replaces it */ };
+  }
+
+  // Decorate startApp: don't hide the app, render hero, kick off load
+  window.startApp = function() {
+    var app = document.getElementById('app');
+    if (app) app.style.display = 'block';
+    _renderHomeHero();
+    if (typeof window.loadMedie === 'function') window.loadMedie();
+  };
+
+  // Replace loadMedie with a version that uses skeleton + inline error
+  window.loadMedie = async function() {
+    var skelEls = document.querySelectorAll('#hub-fuel [data-skel]');
+    skelEls.forEach(function(el) { el.classList.add('skel'); });
+    var heroErr = document.getElementById('home-error');
+    if (heroErr) heroErr.style.display = 'none';
+    try {
+      var data = await api('/api/medie');
+      if (typeof renderMedie === 'function') renderMedie(data);
+      skelEls.forEach(function(el) { el.classList.remove('skel'); });
+    } catch (e) {
+      skelEls.forEach(function(el) { el.classList.remove('skel'); });
+      if (heroErr) {
+        heroErr.textContent = 'Errore caricamento prezzi: ' + e.message + ' · Tap per riprovare';
+        heroErr.style.display = 'block';
+      }
+    }
+  };
+
+  function escSafe(s) {
+    if (typeof window.esc === 'function') return window.esc(s);
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  window._renderHomeHero = function() {
+    var slot = document.getElementById('hero-slot');
+    if (!slot) return;
+    var favs = (typeof loadFavs === 'function') ? loadFavs() : [];
+
+    if (favs.length > 0) {
+      favs = favs.slice().sort(function(a, b) {
+        var ta = (typeof a.savedAt === 'number') ? a.savedAt : (Date.parse(a.savedAt) || 0);
+        var tb = (typeof b.savedAt === 'number') ? b.savedAt : (Date.parse(b.savedAt) || 0);
+        return tb - ta;
+      });
+      var f = favs[0];
+      var name = f.customName || f.nome || 'Distributore preferito';
+      var addr = (f.indirizzo || '') + (f.comune ? ' · ' + f.comune : '');
+      var tags = [];
+      if (f.bandiera) tags.push(f.bandiera);
+      if (typeof f.isSelf === 'boolean') tags.push(f.isSelf ? 'self' : 'servito');
+      if (f.carburante) tags.push(f.carburante);
+      var unit = (String(f.carburante || '').toLowerCase().indexOf('metano') >= 0) ? 'kg' : 'lt';
+      var price = (typeof f.prezzo === 'number' && !isNaN(f.prezzo)) ? f.prezzo.toFixed(3) : '—';
+      var more = favs.length > 1
+        ? '<span class="hero-more">+' + (favs.length - 1) + ' altri</span>'
+        : '';
+
+      slot.innerHTML =
+        '<div class="hero-card hero-fav" onclick="openFavView()">' +
+          '<div class="hero-row">' +
+            '<div class="hero-label"><span class="hero-icn">★</span>Il tuo preferito</div>' +
+            more +
+          '</div>' +
+          '<div class="hero-main">' +
+            '<div class="hero-info">' +
+              '<div class="hero-name">' + escSafe(name) + '</div>' +
+              (addr.trim() ? '<div class="hero-addr">' + escSafe(addr) + '</div>' : '') +
+              (tags.length
+                ? '<div class="hero-tags">' + tags.map(function(t) {
+                    return '<span class="hero-tag">' + escSafe(t) + '</span>';
+                  }).join('') + '</div>'
+                : '') +
+            '</div>' +
+            '<div class="hero-price">' +
+              '<div class="hero-pval">' + price + '</div>' +
+              '<div class="hero-punit">€/' + unit + '</div>' +
+              (f.dtComu ? '<div class="hero-pdate">' + escSafe(f.dtComu) + '</div>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="hero-cta">Tocca per vedere tutti i preferiti →</div>' +
+        '</div>';
+    } else {
+      slot.innerHTML =
+        '<div class="hero-card hero-empty">' +
+          '<div class="hero-row">' +
+            '<div class="hero-label"><span class="hero-icn">🎯</span>Trova il più conveniente</div>' +
+          '</div>' +
+          '<div class="hero-empty-text">Localizzati e scopri i distributori più economici vicino a te.</div>' +
+          '<button class="hero-cta-btn" onclick="event.stopPropagation();openMapView()">📍 Apri la mappa</button>' +
+        '</div>';
+    }
+  };
+
+  // Re-render hero whenever favorites change
+  if (typeof window.saveFavs === 'function') {
+    var _origSaveFavs = window.saveFavs;
+    window.saveFavs = function(favs) {
+      var r = _origSaveFavs.apply(this, arguments);
+      try { window._renderHomeHero(); } catch(e) {}
+      return r;
+    };
+  }
+})();
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
