@@ -918,6 +918,23 @@ body[data-hub="fuel"]::before { display: none !important; }
 /* On the fuel section, push original fixed map controls above the floating pill */
 #hub-fuel .map-fab { bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important; }
 
+/* ── Hide pill when fullscreen modal views are open in fuel section ──
+   The pill duplicates UX inside fullscreen views (map/favorites/modals)
+   and steals space. We use both: native :has() (modern browsers) + a JS
+   class fallback (body[data-pill-hidden="1"]) for older WebKit. */
+body:has(#hub-fuel #map-view.visible) .hub-tabs,
+body:has(#hub-fuel #fav-view.visible) .hub-tabs,
+body:has(#hub-fuel #modal-overlay:not(.hidden)) .hub-tabs,
+body:has(#hub-fuel #fav-edit-overlay:not(.hidden)) .hub-tabs,
+body[data-pill-hidden="1"] .hub-tabs {
+  opacity: 0;
+  transform: translateX(-50%) translateY(24px);
+  pointer-events: none;
+}
+.hub-tabs {
+  transition: opacity .22s ease, transform .22s ease;
+}
+
 
 /* ════════════════════════════════════════════════════════════════════
    CARBURANTI styles (scoped to #hub-fuel — no global pollution)
@@ -1426,119 +1443,110 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 /* (kept intentionally empty — see startApp logic to skip loader if cache hit) */
 
 /* Hero slot — sits above "Medie nazionali" */
-#hub-fuel .hero-slot { padding: 14px 12px 0; }
+#hub-fuel .hero-slot { padding: 12px 12px 0; }
 
-#hub-fuel .hero-card {
+/* ── Compact favorite row (when user has favs) ─────────────────── */
+#hub-fuel .hero-fav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(232,160,48,.10), rgba(232,160,48,.04));
+  border: 1px solid rgba(232,160,48,.22);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  overflow: hidden;
+}
+#hub-fuel .hero-fav:active { transform: scale(.99); }
+#hub-fuel .hero-fav:hover { border-color: rgba(232,160,48,.4); }
+
+#hub-fuel .hero-fav-star {
+  font-size: .85rem;
+  color: var(--am);
+  flex-shrink: 0;
+  line-height: 1;
+}
+#hub-fuel .hero-fav-name {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--tx);
+  letter-spacing: -.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#hub-fuel .hero-fav-price {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--am);
+  letter-spacing: -.01em;
+  flex-shrink: 0;
+  line-height: 1;
+}
+#hub-fuel .hero-fav-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--tx2);
+  margin-left: 3px;
+  letter-spacing: .04em;
+}
+#hub-fuel .hero-fav-more {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  color: var(--am);
+  background: rgba(232,160,48,.13);
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(232,160,48,.25);
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+#hub-fuel .hero-fav-chev {
+  color: var(--mut);
+  font-size: .8rem;
+  flex-shrink: 0;
+}
+
+/* ── Empty state hero (no favs) — keeps the larger CTA card ─────── */
+#hub-fuel .hero-empty {
   position: relative;
   background:
     linear-gradient(135deg, rgba(232,160,48,.12), rgba(232,160,48,.04) 60%, rgba(232,160,48,.08));
   border: 1px solid rgba(232,160,48,.28);
-  border-radius: 14px;
-  padding: 14px 14px 12px;
-  cursor: pointer;
-  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  border-radius: 12px;
+  padding: 12px 14px;
   overflow: hidden;
 }
-#hub-fuel .hero-card::before {
+#hub-fuel .hero-empty::before {
   content: '';
   position: absolute; top: 0; right: 0; width: 90px; height: 90px;
-  background: radial-gradient(circle at 70% 30%, rgba(232,160,48,.25), transparent 60%);
+  background: radial-gradient(circle at 70% 30%, rgba(232,160,48,.22), transparent 60%);
   pointer-events: none;
 }
-#hub-fuel .hero-card:active { transform: scale(.985); }
-#hub-fuel .hero-card:hover { border-color: rgba(232,160,48,.5); }
-
-#hub-fuel .hero-row {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 8px;
+#hub-fuel .hero-empty .hero-row {
+  display: flex; align-items: center;
+  margin-bottom: 4px;
 }
-#hub-fuel .hero-label {
+#hub-fuel .hero-empty .hero-label {
   font-family: 'DM Mono', monospace;
-  font-size: .62rem; font-weight: 500;
-  letter-spacing: .14em; text-transform: uppercase;
+  font-size: .6rem; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
   color: var(--am);
   display: inline-flex; align-items: center; gap: 6px;
 }
-#hub-fuel .hero-icn { font-size: .85rem; line-height: 1; }
-#hub-fuel .hero-more {
-  font-family: 'DM Mono', monospace;
-  font-size: .58rem;
-  background: rgba(232,160,48,.15);
-  color: var(--am);
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(232,160,48,.3);
-}
-
-#hub-fuel .hero-main { display: flex; gap: 14px; align-items: flex-start; }
-#hub-fuel .hero-info { flex: 1; min-width: 0; }
-#hub-fuel .hero-name {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 700; font-size: 1.08rem;
-  color: var(--tx); line-height: 1.25;
-  letter-spacing: -.01em;
-  margin-bottom: 3px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-#hub-fuel .hero-addr {
-  font-family: 'DM Mono', monospace;
-  font-size: .72rem; color: var(--tx2); line-height: 1.4;
-  margin-bottom: 7px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-#hub-fuel .hero-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-#hub-fuel .hero-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: .56rem; font-weight: 500;
-  background: rgba(255,255,255,.05);
-  color: var(--tx2);
-  padding: 2px 7px;
-  border-radius: 4px;
-  border: 1px solid rgba(255,255,255,.08);
-  text-transform: uppercase; letter-spacing: .06em;
-}
-
-#hub-fuel .hero-price {
-  text-align: right;
-  flex-shrink: 0;
-  padding-left: 8px;
-  border-left: 1px solid rgba(232,160,48,.18);
-}
-#hub-fuel .hero-pval {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 700; font-size: 1.6rem;
-  color: var(--am); line-height: 1;
-  letter-spacing: -.02em;
-}
-#hub-fuel .hero-punit {
-  font-family: 'DM Mono', monospace;
-  font-size: .58rem;
-  color: var(--tx2);
-  margin-top: 2px;
-  letter-spacing: .08em;
-}
-#hub-fuel .hero-pdate {
-  font-family: 'DM Mono', monospace;
-  font-size: .54rem;
-  color: var(--mut);
-  margin-top: 4px;
-}
-
-#hub-fuel .hero-cta {
-  font-family: 'DM Mono', monospace;
-  font-size: .6rem; color: var(--mut);
-  margin-top: 10px;
-  text-align: right;
-  letter-spacing: .04em;
-}
-
-/* Empty state hero (no favs) */
+#hub-fuel .hero-empty .hero-icn { font-size: .8rem; line-height: 1; }
 #hub-fuel .hero-empty .hero-empty-text {
   font-family: 'DM Mono', monospace;
-  font-size: .78rem;
+  font-size: .72rem;
   color: var(--tx2);
-  line-height: 1.5;
-  margin: 4px 0 12px;
+  line-height: 1.45;
+  margin: 2px 0 10px;
 }
 #hub-fuel .hero-cta-btn {
   width: 100%;
@@ -1546,10 +1554,10 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   background: linear-gradient(135deg, rgba(232,160,48,.85), rgba(232,160,48,.65));
   color: #0d0e0f;
   border: 1px solid rgba(232,160,48,.6);
-  border-radius: 10px;
-  padding: 10px 14px;
+  border-radius: 8px;
+  padding: 8px 12px;
   font-family: 'DM Mono', monospace;
-  font-size: .76rem; font-weight: 600;
+  font-size: .72rem; font-weight: 600;
   letter-spacing: .04em;
   cursor: pointer;
   transition: all .15s ease;
@@ -2326,6 +2334,35 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     }
   }
   document.addEventListener('DOMContentLoaded', _hubWireDiagSync);
+
+  /* ── Pill visibility: JS fallback for browsers without :has() ────
+        Mirrors the CSS rule. Sets body[data-pill-hidden="1"] when any
+        of the fullscreen views/modals are open inside #hub-fuel. */
+  function _hubUpdatePillVisibility() {
+    var mv  = document.getElementById('map-view');
+    var fv  = document.getElementById('fav-view');
+    var mo  = document.getElementById('modal-overlay');
+    var feo = document.getElementById('fav-edit-overlay');
+    var hide =
+      (mv  && mv.classList.contains('visible')) ||
+      (fv  && fv.classList.contains('visible')) ||
+      (mo  && !mo.classList.contains('hidden')) ||
+      (feo && !feo.classList.contains('hidden'));
+    if (hide) document.body.dataset.pillHidden = '1';
+    else delete document.body.dataset.pillHidden;
+  }
+  function _hubObservePillTriggers() {
+    var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay'];
+    if (typeof MutationObserver === 'function') {
+      var obs = new MutationObserver(_hubUpdatePillVisibility);
+      ids.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
+      });
+    }
+    _hubUpdatePillVisibility();
+  }
+  document.addEventListener('DOMContentLoaded', _hubObservePillTriggers);
 })();
 
 </script>
@@ -10940,6 +10977,7 @@ async function runCmp() {
     var favs = (typeof loadFavs === 'function') ? loadFavs() : [];
 
     if (favs.length > 0) {
+      // Compact one-line row: ★ name … price → tap = open favorites list
       favs = favs.slice().sort(function(a, b) {
         var ta = (typeof a.savedAt === 'number') ? a.savedAt : (Date.parse(a.savedAt) || 0);
         var tb = (typeof b.savedAt === 'number') ? b.savedAt : (Date.parse(b.savedAt) || 0);
@@ -10947,44 +10985,25 @@ async function runCmp() {
       });
       var f = favs[0];
       var name = f.customName || f.nome || 'Distributore preferito';
-      var addr = (f.indirizzo || '') + (f.comune ? ' · ' + f.comune : '');
-      var tags = [];
-      if (f.bandiera) tags.push(f.bandiera);
-      if (typeof f.isSelf === 'boolean') tags.push(f.isSelf ? 'self' : 'servito');
-      if (f.carburante) tags.push(f.carburante);
       var unit = (String(f.carburante || '').toLowerCase().indexOf('metano') >= 0) ? 'kg' : 'lt';
       var price = (typeof f.prezzo === 'number' && !isNaN(f.prezzo)) ? f.prezzo.toFixed(3) : '—';
       var more = favs.length > 1
-        ? '<span class="hero-more">+' + (favs.length - 1) + ' altri</span>'
+        ? '<span class="hero-fav-more">+' + (favs.length - 1) + '</span>'
         : '';
 
       slot.innerHTML =
-        '<div class="hero-card hero-fav" onclick="openFavView()">' +
-          '<div class="hero-row">' +
-            '<div class="hero-label"><span class="hero-icn">★</span>Il tuo preferito</div>' +
-            more +
-          '</div>' +
-          '<div class="hero-main">' +
-            '<div class="hero-info">' +
-              '<div class="hero-name">' + escSafe(name) + '</div>' +
-              (addr.trim() ? '<div class="hero-addr">' + escSafe(addr) + '</div>' : '') +
-              (tags.length
-                ? '<div class="hero-tags">' + tags.map(function(t) {
-                    return '<span class="hero-tag">' + escSafe(t) + '</span>';
-                  }).join('') + '</div>'
-                : '') +
-            '</div>' +
-            '<div class="hero-price">' +
-              '<div class="hero-pval">' + price + '</div>' +
-              '<div class="hero-punit">€/' + unit + '</div>' +
-              (f.dtComu ? '<div class="hero-pdate">' + escSafe(f.dtComu) + '</div>' : '') +
-            '</div>' +
-          '</div>' +
-          '<div class="hero-cta">Tocca per vedere tutti i preferiti →</div>' +
+        '<div class="hero-fav" onclick="openFavView()" role="button" aria-label="Apri preferiti">' +
+          '<span class="hero-fav-star" aria-hidden="true">★</span>' +
+          '<span class="hero-fav-name">' + escSafe(name) + '</span>' +
+          more +
+          '<span class="hero-fav-price">' + price +
+            '<span class="hero-fav-unit">€/' + unit + '</span>' +
+          '</span>' +
+          '<span class="hero-fav-chev" aria-hidden="true">›</span>' +
         '</div>';
     } else {
       slot.innerHTML =
-        '<div class="hero-card hero-empty">' +
+        '<div class="hero-empty">' +
           '<div class="hero-row">' +
             '<div class="hero-label"><span class="hero-icn">🎯</span>Trova il più conveniente</div>' +
           '</div>' +
