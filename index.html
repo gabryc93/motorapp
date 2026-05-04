@@ -849,62 +849,74 @@ body[data-hub="fuel"]::before { display: none !important; }
 .hub-section.active { display: block; }
 
 /* Diagnosis section keeps its original wrap; we just wrap it for routing */
-#hub-diag { padding-bottom: 90px; } /* space for bottom bar */
-#hub-fuel { padding-bottom: 90px; }
+#hub-diag { padding-bottom: 70px; } /* room for floating pill */
+#hub-fuel { padding-bottom: 70px; }
 
 /* The fuel app uses position:fixed map view; keep it above bar */
-#hub-fuel #map-view, #hub-fuel #fav-view { padding-bottom: 80px; }
+#hub-fuel #map-view, #hub-fuel #fav-view { padding-bottom: 64px; }
 
-/* ── Bottom tab bar ────────────────────────────────────────────── */
+/* ── Floating pill — icon-only, centered, low-key ───────────────── */
 .hub-tabs {
-  position: fixed; left: 0; right: 0; bottom: 0;
+  position: fixed;
+  left: 50%;
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
   z-index: 200;
-  display: grid; grid-template-columns: 1fr 1fr;
-  background: rgba(13,13,16,.78);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-top: 1px solid rgba(255,255,255,.08);
-  padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
-  gap: 6px;
+  display: flex;
+  background: rgba(15, 16, 18, 0.62);
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 2px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.05) inset,
+    0 6px 22px rgba(0, 0, 0, 0.42);
 }
 [data-theme="light"] .hub-tabs {
-  background: rgba(255,255,255,.85);
-  border-top: 1px solid rgba(0,0,0,.08);
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.6) inset,
+    0 6px 22px rgba(0, 0, 0, 0.12);
 }
+
 .hub-tab {
   appearance: none; -webkit-appearance: none;
-  background: transparent; color: #a8a4ad;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  padding: 10px 8px 8px;
-  font-family: 'DM Mono', monospace;
-  font-size: .68rem; font-weight: 500;
-  letter-spacing: .1em; text-transform: uppercase;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  width: 50px; height: 38px;
+  padding: 0;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: all .18s ease;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0; /* hide any text */
 }
 .hub-tab .hub-icn {
-  font-size: 1.3rem; line-height: 1;
-  transition: transform .2s ease;
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.55;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
+.hub-tab.active .hub-icn { opacity: 1; }
 .hub-tab.active {
-  color: #ffffff;
-  background: linear-gradient(180deg, rgba(224,60,52,.18), rgba(224,60,52,.05));
-  border-color: rgba(224,60,52,.35);
+  background: rgba(232, 160, 48, 0.20);
+  box-shadow: 0 0 0 1px rgba(232, 160, 48, 0.32);
 }
-.hub-tab.active.hub-tab-fuel {
-  background: linear-gradient(180deg, rgba(232,160,48,.18), rgba(232,160,48,.05));
-  border-color: rgba(232,160,48,.4);
-  color: #ffe7c2;
+.hub-tab.active.hub-tab-diag {
+  background: rgba(224, 60, 52, 0.20);
+  box-shadow: 0 0 0 1px rgba(224, 60, 52, 0.34);
 }
-.hub-tab:not(.active):hover { color: #ddd; background: rgba(255,255,255,.04); }
-[data-theme="light"] .hub-tab { color: #66626a; }
-[data-theme="light"] .hub-tab:not(.active):hover { color: #141420; background: rgba(0,0,0,.04); }
-.hub-tab:active .hub-icn { transform: scale(.92); }
+.hub-tab:active .hub-icn { transform: scale(0.88); }
 
-/* On the fuel section, push original fixed map controls above the tab bar */
-#hub-fuel .map-fab { bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+[data-theme="light"] .hub-tab .hub-icn { opacity: 0.6; }
+[data-theme="light"] .hub-tab.active .hub-icn { opacity: 1; }
+
+/* On the fuel section, push original fixed map controls above the floating pill */
+#hub-fuel .map-fab { bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important; }
 
 
 /* ════════════════════════════════════════════════════════════════════
@@ -1598,13 +1610,15 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 </head>
 <body data-hub="fuel">
 
-<!-- ═══ HUB BOTTOM TAB BAR ════════════════════════════════════════ -->
+<!-- ═══ HUB FLOATING PILL ═════════════════════════════════════════ -->
 <nav class="hub-tabs" role="tablist" aria-label="AutoHub sections">
-  <button class="hub-tab hub-tab-diag" data-hub="diag" onclick="hubGo('diag')" role="tab" aria-selected="false">
-    <span class="hub-icn">🔧</span><span>Diagnosi</span>
+  <button class="hub-tab hub-tab-diag" data-hub="diag" onclick="hubGo('diag')"
+          role="tab" aria-selected="false" aria-label="Diagnosi" title="Diagnosi">
+    <span class="hub-icn" aria-hidden="true">🔧</span>
   </button>
-  <button class="hub-tab hub-tab-fuel active" data-hub="fuel" onclick="hubGo('fuel')" role="tab" aria-selected="true">
-    <span class="hub-icn">⛽</span><span>Carburanti</span>
+  <button class="hub-tab hub-tab-fuel active" data-hub="fuel" onclick="hubGo('fuel')"
+          role="tab" aria-selected="true" aria-label="Carburanti" title="Carburanti">
+    <span class="hub-icn" aria-hidden="true">⛽</span>
   </button>
 </nav>
 
@@ -10760,6 +10774,13 @@ async function runCmp() {
    - re-renders hero whenever favorites change
    ═══════════════════════════════════════════════════════════════════ */
 (function() {
+  function escSafe(s) {
+    if (typeof window.esc === 'function') return window.esc(s);
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
   // Kill the fullscreen loader entirely
   if (typeof window.showLoader === 'function') {
     window.showLoader = function() { /* no-op: skeleton replaces it */ };
@@ -10773,31 +10794,58 @@ async function runCmp() {
     if (typeof window.loadMedie === 'function') window.loadMedie();
   };
 
-  // Replace loadMedie with a version that uses skeleton + inline error
+  // Allow overriding WORKER URL via ?worker=... or localStorage('hub_worker')
+  // Useful for testing or when deployed on a domain not in the Worker allowlist.
+  try {
+    var urlParams = new URLSearchParams(location.search);
+    var workerOverride = urlParams.get('worker') || localStorage.getItem('hub_worker');
+    if (workerOverride && typeof window.WORKER !== 'undefined') {
+      window.WORKER = workerOverride;
+      if (urlParams.get('worker')) localStorage.setItem('hub_worker', workerOverride);
+      console.log('[AutoHub] WORKER overridden to:', workerOverride);
+    }
+  } catch(e) {}
+
+  // Replace loadMedie with a version that uses skeleton + visible inline error,
+  // adds a fetch timeout (8s) and shows full diagnostic on failure.
   window.loadMedie = async function() {
     var skelEls = document.querySelectorAll('#hub-fuel [data-skel]');
     skelEls.forEach(function(el) { el.classList.add('skel'); });
     var heroErr = document.getElementById('home-error');
     if (heroErr) heroErr.style.display = 'none';
+
+    var workerUrl = (typeof WORKER !== 'undefined') ? WORKER : '(WORKER undefined)';
+    var fullUrl = workerUrl + '/api/medie';
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function() { if (ctrl) ctrl.abort(); }, 8000);
+
     try {
-      var data = await api('/api/medie');
+      var res = await fetch(fullUrl, ctrl ? { signal: ctrl.signal } : {});
+      clearTimeout(timer);
+      if (!res.ok) {
+        var body = '';
+        try { body = (await res.text()).slice(0, 120); } catch(_) {}
+        throw new Error('HTTP ' + res.status + (body ? ' · ' + body : ''));
+      }
+      var data = await res.json();
       if (typeof renderMedie === 'function') renderMedie(data);
       skelEls.forEach(function(el) { el.classList.remove('skel'); });
     } catch (e) {
+      clearTimeout(timer);
       skelEls.forEach(function(el) { el.classList.remove('skel'); });
+      console.error('[AutoHub] loadMedie failed:', e, '· URL:', fullUrl);
       if (heroErr) {
-        heroErr.textContent = 'Errore caricamento prezzi: ' + e.message + ' · Tap per riprovare';
+        var msg = (e && e.name === 'AbortError') ? 'Timeout (8s) — il Worker non ha risposto'
+                : (e && e.message) ? e.message
+                : String(e);
+        heroErr.innerHTML = '<strong>Errore caricamento prezzi.</strong><br>' +
+          'URL: <code style="font-size:.65rem">' + escSafe(fullUrl) + '</code><br>' +
+          'Dettaglio: ' + escSafe(msg) + '<br>' +
+          '<small>Tap qui per riprovare</small>';
         heroErr.style.display = 'block';
       }
     }
   };
-
-  function escSafe(s) {
-    if (typeof window.esc === 'function') return window.esc(s);
-    return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
 
   window._renderHomeHero = function() {
     var slot = document.getElementById('hero-slot');
