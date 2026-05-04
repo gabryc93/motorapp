@@ -852,8 +852,9 @@ body[data-hub="fuel"]::before { display: none !important; }
 #hub-diag { padding-bottom: 70px; } /* room for floating pill */
 #hub-fuel { padding-bottom: 70px; }
 
-/* The fuel app uses position:fixed map view; keep it above bar */
-#hub-fuel #map-view, #hub-fuel #fav-view { padding-bottom: 64px; }
+/* The fuel app uses position:fixed map view; the pill auto-hides when these
+   open (see :has() rule below), so they can be true fullscreen — no padding. */
+#hub-fuel #map-view, #hub-fuel #fav-view { padding-bottom: 0; }
 
 /* ── Floating pill — icon-only, centered, low-key ───────────────── */
 .hub-tabs {
@@ -915,8 +916,8 @@ body[data-hub="fuel"]::before { display: none !important; }
 [data-theme="light"] .hub-tab .hub-icn { opacity: 0.6; }
 [data-theme="light"] .hub-tab.active .hub-icn { opacity: 1; }
 
-/* On the fuel section, push original fixed map controls above the floating pill */
-#hub-fuel .map-fab { bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important; }
+/* Map controls can stay at their original bottom position — pill is hidden
+   when the map is open, so no risk of overlap. (No override needed.) */
 
 /* ── Hide pill when fullscreen modal views are open in fuel section ──
    The pill duplicates UX inside fullscreen views (map/favorites/modals)
