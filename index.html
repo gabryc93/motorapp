@@ -1422,8 +1422,8 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
    HUB HOME — hero card + skeleton shimmer (replaces fullscreen loader)
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Kill the fullscreen loader entirely — we render the app immediately */
-#hub-fuel #loader { display: none !important; }
+/* ── Skeleton CSS removed — original fullscreen loader is back ─── */
+/* (kept intentionally empty — see startApp logic to skip loader if cache hit) */
 
 /* Hero slot — sits above "Medie nazionali" */
 #hub-fuel .hero-slot { padding: 14px 12px 0; }
@@ -1574,37 +1574,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 #hub-fuel .home-error::before { content: '⚠ '; opacity: .8; }
 #hub-fuel .home-error:hover { background: rgba(224,90,74,.15); }
 
-/* ── Skeleton shimmer for price cards ──────────────────────────── */
-#hub-fuel [data-skel].skel {
-  position: relative;
-  color: transparent !important;
-  background: rgba(255,255,255,.05);
-  border-radius: 4px;
-  overflow: hidden;
-  display: inline-block;
-  min-width: 60px;
-  vertical-align: middle;
-}
-#hub-fuel [data-skel="price"].skel { min-width: 96px; min-height: 1.5em; }
-#hub-fuel [data-skel="badge"].skel { min-width: 56px; min-height: .85em; }
-
-#hub-fuel [data-skel].skel::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(232,160,48,.18) 45%,
-    rgba(232,160,48,.32) 50%,
-    rgba(232,160,48,.18) 55%,
-    transparent 100%);
-  animation: skelShimmer 1.5s ease-in-out infinite;
-  transform: translateX(-100%);
-}
-@keyframes skelShimmer {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
+/* (Skeleton shimmer rules removed — back to original loader UX) */
 
 </style>
 </head>
@@ -1979,38 +1949,38 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     <div class="cards-grid">
       <div class="card c-bz">
         <div class="clabel">Benzina</div>
-        <div class="cprice" id="avg-bz" data-skel="price">—</div>
+        <div class="cprice" id="avg-bz">—</div>
         <div class="cunit">€/litro</div>
         <div class="cmode">
-          <span class="mb mb-s" id="s-bz" data-skel="badge">self —</span>
-          <span class="mb mb-v" id="v-bz" data-skel="badge">serv. —</span>
+          <span class="mb mb-s" id="s-bz">self —</span>
+          <span class="mb mb-v" id="v-bz">serv. —</span>
         </div>
       </div>
       <div class="card c-go">
         <div class="clabel">Diesel</div>
-        <div class="cprice" id="avg-go" data-skel="price">—</div>
+        <div class="cprice" id="avg-go">—</div>
         <div class="cunit">€/litro</div>
         <div class="cmode">
-          <span class="mb mb-s" id="s-go" data-skel="badge">self —</span>
-          <span class="mb mb-v" id="v-go" data-skel="badge">serv. —</span>
+          <span class="mb mb-s" id="s-go">self —</span>
+          <span class="mb mb-v" id="v-go">serv. —</span>
         </div>
       </div>
       <div class="card c-gpl">
         <div class="clabel">GPL</div>
-        <div class="cprice" id="avg-gpl" data-skel="price">—</div>
+        <div class="cprice" id="avg-gpl">—</div>
         <div class="cunit">€/litro</div>
         <div class="cmode">
-          <span class="mb mb-s" id="s-gpl" data-skel="badge">self —</span>
-          <span class="mb mb-v" id="v-gpl" data-skel="badge">serv. —</span>
+          <span class="mb mb-s" id="s-gpl">self —</span>
+          <span class="mb mb-v" id="v-gpl">serv. —</span>
         </div>
       </div>
       <div class="card c-met">
         <div class="clabel">Metano</div>
-        <div class="cprice" id="avg-met" data-skel="price">—</div>
+        <div class="cprice" id="avg-met">—</div>
         <div class="cunit">€/kg</div>
         <div class="cmode">
-          <span class="mb mb-s" id="s-met" data-skel="badge">self —</span>
-          <span class="mb mb-v" id="v-met" data-skel="badge">serv. —</span>
+          <span class="mb mb-s" id="s-met">self —</span>
+          <span class="mb mb-v" id="v-met">serv. —</span>
         </div>
       </div>
     </div>
@@ -10781,17 +10751,39 @@ async function runCmp() {
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  // Kill the fullscreen loader entirely
-  if (typeof window.showLoader === 'function') {
-    window.showLoader = function() { /* no-op: skeleton replaces it */ };
-  }
+  // showLoader / hideLoader are kept as in the original fuel app —
+  // we intentionally do NOT override them. The fullscreen loader is back.
 
-  // Decorate startApp: don't hide the app, render hero, kick off load
+  // Decorate startApp:
+  //   - If we have cached medie → render instantly, skip loader entirely
+  //   - Otherwise → call the ORIGINAL startApp flow (loader + fetch)
+  var _origStartApp = window.startApp;
   window.startApp = function() {
-    var app = document.getElementById('app');
-    if (app) app.style.display = 'block';
-    _renderHomeHero();
-    if (typeof window.loadMedie === 'function') window.loadMedie();
+    var cache = readMedieCache();
+
+    if (cache && cache.data) {
+      // Instant cached render — bypass the loader
+      var loader = document.getElementById('loader');
+      if (loader) loader.style.display = 'none';
+      var app = document.getElementById('app');
+      if (app) app.style.display = 'block';
+
+      try {
+        if (typeof renderMedie === 'function') renderMedie(cache.data);
+      } catch(e) { console.error('[AutoHub] render from cache failed', e); }
+      _renderHomeHero();
+
+      // Background revalidation — silent
+      _revalidateMedie(cache);
+    } else {
+      // No cache: original flow (fullscreen loader + first fetch)
+      _renderHomeHero();
+      if (typeof _origStartApp === 'function') return _origStartApp.apply(this, arguments);
+      // Fallback: minimal first-time load
+      var app2 = document.getElementById('app');
+      if (app2) app2.style.display = 'block';
+      if (typeof window.loadMedie === 'function') window.loadMedie();
+    }
   };
 
   // Allow overriding WORKER URL via ?worker=... or localStorage('hub_worker')
@@ -10806,18 +10798,73 @@ async function runCmp() {
     }
   } catch(e) {}
 
-  // Replace loadMedie with a version that uses skeleton + visible inline error,
-  // adds a fetch timeout (8s) and shows full diagnostic on failure.
+  // Replace loadMedie with a stale-while-revalidate version:
+  //   1. If we have a cached response, render it instantly (no skeleton)
+  //   2. Try a fresh fetch with a 12s timeout (cold-start friendly)
+  //   3. On success: update cache, render fresh data
+  //   4. On failure: if we already showed cache, show small "stale" badge;
+  //                  if we have NO cache, show full inline error
+  var MEDIE_CACHE_KEY = 'hub_medie_cache_v1';
+  var MEDIE_TIMEOUT_MS = 12000;
+
+  function readMedieCache() {
+    try {
+      var raw = localStorage.getItem(MEDIE_CACHE_KEY);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (obj && obj.data && typeof obj.ts === 'number') return obj;
+      return null;
+    } catch(e) { return null; }
+  }
+  function writeMedieCache(data) {
+    try { localStorage.setItem(MEDIE_CACHE_KEY, JSON.stringify({ data: data, ts: Date.now() })); }
+    catch(e) {}
+  }
+  function fmtAge(ms) {
+    var m = Math.round(ms / 60000);
+    if (m < 1)  return 'ora';
+    if (m < 60) return m + ' min fa';
+    var h = Math.round(m / 60);
+    if (h < 24) return h + 'h fa';
+    var d = Math.round(h / 24);
+    return d + 'g fa';
+  }
+
+  // Persistent stale-data badge on the home (above medie cards)
+  function showStaleBadge(ageMs, errMsg) {
+    var slot = document.getElementById('home-error');
+    if (!slot) return;
+    slot.innerHTML =
+      '⚠ <strong>Mostrando dati salvati</strong> (' + escSafe(fmtAge(ageMs)) + ') · ' +
+      'aggiornamento fallito' + (errMsg ? ': ' + escSafe(errMsg) : '') +
+      '<br><small>Tap per riprovare</small>';
+    slot.style.display = 'block';
+  }
+  function showFullError(url, msg) {
+    var slot = document.getElementById('home-error');
+    if (!slot) return;
+    slot.innerHTML =
+      '<strong>Errore caricamento prezzi.</strong><br>' +
+      'URL: <code style="font-size:.65rem">' + escSafe(url) + '</code><br>' +
+      'Dettaglio: ' + escSafe(msg) + '<br>' +
+      '<small>Tap qui per riprovare</small>';
+    slot.style.display = 'block';
+  }
+
+  // loadMedie:
+  //   - Called from initial load (when no cache) or via "Tap to retry"
+  //   - Lets the original loader stay visible during fetch
+  //   - On success: cache + render + hide loader + clear errors
+  //   - On failure (no cache): show full diagnostic error
+  //   - On failure (with cache): show stale-data badge, keep cached display
   window.loadMedie = async function() {
-    var skelEls = document.querySelectorAll('#hub-fuel [data-skel]');
-    skelEls.forEach(function(el) { el.classList.add('skel'); });
     var heroErr = document.getElementById('home-error');
     if (heroErr) heroErr.style.display = 'none';
 
-    var workerUrl = (typeof WORKER !== 'undefined') ? WORKER : '(WORKER undefined)';
+    var workerUrl = (typeof WORKER !== 'undefined') ? WORKER : '';
     var fullUrl = workerUrl + '/api/medie';
     var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-    var timer = setTimeout(function() { if (ctrl) ctrl.abort(); }, 8000);
+    var timer = setTimeout(function() { if (ctrl) ctrl.abort(); }, MEDIE_TIMEOUT_MS);
 
     try {
       var res = await fetch(fullUrl, ctrl ? { signal: ctrl.signal } : {});
@@ -10828,24 +10875,64 @@ async function runCmp() {
         throw new Error('HTTP ' + res.status + (body ? ' · ' + body : ''));
       }
       var data = await res.json();
+      writeMedieCache(data);
       if (typeof renderMedie === 'function') renderMedie(data);
-      skelEls.forEach(function(el) { el.classList.remove('skel'); });
+      // Hide the original loader if it was showing
+      var loader = document.getElementById('loader');
+      if (loader) loader.style.display = 'none';
+      var app = document.getElementById('app');
+      if (app) app.style.display = 'block';
     } catch (e) {
       clearTimeout(timer);
-      skelEls.forEach(function(el) { el.classList.remove('skel'); });
-      console.error('[AutoHub] loadMedie failed:', e, '· URL:', fullUrl);
-      if (heroErr) {
-        var msg = (e && e.name === 'AbortError') ? 'Timeout (8s) — il Worker non ha risposto'
-                : (e && e.message) ? e.message
-                : String(e);
-        heroErr.innerHTML = '<strong>Errore caricamento prezzi.</strong><br>' +
-          'URL: <code style="font-size:.65rem">' + escSafe(fullUrl) + '</code><br>' +
-          'Dettaglio: ' + escSafe(msg) + '<br>' +
-          '<small>Tap qui per riprovare</small>';
-        heroErr.style.display = 'block';
+      var msg = (e && e.name === 'AbortError')
+        ? 'Timeout (' + Math.round(MEDIE_TIMEOUT_MS/1000) + 's) — il Worker non ha risposto'
+        : (e && e.message) ? e.message : String(e);
+      console.error('[AutoHub] loadMedie failed:', msg, '· URL:', fullUrl);
+
+      var cache = readMedieCache();
+      var loader = document.getElementById('loader');
+      var app = document.getElementById('app');
+
+      if (cache && cache.data) {
+        // We have cache: hide loader, render cache, show stale badge
+        if (loader) loader.style.display = 'none';
+        if (app) app.style.display = 'block';
+        try { if (typeof renderMedie === 'function') renderMedie(cache.data); } catch(_) {}
+        showStaleBadge(Date.now() - cache.ts, msg);
+      } else {
+        // No cache: keep loader hidden, show full diagnostic
+        if (loader) loader.style.display = 'none';
+        if (app) app.style.display = 'block';
+        showFullError(fullUrl, msg);
       }
     }
   };
+
+  // Silent revalidation (used when we already showed cached data on startup)
+  async function _revalidateMedie(currentCache) {
+    var workerUrl = (typeof WORKER !== 'undefined') ? WORKER : '';
+    var fullUrl = workerUrl + '/api/medie';
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function() { if (ctrl) ctrl.abort(); }, MEDIE_TIMEOUT_MS);
+
+    try {
+      var res = await fetch(fullUrl, ctrl ? { signal: ctrl.signal } : {});
+      clearTimeout(timer);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var data = await res.json();
+      writeMedieCache(data);
+      if (typeof renderMedie === 'function') renderMedie(data);
+    } catch (e) {
+      clearTimeout(timer);
+      // Silent: don't disturb the user with errors when cache was already shown.
+      // BUT: if cached data is older than 24h, show a discreet stale notice.
+      if (currentCache && (Date.now() - currentCache.ts) > 24 * 60 * 60 * 1000) {
+        var msg = (e && e.name === 'AbortError') ? 'timeout' : (e && e.message) || 'errore';
+        showStaleBadge(Date.now() - currentCache.ts, msg);
+      }
+      console.warn('[AutoHub] silent revalidate failed:', e);
+    }
+  }
 
   window._renderHomeHero = function() {
     var slot = document.getElementById('hero-slot');
