@@ -931,6 +931,178 @@ body[data-hub="fuel"]::before { display: none !important; }
 #hub-fuel #map-brow.bandiera-row::-webkit-scrollbar { display: none; }
 #hub-fuel #map-brow .bfb { flex-shrink: 0; }
 
+/* ── Compare-favorites overlay ─────────────────────────────────── */
+#hub-fuel .hub-cmp-launch {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(232,160,48,.16), rgba(232,160,48,.06));
+  border: 1px solid rgba(232,160,48,.3);
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: var(--am);
+  letter-spacing: .02em;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#hub-fuel .hub-cmp-launch:hover { filter: brightness(1.1); border-color: rgba(232,160,48,.5); }
+#hub-fuel .hub-cmp-launch:active { transform: scale(.99); }
+#hub-fuel .hub-cmp-launch[hidden] { display: none; }
+
+#hub-fuel #hub-cmp-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#hub-fuel #hub-cmp-overlay.visible { display: flex; }
+
+#hub-fuel .hub-cmp-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0;
+  gap: 10px;
+}
+#hub-fuel .hub-cmp-hdr h2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1rem;
+  color: var(--tx); letter-spacing: -.01em;
+}
+#hub-fuel .hub-cmp-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--mut);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+
+#hub-fuel .hub-cmp-tabs {
+  display: flex; gap: 6px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--brd);
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+#hub-fuel .hub-cmp-tabs::-webkit-scrollbar { display: none; }
+#hub-fuel .hub-cmp-tab {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf);
+  border: 1px solid var(--brd2);
+  color: var(--tx2);
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem; font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+#hub-fuel .hub-cmp-tab.on {
+  color: var(--am);
+  border-color: var(--am);
+  background: var(--am-d);
+}
+#hub-fuel .hub-cmp-tab .hub-cmp-tab-n {
+  font-size: .58rem;
+  margin-left: 4px;
+  opacity: .7;
+}
+
+#hub-fuel .hub-cmp-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+
+#hub-fuel .hub-cmp-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--mut);
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+}
+
+#hub-fuel .hub-cmp-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  transition: border-color .15s ease;
+}
+#hub-fuel .hub-cmp-row.hub-cmp-best {
+  background: linear-gradient(135deg, rgba(76,175,125,.08), rgba(76,175,125,.02));
+  border-color: rgba(76,175,125,.35);
+}
+#hub-fuel .hub-cmp-rank {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--surf2);
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem; font-weight: 600;
+  color: var(--tx2);
+}
+#hub-fuel .hub-cmp-row.hub-cmp-best .hub-cmp-rank {
+  background: var(--gn-d);
+  color: var(--gn);
+  font-size: .9rem;
+}
+#hub-fuel .hub-cmp-info { flex: 1; min-width: 0; }
+#hub-fuel .hub-cmp-row .hub-cmp-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: .85rem;
+  color: var(--tx); letter-spacing: -.01em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  margin-bottom: 2px;
+}
+#hub-fuel .hub-cmp-meta {
+  display: flex; gap: 8px; align-items: center;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem; color: var(--tx2);
+}
+#hub-fuel .hub-cmp-meta-tag {
+  background: rgba(255,255,255,.04);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+#hub-fuel .hub-cmp-price {
+  flex-shrink: 0;
+  text-align: right;
+  padding-left: 10px;
+  border-left: 1px solid var(--brd);
+}
+#hub-fuel .hub-cmp-price-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.05rem;
+  color: var(--tx); letter-spacing: -.01em;
+  line-height: 1;
+}
+#hub-fuel .hub-cmp-row.hub-cmp-best .hub-cmp-price-val { color: var(--gn); }
+#hub-fuel .hub-cmp-diff {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--rd);
+  margin-top: 3px;
+}
+#hub-fuel .hub-cmp-row.hub-cmp-best .hub-cmp-diff { color: var(--gn); }
+#hub-fuel .hub-cmp-date {
+  font-family: 'DM Mono', monospace;
+  font-size: .52rem;
+  color: var(--mut);
+  margin-top: 2px;
+}
+
 /* ── Hide pill when fullscreen modal views are open in fuel section ──
    The pill duplicates UX inside fullscreen views (map/favorites/modals)
    and steals space. We use both: native :has() (modern browsers) + a JS
@@ -939,6 +1111,7 @@ body:has(#hub-fuel #map-view.visible) .hub-tabs,
 body:has(#hub-fuel #fav-view.visible) .hub-tabs,
 body:has(#hub-fuel #modal-overlay:not(.hidden)) .hub-tabs,
 body:has(#hub-fuel #fav-edit-overlay:not(.hidden)) .hub-tabs,
+body:has(#hub-fuel #hub-cmp-overlay.visible) .hub-tabs,
 body[data-pill-hidden="1"] .hub-tabs {
   opacity: 0;
   transform: translateX(-50%) translateY(24px);
@@ -2276,7 +2449,15 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
    HUB ROUTER — bottom tab navigation, default = fuel
    ═══════════════════════════════════════════════════════════════════ */
 (function() {
+  function escSafe(s) {
+    if (typeof window.esc === 'function') return window.esc(s);
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
   var fuelInitialized = false;
+  var _cmpFuel = null;
   function hubGo(name) {
     if (name !== 'diag' && name !== 'fuel') name = 'fuel';
     document.body.dataset.hub = name;
@@ -2356,16 +2537,18 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     var fv  = document.getElementById('fav-view');
     var mo  = document.getElementById('modal-overlay');
     var feo = document.getElementById('fav-edit-overlay');
+    var cmp = document.getElementById('hub-cmp-overlay');
     var hide =
       (mv  && mv.classList.contains('visible')) ||
       (fv  && fv.classList.contains('visible')) ||
       (mo  && !mo.classList.contains('hidden')) ||
-      (feo && !feo.classList.contains('hidden'));
+      (feo && !feo.classList.contains('hidden')) ||
+      (cmp && cmp.classList.contains('visible'));
     if (hide) document.body.dataset.pillHidden = '1';
     else delete document.body.dataset.pillHidden;
   }
   function _hubObservePillTriggers() {
-    var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay'];
+    var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay', 'hub-cmp-overlay'];
     if (typeof MutationObserver === 'function') {
       var obs = new MutationObserver(_hubUpdatePillVisibility);
       ids.forEach(function(id) {
@@ -2376,6 +2559,179 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     _hubUpdatePillVisibility();
   }
   document.addEventListener('DOMContentLoaded', _hubObservePillTriggers);
+
+  /* ── #4 AUTO-LOCALIZE on map open (only if permission already granted) */
+  function _hubAutoLocalize() {
+    if (typeof window.openMapView !== 'function') return;
+    var _origOpenMap = window.openMapView;
+    window.openMapView = function() {
+      var r = _origOpenMap.apply(this, arguments);
+      // Only auto-trigger if user has previously granted geolocation
+      if (navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({ name: 'geolocation' }).then(function(s) {
+          if (s.state === 'granted' && typeof window.mapLocateMe === 'function') {
+            // small delay to let the map init first
+            setTimeout(function() { try { window.mapLocateMe(); } catch(e){} }, 250);
+          }
+        }).catch(function() {});
+      }
+      return r;
+    };
+  }
+  document.addEventListener('DOMContentLoaded', _hubAutoLocalize);
+
+  /* ── #6 COMPARE FAVORITES OVERLAY ───────────────────────────── */
+  function _hubInjectCompareUI() {
+    if (document.getElementById('hub-cmp-overlay')) return;
+
+    // 1. Inject compare button at the top of fav-view-body
+    var favBody = document.getElementById('fav-view-body');
+    if (favBody) {
+      var btn = document.createElement('button');
+      btn.id = 'hub-cmp-launch-btn';
+      btn.className = 'cmp-launch';
+      btn.innerHTML = '📊 Confronta prezzi tra i preferiti';
+      btn.onclick = window.openCompareView;
+      favBody.parentNode.insertBefore(btn, favBody);
+    }
+
+    // 2. Inject overlay container at end of #hub-fuel
+    var hubFuel = document.getElementById('hub-fuel');
+    if (!hubFuel) return;
+    var overlay = document.createElement('div');
+    overlay.id = 'hub-cmp-overlay';
+    overlay.innerHTML =
+      '<div class="hub-cmp-hdr">' +
+        '<h2>Confronto<small>Preferiti per carburante</small></h2>' +
+        '<button class="btn-close-map" onclick="closeCompareView()">✕ Chiudi</button>' +
+      '</div>' +
+      '<div class="hub-cmp-tabs" id="hub-cmp-tabs"></div>' +
+      '<div class="hub-cmp-body" id="hub-cmp-body"></div>';
+    hubFuel.appendChild(overlay);
+  }
+  document.addEventListener('DOMContentLoaded', _hubInjectCompareUI);
+
+  // Hide button if no favs (toggled when fav-view opens)
+  function _hubSyncCompareBtn() {
+    var btn = document.getElementById('hub-cmp-launch-btn');
+    if (!btn) return;
+    var favs = (typeof loadFavs === 'function') ? loadFavs() : [];
+    btn.hidden = favs.length < 2;
+  }
+
+  window.openCompareView = function() {
+    _hubInjectCompareUI();
+    var ov = document.getElementById('hub-cmp-overlay');
+    if (!ov) return;
+    ov.classList.add('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+    var tabsEl = document.getElementById('hub-cmp-tabs');
+    if (tabsEl && !tabsEl._hubWired) {
+      tabsEl.addEventListener('click', function(ev) {
+        var t = ev.target.closest('.hub-cmp-tab');
+        if (!t) return;
+        _cmpFuel = t.dataset.fuel;
+        _renderCompare();
+      });
+      tabsEl._hubWired = true;
+    }
+    _renderCompare();
+  };
+  window.closeCompareView = function() {
+    var ov = document.getElementById('hub-cmp-overlay');
+    if (ov) ov.classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+
+  function _renderCompare() {
+    var tabsEl = document.getElementById('hub-cmp-tabs');
+    var bodyEl = document.getElementById('hub-cmp-body');
+    if (!tabsEl || !bodyEl) return;
+
+    var favs = (typeof loadFavs === 'function') ? loadFavs() : [];
+
+    // Group by carburante
+    var byFuel = {};
+    favs.forEach(function(f) {
+      var k = f.carburante || 'Altro';
+      if (!byFuel[k]) byFuel[k] = [];
+      byFuel[k].push(f);
+    });
+    var fuels = Object.keys(byFuel).sort(function(a, b) { return byFuel[b].length - byFuel[a].length; });
+
+    if (fuels.length === 0) {
+      tabsEl.innerHTML = '';
+      bodyEl.innerHTML = '<div class="hub-cmp-empty">Nessun preferito da confrontare.<br>Aggiungi almeno 2 stazioni ai preferiti per usare il confronto.</div>';
+      return;
+    }
+
+    // Default selected fuel: first in list (most populated) if not set or invalid
+    if (!_cmpFuel || fuels.indexOf(_cmpFuel) < 0) _cmpFuel = fuels[0];
+
+    // Render tabs
+    tabsEl.innerHTML = fuels.map(function(f) {
+      var on = f === _cmpFuel ? ' on' : '';
+      return '<button class="hub-cmp-tab' + on + '" data-fuel="' + escSafe(f) + '">' +
+        escSafe(f) + '<span class="hub-cmp-tab-n">(' + byFuel[f].length + ')</span></button>';
+    }).join('');
+    // Wire tab clicks (delegation handled below via single listener)
+
+    // Get rows for selected fuel, sorted by price asc
+    var rows = byFuel[_cmpFuel].slice().filter(function(f) {
+      return typeof f.prezzo === 'number' && !isNaN(f.prezzo);
+    });
+    rows.sort(function(a, b) { return a.prezzo - b.prezzo; });
+
+    if (rows.length === 0) {
+      bodyEl.innerHTML = '<div class="hub-cmp-empty">Nessun preferito con prezzo per ' + escSafe(_cmpFuel) + '.</div>';
+      return;
+    }
+
+    var bestPrice = rows[0].prezzo;
+    var unit = String(_cmpFuel).toLowerCase().indexOf('metano') >= 0 ? 'kg' : 'lt';
+
+    bodyEl.innerHTML = rows.map(function(f, i) {
+      var name = f.customName || f.nome || 'Distributore';
+      var diff = f.prezzo - bestPrice;
+      var diffStr = i === 0 ? '— (più economico)' : '+' + diff.toFixed(3) + ' €/' + unit;
+      var rank = i === 0 ? '🏆' : (i + 1);
+      var meta = [];
+      if (f.bandiera) meta.push('<span class="hub-cmp-meta-tag">' + escSafe(f.bandiera) + '</span>');
+      if (typeof f.isSelf === 'boolean') meta.push('<span class="hub-cmp-meta-tag">' + (f.isSelf ? 'self' : 'servito') + '</span>');
+      if (f.comune) meta.push('<span>' + escSafe(f.comune) + '</span>');
+      return '<div class="hub-cmp-row' + (i === 0 ? ' hub-cmp-best' : '') + '">' +
+        '<div class="hub-cmp-rank">' + rank + '</div>' +
+        '<div class="hub-cmp-info">' +
+          '<div class="hub-cmp-name">' + escSafe(name) + '</div>' +
+          '<div class="hub-cmp-meta">' + meta.join('') + '</div>' +
+        '</div>' +
+        '<div class="hub-cmp-price">' +
+          '<div class="hub-cmp-price-val">' + f.prezzo.toFixed(3) + '</div>' +
+          '<div class="hub-cmp-diff">' + diffStr + '</div>' +
+          (f.dtComu ? '<div class="hub-cmp-date">' + escSafe(f.dtComu) + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // Re-sync compare button visibility when favs change or fav-view opens
+  if (typeof window.saveFavs === 'function') {
+    var _origSaveFavs2 = window.saveFavs;
+    window.saveFavs = function(favs) {
+      var r = _origSaveFavs2.apply(this, arguments);
+      try { _hubSyncCompareBtn(); } catch(e) {}
+      return r;
+    };
+  }
+  if (typeof window.openFavView === 'function') {
+    var _origOpenFav = window.openFavView;
+    window.openFavView = function() {
+      var r = _origOpenFav.apply(this, arguments);
+      _hubInjectCompareUI();
+      _hubSyncCompareBtn();
+      return r;
+    };
+  }
 })();
 
 </script>
