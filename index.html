@@ -1475,6 +1475,711 @@ body[data-hub="fuel"]::before { display: none !important; }
   border-color: rgba(91,155,213,.5);
   background: rgba(91,155,213,.12);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PASSI ALPINI / APPENNINICI — curated database for motorcyclists
+   ═══════════════════════════════════════════════════════════════════ */
+#hub-diag .ps-launch {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(140,90,200,.15), rgba(140,90,200,.04));
+  border: 1px solid rgba(140,90,200,.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: #d4bff0;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#hub-diag .ps-launch:hover { border-color: rgba(140,90,200,.55); }
+#hub-diag .ps-launch:active { transform: scale(.99); }
+#hub-diag .ps-launch-icon { font-size: 1rem; }
+#hub-diag .ps-launch-text { flex: 1; text-align: left; }
+#hub-diag .ps-launch-stat {
+  background: rgba(140,90,200,.18);
+  color: #e8d5fa;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .58rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+#hub-diag #ps-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#hub-diag #ps-overlay.visible { display: flex; }
+
+#hub-diag .ps-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+#hub-diag .ps-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1); letter-spacing: .02em;
+}
+#hub-diag .ps-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+
+#hub-diag .ps-filters {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0;
+  display: flex; gap: 6px; flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+#hub-diag .ps-filters::-webkit-scrollbar { display: none; }
+#hub-diag .ps-fbtn {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t2);
+  padding: 6px 11px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: all .15s ease;
+}
+#hub-diag .ps-fbtn.on {
+  color: #d4bff0;
+  border-color: rgba(140,90,200,.55);
+  background: rgba(140,90,200,.13);
+}
+
+#hub-diag .ps-body {
+  flex: 1; overflow-y: auto;
+  padding: 12px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+
+#hub-diag .ps-card {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+  position: relative;
+}
+#hub-diag .ps-card:hover { border-color: var(--brd2); }
+#hub-diag .ps-card:active { transform: scale(.99); }
+#hub-diag .ps-card-status {
+  position: absolute;
+  top: 12px; right: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: .04em;
+}
+#hub-diag .ps-card-status.open {
+  background: rgba(76,175,125,.18);
+  color: #6dd9a3;
+  border: 1px solid rgba(76,175,125,.32);
+}
+#hub-diag .ps-card-status.closed {
+  background: rgba(224,90,74,.18);
+  color: #ff8a82;
+  border: 1px solid rgba(224,90,74,.32);
+}
+#hub-diag .ps-card-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.05rem;
+  color: var(--t1); letter-spacing: -.01em;
+  margin-bottom: 3px;
+  padding-right: 80px;
+}
+#hub-diag .ps-card-region {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t2);
+  margin-bottom: 8px;
+}
+#hub-diag .ps-card-stats {
+  display: flex; gap: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  color: var(--t1);
+  flex-wrap: wrap;
+}
+#hub-diag .ps-card-stat-lbl {
+  color: var(--t3);
+  font-size: .54rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-right: 3px;
+}
+#hub-diag .ps-card-diff {
+  display: inline-block;
+  margin-left: 8px;
+  letter-spacing: .04em;
+  font-size: .68rem;
+  color: #d4bff0;
+}
+
+/* Detail modal */
+#hub-diag #ps-detail {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(3px);
+  z-index: 80;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#hub-diag #ps-detail.visible { display: flex; }
+@media (min-width: 600px) { #hub-diag #ps-detail { align-items: center; } }
+#hub-diag .ps-detail-card {
+  background: var(--surf);
+  border: 1px solid var(--brd2);
+  border-radius: 14px 14px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@media (min-width: 600px) { #hub-diag .ps-detail-card { border-radius: 14px; } }
+#hub-diag .ps-detail-hdr {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--brd);
+}
+#hub-diag .ps-detail-hdr h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.3rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  margin-bottom: 3px;
+}
+#hub-diag .ps-detail-hdr-region {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t2);
+}
+#hub-diag .ps-detail-body { padding: 14px 18px; }
+#hub-diag .ps-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+#hub-diag .ps-detail-cell {
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 8px;
+  padding: 9px 11px;
+}
+#hub-diag .ps-detail-cell-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .53rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 3px;
+}
+#hub-diag .ps-detail-cell-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1rem;
+  color: var(--t1);
+}
+#hub-diag .ps-detail-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  color: var(--t2);
+  line-height: 1.55;
+  margin-bottom: 14px;
+  padding: 11px 12px;
+  background: var(--surf2);
+  border-radius: 8px;
+  border-left: 3px solid rgba(140,90,200,.5);
+}
+#hub-diag .ps-detail-weather {
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+#hub-diag .ps-detail-weather-icon { font-size: 2rem; }
+#hub-diag .ps-detail-weather-info { flex: 1; }
+#hub-diag .ps-detail-weather-temp {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.4rem;
+  color: var(--t1);
+  letter-spacing: -.02em;
+}
+#hub-diag .ps-detail-weather-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t2);
+  margin-top: 3px;
+}
+#hub-diag .ps-detail-weather-loading {
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  color: var(--t3);
+}
+#hub-diag .ps-detail-actions {
+  display: flex; gap: 8px;
+  padding: 12px 18px 18px;
+  border-top: 1px solid var(--brd);
+}
+#hub-diag .ps-detail-actions button,
+#hub-diag .ps-detail-actions a {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: .7rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all .15s ease;
+}
+#hub-diag .ps-detail-close {
+  background: var(--surf2);
+  border-color: var(--brd2);
+  color: var(--t2);
+}
+#hub-diag .ps-detail-maps {
+  background: rgba(140,90,200,.85);
+  border-color: rgba(140,90,200,.6);
+  color: #fff;
+}
+#hub-diag .ps-detail-maps:hover { filter: brightness(1.1); }
+#hub-diag .ps-empty {
+  text-align: center; padding: 30px 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; color: var(--t3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RIDE MODE — fullscreen GPS tracker (speed, distance, time)
+   ═══════════════════════════════════════════════════════════════════ */
+#hub-diag .rd-launch {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(255,90,40,.18), rgba(255,90,40,.04));
+  border: 1px solid rgba(255,90,40,.32);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: #ffc4b0;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#hub-diag .rd-launch:hover { border-color: rgba(255,90,40,.55); }
+#hub-diag .rd-launch:active { transform: scale(.99); }
+#hub-diag .rd-launch-icon { font-size: 1rem; }
+#hub-diag .rd-launch-text { flex: 1; text-align: left; }
+
+#hub-diag #rd-overlay {
+  position: fixed; inset: 0;
+  background: #000;
+  z-index: 75;
+  display: none;
+  flex-direction: column;
+  color: #fff;
+}
+#hub-diag #rd-overlay.visible { display: flex; }
+
+#hub-diag .rd-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+#hub-diag .rd-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  letter-spacing: .04em;
+  color: #ff5a28;
+}
+#hub-diag .rd-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem;
+  color: rgba(255,255,255,.45);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+#hub-diag .rd-close {
+  appearance: none; -webkit-appearance: none;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  cursor: pointer;
+}
+#hub-diag .rd-status {
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: rgba(255,255,255,.5);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  padding: 12px 0 6px;
+  flex-shrink: 0;
+}
+#hub-diag .rd-status.recording { color: #ff5a28; }
+#hub-diag .rd-status.recording::before {
+  content: '●';
+  display: inline-block;
+  margin-right: 6px;
+  animation: rdBlink 1s ease-in-out infinite;
+}
+@keyframes rdBlink {
+  0%,100% { opacity: 1; }
+  50% { opacity: .3; }
+}
+
+#hub-diag .rd-speedbox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+#hub-diag .rd-speed {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 8rem;
+  color: #fff;
+  letter-spacing: -.04em;
+  line-height: .9;
+  font-variant-numeric: tabular-nums;
+}
+#hub-diag .rd-speed-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: .8rem;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+#hub-diag .rd-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,.06);
+  margin: 0 12px 12px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+#hub-diag .rd-stat {
+  background: rgba(0,0,0,.6);
+  padding: 12px 10px;
+  text-align: center;
+}
+#hub-diag .rd-stat-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem;
+  color: rgba(255,255,255,.4);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  margin-bottom: 5px;
+}
+#hub-diag .rd-stat-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #fff;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+#hub-diag .rd-stat-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  color: rgba(255,255,255,.4);
+  margin-top: 2px;
+  letter-spacing: .04em;
+}
+
+#hub-diag .rd-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+  flex-shrink: 0;
+}
+#hub-diag .rd-btn {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all .15s ease;
+}
+#hub-diag .rd-btn:active { transform: scale(.98); }
+#hub-diag .rd-btn-start {
+  background: linear-gradient(135deg, rgba(255,90,40,.95), rgba(255,90,40,.7));
+  border-color: rgba(255,90,40,.6);
+  color: #fff;
+}
+#hub-diag .rd-btn-pause {
+  background: rgba(255,255,255,.1);
+  border-color: rgba(255,255,255,.2);
+  color: #fff;
+}
+#hub-diag .rd-btn-stop {
+  background: rgba(224,90,74,.85);
+  border-color: rgba(224,90,74,.6);
+  color: #fff;
+}
+#hub-diag .rd-btn-export {
+  background: rgba(91,155,213,.85);
+  border-color: rgba(91,155,213,.6);
+  color: #08131c;
+}
+#hub-diag .rd-error {
+  margin: 12px 14px;
+  padding: 10px 12px;
+  background: rgba(224,90,74,.1);
+  border: 1px solid rgba(224,90,74,.3);
+  border-radius: 8px;
+  color: #ff8a82;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MAINTENANCE — service tracker per vehicle, by km AND date
+   ═══════════════════════════════════════════════════════════════════ */
+#hub-diag .mt-launch {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(76,175,125,.13), rgba(76,175,125,.04));
+  border: 1px solid rgba(76,175,125,.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: #b8e6cf;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#hub-diag .mt-launch:hover { border-color: rgba(76,175,125,.55); }
+#hub-diag .mt-launch:active { transform: scale(.99); }
+#hub-diag .mt-launch-icon { font-size: 1rem; }
+#hub-diag .mt-launch-text { flex: 1; text-align: left; }
+#hub-diag .mt-launch-stat {
+  background: rgba(76,175,125,.18);
+  color: #d4f0e2;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .58rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+#hub-diag .mt-launch-stat.warn {
+  background: rgba(232,160,48,.2);
+  color: #ffe7c2;
+}
+#hub-diag .mt-launch-stat.crit {
+  background: rgba(224,90,74,.2);
+  color: #ffb4a8;
+}
+
+#hub-diag #mt-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#hub-diag #mt-overlay.visible { display: flex; }
+
+#hub-diag .mt-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+#hub-diag .mt-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1); letter-spacing: .02em;
+}
+#hub-diag .mt-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 220px;
+}
+
+#hub-diag .mt-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+
+#hub-diag .mt-veh-header {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#hub-diag .mt-veh-icon { font-size: 1.4rem; }
+#hub-diag .mt-veh-info { flex: 1; min-width: 0; }
+#hub-diag .mt-veh-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--t1);
+}
+#hub-diag .mt-veh-km {
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  color: var(--t2);
+  margin-top: 2px;
+}
+
+#hub-diag .mt-card {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+}
+#hub-diag .mt-card:hover { border-color: var(--brd2); }
+#hub-diag .mt-card:active { transform: scale(.99); }
+#hub-diag .mt-card.warn { border-color: rgba(232,160,48,.35); }
+#hub-diag .mt-card.crit { border-color: rgba(224,90,74,.4); }
+#hub-diag .mt-card-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 8px;
+}
+#hub-diag .mt-card-icon {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: var(--surf2);
+  font-size: 1.1rem;
+}
+#hub-diag .mt-card-info { flex: 1; min-width: 0; }
+#hub-diag .mt-card-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--t1);
+}
+#hub-diag .mt-card-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: .6rem;
+  color: var(--t2);
+  margin-top: 2px;
+}
+#hub-diag .mt-card-status {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+#hub-diag .mt-card-status.ok {
+  background: rgba(76,175,125,.16);
+  color: #6dd9a3;
+  border: 1px solid rgba(76,175,125,.3);
+}
+#hub-diag .mt-card-status.warn {
+  background: rgba(232,160,48,.16);
+  color: #ffd699;
+  border: 1px solid rgba(232,160,48,.3);
+}
+#hub-diag .mt-card-status.crit {
+  background: rgba(224,90,74,.16);
+  color: #ff8a82;
+  border: 1px solid rgba(224,90,74,.32);
+}
+#hub-diag .mt-card-bar {
+  height: 4px;
+  background: var(--surf2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+#hub-diag .mt-card-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .3s ease;
+}
+#hub-diag .mt-card-bar-fill.ok { background: #4caf7d; }
+#hub-diag .mt-card-bar-fill.warn { background: #e8a030; }
+#hub-diag .mt-card-bar-fill.crit { background: #e05a4a; }
+#hub-diag .mt-card-detail {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t2);
+  display: flex;
+  justify-content: space-between;
+}
+
+#hub-diag .mt-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--t3);
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+}
+
+/* Maintenance log modal (record an intervention) */
+#hub-diag #mt-edit {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(3px);
+  z-index: 80;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#hub-diag #mt-edit.visible { display: flex; }
+@media (min-width: 600px) { #hub-diag #mt-edit { align-items: center; } }
 #hub-fuel .hub-cmp-launch {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   width: 100%;
@@ -1659,6 +2364,11 @@ body:has(#hub-diag #gar-overlay.visible) .hub-tabs,
 body:has(#hub-diag #gar-edit.visible) .hub-tabs,
 body:has(#hub-diag #fl-overlay.visible) .hub-tabs,
 body:has(#hub-diag #fl-edit.visible) .hub-tabs,
+body:has(#hub-diag #ps-overlay.visible) .hub-tabs,
+body:has(#hub-diag #ps-detail.visible) .hub-tabs,
+body:has(#hub-diag #rd-overlay.visible) .hub-tabs,
+body:has(#hub-diag #mt-overlay.visible) .hub-tabs,
+body:has(#hub-diag #mt-edit.visible) .hub-tabs,
 body[data-pill-hidden="1"] .hub-tabs {
   opacity: 0;
   transform: translateX(-50%) translateY(24px);
@@ -3089,6 +3799,11 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     var ged = document.getElementById('gar-edit');
     var flo = document.getElementById('fl-overlay');
     var fle = document.getElementById('fl-edit');
+    var pso = document.getElementById('ps-overlay');
+    var psd = document.getElementById('ps-detail');
+    var rdo = document.getElementById('rd-overlay');
+    var mto = document.getElementById('mt-overlay');
+    var mte = document.getElementById('mt-edit');
     var hide =
       (mv  && mv.classList.contains('visible')) ||
       (fv  && fv.classList.contains('visible')) ||
@@ -3098,22 +3813,28 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
       (gar && gar.classList.contains('visible')) ||
       (ged && ged.classList.contains('visible')) ||
       (flo && flo.classList.contains('visible')) ||
-      (fle && fle.classList.contains('visible'));
+      (fle && fle.classList.contains('visible')) ||
+      (pso && pso.classList.contains('visible')) ||
+      (psd && psd.classList.contains('visible')) ||
+      (rdo && rdo.classList.contains('visible')) ||
+      (mto && mto.classList.contains('visible')) ||
+      (mte && mte.classList.contains('visible'));
     if (hide) document.body.dataset.pillHidden = '1';
     else delete document.body.dataset.pillHidden;
   }
   function _hubObservePillTriggers() {
     var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay',
-               'hub-cmp-overlay', 'gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit'];
+               'hub-cmp-overlay', 'gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
+               'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit'];
     if (typeof MutationObserver === 'function') {
       var obs = new MutationObserver(_hubUpdatePillVisibility);
       ids.forEach(function(id) {
         var el = document.getElementById(id);
         if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
       });
-      // Re-attach observer to gar-overlay/gar-edit when they get injected late
       var lateRetry = setTimeout(function() {
-        ['gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit'].forEach(function(id) {
+        ['gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
+         'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit'].forEach(function(id) {
           var el = document.getElementById(id);
           if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
         });
@@ -12787,6 +13508,956 @@ async function runCmp() {
     window.useVehicle = function(id) {
       var r = _origUseVehicle.apply(this, arguments);
       try { refreshFuelLogBadge(); } catch(e) {}
+      return r;
+    };
+  }
+})();
+
+</script>
+
+<!-- HUB PASSI: curated alpine/apennine pass database -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB PASSI — curated Italian mountain passes for motorcyclists
+   Data: pre-loaded constant (no fetch). Weather: open-meteo on demand.
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function escSafe(s) {
+    if (typeof window.esc === 'function') return window.esc(s);
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // Curated dataset — handpicked top passes for IT motorcyclists.
+  // closedM/closedM = months range when typically closed (1=Jan ... 12=Dec); null = always open.
+  var PASSES = [
+    { id:'stelvio', name:'Passo dello Stelvio', region:'Lombardia / Trentino-AA', lat:46.5286, lng:10.4543, alt:2758, length:24, hairpins:48, closed:[11,12,1,2,3,4,5], diff:'expert', desc:'Il leggendario passo dei 48 tornanti, secondo passo asfaltato più alto delle Alpi. Versante tirolese più tecnico, lato Bormio più aperto. Aperto tipicamente da metà giugno a inizio novembre.' },
+    { id:'gavia',   name:'Passo Gavia', region:'Lombardia', lat:46.3439, lng:10.4892, alt:2621, length:25, hairpins:34, closed:[11,12,1,2,3,4,5], diff:'expert', desc:'Stretto, selvaggio, indimenticabile. Asfalto irregolare in alcuni tratti, tornanti senza guardrail. Per piloti esperti che cercano emozioni vere.' },
+    { id:'mortirolo', name:'Passo del Mortirolo', region:'Lombardia', lat:46.2336, lng:10.2932, alt:1852, length:12, hairpins:33, closed:[11,12,1,2,3,4], diff:'expert', desc:'Pendenze fino al 18%. Un mito del ciclismo, in moto è un susseguirsi di tornanti ravvicinati nel bosco. Asfalto rifatto recentemente.' },
+    { id:'pordoi',  name:'Passo Pordoi', region:'Trentino-AA / Veneto', lat:46.4881, lng:11.8125, alt:2239, length:11, hairpins:33, closed:null, diff:'medium', desc:'Cuore delle Dolomiti, tornanti ampi e panorami incredibili sul Sella. Tappa obbligata del Sellaronda. Aperto quasi tutto l\'anno (con neve invernale).' },
+    { id:'sella',   name:'Passo Sella', region:'Trentino-AA', lat:46.5093, lng:11.7570, alt:2244, length:11, hairpins:21, closed:null, diff:'medium', desc:'Spettacolo dolomitico puro: Sassolungo a destra, Sella a sinistra. Asfalto perfetto, traffico turistico in alta stagione.' },
+    { id:'gardena', name:'Passo Gardena', region:'Trentino-AA', lat:46.5510, lng:11.7960, alt:2121, length:10, hairpins:13, closed:null, diff:'medium', desc:'Quarto passo del Sellaronda. Curve fluide e vista sul Sassolungo. Ottimo per moto turistiche.' },
+    { id:'campolongo', name:'Passo Campolongo', region:'Trentino-AA / Veneto', lat:46.5247, lng:11.8770, alt:1875, length:6, hairpins:16, closed:null, diff:'easy', desc:'Il più dolce dei quattro passi del Sellaronda. Curve facili, ottimo per chi inizia con i passi alpini.' },
+    { id:'falzarego', name:'Passo Falzarego', region:'Veneto', lat:46.5189, lng:12.0106, alt:2105, length:18, hairpins:24, closed:null, diff:'medium', desc:'Strada storica della Grande Guerra. Vista mozzafiato sulle Tofane. Combinabile col Passo Giau per un giro epico.' },
+    { id:'giau',    name:'Passo Giau', region:'Veneto', lat:46.4850, lng:12.0567, alt:2236, length:9, hairpins:29, closed:[11,12,1,2,3,4], diff:'expert', desc:'Tornanti stretti e ravvicinati, panorama da cartolina. Considerato uno dei più belli delle Dolomiti. Asfalto stretto, attenzione al meteo.' },
+    { id:'fedaia',  name:'Passo Fedaia', region:'Trentino-AA / Veneto', lat:46.4604, lng:11.8721, alt:2057, length:14, hairpins:8, closed:null, diff:'medium', desc:'Sotto il ghiacciaio della Marmolada. Pendenze impegnative, lago panoramico in vetta.' },
+    { id:'bernina', name:'Passo del Bernina', region:'Svizzera (vicino Tirano)', lat:46.4101, lng:10.0289, alt:2328, length:35, hairpins:14, closed:null, diff:'easy', desc:'Versante svizzero ben asfaltato, paesaggio glaciale unico. Fattibile in giornata da Lombardia. Treno rosso del Bernina come bonus.' },
+    { id:'spluga',  name:'Passo dello Spluga', region:'Lombardia / Svizzera', lat:46.5085, lng:9.3286, alt:2114, length:30, hairpins:36, closed:[11,12,1,2,3,4,5], diff:'expert', desc:'Tornanti vertiginosi del lato italiano (Pianazzo), galleria di Madesimo, paesaggio lunare verso il confine.' },
+    { id:'sanbernardino', name:'Passo del San Bernardino', region:'Svizzera', lat:46.4973, lng:9.1715, alt:2065, length:17, hairpins:24, closed:[12,1,2,3,4], diff:'medium', desc:'Alternativa scenografica all\'autostrada A13. Tornanti regolari, asfalto svizzero impeccabile.' },
+    { id:'gotthard',name:'Passo del San Gottardo (Tremola)', region:'Svizzera', lat:46.5589, lng:8.5618, alt:2106, length:13, hairpins:38, closed:[11,12,1,2,3,4,5], diff:'expert', desc:'La Tremola: pavé storico, 38 tornanti su strada selciata. Esperienza unica al mondo, ma serve sensibilità.' },
+    { id:'iseran',  name:'Col de l\'Iseran', region:'Francia (vicino Val d\'Isere)', lat:45.4178, lng:7.0291, alt:2770, length:48, hairpins:20, closed:[11,12,1,2,3,4,5,6], diff:'expert', desc:'Il passo asfaltato più alto delle Alpi. Strada strettissima, vento, isolamento. Solo luglio-settembre.' },
+    { id:'galibier',name:'Col du Galibier', region:'Francia', lat:45.0644, lng:6.4091, alt:2642, length:23, hairpins:13, closed:[11,12,1,2,3,4,5], diff:'medium', desc:'Salita francese mitica del Tour de France. Combinato col Telegraphe sul versante nord per un giro lungo e gratificante.' },
+    { id:'agnello', name:'Colle dell\'Agnello', region:'Piemonte / Francia', lat:44.6797, lng:6.9797, alt:2744, length:23, hairpins:25, closed:[11,12,1,2,3,4,5], diff:'expert', desc:'Terzo passo asfaltato più alto delle Alpi. Lato italiano (Casteldelfino) lungo e rilassato, lato francese ripido e tecnico.' },
+    { id:'sommeiller', name:'Colle del Sommeiller', region:'Piemonte', lat:45.1444, lng:6.8861, alt:2993, length:18, hairpins:0, closed:[11,12,1,2,3,4,5,6,7], diff:'expert', desc:'Strada bianca, NON asfaltata. Punto più alto raggiungibile in moto in Italia. Solo per moto enduro o adventure. Ferragosto-settembre.' },
+    { id:'mongenevre', name:'Colle del Monginevro', region:'Piemonte / Francia', lat:44.9314, lng:6.7234, alt:1850, length:8, hairpins:5, closed:null, diff:'easy', desc:'Passo aperto tutto l\'anno, transito facile. Buon punto di partenza per giri più impegnativi nel Briançonnais.' },
+    { id:'tonale',  name:'Passo del Tonale', region:'Lombardia / Trentino-AA', lat:46.2606, lng:10.5856, alt:1883, length:15, hairpins:8, closed:null, diff:'easy', desc:'Largo, panoramico, sempre aperto. Collega Val Camonica e Val di Sole. Stazione sciistica attiva tutto l\'anno.' },
+    { id:'mendola', name:'Passo della Mendola', region:'Trentino-AA', lat:46.4203, lng:11.1942, alt:1363, length:14, hairpins:18, closed:null, diff:'easy', desc:'Tra Bolzano e Trento, tornanti regolari nel bosco. Bel raccordo per chi va o torna dalle Dolomiti.' },
+    { id:'rolle',   name:'Passo Rolle', region:'Trentino-AA', lat:46.2966, lng:11.7864, alt:1980, length:21, hairpins:18, closed:null, diff:'medium', desc:'Vista delle Pale di San Martino. Asfalto eccellente, curve scorrevoli. Spesso meno trafficato del Sellaronda.' },
+    { id:'manghen', name:'Passo Manghen', region:'Trentino-AA', lat:46.1544, lng:11.4611, alt:2047, length:25, hairpins:32, closed:[12,1,2,3,4], diff:'medium', desc:'Strada poco frequentata, foreste e malghe. Piacere puro, soprattutto mid-week. Asfalto irregolare in alcuni tratti.' },
+    { id:'bocca',   name:'Bocca della Selva', region:'Campania', lat:41.3489, lng:14.4819, alt:1393, length:15, hairpins:25, closed:null, diff:'medium', desc:'Appennino sannita, poco conosciuto fuori regione. Curve fluide, traffico minimo, asfalto recente. Ottimo per chi vive a sud.' },
+    { id:'forcafarro', name:'Forca di Caruso', region:'Abruzzo', lat:42.0186, lng:13.4839, alt:1107, length:10, hairpins:14, closed:null, diff:'easy', desc:'Tra Marsica e Velino. Salita dolce, panorama sul Fucino, ideale per sgranchirsi a metà giornata.' },
+    { id:'campoimperatore', name:'Campo Imperatore (Vado di Sole)', region:'Abruzzo', lat:42.4503, lng:13.5586, alt:2130, length:30, hairpins:40, closed:[12,1,2,3,4], diff:'medium', desc:'Il "piccolo Tibet" italiano. Altopiano lunare a 1800m, salita lunghissima da Fonte Cerreto. Vento e meteo da controllare.' }
+  ];
+
+  function isClosedNow(p) {
+    if (!p.closed) return false;
+    var m = (new Date().getMonth() + 1);
+    return p.closed.indexOf(m) >= 0;
+  }
+  function difficultyLabel(d) {
+    return d === 'easy' ? 'Facile' : d === 'medium' ? 'Medio' : 'Esperto';
+  }
+  function formatPercent(p) {
+    if (p.length && p.alt) {
+      // Approximate average gradient (very rough): we don't have base altitude per pass.
+      // Skip for cards; only show length+hairpins+alt.
+    }
+    return '';
+  }
+
+  /* ── UI INJECTION ───────────────────────────────────────────── */
+  function injectPassiUI() {
+    if (document.getElementById('ps-overlay')) return;
+    var hubDiag = document.getElementById('hub-diag');
+    if (!hubDiag) return;
+
+    // Launch button below fuel-log
+    var flLaunch = document.getElementById('fl-launch-btn');
+    var anchor = flLaunch || document.getElementById('gar-launch-btn');
+    if (anchor) {
+      var b = document.createElement('button');
+      b.id = 'ps-launch-btn';
+      b.className = 'ps-launch';
+      b.type = 'button';
+      b.innerHTML =
+        '<span class="ps-launch-icon">⛰</span>' +
+        '<span class="ps-launch-text">Passi alpini & strade panoramiche</span>' +
+        '<span class="ps-launch-stat">' + PASSES.length + ' passi</span>';
+      b.onclick = window.openPassi;
+      anchor.parentNode.insertBefore(b, anchor.nextSibling);
+    }
+
+    // Overlay
+    var ov = document.createElement('div');
+    ov.id = 'ps-overlay';
+    ov.innerHTML =
+      '<div class="ps-hdr">' +
+        '<h2>PASSI & STRADE<small>Curato per motociclisti</small></h2>' +
+        '<button class="gar-close" onclick="closePassi()">✕ Chiudi</button>' +
+      '</div>' +
+      '<div class="ps-filters" id="ps-filters"></div>' +
+      '<div class="ps-body" id="ps-body"></div>';
+    hubDiag.appendChild(ov);
+
+    // Detail modal
+    var dm = document.createElement('div');
+    dm.id = 'ps-detail';
+    dm.onclick = function(e) { if (e.target === dm) closePassoDetail(); };
+    dm.innerHTML = '<div class="ps-detail-card" id="ps-detail-card"></div>';
+    hubDiag.appendChild(dm);
+  }
+
+  /* ── State + filters ───────────────────────────────────────── */
+  var _filter = 'all';   // all | open | easy | medium | expert | dolomiti | alpi | appennino
+  function applyFilter(p) {
+    if (_filter === 'all') return true;
+    if (_filter === 'open') return !isClosedNow(p);
+    if (_filter === 'easy' || _filter === 'medium' || _filter === 'expert') return p.diff === _filter;
+    if (_filter === 'dolomiti') return /Trentino|Veneto/.test(p.region) && p.alt > 1800;
+    if (_filter === 'alpi')     return /Lombardia|Piemonte|Trentino|Veneto|Svizzera|Francia/.test(p.region);
+    if (_filter === 'appennino')return /Abruzzo|Campania|Lazio|Marche|Umbria|Toscana|Emilia/.test(p.region);
+    return true;
+  }
+
+  function renderFilters() {
+    var el = document.getElementById('ps-filters');
+    if (!el) return;
+    var defs = [
+      { id:'all',       label:'Tutti' },
+      { id:'open',      label:'Aperti ora' },
+      { id:'dolomiti',  label:'Dolomiti' },
+      { id:'alpi',      label:'Alpi' },
+      { id:'appennino', label:'Appennini' },
+      { id:'easy',      label:'Facili' },
+      { id:'medium',    label:'Medi' },
+      { id:'expert',    label:'Esperti' },
+    ];
+    el.innerHTML = defs.map(function(d) {
+      return '<button class="ps-fbtn' + (d.id === _filter ? ' on' : '') + '" data-flt="' + d.id + '">' + d.label + '</button>';
+    }).join('');
+  }
+
+  function renderList() {
+    var body = document.getElementById('ps-body');
+    if (!body) return;
+    var rows = PASSES.filter(applyFilter);
+    if (rows.length === 0) {
+      body.innerHTML = '<div class="ps-empty">Nessun passo per il filtro selezionato.</div>';
+      return;
+    }
+    // Sort: open first, then by altitude desc
+    rows.sort(function(a, b) {
+      var ca = isClosedNow(a) ? 1 : 0;
+      var cb = isClosedNow(b) ? 1 : 0;
+      if (ca !== cb) return ca - cb;
+      return b.alt - a.alt;
+    });
+    body.innerHTML = rows.map(function(p) {
+      var closed = isClosedNow(p);
+      var diff = difficultyLabel(p.diff);
+      var diffClass = p.diff === 'easy' ? 'easy' : p.diff === 'expert' ? 'expert' : 'medium';
+      return '<div class="ps-card" data-id="' + p.id + '">' +
+        '<div class="ps-card-status ' + (closed ? 'closed' : 'open') + '">' +
+          (closed ? 'Chiuso' : 'Aperto') + '</div>' +
+        '<div class="ps-card-name">' + escSafe(p.name) + '</div>' +
+        '<div class="ps-card-region">' + escSafe(p.region) + '</div>' +
+        '<div class="ps-card-stats">' +
+          '<span><span class="ps-card-stat-lbl">ALT</span>' + p.alt + ' m</span>' +
+          '<span><span class="ps-card-stat-lbl">LUNGH</span>' + p.length + ' km</span>' +
+          '<span><span class="ps-card-stat-lbl">TORN</span>' + p.hairpins + '</span>' +
+          '<span class="ps-card-diff">' + diff + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* ── Public functions ──────────────────────────────────────── */
+  window.openPassi = function() {
+    injectPassiUI();
+    document.getElementById('ps-overlay').classList.add('visible');
+    renderFilters();
+    renderList();
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closePassi = function() {
+    document.getElementById('ps-overlay').classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closePassoDetail = function() {
+    document.getElementById('ps-detail').classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+
+  /* ── Detail view ───────────────────────────────────────────── */
+  function openDetail(passoId) {
+    var p = PASSES.find(function(x) { return x.id === passoId; });
+    if (!p) return;
+    var closed = isClosedNow(p);
+    var diff = difficultyLabel(p.diff);
+    var card = document.getElementById('ps-detail-card');
+    var closedMonths = p.closed ? p.closed.map(function(m) {
+      return ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'][m-1];
+    }).join(', ') : 'Sempre aperto';
+
+    card.innerHTML =
+      '<div class="ps-detail-hdr">' +
+        '<h3>' + escSafe(p.name) + '</h3>' +
+        '<div class="ps-detail-hdr-region">' + escSafe(p.region) + '</div>' +
+      '</div>' +
+      '<div class="ps-detail-body">' +
+        '<div class="ps-detail-grid">' +
+          '<div class="ps-detail-cell"><div class="ps-detail-cell-lbl">Altitudine</div><div class="ps-detail-cell-val">' + p.alt + ' m</div></div>' +
+          '<div class="ps-detail-cell"><div class="ps-detail-cell-lbl">Lunghezza</div><div class="ps-detail-cell-val">' + p.length + ' km</div></div>' +
+          '<div class="ps-detail-cell"><div class="ps-detail-cell-lbl">Tornanti</div><div class="ps-detail-cell-val">' + p.hairpins + '</div></div>' +
+          '<div class="ps-detail-cell"><div class="ps-detail-cell-lbl">Difficoltà</div><div class="ps-detail-cell-val">' + diff + '</div></div>' +
+          '<div class="ps-detail-cell" style="grid-column:span 2"><div class="ps-detail-cell-lbl">Stato attuale</div><div class="ps-detail-cell-val" style="font-size:.85rem">' +
+            (closed ? '⚠ Chiuso · ' : '✓ Aperto · ') + 'mesi chiusi: ' + closedMonths +
+          '</div></div>' +
+        '</div>' +
+        '<div class="ps-detail-desc">' + escSafe(p.desc) + '</div>' +
+        '<div class="ps-detail-weather" id="ps-detail-weather">' +
+          '<div class="ps-detail-weather-loading">Carico meteo dal passo...</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ps-detail-actions">' +
+        '<button class="ps-detail-close" onclick="closePassoDetail()">Chiudi</button>' +
+        '<a class="ps-detail-maps" href="https://www.google.com/maps/dir/?api=1&destination=' + p.lat + ',' + p.lng + '&travelmode=driving" target="_blank" rel="noopener">📍 Apri in Maps</a>' +
+      '</div>';
+
+    document.getElementById('ps-detail').classList.add('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+    fetchPassoWeather(p);
+  }
+
+  function fetchPassoWeather(p) {
+    var slot = document.getElementById('ps-detail-weather');
+    if (!slot) return;
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + p.lat.toFixed(4) +
+              '&longitude=' + p.lng.toFixed(4) +
+              '&current_weather=true&hourly=temperature_2m,precipitation,wind_speed_10m&timezone=auto';
+    fetch(url).then(function(r) { return r.json(); }).then(function(data) {
+      var cw = data.current_weather;
+      if (!cw) throw new Error('no current weather');
+      var icon = weatherIcon(cw.weathercode);
+      var desc = weatherDesc(cw.weathercode);
+      var wind = cw.windspeed ? ' · vento ' + Math.round(cw.windspeed) + ' km/h' : '';
+      slot.innerHTML =
+        '<div class="ps-detail-weather-icon">' + icon + '</div>' +
+        '<div class="ps-detail-weather-info">' +
+          '<div class="ps-detail-weather-temp">' + Math.round(cw.temperature) + '°C</div>' +
+          '<div class="ps-detail-weather-desc">' + desc + wind + ' · al passo ora</div>' +
+        '</div>';
+    }).catch(function() {
+      slot.innerHTML = '<div class="ps-detail-weather-loading">Meteo non disponibile</div>';
+    });
+  }
+
+  function weatherIcon(code) {
+    if (code === 0) return '☀️';
+    if (code <= 3) return '⛅';
+    if (code <= 48) return '🌫';
+    if (code <= 67) return '🌧';
+    if (code <= 77) return '🌨';
+    if (code <= 82) return '🌧';
+    if (code <= 86) return '🌨';
+    return '⛈';
+  }
+  function weatherDesc(code) {
+    if (code === 0) return 'Sereno';
+    if (code <= 3) return 'Nuvoloso';
+    if (code <= 48) return 'Nebbia';
+    if (code <= 67) return 'Pioggia';
+    if (code <= 77) return 'Neve';
+    if (code <= 82) return 'Rovesci';
+    if (code <= 86) return 'Rovesci di neve';
+    return 'Temporale';
+  }
+
+  /* ── Event delegation for cards + filters ──────────────────── */
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(injectPassiUI, 350);
+
+    document.addEventListener('click', function(ev) {
+      var card = ev.target.closest('#ps-body .ps-card');
+      if (card) {
+        openDetail(card.dataset.id);
+        return;
+      }
+      var fbtn = ev.target.closest('#ps-filters .ps-fbtn');
+      if (fbtn) {
+        _filter = fbtn.dataset.flt;
+        renderFilters();
+        renderList();
+      }
+    });
+  });
+})();
+
+</script>
+
+<!-- HUB RIDE: GPS tracker with GPX export -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB RIDE — fullscreen GPS tracker (speed/distance/time + GPX export)
+   Uses watchPosition + Wake Lock + Haversine for distance.
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function escSafe(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  var watchId = null;
+  var wakeLock = null;
+  var state = 'idle'; // idle | recording | paused
+  var startTs = 0;       // ms when current run-segment started
+  var elapsedMs = 0;     // accumulated elapsed time
+  var distanceM = 0;     // meters
+  var maxSpeed = 0;      // km/h
+  var sumSpeed = 0; var sumSpeedN = 0; // for moving avg
+  var lastFix = null;    // {lat, lng, ts, speed}
+  var track = [];        // [{lat, lng, ts, speed, alt}]
+  var tickInterval = null;
+
+  function fmtTime(ms) {
+    var s = Math.floor(ms / 1000);
+    var h = Math.floor(s / 3600);
+    var m = Math.floor((s % 3600) / 60);
+    var ss = s % 60;
+    var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+    return (h > 0 ? pad(h) + ':' : '') + pad(m) + ':' + pad(ss);
+  }
+  function haversine(a, b) {
+    var R = 6371000, toRad = Math.PI / 180;
+    var dLat = (b.lat - a.lat) * toRad;
+    var dLng = (b.lng - a.lng) * toRad;
+    var la1 = a.lat * toRad, la2 = b.lat * toRad;
+    var x = Math.sin(dLat/2)**2 + Math.sin(dLng/2)**2 * Math.cos(la1) * Math.cos(la2);
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+
+  function injectRideUI() {
+    if (document.getElementById('rd-overlay')) return;
+    var hubDiag = document.getElementById('hub-diag');
+    if (!hubDiag) return;
+
+    var psLaunch = document.getElementById('ps-launch-btn');
+    var anchor = psLaunch || document.getElementById('fl-launch-btn') || document.getElementById('gar-launch-btn');
+    if (anchor) {
+      var b = document.createElement('button');
+      b.id = 'rd-launch-btn';
+      b.className = 'rd-launch';
+      b.type = 'button';
+      b.innerHTML =
+        '<span class="rd-launch-icon">🏁</span>' +
+        '<span class="rd-launch-text">Modalità Ride</span>' +
+        '<span style="font-size:.58rem;color:rgba(255,196,176,.7);background:rgba(255,90,40,.15);padding:3px 8px;border-radius:999px">GPS · GPX</span>';
+      b.onclick = window.openRide;
+      anchor.parentNode.insertBefore(b, anchor.nextSibling);
+    }
+
+    var ov = document.createElement('div');
+    ov.id = 'rd-overlay';
+    ov.innerHTML =
+      '<div class="rd-hdr">' +
+        '<h2>RIDE MODE<small id="rd-veh">—</small></h2>' +
+        '<button class="rd-close" onclick="closeRide()">✕ Esci</button>' +
+      '</div>' +
+      '<div class="rd-status" id="rd-status">In attesa</div>' +
+      '<div id="rd-error-slot"></div>' +
+      '<div class="rd-speedbox">' +
+        '<div class="rd-speed" id="rd-speed">0</div>' +
+        '<div class="rd-speed-unit">km/h</div>' +
+      '</div>' +
+      '<div class="rd-stats">' +
+        '<div class="rd-stat">' +
+          '<div class="rd-stat-lbl">Tempo</div>' +
+          '<div class="rd-stat-val" id="rd-time">00:00</div>' +
+        '</div>' +
+        '<div class="rd-stat">' +
+          '<div class="rd-stat-lbl">Distanza</div>' +
+          '<div class="rd-stat-val" id="rd-dist">0.0</div>' +
+          '<div class="rd-stat-sub">km</div>' +
+        '</div>' +
+        '<div class="rd-stat">' +
+          '<div class="rd-stat-lbl">Max</div>' +
+          '<div class="rd-stat-val" id="rd-max">0</div>' +
+          '<div class="rd-stat-sub">km/h</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rd-actions" id="rd-actions"></div>';
+    hubDiag.appendChild(ov);
+
+    renderActions();
+  }
+
+  function renderActions() {
+    var el = document.getElementById('rd-actions');
+    if (!el) return;
+    if (state === 'idle') {
+      el.innerHTML = '<button class="rd-btn rd-btn-start" onclick="rideStart()">▶ Avvia</button>';
+    } else if (state === 'recording') {
+      el.innerHTML =
+        '<button class="rd-btn rd-btn-pause" onclick="ridePause()">⏸ Pausa</button>' +
+        '<button class="rd-btn rd-btn-stop" onclick="rideStop()">⏹ Termina</button>';
+    } else if (state === 'paused') {
+      el.innerHTML =
+        '<button class="rd-btn rd-btn-start" onclick="rideStart()">▶ Riprendi</button>' +
+        '<button class="rd-btn rd-btn-stop" onclick="rideStop()">⏹ Termina</button>';
+    } else if (state === 'finished') {
+      el.innerHTML =
+        '<button class="rd-btn rd-btn-export" onclick="rideExport()">⬇ Esporta GPX</button>' +
+        '<button class="rd-btn rd-btn-pause" onclick="rideReset()">↺ Nuova</button>';
+    }
+  }
+
+  function setStatus(text, recording) {
+    var el = document.getElementById('rd-status');
+    if (!el) return;
+    el.textContent = text;
+    el.classList.toggle('recording', !!recording);
+  }
+  function showError(msg) {
+    var slot = document.getElementById('rd-error-slot');
+    if (!slot) return;
+    slot.innerHTML = msg ? '<div class="rd-error">' + escSafe(msg) + '</div>' : '';
+  }
+
+  function tick() {
+    if (state !== 'recording') return;
+    var elapsed = elapsedMs + (Date.now() - startTs);
+    document.getElementById('rd-time').textContent = fmtTime(elapsed);
+  }
+
+  function onPosition(pos) {
+    if (state !== 'recording') return;
+    var c = pos.coords;
+    var now = pos.timestamp || Date.now();
+    var fix = { lat: c.latitude, lng: c.longitude, ts: now, speed: c.speed, alt: c.altitude };
+
+    // Speed: prefer GPS-reported (m/s) when available, else compute from delta
+    var kmh = 0;
+    if (typeof c.speed === 'number' && c.speed >= 0 && !isNaN(c.speed)) {
+      kmh = c.speed * 3.6;
+    } else if (lastFix) {
+      var dt = (now - lastFix.ts) / 1000;
+      if (dt > 0) kmh = haversine(lastFix, fix) / dt * 3.6;
+    }
+
+    // Distance
+    if (lastFix && c.accuracy && c.accuracy < 50) {
+      var d = haversine(lastFix, fix);
+      // ignore tiny jitters when stopped
+      if (d > 1.5) distanceM += d;
+    }
+
+    // Max + avg (only count if moving)
+    if (kmh > maxSpeed) maxSpeed = kmh;
+    if (kmh > 1) { sumSpeed += kmh; sumSpeedN++; }
+
+    track.push(fix);
+    lastFix = fix;
+
+    document.getElementById('rd-speed').textContent = Math.round(kmh);
+    document.getElementById('rd-dist').textContent = (distanceM / 1000).toFixed(1);
+    document.getElementById('rd-max').textContent = Math.round(maxSpeed);
+  }
+  function onPositionError(err) {
+    showError('GPS: ' + (err.message || err.code || 'errore') +
+              ' · controlla che la geolocalizzazione sia attiva.');
+  }
+
+  async function acquireWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+      }
+    } catch(e) { /* ignore */ }
+  }
+  function releaseWakeLock() {
+    if (wakeLock) { try { wakeLock.release(); } catch(e) {} wakeLock = null; }
+  }
+  document.addEventListener('visibilitychange', function() {
+    if (state === 'recording' && document.visibilityState === 'visible' && !wakeLock) {
+      acquireWakeLock();
+    }
+  });
+
+  /* ── Public ────────────────────────────────────────────────── */
+  window.openRide = function() {
+    injectRideUI();
+    var v = window.hubGarage && window.hubGarage.active();
+    document.getElementById('rd-veh').textContent = v
+      ? (v.customName || (v.marca + ' ' + v.modello)) + ' · ' + (v.type === 'moto' ? 'Moto' : 'Auto')
+      : 'Nessun veicolo attivo';
+    document.getElementById('rd-overlay').classList.add('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeRide = function() {
+    if (state === 'recording' || state === 'paused') {
+      if (!confirm('Terminare la registrazione?')) return;
+      rideStop();
+    }
+    document.getElementById('rd-overlay').classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+
+  window.rideStart = function() {
+    if (!('geolocation' in navigator)) {
+      showError('GPS non disponibile sul dispositivo.');
+      return;
+    }
+    showError('');
+    if (state === 'idle') {
+      // fresh start
+      distanceM = 0; maxSpeed = 0; sumSpeed = 0; sumSpeedN = 0;
+      elapsedMs = 0; track = []; lastFix = null;
+    }
+    startTs = Date.now();
+    state = 'recording';
+    setStatus('REC · GPS attivo', true);
+    renderActions();
+    watchId = navigator.geolocation.watchPosition(onPosition, onPositionError, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 15000
+    });
+    tickInterval = setInterval(tick, 250);
+    acquireWakeLock();
+  };
+  window.ridePause = function() {
+    if (state !== 'recording') return;
+    elapsedMs += Date.now() - startTs;
+    state = 'paused';
+    setStatus('In pausa', false);
+    if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    releaseWakeLock();
+    renderActions();
+  };
+  window.rideStop = function() {
+    if (state === 'recording') elapsedMs += Date.now() - startTs;
+    state = 'finished';
+    var totalKm = distanceM / 1000;
+    var totalH = (elapsedMs / 1000) / 3600;
+    var avgKmh = totalH > 0 ? totalKm / totalH : 0;
+    setStatus('Ride completato · media ' + avgKmh.toFixed(1) + ' km/h', false);
+    if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    releaseWakeLock();
+    renderActions();
+  };
+  window.rideReset = function() {
+    state = 'idle';
+    elapsedMs = 0; distanceM = 0; maxSpeed = 0; sumSpeed = 0; sumSpeedN = 0;
+    track = []; lastFix = null;
+    document.getElementById('rd-speed').textContent = '0';
+    document.getElementById('rd-time').textContent  = '00:00';
+    document.getElementById('rd-dist').textContent  = '0.0';
+    document.getElementById('rd-max').textContent   = '0';
+    setStatus('In attesa', false);
+    showError('');
+    renderActions();
+  };
+
+  window.rideExport = function() {
+    if (track.length === 0) { alert('Nessun punto GPS registrato.'); return; }
+    var v = window.hubGarage && window.hubGarage.active();
+    var vehName = v ? (v.customName || (v.marca + ' ' + v.modello)) : 'AutoHub Ride';
+    var startDate = new Date(track[0].ts).toISOString();
+    var trkpts = track.map(function(p) {
+      var t = new Date(p.ts).toISOString();
+      var s = (p.speed != null && !isNaN(p.speed)) ? p.speed : '';
+      var a = (p.alt != null && !isNaN(p.alt)) ? p.alt : '';
+      var ext = '';
+      if (s !== '') ext += '<extensions><speed>' + s + '</speed></extensions>';
+      return '    <trkpt lat="' + p.lat.toFixed(6) + '" lon="' + p.lng.toFixed(6) + '">' +
+        (a !== '' ? '<ele>' + a + '</ele>' : '') +
+        '<time>' + t + '</time>' +
+        ext +
+      '</trkpt>';
+    }).join('\n');
+    var gpx = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<gpx version="1.1" creator="AutoHub" xmlns="http://www.topografix.com/GPX/1/1">\n' +
+      '  <metadata><name>' + escSafe(vehName) + '</name><time>' + startDate + '</time></metadata>\n' +
+      '  <trk><name>' + escSafe(vehName) + ' Ride</name><trkseg>\n' +
+      trkpts + '\n' +
+      '  </trkseg></trk>\n' +
+      '</gpx>';
+
+    var blob = new Blob([gpx], { type: 'application/gpx+xml' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    var stamp = new Date(track[0].ts).toISOString().replace(/[:.]/g, '-').slice(0, 16);
+    a.download = 'autohub-ride-' + stamp + '.gpx';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      URL.revokeObjectURL(url);
+      a.remove();
+    }, 100);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(injectRideUI, 400);
+  });
+})();
+
+</script>
+
+<!-- HUB MAINT: per-vehicle maintenance tracker -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB MAINT — maintenance tracker per vehicle (km + date based).
+   Different presets for auto vs moto. Stored at hub_maint_v1.
+   Each event: id, vehicleId, type, doneKm, doneDate, note
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function escSafe(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function uid() { return 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  // Maintenance presets:
+  //   km:    interval in kilometers (null = date-only)
+  //   months: interval in months  (null = km-only)
+  // For each item, we use whichever is reached first.
+  var PRESETS_AUTO = [
+    { type:'olio',       icon:'🛢',  name:'Cambio olio motore',  km:15000, months:12 },
+    { type:'filtro',     icon:'🌫',  name:'Filtro aria',          km:30000, months:24 },
+    { type:'tagliando',  icon:'🔧',  name:'Tagliando completo',   km:30000, months:12 },
+    { type:'gomme',      icon:'⚫',  name:'Gomme (rotazione)',    km:10000, months:12 },
+    { type:'pastiglie',  icon:'🛑',  name:'Pastiglie freni',      km:30000, months:null },
+    { type:'liq-freni',  icon:'💧',  name:'Liquido freni',        km:null,  months:24 },
+    { type:'liq-raffr',  icon:'❄️',  name:'Liquido refrigerante', km:null,  months:24 },
+    { type:'cinghia',    icon:'⚙',   name:'Cinghia distribuzione',km:120000,months:60 },
+    { type:'revisione',  icon:'📋',  name:'Revisione (MCTC)',     km:null,  months:24 }
+  ];
+  var PRESETS_MOTO = [
+    { type:'olio',       icon:'🛢',  name:'Cambio olio motore',   km:6000,  months:12 },
+    { type:'filtro-olio',icon:'🛢',  name:'Filtro olio',          km:12000, months:24 },
+    { type:'catena',     icon:'⛓',  name:'Catena (lubr+tens)',   km:500,   months:null },
+    { type:'catena-set', icon:'⛓',  name:'Kit catena (sostituz.)', km:25000, months:null },
+    { type:'pastiglie',  icon:'🛑',  name:'Pastiglie freni',      km:15000, months:null },
+    { type:'gomme',      icon:'⚫',  name:'Gomme (sostituz.)',    km:10000, months:null },
+    { type:'liq-freni',  icon:'💧',  name:'Liquido freni',        km:null,  months:24 },
+    { type:'liq-raffr',  icon:'❄️',  name:'Liquido refrigerante', km:null,  months:24 },
+    { type:'liq-frizione',icon:'💧', name:'Liquido frizione',     km:null,  months:24 },
+    { type:'valvole',    icon:'⚙',   name:'Gioco valvole',        km:24000, months:null },
+    { type:'candele',    icon:'⚡',  name:'Candele',              km:12000, months:null },
+    { type:'filtro-aria',icon:'🌫',  name:'Filtro aria',          km:18000, months:null },
+    { type:'revisione',  icon:'📋',  name:'Revisione (MCTC)',     km:null,  months:48 }
+  ];
+
+  var MT_KEY = 'hub_maint_v1';
+  function loadAll() { try { return JSON.parse(localStorage.getItem(MT_KEY) || '[]'); } catch(e) { return []; } }
+  function saveAll(r) { try { localStorage.setItem(MT_KEY, JSON.stringify(r)); } catch(e) {} }
+
+  function presetsFor(v) {
+    return (v && v.type === 'moto') ? PRESETS_MOTO : PRESETS_AUTO;
+  }
+
+  // Compute status for a maintenance item:
+  //   kmRem = km until next service (or null if no km interval)
+  //   daysRem = days until next (or null)
+  //   status = 'ok' | 'warn' | 'crit'
+  function statusFor(preset, lastEvent, currentKm) {
+    var kmRem = null, kmPct = null;
+    if (preset.km && lastEvent && lastEvent.doneKm != null) {
+      var nextKm = lastEvent.doneKm + preset.km;
+      kmRem = nextKm - (currentKm || 0);
+      kmPct = (kmRem / preset.km);
+    }
+    var daysRem = null, datePct = null;
+    if (preset.months && lastEvent && lastEvent.doneDate) {
+      var done = new Date(lastEvent.doneDate);
+      var nextDate = new Date(done);
+      nextDate.setMonth(nextDate.getMonth() + preset.months);
+      var today = new Date(); today.setHours(0,0,0,0);
+      daysRem = Math.round((nextDate - today) / 86400000);
+      datePct = daysRem / (preset.months * 30);
+    }
+    // Worst-case among km/date
+    var pct = null;
+    if (kmPct != null && datePct != null) pct = Math.min(kmPct, datePct);
+    else if (kmPct != null) pct = kmPct;
+    else if (datePct != null) pct = datePct;
+
+    var status;
+    if (!lastEvent) {
+      status = 'unknown';
+    } else if (pct == null) {
+      status = 'ok';
+    } else if (pct < 0) {
+      status = 'crit';
+    } else if (pct < 0.15) {
+      status = 'warn';
+    } else {
+      status = 'ok';
+    }
+    return { kmRem: kmRem, daysRem: daysRem, pct: pct, status: status };
+  }
+
+  function injectMaintUI() {
+    if (document.getElementById('mt-overlay')) return;
+    var hubDiag = document.getElementById('hub-diag');
+    if (!hubDiag) return;
+
+    var rdLaunch = document.getElementById('rd-launch-btn');
+    var anchor = rdLaunch || document.getElementById('ps-launch-btn') ||
+                 document.getElementById('fl-launch-btn') || document.getElementById('gar-launch-btn');
+    if (anchor) {
+      var b = document.createElement('button');
+      b.id = 'mt-launch-btn';
+      b.className = 'mt-launch';
+      b.type = 'button';
+      b.innerHTML =
+        '<span class="mt-launch-icon">🔧</span>' +
+        '<span class="mt-launch-text">Manutenzione</span>' +
+        '<span class="mt-launch-stat" id="mt-launch-stat">—</span>';
+      b.onclick = window.openMaint;
+      anchor.parentNode.insertBefore(b, anchor.nextSibling);
+    }
+
+    var ov = document.createElement('div');
+    ov.id = 'mt-overlay';
+    ov.innerHTML =
+      '<div class="mt-hdr">' +
+        '<h2>MANUTENZIONE<small id="mt-hdr-veh">—</small></h2>' +
+        '<button class="gar-close" onclick="closeMaint()">✕ Chiudi</button>' +
+      '</div>' +
+      '<div class="mt-body" id="mt-body"></div>';
+    hubDiag.appendChild(ov);
+
+    var em = document.createElement('div');
+    em.id = 'mt-edit';
+    em.onclick = function(e) { if (e.target === em) closeMaintEdit(); };
+    em.innerHTML =
+      '<div class="gar-edit-card">' +
+        '<h3 id="mt-edit-title">Registra intervento</h3>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Data intervento</label>' +
+            '<input type="date" id="mt-f-date"></div>' +
+          '<div class="gar-field"><label>Km al momento</label>' +
+            '<input type="number" id="mt-f-km" min="0"></div>' +
+        '</div>' +
+        '<div class="gar-field"><label>Note</label>' +
+          '<textarea id="mt-f-note" rows="2" placeholder="Es. olio Castrol 5W30, pastiglie EBC, da Officina XY..." maxlength="200"></textarea></div>' +
+        '<div class="gar-edit-btns">' +
+          '<button type="button" class="gar-cancel" onclick="closeMaintEdit()">Annulla</button>' +
+          '<button type="button" class="gar-save" onclick="saveMaintEvent()" style="background:rgba(76,175,125,.85);border-color:rgba(76,175,125,.6);color:#08160d">Salva</button>' +
+        '</div>' +
+      '</div>';
+    hubDiag.appendChild(em);
+  }
+
+  /* ── Public ─────────────────────────────────────────────────── */
+  window.openMaint = function() {
+    injectMaintUI();
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) { alert('Aggiungi prima un veicolo nel garage.'); return; }
+    document.getElementById('mt-overlay').classList.add('visible');
+    document.getElementById('mt-hdr-veh').textContent =
+      (v.customName || (v.marca + ' ' + v.modello)) + ' · ' + (v.type === 'moto' ? 'Moto' : 'Auto');
+    renderMaint();
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeMaint = function() {
+    document.getElementById('mt-overlay').classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+
+  var _editingType = null;
+  window.openMaintEdit = function(presetType) {
+    injectMaintUI();
+    _editingType = presetType;
+    var v = window.hubGarage && window.hubGarage.active();
+    var preset = presetsFor(v).find(function(p) { return p.type === presetType; });
+    document.getElementById('mt-edit-title').textContent = preset ? preset.name : 'Intervento';
+    document.getElementById('mt-f-date').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('mt-f-km').value = (v && v.kmTot) || '';
+    document.getElementById('mt-f-note').value = '';
+    document.getElementById('mt-edit').classList.add('visible');
+  };
+  window.closeMaintEdit = function() {
+    document.getElementById('mt-edit').classList.remove('visible');
+  };
+
+  window.saveMaintEvent = function() {
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v || !_editingType) { alert('Errore.'); return; }
+    var date = document.getElementById('mt-f-date').value;
+    var km = parseInt(document.getElementById('mt-f-km').value, 10);
+    if (!date || isNaN(km)) { alert('Compila data e km.'); return; }
+    var all = loadAll();
+    all.push({
+      id: uid(),
+      vehicleId: v.id,
+      type: _editingType,
+      doneKm: km,
+      doneDate: date,
+      note: document.getElementById('mt-f-note').value.trim(),
+      ts: Date.now()
+    });
+    saveAll(all);
+    // Update vehicle odometer if increased
+    if (window.hubGarage && km > (v.kmTot || 0)) {
+      window.hubGarage.update(v.id, { kmTot: km });
+      if (typeof window._hubRefreshGarageBadge === 'function') window._hubRefreshGarageBadge();
+    }
+    closeMaintEdit();
+    renderMaint();
+    refreshMaintBadge();
+  };
+
+  /* ── Render ─────────────────────────────────────────────────── */
+  function lastEventFor(vehicleId, type) {
+    var ev = loadAll().filter(function(e) { return e.vehicleId === vehicleId && e.type === type; });
+    if (ev.length === 0) return null;
+    return ev.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); })[0];
+  }
+
+  function renderMaint() {
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) return;
+    var body = document.getElementById('mt-body');
+    if (!body) return;
+    var presets = presetsFor(v);
+    var icon = v.type === 'moto' ? '🏍' : '🚗';
+    var name = v.customName || (v.marca + ' ' + v.modello);
+
+    var html = '<div class="mt-veh-header">' +
+      '<div class="mt-veh-icon">' + icon + '</div>' +
+      '<div class="mt-veh-info">' +
+        '<div class="mt-veh-name">' + escSafe(name) + '</div>' +
+        '<div class="mt-veh-km">' + (v.kmTot || 0).toLocaleString('it-IT') + ' km · ' + presets.length + ' interventi tracciati</div>' +
+      '</div></div>';
+
+    html += presets.map(function(p) {
+      var last = lastEventFor(v.id, p.type);
+      var st = statusFor(p, last, v.kmTot || 0);
+      var statusLbl = '', statusClass = '';
+      var detailParts = [];
+      var barPct = 0;
+
+      if (!last) {
+        statusLbl = 'Mai registrato';
+        statusClass = 'warn';
+        detailParts.push('Tap per registrare il primo intervento');
+      } else {
+        var doneStr = last.doneDate ? last.doneDate.split('-').reverse().join('/') : '—';
+        detailParts.push('Ultimo: ' + doneStr + (last.doneKm != null ? ' · ' + last.doneKm.toLocaleString('it-IT') + ' km' : ''));
+
+        if (st.status === 'crit') {
+          statusClass = 'crit';
+          if (st.kmRem != null && st.kmRem < 0) statusLbl = 'Scaduto ' + Math.abs(st.kmRem) + ' km fa';
+          else if (st.daysRem != null && st.daysRem < 0) statusLbl = 'Scaduto ' + Math.abs(st.daysRem) + ' gg fa';
+          else statusLbl = 'Scaduto';
+        } else if (st.status === 'warn') {
+          statusClass = 'warn';
+          if (st.kmRem != null && st.kmRem < (p.km * 0.15)) statusLbl = 'Tra ~' + st.kmRem + ' km';
+          else if (st.daysRem != null) statusLbl = 'Tra ' + st.daysRem + ' gg';
+          else statusLbl = 'In scadenza';
+        } else {
+          statusClass = 'ok';
+          if (st.kmRem != null) statusLbl = 'Tra ~' + st.kmRem.toLocaleString('it-IT') + ' km';
+          else if (st.daysRem != null) statusLbl = 'Tra ' + st.daysRem + ' gg';
+          else statusLbl = 'OK';
+        }
+
+        // Bar fill (1.0 = just done, 0.0 = due now, <0 = overdue)
+        if (st.pct != null) {
+          var fillPct = Math.max(0, Math.min(100, (1 - st.pct) * 100));
+          // pct close to 1 = full bar (worn); close to 0 = empty (just done)
+          // We want: just done → empty bar (looks healthy), close to due → full red bar.
+          // So invert again:
+          fillPct = Math.max(0, Math.min(100, (1 - Math.max(0, st.pct)) * 100));
+          // pct < 0 (overdue) → 100%
+          if (st.pct < 0) fillPct = 100;
+          barPct = fillPct;
+        }
+      }
+
+      var cardClass = statusClass === 'crit' ? 'mt-card crit'
+                    : statusClass === 'warn' ? 'mt-card warn' : 'mt-card';
+      var nextInfoLeft = '';
+      if (p.km) nextInfoLeft += 'ogni ' + p.km.toLocaleString('it-IT') + ' km';
+      if (p.km && p.months) nextInfoLeft += ' o ';
+      if (p.months) nextInfoLeft += 'ogni ' + p.months + ' mesi';
+
+      return '<div class="' + cardClass + '" onclick="openMaintEdit(\'' + p.type + '\')">' +
+        '<div class="mt-card-row">' +
+          '<div class="mt-card-icon">' + p.icon + '</div>' +
+          '<div class="mt-card-info">' +
+            '<div class="mt-card-name">' + escSafe(p.name) + '</div>' +
+            '<div class="mt-card-meta">' + escSafe(detailParts.join(' · ')) + '</div>' +
+          '</div>' +
+          '<div class="mt-card-status ' + statusClass + '">' + escSafe(statusLbl) + '</div>' +
+        '</div>' +
+        (last ? '<div class="mt-card-bar">' +
+          '<div class="mt-card-bar-fill ' + statusClass + '" style="width:' + barPct + '%"></div>' +
+        '</div>' : '') +
+        '<div class="mt-card-detail">' +
+          '<span>' + escSafe(nextInfoLeft) + '</span>' +
+          '<span>' + (last && last.note ? escSafe(last.note.slice(0, 40)) : '') + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    body.innerHTML = html;
+  }
+
+  /* ── Badge: show worst status across all items ─────────────── */
+  function refreshMaintBadge() {
+    var b = document.getElementById('mt-launch-stat');
+    if (!b) return;
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) { b.textContent = '—'; b.className = 'mt-launch-stat'; return; }
+    var presets = presetsFor(v);
+    var worst = 'ok';
+    var critN = 0, warnN = 0;
+    presets.forEach(function(p) {
+      var last = lastEventFor(v.id, p.type);
+      if (!last) return;
+      var st = statusFor(p, last, v.kmTot || 0);
+      if (st.status === 'crit') { worst = 'crit'; critN++; }
+      else if (st.status === 'warn' && worst !== 'crit') { worst = 'warn'; warnN++; }
+    });
+    b.className = 'mt-launch-stat' + (worst === 'crit' ? ' crit' : worst === 'warn' ? ' warn' : '');
+    if (critN > 0) b.textContent = critN + ' scaduti';
+    else if (warnN > 0) b.textContent = warnN + ' in scad.';
+    else b.textContent = 'Tutto ok';
+  }
+  window._hubRefreshMaintBadge = refreshMaintBadge;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      injectMaintUI();
+      refreshMaintBadge();
+    }, 450);
+  });
+
+  // Re-sync when active vehicle changes
+  if (typeof window.useVehicle === 'function') {
+    var _origUseVehicleM = window.useVehicle;
+    window.useVehicle = function(id) {
+      var r = _origUseVehicleM.apply(this, arguments);
+      try { refreshMaintBadge(); } catch(e) {}
       return r;
     };
   }
