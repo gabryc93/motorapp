@@ -931,7 +931,550 @@ body[data-hub="fuel"]::before { display: none !important; }
 #hub-fuel #map-brow.bandiera-row::-webkit-scrollbar { display: none; }
 #hub-fuel #map-brow .bfb { flex-shrink: 0; }
 
-/* ── Compare-favorites overlay ─────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   GARAGE — multi-vehicle profile (auto + moto), used as identity for
+   diagnosis, fuel tracking, maintenance reminders.
+   Lives in the diagnosis section but the data is global.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Launch button — shown at top of diagnosis */
+#hub-diag .gar-launch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(224,60,52,.13), rgba(224,60,52,.04));
+  border: 1px solid rgba(224,60,52,.28);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: #ffb4a8;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#hub-diag .gar-launch:hover { border-color: rgba(224,60,52,.5); }
+#hub-diag .gar-launch:active { transform: scale(.99); }
+#hub-diag .gar-launch-icon { font-size: 1rem; line-height: 1; }
+#hub-diag .gar-launch-text { flex: 1; text-align: left; }
+#hub-diag .gar-launch-active {
+  background: rgba(224,60,52,.18);
+  color: #ffe0db;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .58rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;
+}
+
+/* Garage overlay — fullscreen modal living in #hub-diag */
+#hub-diag #gar-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#hub-diag #gar-overlay.visible { display: flex; }
+
+#hub-diag .gar-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+#hub-diag .gar-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1);
+  letter-spacing: .02em;
+}
+#hub-diag .gar-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+#hub-diag .gar-close {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd2);
+  color: var(--t1);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  cursor: pointer;
+}
+
+#hub-diag .gar-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+
+#hub-diag .gar-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--t3);
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+}
+
+#hub-diag .gar-add-btn {
+  appearance: none; -webkit-appearance: none;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(224,60,52,.85), rgba(224,60,52,.65));
+  color: #fff;
+  border: 1px solid rgba(224,60,52,.6);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: all .15s ease;
+}
+#hub-diag .gar-add-btn:hover { filter: brightness(1.1); }
+#hub-diag .gar-add-btn:active { transform: scale(.99); }
+
+/* Vehicle card */
+#hub-diag .gar-veh {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+  position: relative;
+}
+#hub-diag .gar-veh:hover { border-color: var(--brd2); }
+#hub-diag .gar-veh:active { transform: scale(.99); }
+#hub-diag .gar-veh.gar-veh-active {
+  border-color: rgba(224,60,52,.45);
+  background: linear-gradient(135deg, rgba(224,60,52,.08), rgba(224,60,52,.02));
+}
+#hub-diag .gar-veh-active::before {
+  content: '✓ Attivo';
+  position: absolute;
+  top: 10px; right: 10px;
+  background: rgba(224,60,52,.18);
+  color: #ffb4a8;
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: .06em;
+}
+
+#hub-diag .gar-veh-row { display: flex; align-items: flex-start; gap: 10px; }
+#hub-diag .gar-veh-icon {
+  flex-shrink: 0;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surf2);
+  border-radius: 8px;
+  font-size: 1.2rem;
+}
+#hub-diag .gar-veh-info { flex: 1; min-width: 0; padding-right: 70px; }
+#hub-diag .gar-veh-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1rem;
+  color: var(--t1); letter-spacing: -.01em;
+  margin-bottom: 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#hub-diag .gar-veh-spec {
+  font-family: 'DM Mono', monospace;
+  font-size: .66rem;
+  color: var(--t2);
+  line-height: 1.4;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#hub-diag .gar-veh-tags {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  margin-top: 6px;
+}
+#hub-diag .gar-veh-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--t2);
+  background: var(--surf2);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.04);
+  letter-spacing: .04em;
+}
+
+#hub-diag .gar-veh-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--brd);
+}
+#hub-diag .gar-veh-act {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd2);
+  color: var(--t2);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  cursor: pointer;
+  flex: 1;
+  transition: all .15s ease;
+}
+#hub-diag .gar-veh-act:hover { color: var(--t1); border-color: var(--ac); }
+#hub-diag .gar-veh-act-del { color: #ff8a82; }
+#hub-diag .gar-veh-act-del:hover { border-color: rgba(224,60,52,.5); color: #ffb4a8; }
+
+/* Add/edit modal */
+#hub-diag #gar-edit {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(3px);
+  z-index: 80;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#hub-diag #gar-edit.visible { display: flex; }
+@media (min-width: 600px) {
+  #hub-diag #gar-edit { align-items: center; }
+}
+#hub-diag .gar-edit-card {
+  background: var(--surf);
+  border: 1px solid var(--brd2);
+  border-radius: 14px 14px 0 0;
+  width: 100%;
+  max-width: 600px;
+  padding: 18px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@media (min-width: 600px) {
+  #hub-diag .gar-edit-card { border-radius: 14px; }
+}
+#hub-diag .gar-edit-card h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.25rem;
+  color: var(--t1);
+  letter-spacing: .02em;
+  margin-bottom: 14px;
+}
+#hub-diag .gar-field { margin-bottom: 12px; }
+#hub-diag .gar-field label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-bottom: 5px;
+}
+#hub-diag .gar-field input[type="text"],
+#hub-diag .gar-field input[type="number"],
+#hub-diag .gar-field input[type="date"],
+#hub-diag .gar-field textarea,
+#hub-diag .gar-field select {
+  width: 100%;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 7px;
+  color: var(--t1);
+  padding: 9px 11px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+}
+#hub-diag .gar-field input:focus,
+#hub-diag .gar-field textarea:focus,
+#hub-diag .gar-field select:focus {
+  outline: none; border-color: var(--ac);
+}
+#hub-diag .gar-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#hub-diag .gar-typebar { display: flex; gap: 6px; margin-bottom: 12px; }
+#hub-diag .gar-typebar button {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t2);
+  padding: 8px 10px;
+  border-radius: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  cursor: pointer;
+}
+#hub-diag .gar-typebar button.on {
+  color: var(--ac);
+  border-color: var(--ac);
+  background: rgba(224,60,52,.1);
+}
+#hub-diag .gar-edit-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--brd);
+}
+#hub-diag .gar-edit-btns button {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+}
+#hub-diag .gar-cancel {
+  background: var(--surf2);
+  border-color: var(--brd2);
+  color: var(--t2);
+}
+#hub-diag .gar-save {
+  background: rgba(224,60,52,.85);
+  border-color: rgba(224,60,52,.6);
+  color: #fff;
+}
+#hub-diag .gar-save:hover { filter: brightness(1.1); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   FUEL LOG — record refuels per active vehicle, compute L/100km, €/km
+   ═══════════════════════════════════════════════════════════════════ */
+
+#hub-diag .fl-launch {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(91,155,213,.13), rgba(91,155,213,.04));
+  border: 1px solid rgba(91,155,213,.28);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: #b8d4ec;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#hub-diag .fl-launch:hover { border-color: rgba(91,155,213,.5); }
+#hub-diag .fl-launch:active { transform: scale(.99); }
+#hub-diag .fl-launch-icon { font-size: 1rem; }
+#hub-diag .fl-launch-text { flex: 1; text-align: left; }
+#hub-diag .fl-launch-stat {
+  background: rgba(91,155,213,.18);
+  color: #d8e8f7;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .58rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+#hub-diag #fl-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#hub-diag #fl-overlay.visible { display: flex; }
+
+#hub-diag .fl-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+#hub-diag .fl-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1); letter-spacing: .02em;
+}
+#hub-diag .fl-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 220px;
+}
+
+#hub-diag .fl-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+
+/* Stats grid */
+#hub-diag .fl-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+#hub-diag .fl-stat {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+#hub-diag .fl-stat-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+#hub-diag .fl-stat-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  line-height: 1;
+}
+#hub-diag .fl-stat-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t2);
+  margin-top: 3px;
+}
+#hub-diag .fl-stat-trend-up { color: #ff8a82; }
+#hub-diag .fl-stat-trend-down { color: #6dd9a3; }
+#hub-diag .fl-stat-trend-flat { color: var(--t2); }
+
+#hub-diag .fl-add-btn {
+  appearance: none; -webkit-appearance: none;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(91,155,213,.85), rgba(91,155,213,.65));
+  color: #08131c;
+  border: 1px solid rgba(91,155,213,.6);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: all .15s ease;
+}
+#hub-diag .fl-add-btn:hover { filter: brightness(1.1); }
+#hub-diag .fl-add-btn:active { transform: scale(.99); }
+
+#hub-diag .fl-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--t3);
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+}
+
+#hub-diag .fl-list-title {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin: 16px 0 8px;
+}
+
+#hub-diag .fl-row {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+#hub-diag .fl-row-info { flex: 1; min-width: 0; }
+#hub-diag .fl-row-date {
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  color: var(--t1);
+  margin-bottom: 2px;
+}
+#hub-diag .fl-row-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: .6rem;
+  color: var(--t2);
+}
+#hub-diag .fl-row-cons {
+  text-align: right;
+  flex-shrink: 0;
+  padding-left: 10px;
+  border-left: 1px solid var(--brd);
+}
+#hub-diag .fl-row-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  line-height: 1;
+}
+#hub-diag .fl-row-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--t2);
+  margin-top: 2px;
+}
+#hub-diag .fl-row-del {
+  appearance: none; -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--t3);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px 8px;
+}
+#hub-diag .fl-row-del:hover { color: #ff8a82; }
+
+/* Add modal — reuse gar-edit styles via piggybacking on same container */
+#hub-diag #fl-edit {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(3px);
+  z-index: 80;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#hub-diag #fl-edit.visible { display: flex; }
+@media (min-width: 600px) { #hub-diag #fl-edit { align-items: center; } }
+#hub-diag #fl-edit .gar-edit-card { /* reuse */ }
+#hub-diag #fl-edit .fl-fullbar {
+  display: flex; gap: 6px; margin-bottom: 12px;
+}
+#hub-diag #fl-edit .fl-fullbar button {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t2);
+  padding: 8px 10px;
+  border-radius: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  cursor: pointer;
+}
+#hub-diag #fl-edit .fl-fullbar button.on {
+  color: #b8d4ec;
+  border-color: rgba(91,155,213,.5);
+  background: rgba(91,155,213,.12);
+}
 #hub-fuel .hub-cmp-launch {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   width: 100%;
@@ -1112,6 +1655,10 @@ body:has(#hub-fuel #fav-view.visible) .hub-tabs,
 body:has(#hub-fuel #modal-overlay:not(.hidden)) .hub-tabs,
 body:has(#hub-fuel #fav-edit-overlay:not(.hidden)) .hub-tabs,
 body:has(#hub-fuel #hub-cmp-overlay.visible) .hub-tabs,
+body:has(#hub-diag #gar-overlay.visible) .hub-tabs,
+body:has(#hub-diag #gar-edit.visible) .hub-tabs,
+body:has(#hub-diag #fl-overlay.visible) .hub-tabs,
+body:has(#hub-diag #fl-edit.visible) .hub-tabs,
 body[data-pill-hidden="1"] .hub-tabs {
   opacity: 0;
   transform: translateX(-50%) translateY(24px);
@@ -2538,23 +3085,39 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     var mo  = document.getElementById('modal-overlay');
     var feo = document.getElementById('fav-edit-overlay');
     var cmp = document.getElementById('hub-cmp-overlay');
+    var gar = document.getElementById('gar-overlay');
+    var ged = document.getElementById('gar-edit');
+    var flo = document.getElementById('fl-overlay');
+    var fle = document.getElementById('fl-edit');
     var hide =
       (mv  && mv.classList.contains('visible')) ||
       (fv  && fv.classList.contains('visible')) ||
       (mo  && !mo.classList.contains('hidden')) ||
       (feo && !feo.classList.contains('hidden')) ||
-      (cmp && cmp.classList.contains('visible'));
+      (cmp && cmp.classList.contains('visible')) ||
+      (gar && gar.classList.contains('visible')) ||
+      (ged && ged.classList.contains('visible')) ||
+      (flo && flo.classList.contains('visible')) ||
+      (fle && fle.classList.contains('visible'));
     if (hide) document.body.dataset.pillHidden = '1';
     else delete document.body.dataset.pillHidden;
   }
   function _hubObservePillTriggers() {
-    var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay', 'hub-cmp-overlay'];
+    var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay',
+               'hub-cmp-overlay', 'gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit'];
     if (typeof MutationObserver === 'function') {
       var obs = new MutationObserver(_hubUpdatePillVisibility);
       ids.forEach(function(id) {
         var el = document.getElementById(id);
         if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
       });
+      // Re-attach observer to gar-overlay/gar-edit when they get injected late
+      var lateRetry = setTimeout(function() {
+        ['gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
+        });
+      }, 600);
     }
     _hubUpdatePillVisibility();
   }
@@ -11388,6 +11951,842 @@ async function runCmp() {
     window.saveFavs = function(favs) {
       var r = _origSaveFavs.apply(this, arguments);
       try { window._renderHomeHero(); } catch(e) {}
+      return r;
+    };
+  }
+})();
+
+</script>
+
+<!-- HUB GARAGE ADDON: multi-vehicle profile (must run AFTER diag JS) -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB GARAGE — multi-vehicle profile management
+   Stores: hub_garage_v1 (array), hub_active_vehicle_v1 (id)
+   Integrates with diagnosis: selecting a vehicle pre-fills the dropdowns.
+   Each vehicle: id, type (auto/moto), marca, modello, anno, motore,
+                 customName, targa, note, kmTot, scadBollo, scadRca,
+                 scadRev, scadTagliando, createdAt
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function escSafe(s) {
+    if (typeof window.esc === 'function') return window.esc(s);
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function uid() {
+    return 'v' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+  var GAR_KEY = 'hub_garage_v1';
+  var GAR_ACTIVE = 'hub_active_vehicle_v1';
+
+  function loadGarage() {
+    try { return JSON.parse(localStorage.getItem(GAR_KEY) || '[]'); }
+    catch(e) { return []; }
+  }
+  function saveGarage(g) {
+    try { localStorage.setItem(GAR_KEY, JSON.stringify(g)); } catch(e) {}
+  }
+  function getActiveId() { return localStorage.getItem(GAR_ACTIVE) || null; }
+  function setActiveId(id) {
+    if (id) localStorage.setItem(GAR_ACTIVE, id);
+    else localStorage.removeItem(GAR_ACTIVE);
+  }
+  function getActiveVehicle() {
+    var id = getActiveId();
+    if (!id) return null;
+    return loadGarage().find(function(v) { return v.id === id; }) || null;
+  }
+  // Public API for other modules (fuel logging, comparator, etc.)
+  window.hubGarage = {
+    list:   loadGarage,
+    save:   saveGarage,
+    active: getActiveVehicle,
+    activeId: getActiveId,
+    setActive: setActiveId,
+    update: function(id, patch) {
+      var g = loadGarage();
+      var i = g.findIndex(function(v) { return v.id === id; });
+      if (i < 0) return null;
+      g[i] = Object.assign({}, g[i], patch);
+      saveGarage(g);
+      return g[i];
+    }
+  };
+
+  /* ── UI INJECTION ───────────────────────────────────────────── */
+  function injectGarageUI() {
+    if (document.getElementById('gar-overlay')) return;
+
+    var hubDiag = document.getElementById('hub-diag');
+    if (!hubDiag) return;
+
+    // Launch button (above diagnosis form)
+    var anaForm = document.getElementById('btn-analisi');
+    if (anaForm) {
+      var card = anaForm.closest('.cardx, .form-card, .card, .cs, [class*="card"]') || anaForm.parentElement;
+      var btn = document.createElement('button');
+      btn.id = 'gar-launch-btn';
+      btn.className = 'gar-launch';
+      btn.type = 'button';
+      btn.innerHTML =
+        '<span class="gar-launch-icon">🏎</span>' +
+        '<span class="gar-launch-text">Il mio garage</span>' +
+        '<span class="gar-launch-active" id="gar-launch-active">Nessun veicolo</span>';
+      btn.onclick = window.openGarage;
+      if (card && card.parentElement) {
+        card.parentElement.insertBefore(btn, card);
+      } else {
+        hubDiag.insertBefore(btn, hubDiag.firstChild);
+      }
+    }
+
+    // Overlay
+    var ov = document.createElement('div');
+    ov.id = 'gar-overlay';
+    ov.innerHTML =
+      '<div class="gar-hdr">' +
+        '<h2>IL MIO GARAGE<small>Veicoli salvati · Switch rapido</small></h2>' +
+        '<button class="gar-close" onclick="closeGarage()">✕ Chiudi</button>' +
+      '</div>' +
+      '<div class="gar-body">' +
+        '<button class="gar-add-btn" onclick="openGarageEdit(null)">+ Aggiungi veicolo</button>' +
+        '<div id="gar-list"></div>' +
+      '</div>';
+    hubDiag.appendChild(ov);
+
+    // Edit modal
+    var em = document.createElement('div');
+    em.id = 'gar-edit';
+    em.onclick = function(e) { if (e.target === em) closeGarageEdit(); };
+    em.innerHTML =
+      '<div class="gar-edit-card">' +
+        '<h3 id="gar-edit-title">Nuovo veicolo</h3>' +
+        '<div class="gar-typebar">' +
+          '<button type="button" data-type="auto" onclick="_garSetType(\'auto\')">🚗 Auto</button>' +
+          '<button type="button" data-type="moto" onclick="_garSetType(\'moto\')">🏍 Moto</button>' +
+        '</div>' +
+        '<div class="gar-field"><label>Nome personalizzato</label>' +
+          '<input type="text" id="gar-f-name" placeholder="Es. Giulia di tutti i giorni" maxlength="40"></div>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Marca</label>' +
+            '<input type="text" id="gar-f-marca" placeholder="Alfa Romeo" maxlength="30"></div>' +
+          '<div class="gar-field"><label>Modello</label>' +
+            '<input type="text" id="gar-f-modello" placeholder="Giulia" maxlength="40"></div>' +
+        '</div>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Anno</label>' +
+            '<input type="text" id="gar-f-anno" placeholder="2020" maxlength="4"></div>' +
+          '<div class="gar-field"><label>Motore</label>' +
+            '<input type="text" id="gar-f-motore" placeholder="2.2 JTDM" maxlength="30"></div>' +
+        '</div>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Targa</label>' +
+            '<input type="text" id="gar-f-targa" placeholder="AB123CD" maxlength="10" style="text-transform:uppercase"></div>' +
+          '<div class="gar-field"><label>Km totali</label>' +
+            '<input type="number" id="gar-f-km" placeholder="0" min="0"></div>' +
+        '</div>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Scadenza bollo</label>' +
+            '<input type="date" id="gar-f-bollo"></div>' +
+          '<div class="gar-field"><label>Scadenza RCA</label>' +
+            '<input type="date" id="gar-f-rca"></div>' +
+        '</div>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Scadenza revisione</label>' +
+            '<input type="date" id="gar-f-rev"></div>' +
+          '<div class="gar-field"><label>Prossimo tagliando</label>' +
+            '<input type="date" id="gar-f-tag"></div>' +
+        '</div>' +
+        '<div class="gar-field"><label>Note</label>' +
+          '<textarea id="gar-f-note" rows="2" placeholder="Es. blu Misano, cerchi 19..." maxlength="200"></textarea></div>' +
+        '<div class="gar-edit-btns">' +
+          '<button type="button" class="gar-cancel" onclick="closeGarageEdit()">Annulla</button>' +
+          '<button type="button" class="gar-save" onclick="saveGarageEdit()">Salva</button>' +
+        '</div>' +
+      '</div>';
+    hubDiag.appendChild(em);
+
+    refreshGarageBadge();
+  }
+
+  /* ── Public functions ───────────────────────────────────────── */
+  window.openGarage = function() {
+    injectGarageUI();
+    var ov = document.getElementById('gar-overlay');
+    if (!ov) return;
+    ov.classList.add('visible');
+    renderGarageList();
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeGarage = function() {
+    var ov = document.getElementById('gar-overlay');
+    if (ov) ov.classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+
+  var _editingId = null;
+  var _editingType = 'auto';
+
+  window.openGarageEdit = function(id) {
+    injectGarageUI();
+    _editingId = id;
+    var v = id ? loadGarage().find(function(x) { return x.id === id; }) : null;
+    document.getElementById('gar-edit-title').textContent = v ? 'Modifica veicolo' : 'Nuovo veicolo';
+    document.getElementById('gar-f-name').value    = v ? (v.customName || '') : '';
+    document.getElementById('gar-f-marca').value   = v ? (v.marca || '') : '';
+    document.getElementById('gar-f-modello').value = v ? (v.modello || '') : '';
+    document.getElementById('gar-f-anno').value    = v ? (v.anno || '') : '';
+    document.getElementById('gar-f-motore').value  = v ? (v.motore || '') : '';
+    document.getElementById('gar-f-targa').value   = v ? (v.targa || '') : '';
+    document.getElementById('gar-f-km').value      = v ? (v.kmTot || '') : '';
+    document.getElementById('gar-f-bollo').value   = v ? (v.scadBollo || '') : '';
+    document.getElementById('gar-f-rca').value     = v ? (v.scadRca || '') : '';
+    document.getElementById('gar-f-rev').value     = v ? (v.scadRev || '') : '';
+    document.getElementById('gar-f-tag').value     = v ? (v.scadTagliando || '') : '';
+    document.getElementById('gar-f-note').value    = v ? (v.note || '') : '';
+    _garSetType(v ? (v.type || 'auto') : 'auto');
+    document.getElementById('gar-edit').classList.add('visible');
+  };
+  window.closeGarageEdit = function() {
+    document.getElementById('gar-edit').classList.remove('visible');
+  };
+
+  window._garSetType = function(t) {
+    _editingType = t;
+    document.querySelectorAll('#gar-edit .gar-typebar button').forEach(function(b) {
+      b.classList.toggle('on', b.dataset.type === t);
+    });
+  };
+
+  window.saveGarageEdit = function() {
+    var name = document.getElementById('gar-f-name').value.trim();
+    var marca = document.getElementById('gar-f-marca').value.trim();
+    var modello = document.getElementById('gar-f-modello').value.trim();
+    var anno = document.getElementById('gar-f-anno').value.trim();
+    var motore = document.getElementById('gar-f-motore').value.trim();
+    if (!marca || !modello) {
+      alert('Inserisci almeno marca e modello.');
+      return;
+    }
+    var patch = {
+      type: _editingType || 'auto',
+      customName: name,
+      marca: marca,
+      modello: modello,
+      anno: anno,
+      motore: motore,
+      targa: document.getElementById('gar-f-targa').value.trim().toUpperCase(),
+      kmTot: parseInt(document.getElementById('gar-f-km').value, 10) || 0,
+      scadBollo: document.getElementById('gar-f-bollo').value || '',
+      scadRca: document.getElementById('gar-f-rca').value || '',
+      scadRev: document.getElementById('gar-f-rev').value || '',
+      scadTagliando: document.getElementById('gar-f-tag').value || '',
+      note: document.getElementById('gar-f-note').value.trim()
+    };
+    var g = loadGarage();
+    if (_editingId) {
+      var i = g.findIndex(function(v) { return v.id === _editingId; });
+      if (i >= 0) g[i] = Object.assign({}, g[i], patch);
+    } else {
+      patch.id = uid();
+      patch.createdAt = Date.now();
+      g.push(patch);
+      // First vehicle becomes active
+      if (g.length === 1) setActiveId(patch.id);
+    }
+    saveGarage(g);
+    closeGarageEdit();
+    renderGarageList();
+    refreshGarageBadge();
+  };
+
+  window.deleteVehicle = function(id) {
+    if (!confirm('Eliminare questo veicolo dal garage?')) return;
+    var g = loadGarage().filter(function(v) { return v.id !== id; });
+    saveGarage(g);
+    if (getActiveId() === id) {
+      setActiveId(g.length ? g[0].id : null);
+    }
+    renderGarageList();
+    refreshGarageBadge();
+  };
+
+  window.useVehicle = function(id) {
+    setActiveId(id);
+    var v = loadGarage().find(function(x) { return x.id === id; });
+    refreshGarageBadge();
+    renderGarageList();
+    if (v) applyVehicleToDiagnosis(v);
+    closeGarage();
+  };
+
+  /* ── List rendering ─────────────────────────────────────────── */
+  function renderGarageList() {
+    var list = document.getElementById('gar-list');
+    if (!list) return;
+    var g = loadGarage();
+    var activeId = getActiveId();
+    if (g.length === 0) {
+      list.innerHTML = '<div class="gar-empty">Nessun veicolo nel garage.<br>Aggiungi auto o moto per usarle nella Diagnosi e tracciare consumi.</div>';
+      return;
+    }
+    list.innerHTML = g.map(function(v) {
+      var isActive = v.id === activeId;
+      var icon = v.type === 'moto' ? '🏍' : '🚗';
+      var displayName = v.customName || (v.marca + ' ' + v.modello);
+      var spec = [v.marca, v.modello, v.anno, v.motore].filter(Boolean).join(' · ');
+      var tags = [];
+      if (v.targa) tags.push(escSafe(v.targa));
+      if (typeof v.kmTot === 'number' && v.kmTot > 0) tags.push(v.kmTot.toLocaleString('it-IT') + ' km');
+      var scadenze = _formatScadenze(v);
+      if (scadenze) tags.push(scadenze);
+
+      return '<div class="gar-veh' + (isActive ? ' gar-veh-active' : '') + '">' +
+        '<div class="gar-veh-row" onclick="useVehicle(\'' + v.id + '\')">' +
+          '<div class="gar-veh-icon">' + icon + '</div>' +
+          '<div class="gar-veh-info">' +
+            '<div class="gar-veh-name">' + escSafe(displayName) + '</div>' +
+            '<div class="gar-veh-spec">' + escSafe(spec) + '</div>' +
+            (tags.length ? '<div class="gar-veh-tags">' +
+              tags.map(function(t) { return '<span class="gar-veh-tag">' + t + '</span>'; }).join('') +
+            '</div>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="gar-veh-actions">' +
+          (isActive ? '' :
+            '<button class="gar-veh-act" onclick="useVehicle(\'' + v.id + '\')">Usa</button>') +
+          '<button class="gar-veh-act" onclick="openGarageEdit(\'' + v.id + '\')">Modifica</button>' +
+          '<button class="gar-veh-act gar-veh-act-del" onclick="deleteVehicle(\'' + v.id + '\')">Elimina</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function _formatScadenze(v) {
+    var dates = [];
+    var today = new Date(); today.setHours(0,0,0,0);
+    function check(label, dateStr) {
+      if (!dateStr) return;
+      var d = new Date(dateStr);
+      if (isNaN(d)) return;
+      var days = Math.round((d - today) / 86400000);
+      if (days < 0) dates.push('⚠ ' + label + ' scaduto');
+      else if (days <= 30) dates.push('⏰ ' + label + ' tra ' + days + 'gg');
+    }
+    check('bollo', v.scadBollo);
+    check('RCA', v.scadRca);
+    check('revisione', v.scadRev);
+    check('tagliando', v.scadTagliando);
+    return dates.length ? dates[0] : '';
+  }
+
+  /* ── Active-vehicle badge in launch button ──────────────────── */
+  function refreshGarageBadge() {
+    var b = document.getElementById('gar-launch-active');
+    if (!b) return;
+    var v = getActiveVehicle();
+    if (v) {
+      var name = v.customName || (v.marca + ' ' + v.modello);
+      b.textContent = (v.type === 'moto' ? '🏍 ' : '🚗 ') + name;
+    } else {
+      b.textContent = 'Nessun veicolo';
+    }
+  }
+  window._hubRefreshGarageBadge = refreshGarageBadge;
+
+  /* ── Apply selected vehicle to the diagnosis dropdowns ─────── */
+  function applyVehicleToDiagnosis(v) {
+    if (!v) return;
+    try {
+      // 1. switch auto/moto mode (which rebuilds the marca list)
+      if (typeof window.setVehicleMode === 'function') {
+        window.setVehicleMode(v.type === 'moto' ? 'moto' : 'auto');
+      }
+      // 2. populate marca/modello/anno/motore via existing flow
+      setTimeout(function() {
+        if (typeof window.selectOption === 'function') {
+          if (v.marca) window.selectOption('marca', v.marca);
+          setTimeout(function() {
+            if (v.modello && typeof window.selectOption === 'function') {
+              window.selectOption('modello', v.modello);
+            }
+            setTimeout(function() {
+              var sa = document.getElementById('sel-anno');
+              if (sa && v.anno) {
+                var hasAnno = Array.from(sa.options).some(function(o) { return o.value === v.anno; });
+                if (hasAnno) {
+                  sa.value = v.anno;
+                  if (typeof window.updateMotori === 'function') window.updateMotori();
+                  setTimeout(function() {
+                    var sm = document.getElementById('sel-motore');
+                    if (sm && v.motore) {
+                      var hasMot = Array.from(sm.options).some(function(o) { return o.value === v.motore; });
+                      if (hasMot) sm.value = v.motore;
+                    }
+                  }, 50);
+                }
+              }
+            }, 100);
+          }, 100);
+        }
+      }, 80);
+    } catch(e) { console.error('[AutoHub] applyVehicleToDiagnosis failed', e); }
+  }
+
+  // Expose for other modules
+  window._hubApplyVehicleToDiagnosis = applyVehicleToDiagnosis;
+
+  /* ── Init: inject UI, restore active vehicle on page load ──── */
+  document.addEventListener('DOMContentLoaded', function() {
+    injectGarageUI();
+    setTimeout(function() {
+      var v = getActiveVehicle();
+      if (v) {
+        // Defer to allow diagnosis dropdowns to be initialized first
+        setTimeout(function() { applyVehicleToDiagnosis(v); }, 200);
+      }
+    }, 100);
+  });
+
+  /* ── Pill auto-hide: garage overlay + edit modal also hide it ─ */
+})();
+
+</script>
+
+<!-- HUB FUEL LOG: refuel diary + consumption stats per vehicle -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB FUEL LOG — refuel diary per active vehicle, computes:
+     • L/100km between consecutive "full" refuels
+     • €/km from costs
+     • Trend (last 3 vs all-time avg)
+   Storage: hub_refuels_v1 (array)
+   Each: id, vehicleId, date(ISO), km, litri, prezzoPerLitro,
+         costoTotale, carburante, isFull, distributore, note
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function escSafe(s) {
+    if (typeof window.esc === 'function') return window.esc(s);
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function uid() { return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  var FL_KEY = 'hub_refuels_v1';
+  function loadAll() { try { return JSON.parse(localStorage.getItem(FL_KEY) || '[]'); } catch(e) { return []; } }
+  function saveAll(r) { try { localStorage.setItem(FL_KEY, JSON.stringify(r)); } catch(e) {} }
+  function loadForVehicle(vehicleId) {
+    return loadAll().filter(function(r) { return r.vehicleId === vehicleId; })
+      .sort(function(a, b) { return a.km - b.km; });
+  }
+
+  // Public API
+  window.hubFuelLog = {
+    list:    loadAll,
+    listFor: loadForVehicle,
+    save:    saveAll,
+  };
+
+  /* ── Compute stats ──────────────────────────────────────────── */
+  function computeStats(refuels) {
+    if (!refuels || refuels.length === 0) {
+      return { avgConsumption: null, avgCostPerKm: null, totalSpent: 0, totalKm: 0, totalLitres: 0,
+               trendPct: null, intervals: [] };
+    }
+    // intervals: from each "full" tank to the next "full" tank
+    var sorted = refuels.slice().sort(function(a, b) { return a.km - b.km; });
+    var intervals = [];
+    var prevFull = null;
+    var litresInWindow = 0;
+    for (var i = 0; i < sorted.length; i++) {
+      var r = sorted[i];
+      if (prevFull) {
+        litresInWindow += (Number(r.litri) || 0);
+        if (r.isFull) {
+          var distKm = r.km - prevFull.km;
+          if (distKm > 0 && litresInWindow > 0) {
+            intervals.push({
+              from: prevFull, to: r,
+              km: distKm, litri: litresInWindow,
+              consumption: (litresInWindow / distKm) * 100,
+              costPerKm: (litresInWindow * (r.prezzoPerLitro || 0)) / distKm
+            });
+          }
+          prevFull = r;
+          litresInWindow = 0;
+        }
+      } else if (r.isFull) {
+        prevFull = r;
+        litresInWindow = 0;
+      }
+    }
+
+    var totalLitres = sorted.reduce(function(s, r) { return s + (Number(r.litri) || 0); }, 0);
+    var totalSpent = sorted.reduce(function(s, r) { return s + (Number(r.costoTotale) || 0); }, 0);
+    var firstKm = sorted[0].km;
+    var lastKm = sorted[sorted.length - 1].km;
+    var totalKm = Math.max(0, lastKm - firstKm);
+
+    var avgConsumption = null, avgCostPerKm = null, trendPct = null;
+    if (intervals.length > 0) {
+      var sumC = intervals.reduce(function(s, x) { return s + x.consumption; }, 0);
+      avgConsumption = sumC / intervals.length;
+      var sumCk = intervals.reduce(function(s, x) { return s + x.costPerKm; }, 0);
+      avgCostPerKm = sumCk / intervals.length;
+
+      // trend: compare last 3 (or last half) vs all-time
+      if (intervals.length >= 4) {
+        var last3 = intervals.slice(-3);
+        var l3avg = last3.reduce(function(s, x) { return s + x.consumption; }, 0) / last3.length;
+        trendPct = ((l3avg - avgConsumption) / avgConsumption) * 100;
+      }
+    }
+
+    return {
+      avgConsumption: avgConsumption,
+      avgCostPerKm: avgCostPerKm,
+      totalSpent: totalSpent,
+      totalKm: totalKm,
+      totalLitres: totalLitres,
+      trendPct: trendPct,
+      intervals: intervals,
+      count: sorted.length
+    };
+  }
+
+  /* ── UI INJECTION ───────────────────────────────────────────── */
+  function injectFuelLogUI() {
+    if (document.getElementById('fl-overlay')) return;
+    var hubDiag = document.getElementById('hub-diag');
+    if (!hubDiag) return;
+
+    // Launch button — placed right after the garage launch button
+    var garLaunch = document.getElementById('gar-launch-btn');
+    if (garLaunch) {
+      var b = document.createElement('button');
+      b.id = 'fl-launch-btn';
+      b.className = 'fl-launch';
+      b.type = 'button';
+      b.innerHTML =
+        '<span class="fl-launch-icon">📊</span>' +
+        '<span class="fl-launch-text">Consumi & Rifornimenti</span>' +
+        '<span class="fl-launch-stat" id="fl-launch-stat">—</span>';
+      b.onclick = window.openFuelLog;
+      garLaunch.parentNode.insertBefore(b, garLaunch.nextSibling);
+    }
+
+    // Overlay
+    var ov = document.createElement('div');
+    ov.id = 'fl-overlay';
+    ov.innerHTML =
+      '<div class="fl-hdr">' +
+        '<h2>CONSUMI<small id="fl-hdr-veh">—</small></h2>' +
+        '<button class="gar-close" onclick="closeFuelLog()">✕ Chiudi</button>' +
+      '</div>' +
+      '<div class="fl-body" id="fl-body"></div>';
+    hubDiag.appendChild(ov);
+
+    // Edit modal
+    var em = document.createElement('div');
+    em.id = 'fl-edit';
+    em.onclick = function(e) { if (e.target === em) closeFuelLogEdit(); };
+    em.innerHTML =
+      '<div class="gar-edit-card">' +
+        '<h3 id="fl-edit-title">Nuovo rifornimento</h3>' +
+        '<div class="fl-fullbar">' +
+          '<button type="button" data-full="1" onclick="_flSetFull(true)">⛽ Pieno fatto</button>' +
+          '<button type="button" data-full="0" onclick="_flSetFull(false)">Parziale</button>' +
+        '</div>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Data</label>' +
+            '<input type="date" id="fl-f-date"></div>' +
+          '<div class="gar-field"><label>Km totali al pieno</label>' +
+            '<input type="number" id="fl-f-km" min="0" step="1" placeholder="45000"></div>' +
+        '</div>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Litri</label>' +
+            '<input type="number" id="fl-f-litri" min="0" step="0.01" placeholder="42.5"></div>' +
+          '<div class="gar-field"><label>€ per litro</label>' +
+            '<input type="number" id="fl-f-prezzo" min="0" step="0.001" placeholder="1.789"></div>' +
+        '</div>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Totale spesa €</label>' +
+            '<input type="number" id="fl-f-totale" min="0" step="0.01" placeholder="76.03"></div>' +
+          '<div class="gar-field"><label>Carburante</label>' +
+            '<select id="fl-f-carb">' +
+              '<option value="Benzina">Benzina</option>' +
+              '<option value="Diesel">Diesel</option>' +
+              '<option value="GPL">GPL</option>' +
+              '<option value="Metano">Metano</option>' +
+              '<option value="HVO">HVO</option>' +
+              '<option value="Elettrico">Elettrico (kWh)</option>' +
+            '</select></div>' +
+        '</div>' +
+        '<div class="gar-field"><label>Distributore (opzionale)</label>' +
+          '<input type="text" id="fl-f-distrib" placeholder="Eni Cologno" maxlength="60"></div>' +
+        '<div class="gar-field"><label>Note</label>' +
+          '<textarea id="fl-f-note" rows="2" placeholder="Es. autostrada, viaggio Roma…" maxlength="200"></textarea></div>' +
+        '<div class="gar-edit-btns">' +
+          '<button type="button" class="gar-cancel" onclick="closeFuelLogEdit()">Annulla</button>' +
+          '<button type="button" class="gar-save" onclick="saveFuelLogEdit()" style="background:rgba(91,155,213,.85);border-color:rgba(91,155,213,.6);color:#08131c">Salva</button>' +
+        '</div>' +
+      '</div>';
+    hubDiag.appendChild(em);
+
+    // Auto-compute totale when litri or prezzo changes
+    function autoTotale() {
+      var L = parseFloat(document.getElementById('fl-f-litri').value);
+      var P = parseFloat(document.getElementById('fl-f-prezzo').value);
+      if (!isNaN(L) && !isNaN(P)) {
+        document.getElementById('fl-f-totale').value = (L * P).toFixed(2);
+      }
+    }
+    document.getElementById('fl-f-litri').addEventListener('input', autoTotale);
+    document.getElementById('fl-f-prezzo').addEventListener('input', autoTotale);
+  }
+
+  /* ── Public functions ──────────────────────────────────────── */
+  window.openFuelLog = function() {
+    injectFuelLogUI();
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) {
+      alert('Aggiungi prima un veicolo nel garage.');
+      return;
+    }
+    document.getElementById('fl-overlay').classList.add('visible');
+    document.getElementById('fl-hdr-veh').textContent =
+      (v.customName || (v.marca + ' ' + v.modello)) + ' · ' + (v.type === 'moto' ? 'Moto' : 'Auto');
+    renderFuelLog();
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeFuelLog = function() {
+    document.getElementById('fl-overlay').classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+
+  var _editingFlId = null;
+  var _editingFull = true;
+
+  window.openFuelLogEdit = function(id) {
+    injectFuelLogUI();
+    _editingFlId = id;
+    var r = id ? loadAll().find(function(x) { return x.id === id; }) : null;
+    document.getElementById('fl-edit-title').textContent = r ? 'Modifica rifornimento' : 'Nuovo rifornimento';
+
+    // Defaults: date today, km from active vehicle's odometer or last refuel + 500
+    var v = window.hubGarage && window.hubGarage.active();
+    var refuels = v ? loadForVehicle(v.id) : [];
+    var lastRefuel = refuels[refuels.length - 1];
+    var defKm = r ? r.km : (lastRefuel ? (lastRefuel.km + 500) : (v ? (v.kmTot || 0) : 0));
+    var defCarb = r ? r.carburante : (lastRefuel ? lastRefuel.carburante : 'Benzina');
+
+    document.getElementById('fl-f-date').value = r ? (r.date || '') : new Date().toISOString().slice(0, 10);
+    document.getElementById('fl-f-km').value = defKm || '';
+    document.getElementById('fl-f-litri').value = r ? (r.litri || '') : '';
+    document.getElementById('fl-f-prezzo').value = r ? (r.prezzoPerLitro || '') : '';
+    document.getElementById('fl-f-totale').value = r ? (r.costoTotale || '') : '';
+    document.getElementById('fl-f-carb').value = defCarb;
+    document.getElementById('fl-f-distrib').value = r ? (r.distributore || '') : '';
+    document.getElementById('fl-f-note').value = r ? (r.note || '') : '';
+    _flSetFull(r ? !!r.isFull : true);
+
+    document.getElementById('fl-edit').classList.add('visible');
+  };
+  window.closeFuelLogEdit = function() {
+    document.getElementById('fl-edit').classList.remove('visible');
+  };
+
+  window._flSetFull = function(full) {
+    _editingFull = !!full;
+    document.querySelectorAll('#fl-edit .fl-fullbar button').forEach(function(b) {
+      b.classList.toggle('on', (b.dataset.full === '1') === !!full);
+    });
+  };
+
+  window.saveFuelLogEdit = function() {
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) { alert('Nessun veicolo attivo.'); return; }
+
+    var date = document.getElementById('fl-f-date').value;
+    var km = parseInt(document.getElementById('fl-f-km').value, 10);
+    var litri = parseFloat(document.getElementById('fl-f-litri').value);
+    var prezzo = parseFloat(document.getElementById('fl-f-prezzo').value);
+    var totale = parseFloat(document.getElementById('fl-f-totale').value);
+
+    if (!date || isNaN(km) || km < 0 || isNaN(litri) || litri <= 0) {
+      alert('Compila almeno data, km e litri.');
+      return;
+    }
+    if (isNaN(totale) && !isNaN(prezzo)) totale = litri * prezzo;
+    if (isNaN(prezzo) && !isNaN(totale) && litri > 0) prezzo = totale / litri;
+
+    var record = {
+      vehicleId: v.id,
+      date: date,
+      km: km,
+      litri: litri,
+      prezzoPerLitro: isNaN(prezzo) ? null : prezzo,
+      costoTotale: isNaN(totale) ? null : totale,
+      carburante: document.getElementById('fl-f-carb').value,
+      isFull: _editingFull,
+      distributore: document.getElementById('fl-f-distrib').value.trim(),
+      note: document.getElementById('fl-f-note').value.trim()
+    };
+
+    var all = loadAll();
+    if (_editingFlId) {
+      var i = all.findIndex(function(x) { return x.id === _editingFlId; });
+      if (i >= 0) all[i] = Object.assign({}, all[i], record);
+    } else {
+      record.id = uid();
+      all.push(record);
+    }
+    saveAll(all);
+
+    // Update vehicle's odometer to the new max km
+    if (window.hubGarage && km > (v.kmTot || 0)) {
+      window.hubGarage.update(v.id, { kmTot: km });
+      if (typeof window._hubRefreshGarageBadge === 'function') window._hubRefreshGarageBadge();
+    }
+
+    closeFuelLogEdit();
+    renderFuelLog();
+    refreshFuelLogBadge();
+  };
+
+  window.deleteRefuel = function(id) {
+    if (!confirm('Eliminare questo rifornimento?')) return;
+    var all = loadAll().filter(function(r) { return r.id !== id; });
+    saveAll(all);
+    renderFuelLog();
+    refreshFuelLogBadge();
+  };
+
+  /* ── Render ─────────────────────────────────────────────────── */
+  function renderFuelLog() {
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) return;
+    var refuels = loadForVehicle(v.id);
+    var stats = computeStats(refuels);
+
+    var body = document.getElementById('fl-body');
+    if (!body) return;
+
+    var html = '';
+
+    // Stats grid
+    html += '<div class="fl-stats">';
+    var consVal = stats.avgConsumption != null ? stats.avgConsumption.toFixed(1) : '—';
+    var trendHtml = '';
+    if (stats.trendPct != null) {
+      var pct = stats.trendPct;
+      var cls = pct > 2 ? 'fl-stat-trend-up' : pct < -2 ? 'fl-stat-trend-down' : 'fl-stat-trend-flat';
+      var arrow = pct > 2 ? '▲' : pct < -2 ? '▼' : '—';
+      var sign = pct > 0 ? '+' : '';
+      trendHtml = '<span class="' + cls + '">' + arrow + ' ' + sign + pct.toFixed(1) + '% ult. 3</span>';
+    }
+    html += '<div class="fl-stat">' +
+      '<div class="fl-stat-lbl">Consumo medio</div>' +
+      '<div class="fl-stat-val">' + consVal + '<span style="font-size:.6rem;color:var(--t2);margin-left:4px">L/100km</span></div>' +
+      (trendHtml ? '<div class="fl-stat-sub">' + trendHtml + '</div>' : '') +
+      '</div>';
+    html += '<div class="fl-stat">' +
+      '<div class="fl-stat-lbl">Costo per km</div>' +
+      '<div class="fl-stat-val">' + (stats.avgCostPerKm != null ? stats.avgCostPerKm.toFixed(3) : '—') +
+        '<span style="font-size:.6rem;color:var(--t2);margin-left:4px">€/km</span></div>' +
+      '</div>';
+    html += '<div class="fl-stat">' +
+      '<div class="fl-stat-lbl">Totale speso</div>' +
+      '<div class="fl-stat-val">' + (stats.totalSpent || 0).toFixed(2) + ' €</div>' +
+      '<div class="fl-stat-sub">' + (stats.totalLitres || 0).toFixed(1) + ' L · ' + stats.count + ' rif.</div>' +
+      '</div>';
+    html += '<div class="fl-stat">' +
+      '<div class="fl-stat-lbl">Km percorsi</div>' +
+      '<div class="fl-stat-val">' + (stats.totalKm || 0).toLocaleString('it-IT') + '</div>' +
+      '<div class="fl-stat-sub">tracking</div>' +
+      '</div>';
+    html += '</div>';
+
+    // Add button
+    html += '<button class="fl-add-btn" onclick="openFuelLogEdit(null)">+ Nuovo rifornimento</button>';
+
+    // List
+    if (refuels.length === 0) {
+      html += '<div class="fl-empty">Nessun rifornimento registrato.<br>Aggiungi il primo per iniziare a tracciare consumo e costo per km.</div>';
+    } else {
+      html += '<div class="fl-list-title">Storico (' + refuels.length + ')</div>';
+      // Newest first
+      var sorted = refuels.slice().sort(function(a, b) {
+        return (b.km || 0) - (a.km || 0);
+      });
+      // Map intervals back to "to" record id for showing consumption inline
+      var intervalByToId = {};
+      stats.intervals.forEach(function(ix) { intervalByToId[ix.to.id] = ix; });
+
+      html += sorted.map(function(r) {
+        var dateNice = r.date ? r.date.split('-').reverse().join('/') : '—';
+        var meta = [];
+        if (r.litri) meta.push((+r.litri).toFixed(2) + ' L');
+        if (r.costoTotale) meta.push((+r.costoTotale).toFixed(2) + ' €');
+        if (r.prezzoPerLitro) meta.push((+r.prezzoPerLitro).toFixed(3) + ' €/L');
+        if (r.distributore) meta.push(escSafe(r.distributore));
+        meta.push((r.km || 0).toLocaleString('it-IT') + ' km');
+        if (!r.isFull) meta.push('parziale');
+
+        var ix = intervalByToId[r.id];
+        var consBlock = ix ?
+          '<div class="fl-row-cons"><div class="fl-row-val">' + ix.consumption.toFixed(1) + '</div>' +
+          '<div class="fl-row-unit">L/100km</div></div>' : '';
+
+        return '<div class="fl-row">' +
+          '<div class="fl-row-info">' +
+            '<div class="fl-row-date">' + escSafe(dateNice) + ' · ' + escSafe(r.carburante || '—') + '</div>' +
+            '<div class="fl-row-meta">' + meta.join(' · ') + '</div>' +
+          '</div>' +
+          consBlock +
+          '<button class="fl-row-del" onclick="openFuelLogEdit(\'' + r.id + '\')" title="Modifica">✎</button>' +
+          '<button class="fl-row-del" onclick="deleteRefuel(\'' + r.id + '\')" title="Elimina">✕</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    body.innerHTML = html;
+  }
+
+  /* ── Badge: show avg consumption next to launch button ─────── */
+  function refreshFuelLogBadge() {
+    var b = document.getElementById('fl-launch-stat');
+    if (!b) return;
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) { b.textContent = '—'; return; }
+    var stats = computeStats(loadForVehicle(v.id));
+    if (stats.avgConsumption != null) {
+      b.textContent = stats.avgConsumption.toFixed(1) + ' L/100km';
+    } else if (stats.count > 0) {
+      b.textContent = stats.count + ' rif.';
+    } else {
+      b.textContent = 'Mai usato';
+    }
+  }
+  window._hubRefreshFuelLogBadge = refreshFuelLogBadge;
+
+  /* ── Init ───────────────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      injectFuelLogUI();
+      refreshFuelLogBadge();
+    }, 250); // after garage UI injection
+  });
+
+  // When user switches active vehicle, the badge needs to update too
+  if (typeof window.useVehicle === 'function') {
+    var _origUseVehicle = window.useVehicle;
+    window.useVehicle = function(id) {
+      var r = _origUseVehicle.apply(this, arguments);
+      try { refreshFuelLogBadge(); } catch(e) {}
       return r;
     };
   }
