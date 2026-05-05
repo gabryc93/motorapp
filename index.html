@@ -943,6 +943,19 @@ body[data-hub="fuel"]::before { display: none !important; }
 #hub-fuel #map-brow.bandiera-row::-webkit-scrollbar { display: none; }
 #hub-fuel #map-brow .bfb { flex-shrink: 0; }
 
+/* Same horizontal-scroll behaviour for the HOME filter rows */
+#hub-fuel #frow.filter-row,
+#hub-fuel #brow.bandiera-row {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+#hub-fuel #frow.filter-row::-webkit-scrollbar,
+#hub-fuel #brow.bandiera-row::-webkit-scrollbar { display: none; }
+#hub-fuel #frow .fbtn,
+#hub-fuel #brow .bfb { flex-shrink: 0; }
+
 /* ═══════════════════════════════════════════════════════════════════
    GARAGE — multi-vehicle profile (auto + moto), used as identity for
    diagnosis, fuel tracking, maintenance reminders.
