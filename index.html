@@ -888,16 +888,16 @@ body[data-hub="fuel"]::before { display: none !important; }
   background: transparent;
   border: none;
   border-radius: 999px;
-  width: 44px; height: 36px;
+  width: 38px; height: 34px;
   padding: 0;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
   color: rgba(255, 255, 255, 0.55);
-  font-size: 0; /* hide any text */
+  font-size: 0;
 }
 .hub-tab .hub-icn {
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1;
   opacity: 0.55;
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -922,6 +922,10 @@ body[data-hub="fuel"]::before { display: none !important; }
 .hub-tab.active.hub-tab-ride {
   background: rgba(255, 90, 40, 0.24);
   box-shadow: 0 0 0 1px rgba(255, 90, 40, 0.45);
+}
+.hub-tab.active.hub-tab-meteo {
+  background: rgba(91, 155, 213, 0.22);
+  box-shadow: 0 0 0 1px rgba(91, 155, 213, 0.4);
 }
 .hub-tab:active .hub-icn { transform: scale(0.88); }
 
@@ -1557,7 +1561,8 @@ body[data-hub="fuel"]::before { display: none !important; }
    Replicate them by mirroring the same selectors targeted at hub-garage. */
 #hub-garage .gar-launch,
 #hub-garage .fl-launch,
-#hub-garage .mt-launch {
+#hub-garage .mt-launch,
+#hub-garage .rdl-launch {
   display: flex; align-items: center; gap: 10px;
   width: 100%;
   border-radius: 10px;
@@ -1584,21 +1589,31 @@ body[data-hub="fuel"]::before { display: none !important; }
   border-color: rgba(76,175,125,.3);
   color: #b8e6cf;
 }
+#hub-garage .rdl-launch {
+  background: linear-gradient(135deg, rgba(255,90,40,.13), rgba(255,90,40,.04));
+  border-color: rgba(255,90,40,.3);
+  color: #ffc4b0;
+}
 #hub-garage .gar-launch:hover { border-color: rgba(224,60,52,.5); }
 #hub-garage .fl-launch:hover  { border-color: rgba(91,155,213,.5); }
 #hub-garage .mt-launch:hover  { border-color: rgba(76,175,125,.55); }
+#hub-garage .rdl-launch:hover { border-color: rgba(255,90,40,.55); }
 #hub-garage .gar-launch:active,
 #hub-garage .fl-launch:active,
-#hub-garage .mt-launch:active { transform: scale(.99); }
+#hub-garage .mt-launch:active,
+#hub-garage .rdl-launch:active { transform: scale(.99); }
 #hub-garage .gar-launch-icon,
 #hub-garage .fl-launch-icon,
-#hub-garage .mt-launch-icon { font-size: 1rem; }
+#hub-garage .mt-launch-icon,
+#hub-garage .rdl-launch-icon { font-size: 1rem; }
 #hub-garage .gar-launch-text,
 #hub-garage .fl-launch-text,
-#hub-garage .mt-launch-text { flex: 1; text-align: left; }
+#hub-garage .mt-launch-text,
+#hub-garage .rdl-launch-text { flex: 1; text-align: left; }
 #hub-garage .gar-launch-active,
 #hub-garage .fl-launch-stat,
-#hub-garage .mt-launch-stat {
+#hub-garage .mt-launch-stat,
+#hub-garage .rdl-launch-stat {
   padding: 3px 8px;
   border-radius: 999px;
   font-size: .58rem;
@@ -1620,6 +1635,10 @@ body[data-hub="fuel"]::before { display: none !important; }
   background: rgba(76,175,125,.18);
   color: #d4f0e2;
 }
+#hub-garage .rdl-launch-stat {
+  background: rgba(255,90,40,.18);
+  color: #ffd8c8;
+}
 #hub-garage .mt-launch-stat.warn {
   background: rgba(232,160,48,.2);
   color: #ffe7c2;
@@ -1627,6 +1646,449 @@ body[data-hub="fuel"]::before { display: none !important; }
 #hub-garage .mt-launch-stat.crit {
   background: rgba(224,90,74,.2);
   color: #ffb4a8;
+}
+
+/* ── Ride Diary overlay ────────────────────────────────────────── */
+#rdl-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#rdl-overlay.visible { display: flex; }
+.rdl-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+.rdl-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1); letter-spacing: .02em;
+}
+.rdl-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+.rdl-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+.rdl-stats-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.rdl-summary-cell {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+}
+.rdl-summary-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+.rdl-summary-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.15rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+}
+.rdl-card {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.rdl-card:hover { border-color: var(--brd2); }
+.rdl-card:active { transform: scale(.99); }
+.rdl-card-map {
+  flex-shrink: 0;
+  width: 70px; height: 70px;
+  background: var(--surf2);
+  border-radius: 8px;
+  border: 1px solid var(--brd);
+  overflow: hidden;
+}
+.rdl-card-map svg {
+  width: 100%; height: 100%;
+  display: block;
+}
+.rdl-card-info { flex: 1; min-width: 0; }
+.rdl-card-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: .95rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  margin-bottom: 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.rdl-card-veh {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 5px;
+}
+.rdl-card-stats {
+  display: flex;
+  gap: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  color: var(--t1);
+  flex-wrap: wrap;
+}
+.rdl-card-stat {
+  white-space: nowrap;
+}
+.rdl-card-stat-lbl {
+  color: var(--t3);
+  font-size: .5rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-right: 3px;
+}
+.rdl-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--t3);
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+  line-height: 1.6;
+}
+
+/* ── Ride detail modal ────────────────────────────────────────── */
+#rdl-detail {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(3px);
+  z-index: 80;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#rdl-detail.visible { display: flex; }
+@media (min-width: 600px) { #rdl-detail { align-items: center; } }
+.rdl-detail-card {
+  background: var(--surf);
+  border: 1px solid var(--brd2);
+  border-radius: 14px 14px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@media (min-width: 600px) { .rdl-detail-card { border-radius: 14px; } }
+.rdl-detail-hdr {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--brd);
+}
+.rdl-detail-hdr h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.2rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  margin-bottom: 3px;
+}
+.rdl-detail-hdr small {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.rdl-detail-body { padding: 14px 18px; }
+.rdl-detail-map {
+  width: 100%;
+  height: 200px;
+  background: var(--surf2);
+  border-radius: 10px;
+  border: 1px solid var(--brd);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.rdl-detail-map svg { width: 100%; height: 100%; display: block; }
+.rdl-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.rdl-detail-cell {
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 8px;
+  padding: 9px 11px;
+}
+.rdl-detail-cell-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .53rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 3px;
+}
+.rdl-detail-cell-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: .95rem;
+  color: var(--t1);
+}
+.rdl-rename-row {
+  display: flex; gap: 8px;
+  margin-bottom: 12px;
+}
+.rdl-rename-row input {
+  flex: 1;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 7px;
+  color: var(--t1);
+  padding: 8px 11px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+}
+.rdl-detail-actions {
+  display: flex; gap: 6px;
+  padding: 12px 18px 18px;
+  border-top: 1px solid var(--brd);
+}
+.rdl-detail-actions button {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem; font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+}
+.rdl-act-close {
+  background: var(--surf2);
+  border-color: var(--brd2);
+  color: var(--t2);
+}
+.rdl-act-export {
+  background: rgba(91,155,213,.85);
+  border-color: rgba(91,155,213,.6);
+  color: #08131c;
+}
+.rdl-act-del {
+  background: rgba(224,90,74,.18);
+  border-color: rgba(224,90,74,.4);
+  color: #ff8a82;
+}
+
+/* ── Weather along route ──────────────────────────────────────── */
+#wp-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#wp-overlay.visible { display: flex; }
+.wp-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+.wp-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1); letter-spacing: .02em;
+}
+.wp-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+.wp-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+.wp-form {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+.wp-field {
+  position: relative;
+  margin-bottom: 10px;
+}
+.wp-field label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 5px;
+}
+.wp-field input {
+  width: 100%;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 7px;
+  color: var(--t1);
+  padding: 9px 11px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+}
+.wp-field input:focus { outline: none; border-color: rgba(110,170,220,.6); }
+.wp-locate {
+  position: absolute; right: 6px; bottom: 5px;
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd2);
+  border-radius: 6px;
+  width: 32px; height: 30px;
+  font-size: .9rem;
+  cursor: pointer;
+  color: var(--t1);
+}
+.wp-go {
+  width: 100%;
+  appearance: none; -webkit-appearance: none;
+  background: linear-gradient(135deg, rgba(110,170,220,.85), rgba(91,155,213,.7));
+  border: 1px solid rgba(91,155,213,.6);
+  border-radius: 8px;
+  color: #08131c;
+  padding: 11px;
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem; font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.wp-go:hover { filter: brightness(1.1); }
+.wp-go:active { transform: scale(.99); }
+
+.wp-loading, .wp-error {
+  text-align: center;
+  padding: 24px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+}
+.wp-loading { color: var(--t3); }
+.wp-error {
+  color: #ff8a82;
+  background: rgba(224,90,74,.1);
+  border: 1px solid rgba(224,90,74,.3);
+  border-radius: 8px;
+}
+
+.wp-route-info {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+}
+.wp-route-row {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: .95rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  margin-bottom: 3px;
+}
+.wp-route-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  color: var(--t2);
+}
+.wp-alert {
+  background: rgba(232,160,48,.13);
+  border: 1px solid rgba(232,160,48,.35);
+  border-radius: 8px;
+  padding: 9px 12px;
+  margin-bottom: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: .7rem;
+  color: #ffd699;
+}
+.wp-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.wp-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 13px;
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+}
+.wp-step-time {
+  flex-shrink: 0;
+  text-align: center;
+  width: 64px;
+  border-right: 1px solid var(--brd);
+  padding-right: 10px;
+}
+.wp-step-frac {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.wp-step-hh {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.05rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  margin-top: 2px;
+}
+.wp-step-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+.wp-step-info { flex: 1; min-width: 0; }
+.wp-step-temp {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+}
+.wp-step-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: .6rem;
+  color: var(--t2);
+  margin-top: 2px;
+}
+.wp-precip {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 7px;
+  background: rgba(91,155,213,.15);
+  color: #b8d4ec;
+  border-radius: 999px;
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  letter-spacing: .04em;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -2522,6 +2984,9 @@ body:has(#ps-detail.visible) .hub-tabs,
 body:has(#rd-overlay.visible) .hub-tabs,
 body:has(#mt-overlay.visible) .hub-tabs,
 body:has(#mt-edit.visible) .hub-tabs,
+body:has(#rdl-overlay.visible) .hub-tabs,
+body:has(#rdl-detail.visible) .hub-tabs,
+body:has(#wp-overlay.visible) .hub-tabs,
 body[data-pill-hidden="1"] .hub-tabs {
   opacity: 0;
   transform: translateX(-50%) translateY(24px);
@@ -3184,7 +3649,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 </head>
 <body data-hub="fuel">
 
-<!-- ═══ HUB FLOATING PILL (5 tabs) ═══════════════════════════════ -->
+<!-- ═══ HUB FLOATING PILL (6 tabs) ═══════════════════════════════ -->
 <nav class="hub-tabs" role="tablist" aria-label="AutoHub sections">
   <button class="hub-tab hub-tab-garage" data-hub="garage" onclick="hubGo('garage')"
           role="tab" aria-selected="false" aria-label="Garage" title="Garage">
@@ -3197,6 +3662,10 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   <button class="hub-tab hub-tab-ride" data-hub="ride" onclick="hubGo('ride')"
           role="tab" aria-selected="false" aria-label="Modalità Ride" title="Modalità Ride">
     <span class="hub-icn" aria-hidden="true">🏁</span>
+  </button>
+  <button class="hub-tab hub-tab-meteo" data-hub="meteo" onclick="hubGo('meteo')"
+          role="tab" aria-selected="false" aria-label="Meteo percorso" title="Meteo lungo il percorso">
+    <span class="hub-icn" aria-hidden="true">🌦</span>
   </button>
   <button class="hub-tab hub-tab-diag" data-hub="diag" onclick="hubGo('diag')"
           role="tab" aria-selected="false" aria-label="Diagnosi" title="Diagnosi">
@@ -3901,7 +4370,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   // Sezioni reali con DOM persistente
   var SECTIONS = ['fuel', 'diag', 'garage'];
   // Tab "azione": aprono un overlay e tornano alla sezione precedente
-  var ACTIONS  = ['passi', 'ride'];
+  var ACTIONS  = ['passi', 'ride', 'meteo'];
   var _lastSection = 'fuel';
 
   function hubGo(name) {
@@ -3939,6 +4408,8 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
         if (typeof window.openPassi === 'function') window.openPassi();
       } else if (name === 'ride') {
         if (typeof window.openRide === 'function') window.openRide();
+      } else if (name === 'meteo') {
+        if (typeof window.openWeather === 'function') window.openWeather();
       }
       // After opening, after a short delay, revert tab visual to last section
       setTimeout(function() {
@@ -4016,6 +4487,9 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     var rdo = document.getElementById('rd-overlay');
     var mto = document.getElementById('mt-overlay');
     var mte = document.getElementById('mt-edit');
+    var rdl = document.getElementById('rdl-overlay');
+    var rdd = document.getElementById('rdl-detail');
+    var wpo = document.getElementById('wp-overlay');
     var hide =
       (mv  && mv.classList.contains('visible')) ||
       (fv  && fv.classList.contains('visible')) ||
@@ -4030,14 +4504,18 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
       (psd && psd.classList.contains('visible')) ||
       (rdo && rdo.classList.contains('visible')) ||
       (mto && mto.classList.contains('visible')) ||
-      (mte && mte.classList.contains('visible'));
+      (mte && mte.classList.contains('visible')) ||
+      (rdl && rdl.classList.contains('visible')) ||
+      (rdd && rdd.classList.contains('visible')) ||
+      (wpo && wpo.classList.contains('visible'));
     if (hide) document.body.dataset.pillHidden = '1';
     else delete document.body.dataset.pillHidden;
   }
   function _hubObservePillTriggers() {
     var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay',
                'hub-cmp-overlay', 'gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
-               'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit'];
+               'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
+               'rdl-overlay', 'rdl-detail', 'wp-overlay'];
     if (typeof MutationObserver === 'function') {
       var obs = new MutationObserver(_hubUpdatePillVisibility);
       ids.forEach(function(id) {
@@ -4046,7 +4524,8 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
       });
       var lateRetry = setTimeout(function() {
         ['gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
-         'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit'].forEach(function(id) {
+         'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
+         'rdl-overlay', 'rdl-detail', 'wp-overlay'].forEach(function(id) {
           var el = document.getElementById(id);
           if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
         });
@@ -14220,8 +14699,54 @@ async function runCmp() {
     if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
     if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
     releaseWakeLock();
+
+    // Auto-save to ride diary if we have at least 1 km
+    if (totalKm >= 1) {
+      try {
+        var v = window.hubGarage && window.hubGarage.active();
+        var entry = {
+          id: 'rd' + Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+          vehicleId: v ? v.id : null,
+          vehicleName: v ? (v.customName || (v.marca + ' ' + v.modello)) : 'Sconosciuto',
+          vehicleType: v ? v.type : null,
+          startTs: track.length ? track[0].ts : Date.now() - elapsedMs,
+          endTs: track.length ? track[track.length-1].ts : Date.now(),
+          elapsedMs: elapsedMs,
+          distanceKm: totalKm,
+          maxKmh: maxSpeed,
+          avgKmh: avgKmh,
+          // Simplify track to ~80 points to keep storage light
+          points: simplifyTrack(track, 80),
+          title: ''
+        };
+        var all = [];
+        try { all = JSON.parse(localStorage.getItem('hub_rides_v1') || '[]'); } catch(_) {}
+        all.push(entry);
+        localStorage.setItem('hub_rides_v1', JSON.stringify(all));
+        setStatus('Ride salvata · media ' + avgKmh.toFixed(1) + ' km/h', false);
+      } catch(e) { console.error('[AutoHub] ride save failed', e); }
+    }
+
     renderActions();
   };
+
+  function simplifyTrack(pts, maxN) {
+    if (!pts || pts.length <= maxN) return pts.map(function(p) {
+      return { lat: +p.lat.toFixed(5), lng: +p.lng.toFixed(5), ts: p.ts };
+    });
+    var step = Math.floor(pts.length / maxN);
+    var out = [];
+    for (var i = 0; i < pts.length; i += step) {
+      var p = pts[i];
+      out.push({ lat: +p.lat.toFixed(5), lng: +p.lng.toFixed(5), ts: p.ts });
+    }
+    // ensure last point included
+    var last = pts[pts.length - 1];
+    if (out.length === 0 || out[out.length-1].ts !== last.ts) {
+      out.push({ lat: +last.lat.toFixed(5), lng: +last.lng.toFixed(5), ts: last.ts });
+    }
+    return out;
+  }
   window.rideReset = function() {
     state = 'idle';
     elapsedMs = 0; distanceM = 0; maxSpeed = 0; sumSpeed = 0; sumSpeedN = 0;
@@ -14619,6 +15144,513 @@ async function runCmp() {
       try { refreshMaintBadge(); } catch(e) {}
       return r;
     };
+  }
+})();
+
+</script>
+
+<!-- HUB RIDELOG: ride diary auto-saved on rideStop -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB RIDELOG — diary of past rides (auto-saved on rideStop)
+   Data: hub_rides_v1
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function escSafe(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function loadAll() {
+    try { return JSON.parse(localStorage.getItem('hub_rides_v1') || '[]'); }
+    catch(e) { return []; }
+  }
+  function saveAll(a) {
+    try { localStorage.setItem('hub_rides_v1', JSON.stringify(a)); } catch(e) {}
+  }
+
+  /* ── Mini-map SVG generator from track points ───────────────── */
+  function trackSVG(points, w, h, color) {
+    if (!points || points.length < 2) {
+      return '<svg viewBox="0 0 ' + w + ' ' + h + '"><line x1="' + (w/2) + '" y1="' + (h*0.3) + '" x2="' + (w/2) + '" y2="' + (h*0.7) + '" stroke="rgba(255,255,255,.2)" stroke-width="2"/></svg>';
+    }
+    var lats = points.map(function(p){return p.lat;});
+    var lngs = points.map(function(p){return p.lng;});
+    var minLat = Math.min.apply(null, lats), maxLat = Math.max.apply(null, lats);
+    var minLng = Math.min.apply(null, lngs), maxLng = Math.max.apply(null, lngs);
+    var dLat = maxLat - minLat || 0.001;
+    var dLng = maxLng - minLng || 0.001;
+    var pad = 4;
+    var path = points.map(function(p, i) {
+      var x = pad + (p.lng - minLng) / dLng * (w - 2*pad);
+      // Note: SVG y is inverted (lat ↑ = y ↓)
+      var y = pad + (maxLat - p.lat) / dLat * (h - 2*pad);
+      return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
+    }).join(' ');
+    var c = color || '#ff5a28';
+    var startX = pad + (points[0].lng - minLng) / dLng * (w - 2*pad);
+    var startY = pad + (maxLat - points[0].lat) / dLat * (h - 2*pad);
+    var endP = points[points.length - 1];
+    var endX = pad + (endP.lng - minLng) / dLng * (w - 2*pad);
+    var endY = pad + (maxLat - endP.lat) / dLat * (h - 2*pad);
+    return '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
+      '<path d="' + path + '" stroke="' + c + '" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<circle cx="' + startX.toFixed(1) + '" cy="' + startY.toFixed(1) + '" r="2.5" fill="#6dd9a3"/>' +
+      '<circle cx="' + endX.toFixed(1) + '" cy="' + endY.toFixed(1) + '" r="2.5" fill="#ff8a82"/>' +
+    '</svg>';
+  }
+
+  function fmtDuration(ms) {
+    var s = Math.floor(ms / 1000);
+    var h = Math.floor(s / 3600);
+    var m = Math.floor((s % 3600) / 60);
+    if (h > 0) return h + 'h ' + (m < 10 ? '0' : '') + m + 'm';
+    return m + 'm';
+  }
+  function fmtDate(ts) {
+    var d = new Date(ts);
+    return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth()+1)).slice(-2) + '/' + d.getFullYear();
+  }
+
+  function injectRideLogUI() {
+    if (document.getElementById('rdl-overlay')) return;
+
+    var slot = document.getElementById('garage-launch-slot');
+    if (slot) {
+      var b = document.createElement('button');
+      b.id = 'rdl-launch-btn';
+      b.className = 'rdl-launch';
+      b.type = 'button';
+      b.innerHTML =
+        '<span class="rdl-launch-icon">📓</span>' +
+        '<span class="rdl-launch-text">Diario uscite</span>' +
+        '<span class="rdl-launch-stat" id="rdl-launch-stat">—</span>';
+      b.onclick = window.openRideLog;
+      slot.appendChild(b);
+    }
+
+    var ov = document.createElement('div');
+    ov.id = 'rdl-overlay';
+    ov.innerHTML =
+      '<div class="rdl-hdr">' +
+        '<h2>DIARIO USCITE<small>Ride completate · auto-salvate</small></h2>' +
+        '<button class="gar-close" onclick="closeRideLog()">✕ Chiudi</button>' +
+      '</div>' +
+      '<div class="rdl-body" id="rdl-body"></div>';
+    document.body.appendChild(ov);
+
+    var dm = document.createElement('div');
+    dm.id = 'rdl-detail';
+    dm.onclick = function(e) { if (e.target === dm) closeRideLogDetail(); };
+    dm.innerHTML = '<div class="rdl-detail-card" id="rdl-detail-card"></div>';
+    document.body.appendChild(dm);
+  }
+
+  /* ── Public ─────────────────────────────────────────────────── */
+  window.openRideLog = function() {
+    injectRideLogUI();
+    document.getElementById('rdl-overlay').classList.add('visible');
+    renderRideLog();
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeRideLog = function() {
+    document.getElementById('rdl-overlay').classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeRideLogDetail = function() {
+    document.getElementById('rdl-detail').classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+
+  function renderRideLog() {
+    var body = document.getElementById('rdl-body');
+    if (!body) return;
+    var all = loadAll();
+    if (all.length === 0) {
+      body.innerHTML = '<div class="rdl-empty">Nessuna uscita registrata.<br>Avvia una Ride dalla tab 🏁 per registrare la prossima.</div>';
+      return;
+    }
+
+    // Summary stats
+    var totalKm = all.reduce(function(s, r) { return s + (r.distanceKm || 0); }, 0);
+    var totalH = all.reduce(function(s, r) { return s + (r.elapsedMs || 0); }, 0) / 3600000;
+    var maxKmh = all.reduce(function(s, r) { return Math.max(s, r.maxKmh || 0); }, 0);
+
+    var html = '<div class="rdl-stats-summary">' +
+      '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Uscite</div><div class="rdl-summary-val">' + all.length + '</div></div>' +
+      '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Km totali</div><div class="rdl-summary-val">' + Math.round(totalKm).toLocaleString('it-IT') + '</div></div>' +
+      '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Tempo</div><div class="rdl-summary-val">' + Math.round(totalH * 10) / 10 + 'h</div></div>' +
+    '</div>';
+
+    var sorted = all.slice().sort(function(a, b) { return (b.startTs || 0) - (a.startTs || 0); });
+    html += sorted.map(function(r) {
+      var title = r.title || ('Ride ' + fmtDate(r.startTs));
+      var color = r.vehicleType === 'moto' ? '#ff5a28' : '#5b9bd5';
+      return '<div class="rdl-card" data-id="' + r.id + '">' +
+        '<div class="rdl-card-map">' + trackSVG(r.points, 70, 70, color) + '</div>' +
+        '<div class="rdl-card-info">' +
+          '<div class="rdl-card-title">' + escSafe(title) + '</div>' +
+          '<div class="rdl-card-veh">' + escSafe(r.vehicleName || '—') + ' · ' + fmtDate(r.startTs) + '</div>' +
+          '<div class="rdl-card-stats">' +
+            '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DIST</span>' + (r.distanceKm || 0).toFixed(1) + ' km</span>' +
+            '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DUR</span>' + fmtDuration(r.elapsedMs || 0) + '</span>' +
+            '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">MAX</span>' + Math.round(r.maxKmh || 0) + ' km/h</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    body.innerHTML = html;
+  }
+
+  /* ── Detail ──────────────────────────────────────────────────── */
+  function openDetail(rideId) {
+    var r = loadAll().find(function(x) { return x.id === rideId; });
+    if (!r) return;
+    var card = document.getElementById('rdl-detail-card');
+    var title = r.title || ('Ride ' + fmtDate(r.startTs));
+    var color = r.vehicleType === 'moto' ? '#ff5a28' : '#5b9bd5';
+    card.innerHTML =
+      '<div class="rdl-detail-hdr">' +
+        '<h3>' + escSafe(title) + '</h3>' +
+        '<small>' + escSafe(r.vehicleName || '—') + ' · ' + fmtDate(r.startTs) + '</small>' +
+      '</div>' +
+      '<div class="rdl-detail-body">' +
+        '<div class="rdl-detail-map">' + trackSVG(r.points, 600, 200, color) + '</div>' +
+        '<div class="rdl-rename-row">' +
+          '<input type="text" id="rdl-rename" maxlength="60" placeholder="Titolo (es. Stelvio con Marco)" value="' + escSafe(r.title || '') + '">' +
+          '<button class="rdl-act-export" onclick="rideLogRename(\'' + r.id + '\')">Salva</button>' +
+        '</div>' +
+        '<div class="rdl-detail-grid">' +
+          '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Distanza</div><div class="rdl-detail-cell-val">' + (r.distanceKm || 0).toFixed(2) + ' km</div></div>' +
+          '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Durata</div><div class="rdl-detail-cell-val">' + fmtDuration(r.elapsedMs || 0) + '</div></div>' +
+          '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità media</div><div class="rdl-detail-cell-val">' + (r.avgKmh || 0).toFixed(1) + ' km/h</div></div>' +
+          '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità max</div><div class="rdl-detail-cell-val">' + Math.round(r.maxKmh || 0) + ' km/h</div></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rdl-detail-actions">' +
+        '<button class="rdl-act-close" onclick="closeRideLogDetail()">Chiudi</button>' +
+        '<button class="rdl-act-export" onclick="rideLogExportGPX(\'' + r.id + '\')">⬇ GPX</button>' +
+        '<button class="rdl-act-del" onclick="rideLogDelete(\'' + r.id + '\')">🗑 Elimina</button>' +
+      '</div>';
+    document.getElementById('rdl-detail').classList.add('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  }
+
+  window.rideLogRename = function(id) {
+    var input = document.getElementById('rdl-rename');
+    var newTitle = input ? input.value.trim() : '';
+    var all = loadAll();
+    var i = all.findIndex(function(x) { return x.id === id; });
+    if (i >= 0) {
+      all[i].title = newTitle;
+      saveAll(all);
+      renderRideLog();
+      closeRideLogDetail();
+    }
+  };
+  window.rideLogDelete = function(id) {
+    if (!confirm('Eliminare questa uscita dal diario?')) return;
+    var all = loadAll().filter(function(x) { return x.id !== id; });
+    saveAll(all);
+    closeRideLogDetail();
+    renderRideLog();
+    refreshRideLogBadge();
+  };
+  window.rideLogExportGPX = function(id) {
+    var r = loadAll().find(function(x) { return x.id === id; });
+    if (!r || !r.points || r.points.length === 0) { alert('Nessun punto GPS.'); return; }
+    var trkpts = r.points.map(function(p) {
+      var t = new Date(p.ts).toISOString();
+      return '    <trkpt lat="' + p.lat + '" lon="' + p.lng + '"><time>' + t + '</time></trkpt>';
+    }).join('\n');
+    var name = r.title || ('Ride ' + fmtDate(r.startTs));
+    var gpx = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<gpx version="1.1" creator="AutoHub" xmlns="http://www.topografix.com/GPX/1/1">\n' +
+      '  <metadata><name>' + escSafe(name) + '</name><time>' + new Date(r.startTs).toISOString() + '</time></metadata>\n' +
+      '  <trk><name>' + escSafe(name) + '</name><trkseg>\n' +
+      trkpts + '\n' +
+      '  </trkseg></trk>\n' +
+      '</gpx>';
+    var blob = new Blob([gpx], { type: 'application/gpx+xml' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'autohub-' + name.replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.gpx';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      try { URL.revokeObjectURL(url); } catch(_) {}
+      a.remove();
+    }, 100);
+  };
+
+  function refreshRideLogBadge() {
+    var b = document.getElementById('rdl-launch-stat');
+    if (!b) return;
+    var n = loadAll().length;
+    b.textContent = n === 0 ? 'Vuoto' : n + (n === 1 ? ' uscita' : ' uscite');
+  }
+  window._hubRefreshRideLogBadge = refreshRideLogBadge;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      injectRideLogUI();
+      refreshRideLogBadge();
+    }, 500);
+
+    // Delegate clicks on cards
+    document.addEventListener('click', function(ev) {
+      var card = ev.target.closest('#rdl-body .rdl-card');
+      if (card) openDetail(card.dataset.id);
+    });
+  });
+})();
+
+</script>
+
+<!-- HUB WEATHER: meteo lungo il percorso (geocoding+OSRM+Open-Meteo) -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB WEATHER — meteo lungo un percorso (geocoding + OSRM + Open-Meteo)
+   Pill-tab "azione": apre overlay direttamente
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function escSafe(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function injectWeatherUI() {
+    if (document.getElementById('wp-overlay')) return;
+    var ov = document.createElement('div');
+    ov.id = 'wp-overlay';
+    ov.innerHTML =
+      '<div class="wp-hdr">' +
+        '<h2>METEO LUNGO IL PERCORSO<small>OpenStreetMap · Open-Meteo</small></h2>' +
+        '<button class="gar-close" onclick="closeWeather()">✕ Chiudi</button>' +
+      '</div>' +
+      '<div class="wp-body">' +
+        '<div class="wp-form">' +
+          '<div class="wp-field"><label>Partenza</label>' +
+            '<input type="text" id="wp-from" placeholder="Es. Milano" autocomplete="off">' +
+            '<button class="wp-locate" onclick="wpUseLocation()" title="Usa la mia posizione">📍</button>' +
+          '</div>' +
+          '<div class="wp-field"><label>Destinazione</label>' +
+            '<input type="text" id="wp-to" placeholder="Es. Stelvio" autocomplete="off">' +
+          '</div>' +
+          '<div class="wp-field"><label>Partenza prevista</label>' +
+            '<input type="datetime-local" id="wp-when">' +
+          '</div>' +
+          '<button class="wp-go" onclick="wpCompute()">Calcola meteo →</button>' +
+        '</div>' +
+        '<div class="wp-result" id="wp-result"></div>' +
+      '</div>';
+    document.body.appendChild(ov);
+
+    // Default datetime: now rounded
+    var now = new Date();
+    now.setMinutes(0, 0, 0);
+    var pad = function(n) { return n < 10 ? '0' + n : n; };
+    var local = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) +
+                'T' + pad(now.getHours()) + ':00';
+    document.getElementById('wp-when').value = local;
+  }
+
+  window.openWeather = function() {
+    injectWeatherUI();
+    document.getElementById('wp-overlay').classList.add('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeWeather = function() {
+    var ov = document.getElementById('wp-overlay');
+    if (ov) ov.classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+
+  window.wpUseLocation = function() {
+    if (!navigator.geolocation) { alert('GPS non disponibile.'); return; }
+    var input = document.getElementById('wp-from');
+    input.value = '⌖ Acquisizione GPS...';
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      input.value = pos.coords.latitude.toFixed(4) + ',' + pos.coords.longitude.toFixed(4);
+      input.dataset.lat = pos.coords.latitude;
+      input.dataset.lng = pos.coords.longitude;
+    }, function(err) {
+      input.value = '';
+      alert('GPS errore: ' + (err.message || err.code));
+    }, { enableHighAccuracy: true, timeout: 10000 });
+  };
+
+  // Geocode using Nominatim (OSM)
+  async function geocode(query) {
+    // If query is "lat,lng" use it directly
+    var m = query.trim().match(/^(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)$/);
+    if (m) return { lat: +m[1], lng: +m[2], display: query };
+    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=it,fr,ch,at,si&q=' +
+              encodeURIComponent(query);
+    var r = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!r.ok) throw new Error('Geocoding HTTP ' + r.status);
+    var data = await r.json();
+    if (!data || !data.length) throw new Error('Località non trovata: ' + query);
+    return { lat: +data[0].lat, lng: +data[0].lon, display: data[0].display_name };
+  }
+
+  // Get route from OSRM (public demo server)
+  async function getRoute(from, to) {
+    var url = 'https://router.project-osrm.org/route/v1/driving/' +
+              from.lng + ',' + from.lat + ';' + to.lng + ',' + to.lat +
+              '?overview=full&geometries=geojson';
+    var r = await fetch(url);
+    if (!r.ok) throw new Error('Routing HTTP ' + r.status);
+    var data = await r.json();
+    if (!data.routes || !data.routes.length) throw new Error('Nessun percorso trovato');
+    var route = data.routes[0];
+    return {
+      coords: route.geometry.coordinates, // [[lng,lat], ...]
+      distanceKm: route.distance / 1000,
+      durationS: route.duration
+    };
+  }
+
+  // Sample N points along the route at fractional positions
+  function sampleRoute(coords, n) {
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var idx = Math.round(i / (n - 1) * (coords.length - 1));
+      var c = coords[idx];
+      out.push({ lat: c[1], lng: c[0], frac: i / (n - 1) });
+    }
+    return out;
+  }
+
+  function weatherIcon(code) {
+    if (code === 0) return '☀️';
+    if (code <= 3) return '⛅';
+    if (code <= 48) return '🌫';
+    if (code <= 67) return '🌧';
+    if (code <= 77) return '🌨';
+    if (code <= 82) return '🌧';
+    if (code <= 86) return '🌨';
+    return '⛈';
+  }
+  function weatherDesc(code) {
+    if (code === 0) return 'Sereno';
+    if (code <= 3) return 'Nuvoloso';
+    if (code <= 48) return 'Nebbia';
+    if (code <= 67) return 'Pioggia';
+    if (code <= 77) return 'Neve';
+    if (code <= 82) return 'Rovesci';
+    if (code <= 86) return 'Rovesci di neve';
+    return 'Temporale';
+  }
+
+  async function fetchWeatherAt(lat, lng, isoHour) {
+    // Open-Meteo hourly forecast — pick the nearest hour
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(4) +
+              '&longitude=' + lng.toFixed(4) +
+              '&hourly=temperature_2m,precipitation,weathercode,wind_speed_10m' +
+              '&forecast_days=3&timezone=auto';
+    var r = await fetch(url);
+    if (!r.ok) throw new Error('Meteo HTTP ' + r.status);
+    var data = await r.json();
+    var times = data.hourly.time;
+    var idx = times.findIndex(function(t) { return t >= isoHour; });
+    if (idx < 0) idx = 0;
+    return {
+      temperature: data.hourly.temperature_2m[idx],
+      precipitation: data.hourly.precipitation[idx],
+      code: data.hourly.weathercode[idx],
+      wind: data.hourly.wind_speed_10m[idx],
+      time: times[idx]
+    };
+  }
+
+  window.wpCompute = async function() {
+    var fromInput = document.getElementById('wp-from');
+    var toInput = document.getElementById('wp-to');
+    var whenInput = document.getElementById('wp-when');
+    var result = document.getElementById('wp-result');
+
+    var fromQ = fromInput.value.trim();
+    var toQ   = toInput.value.trim();
+    if (!fromQ || !toQ) { alert('Inserisci partenza e destinazione.'); return; }
+    var whenStr = whenInput.value;
+    if (!whenStr) { alert('Imposta orario partenza.'); return; }
+    var whenDate = new Date(whenStr);
+
+    result.innerHTML = '<div class="wp-loading">Acquisizione percorso e meteo…</div>';
+
+    try {
+      // 1. Geocode
+      var from, to;
+      if (fromInput.dataset.lat) from = { lat: +fromInput.dataset.lat, lng: +fromInput.dataset.lng, display: fromQ };
+      else from = await geocode(fromQ);
+      to = await geocode(toQ);
+
+      // 2. Route
+      var route = await getRoute(from, to);
+
+      // 3. Sample 5 points
+      var samples = sampleRoute(route.coords, 5);
+
+      // 4. For each sample, compute estimated arrival time and fetch weather
+      var promises = samples.map(function(s, i) {
+        var passTimeMs = whenDate.getTime() + (route.durationS * 1000) * s.frac;
+        var d = new Date(passTimeMs);
+        var pad = function(n) { return n < 10 ? '0' + n : n; };
+        var iso = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' +
+                  pad(d.getHours()) + ':00';
+        return fetchWeatherAt(s.lat, s.lng, iso).then(function(w) {
+          return Object.assign({}, s, { weather: w, when: d });
+        });
+      });
+      var weatherSamples = await Promise.all(promises);
+
+      // 5. Render
+      renderWeather(from, to, route, weatherSamples);
+    } catch (e) {
+      result.innerHTML = '<div class="wp-error">Errore: ' + escSafe(e.message || String(e)) + '</div>';
+    }
+  };
+
+  function renderWeather(from, to, route, samples) {
+    var totalH = route.durationS / 3600;
+    var headHtml = '<div class="wp-route-info">' +
+      '<div class="wp-route-row"><strong>' + escSafe(from.display.split(',')[0]) + '</strong> → <strong>' + escSafe(to.display.split(',')[0]) + '</strong></div>' +
+      '<div class="wp-route-meta">' + route.distanceKm.toFixed(0) + ' km · ' +
+        Math.floor(totalH) + 'h ' + Math.round((totalH % 1) * 60) + 'm</div>' +
+    '</div>';
+
+    // Find any rain/snow alert
+    var hasRain = samples.some(function(s) { return s.weather.precipitation > 0.5; });
+    var alertHtml = hasRain ? '<div class="wp-alert">⚠ Precipitazioni previste lungo il tragitto</div>' : '';
+
+    var rowsHtml = samples.map(function(s, i) {
+      var w = s.weather;
+      var pad = function(n) { return n < 10 ? '0' + n : n; };
+      var hh = pad(s.when.getHours()) + ':' + pad(s.when.getMinutes());
+      var posLbl = i === 0 ? 'Partenza' : i === samples.length - 1 ? 'Arrivo' : Math.round(s.frac * 100) + '%';
+      var precipBadge = w.precipitation > 0.5
+        ? '<span class="wp-precip">💧 ' + w.precipitation.toFixed(1) + ' mm</span>'
+        : '';
+      return '<div class="wp-step">' +
+        '<div class="wp-step-time">' +
+          '<div class="wp-step-frac">' + posLbl + '</div>' +
+          '<div class="wp-step-hh">' + hh + '</div>' +
+        '</div>' +
+        '<div class="wp-step-icon">' + weatherIcon(w.code) + '</div>' +
+        '<div class="wp-step-info">' +
+          '<div class="wp-step-temp">' + Math.round(w.temperature) + '°C</div>' +
+          '<div class="wp-step-desc">' + weatherDesc(w.code) + ' · vento ' + Math.round(w.wind) + ' km/h</div>' +
+          precipBadge +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    document.getElementById('wp-result').innerHTML = headHtml + alertHtml + '<div class="wp-steps">' + rowsHtml + '</div>';
   }
 })();
 
