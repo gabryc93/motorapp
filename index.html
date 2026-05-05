@@ -888,7 +888,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   background: transparent;
   border: none;
   border-radius: 999px;
-  width: 50px; height: 38px;
+  width: 44px; height: 36px;
   padding: 0;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
@@ -897,7 +897,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   font-size: 0; /* hide any text */
 }
 .hub-tab .hub-icn {
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1;
   opacity: 0.55;
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -910,6 +910,18 @@ body[data-hub="fuel"]::before { display: none !important; }
 .hub-tab.active.hub-tab-diag {
   background: rgba(224, 60, 52, 0.20);
   box-shadow: 0 0 0 1px rgba(224, 60, 52, 0.34);
+}
+.hub-tab.active.hub-tab-garage {
+  background: rgba(140, 90, 200, 0.22);
+  box-shadow: 0 0 0 1px rgba(140, 90, 200, 0.4);
+}
+.hub-tab.active.hub-tab-passi {
+  background: rgba(76, 175, 125, 0.22);
+  box-shadow: 0 0 0 1px rgba(76, 175, 125, 0.4);
+}
+.hub-tab.active.hub-tab-ride {
+  background: rgba(255, 90, 40, 0.24);
+  box-shadow: 0 0 0 1px rgba(255, 90, 40, 0.45);
 }
 .hub-tab:active .hub-icn { transform: scale(0.88); }
 
@@ -938,7 +950,7 @@ body[data-hub="fuel"]::before { display: none !important; }
    ═══════════════════════════════════════════════════════════════════ */
 
 /* Launch button — shown at top of diagnosis */
-#hub-diag .gar-launch {
+.gar-launch {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -954,11 +966,11 @@ body[data-hub="fuel"]::before { display: none !important; }
   cursor: pointer;
   transition: all .15s ease;
 }
-#hub-diag .gar-launch:hover { border-color: rgba(224,60,52,.5); }
-#hub-diag .gar-launch:active { transform: scale(.99); }
-#hub-diag .gar-launch-icon { font-size: 1rem; line-height: 1; }
-#hub-diag .gar-launch-text { flex: 1; text-align: left; }
-#hub-diag .gar-launch-active {
+.gar-launch:hover { border-color: rgba(224,60,52,.5); }
+.gar-launch:active { transform: scale(.99); }
+.gar-launch-icon { font-size: 1rem; line-height: 1; }
+.gar-launch-text { flex: 1; text-align: left; }
+.gar-launch-active {
   background: rgba(224,60,52,.18);
   color: #ffe0db;
   padding: 3px 8px;
@@ -972,35 +984,35 @@ body[data-hub="fuel"]::before { display: none !important; }
 }
 
 /* Garage overlay — fullscreen modal living in #hub-diag */
-#hub-diag #gar-overlay {
+#gar-overlay {
   position: fixed; inset: 0;
   background: var(--bg);
   z-index: 70;
   display: none;
   flex-direction: column;
 }
-#hub-diag #gar-overlay.visible { display: flex; }
+#gar-overlay.visible { display: flex; }
 
-#hub-diag .gar-hdr {
+.gar-hdr {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 16px;
   border-bottom: 1px solid var(--brd);
   flex-shrink: 0; gap: 10px;
 }
-#hub-diag .gar-hdr h2 {
+.gar-hdr h2 {
   font-family: 'Bebas Neue', sans-serif;
   font-weight: 400; font-size: 1.2rem;
   color: var(--t1);
   letter-spacing: .02em;
 }
-#hub-diag .gar-hdr h2 small {
+.gar-hdr h2 small {
   display: block;
   font-family: 'DM Mono', monospace;
   font-size: .55rem; color: var(--t3);
   text-transform: uppercase; letter-spacing: .1em;
   margin-top: 2px;
 }
-#hub-diag .gar-close {
+.gar-close {
   appearance: none; -webkit-appearance: none;
   background: var(--surf2);
   border: 1px solid var(--brd2);
@@ -1012,13 +1024,13 @@ body[data-hub="fuel"]::before { display: none !important; }
   cursor: pointer;
 }
 
-#hub-diag .gar-body {
+.gar-body {
   flex: 1; overflow-y: auto;
   padding: 14px;
   max-width: 700px; width: 100%; margin: 0 auto;
 }
 
-#hub-diag .gar-empty {
+.gar-empty {
   text-align: center;
   padding: 40px 20px;
   color: var(--t3);
@@ -1027,7 +1039,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   line-height: 1.6;
 }
 
-#hub-diag .gar-add-btn {
+.gar-add-btn {
   appearance: none; -webkit-appearance: none;
   width: 100%;
   background: linear-gradient(135deg, rgba(224,60,52,.85), rgba(224,60,52,.65));
@@ -1042,11 +1054,11 @@ body[data-hub="fuel"]::before { display: none !important; }
   margin-bottom: 14px;
   transition: all .15s ease;
 }
-#hub-diag .gar-add-btn:hover { filter: brightness(1.1); }
-#hub-diag .gar-add-btn:active { transform: scale(.99); }
+.gar-add-btn:hover { filter: brightness(1.1); }
+.gar-add-btn:active { transform: scale(.99); }
 
 /* Vehicle card */
-#hub-diag .gar-veh {
+.gar-veh {
   background: var(--surf);
   border: 1px solid var(--brd);
   border-radius: 12px;
@@ -1056,13 +1068,13 @@ body[data-hub="fuel"]::before { display: none !important; }
   transition: border-color .15s ease, transform .15s ease;
   position: relative;
 }
-#hub-diag .gar-veh:hover { border-color: var(--brd2); }
-#hub-diag .gar-veh:active { transform: scale(.99); }
-#hub-diag .gar-veh.gar-veh-active {
+.gar-veh:hover { border-color: var(--brd2); }
+.gar-veh:active { transform: scale(.99); }
+.gar-veh.gar-veh-active {
   border-color: rgba(224,60,52,.45);
   background: linear-gradient(135deg, rgba(224,60,52,.08), rgba(224,60,52,.02));
 }
-#hub-diag .gar-veh-active::before {
+.gar-veh-active::before {
   content: '✓ Attivo';
   position: absolute;
   top: 10px; right: 10px;
@@ -1075,8 +1087,8 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: .06em;
 }
 
-#hub-diag .gar-veh-row { display: flex; align-items: flex-start; gap: 10px; }
-#hub-diag .gar-veh-icon {
+.gar-veh-row { display: flex; align-items: flex-start; gap: 10px; }
+.gar-veh-icon {
   flex-shrink: 0;
   width: 38px; height: 38px;
   display: flex; align-items: center; justify-content: center;
@@ -1084,26 +1096,26 @@ body[data-hub="fuel"]::before { display: none !important; }
   border-radius: 8px;
   font-size: 1.2rem;
 }
-#hub-diag .gar-veh-info { flex: 1; min-width: 0; padding-right: 70px; }
-#hub-diag .gar-veh-name {
+.gar-veh-info { flex: 1; min-width: 0; padding-right: 70px; }
+.gar-veh-name {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700; font-size: 1rem;
   color: var(--t1); letter-spacing: -.01em;
   margin-bottom: 3px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-#hub-diag .gar-veh-spec {
+.gar-veh-spec {
   font-family: 'DM Mono', monospace;
   font-size: .66rem;
   color: var(--t2);
   line-height: 1.4;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-#hub-diag .gar-veh-tags {
+.gar-veh-tags {
   display: flex; gap: 4px; flex-wrap: wrap;
   margin-top: 6px;
 }
-#hub-diag .gar-veh-tag {
+.gar-veh-tag {
   font-family: 'DM Mono', monospace;
   font-size: .56rem;
   color: var(--t2);
@@ -1114,14 +1126,14 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: .04em;
 }
 
-#hub-diag .gar-veh-actions {
+.gar-veh-actions {
   display: flex;
   gap: 6px;
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid var(--brd);
 }
-#hub-diag .gar-veh-act {
+.gar-veh-act {
   appearance: none; -webkit-appearance: none;
   background: var(--surf2);
   border: 1px solid var(--brd2);
@@ -1134,12 +1146,12 @@ body[data-hub="fuel"]::before { display: none !important; }
   flex: 1;
   transition: all .15s ease;
 }
-#hub-diag .gar-veh-act:hover { color: var(--t1); border-color: var(--ac); }
-#hub-diag .gar-veh-act-del { color: #ff8a82; }
-#hub-diag .gar-veh-act-del:hover { border-color: rgba(224,60,52,.5); color: #ffb4a8; }
+.gar-veh-act:hover { color: var(--t1); border-color: var(--ac); }
+.gar-veh-act-del { color: #ff8a82; }
+.gar-veh-act-del:hover { border-color: rgba(224,60,52,.5); color: #ffb4a8; }
 
 /* Add/edit modal */
-#hub-diag #gar-edit {
+#gar-edit {
   position: fixed; inset: 0;
   background: rgba(0,0,0,.6);
   backdrop-filter: blur(3px);
@@ -1148,11 +1160,11 @@ body[data-hub="fuel"]::before { display: none !important; }
   align-items: flex-end;
   justify-content: center;
 }
-#hub-diag #gar-edit.visible { display: flex; }
+#gar-edit.visible { display: flex; }
 @media (min-width: 600px) {
-  #hub-diag #gar-edit { align-items: center; }
+  #gar-edit { align-items: center; }
 }
-#hub-diag .gar-edit-card {
+.gar-edit-card {
   background: var(--surf);
   border: 1px solid var(--brd2);
   border-radius: 14px 14px 0 0;
@@ -1163,17 +1175,17 @@ body[data-hub="fuel"]::before { display: none !important; }
   overflow-y: auto;
 }
 @media (min-width: 600px) {
-  #hub-diag .gar-edit-card { border-radius: 14px; }
+  .gar-edit-card { border-radius: 14px; }
 }
-#hub-diag .gar-edit-card h3 {
+.gar-edit-card h3 {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 1.25rem;
   color: var(--t1);
   letter-spacing: .02em;
   margin-bottom: 14px;
 }
-#hub-diag .gar-field { margin-bottom: 12px; }
-#hub-diag .gar-field label {
+.gar-field { margin-bottom: 12px; }
+.gar-field label {
   display: block;
   font-family: 'DM Mono', monospace;
   font-size: .58rem;
@@ -1182,11 +1194,11 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: .1em;
   margin-bottom: 5px;
 }
-#hub-diag .gar-field input[type="text"],
-#hub-diag .gar-field input[type="number"],
-#hub-diag .gar-field input[type="date"],
-#hub-diag .gar-field textarea,
-#hub-diag .gar-field select {
+.gar-field input[type="text"],
+.gar-field input[type="number"],
+.gar-field input[type="date"],
+.gar-field textarea,
+.gar-field select {
   width: 100%;
   background: var(--surf2);
   border: 1px solid var(--brd);
@@ -1196,14 +1208,14 @@ body[data-hub="fuel"]::before { display: none !important; }
   font-family: 'DM Mono', monospace;
   font-size: .76rem;
 }
-#hub-diag .gar-field input:focus,
-#hub-diag .gar-field textarea:focus,
-#hub-diag .gar-field select:focus {
+.gar-field input:focus,
+.gar-field textarea:focus,
+.gar-field select:focus {
   outline: none; border-color: var(--ac);
 }
-#hub-diag .gar-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-#hub-diag .gar-typebar { display: flex; gap: 6px; margin-bottom: 12px; }
-#hub-diag .gar-typebar button {
+.gar-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gar-typebar { display: flex; gap: 6px; margin-bottom: 12px; }
+.gar-typebar button {
   flex: 1;
   appearance: none; -webkit-appearance: none;
   background: var(--surf2);
@@ -1215,19 +1227,19 @@ body[data-hub="fuel"]::before { display: none !important; }
   font-size: .72rem;
   cursor: pointer;
 }
-#hub-diag .gar-typebar button.on {
+.gar-typebar button.on {
   color: var(--ac);
   border-color: var(--ac);
   background: rgba(224,60,52,.1);
 }
-#hub-diag .gar-edit-btns {
+.gar-edit-btns {
   display: flex;
   gap: 8px;
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1px solid var(--brd);
 }
-#hub-diag .gar-edit-btns button {
+.gar-edit-btns button {
   flex: 1;
   appearance: none; -webkit-appearance: none;
   border-radius: 8px;
@@ -1238,23 +1250,23 @@ body[data-hub="fuel"]::before { display: none !important; }
   cursor: pointer;
   border: 1px solid;
 }
-#hub-diag .gar-cancel {
+.gar-cancel {
   background: var(--surf2);
   border-color: var(--brd2);
   color: var(--t2);
 }
-#hub-diag .gar-save {
+.gar-save {
   background: rgba(224,60,52,.85);
   border-color: rgba(224,60,52,.6);
   color: #fff;
 }
-#hub-diag .gar-save:hover { filter: brightness(1.1); }
+.gar-save:hover { filter: brightness(1.1); }
 
 /* ═══════════════════════════════════════════════════════════════════
    FUEL LOG — record refuels per active vehicle, compute L/100km, €/km
    ═══════════════════════════════════════════════════════════════════ */
 
-#hub-diag .fl-launch {
+.fl-launch {
   display: flex; align-items: center; gap: 10px;
   width: 100%;
   background: linear-gradient(135deg, rgba(91,155,213,.13), rgba(91,155,213,.04));
@@ -1268,11 +1280,11 @@ body[data-hub="fuel"]::before { display: none !important; }
   cursor: pointer;
   transition: all .15s ease;
 }
-#hub-diag .fl-launch:hover { border-color: rgba(91,155,213,.5); }
-#hub-diag .fl-launch:active { transform: scale(.99); }
-#hub-diag .fl-launch-icon { font-size: 1rem; }
-#hub-diag .fl-launch-text { flex: 1; text-align: left; }
-#hub-diag .fl-launch-stat {
+.fl-launch:hover { border-color: rgba(91,155,213,.5); }
+.fl-launch:active { transform: scale(.99); }
+.fl-launch-icon { font-size: 1rem; }
+.fl-launch-text { flex: 1; text-align: left; }
+.fl-launch-stat {
   background: rgba(91,155,213,.18);
   color: #d8e8f7;
   padding: 3px 8px;
@@ -1282,27 +1294,27 @@ body[data-hub="fuel"]::before { display: none !important; }
   white-space: nowrap;
 }
 
-#hub-diag #fl-overlay {
+#fl-overlay {
   position: fixed; inset: 0;
   background: var(--bg);
   z-index: 70;
   display: none;
   flex-direction: column;
 }
-#hub-diag #fl-overlay.visible { display: flex; }
+#fl-overlay.visible { display: flex; }
 
-#hub-diag .fl-hdr {
+.fl-hdr {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 16px;
   border-bottom: 1px solid var(--brd);
   flex-shrink: 0; gap: 10px;
 }
-#hub-diag .fl-hdr h2 {
+.fl-hdr h2 {
   font-family: 'Bebas Neue', sans-serif;
   font-weight: 400; font-size: 1.2rem;
   color: var(--t1); letter-spacing: .02em;
 }
-#hub-diag .fl-hdr h2 small {
+.fl-hdr h2 small {
   display: block;
   font-family: 'DM Mono', monospace;
   font-size: .55rem; color: var(--t3);
@@ -1312,33 +1324,33 @@ body[data-hub="fuel"]::before { display: none !important; }
   max-width: 220px;
 }
 
-#hub-diag .fl-body {
+.fl-body {
   flex: 1; overflow-y: auto;
   padding: 14px;
   max-width: 700px; width: 100%; margin: 0 auto;
 }
 
 /* Stats grid */
-#hub-diag .fl-stats {
+.fl-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   margin-bottom: 14px;
 }
-#hub-diag .fl-stat {
+.fl-stat {
   background: var(--surf);
   border: 1px solid var(--brd);
   border-radius: 10px;
   padding: 10px 12px;
 }
-#hub-diag .fl-stat-lbl {
+.fl-stat-lbl {
   font-family: 'DM Mono', monospace;
   font-size: .55rem;
   color: var(--t3);
   text-transform: uppercase; letter-spacing: .1em;
   margin-bottom: 4px;
 }
-#hub-diag .fl-stat-val {
+.fl-stat-val {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   font-size: 1.25rem;
@@ -1346,17 +1358,17 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: -.01em;
   line-height: 1;
 }
-#hub-diag .fl-stat-sub {
+.fl-stat-sub {
   font-family: 'DM Mono', monospace;
   font-size: .58rem;
   color: var(--t2);
   margin-top: 3px;
 }
-#hub-diag .fl-stat-trend-up { color: #ff8a82; }
-#hub-diag .fl-stat-trend-down { color: #6dd9a3; }
-#hub-diag .fl-stat-trend-flat { color: var(--t2); }
+.fl-stat-trend-up { color: #ff8a82; }
+.fl-stat-trend-down { color: #6dd9a3; }
+.fl-stat-trend-flat { color: var(--t2); }
 
-#hub-diag .fl-add-btn {
+.fl-add-btn {
   appearance: none; -webkit-appearance: none;
   width: 100%;
   background: linear-gradient(135deg, rgba(91,155,213,.85), rgba(91,155,213,.65));
@@ -1371,10 +1383,10 @@ body[data-hub="fuel"]::before { display: none !important; }
   margin-bottom: 14px;
   transition: all .15s ease;
 }
-#hub-diag .fl-add-btn:hover { filter: brightness(1.1); }
-#hub-diag .fl-add-btn:active { transform: scale(.99); }
+.fl-add-btn:hover { filter: brightness(1.1); }
+.fl-add-btn:active { transform: scale(.99); }
 
-#hub-diag .fl-empty {
+.fl-empty {
   text-align: center;
   padding: 30px 20px;
   color: var(--t3);
@@ -1383,7 +1395,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   line-height: 1.6;
 }
 
-#hub-diag .fl-list-title {
+.fl-list-title {
   font-family: 'DM Mono', monospace;
   font-size: .58rem;
   color: var(--t3);
@@ -1391,7 +1403,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   margin: 16px 0 8px;
 }
 
-#hub-diag .fl-row {
+.fl-row {
   background: var(--surf);
   border: 1px solid var(--brd);
   border-radius: 10px;
@@ -1399,25 +1411,25 @@ body[data-hub="fuel"]::before { display: none !important; }
   margin-bottom: 8px;
   display: flex; align-items: center; gap: 10px;
 }
-#hub-diag .fl-row-info { flex: 1; min-width: 0; }
-#hub-diag .fl-row-date {
+.fl-row-info { flex: 1; min-width: 0; }
+.fl-row-date {
   font-family: 'DM Mono', monospace;
   font-size: .68rem;
   color: var(--t1);
   margin-bottom: 2px;
 }
-#hub-diag .fl-row-meta {
+.fl-row-meta {
   font-family: 'DM Mono', monospace;
   font-size: .6rem;
   color: var(--t2);
 }
-#hub-diag .fl-row-cons {
+.fl-row-cons {
   text-align: right;
   flex-shrink: 0;
   padding-left: 10px;
   border-left: 1px solid var(--brd);
 }
-#hub-diag .fl-row-val {
+.fl-row-val {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   font-size: .95rem;
@@ -1425,13 +1437,13 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: -.01em;
   line-height: 1;
 }
-#hub-diag .fl-row-unit {
+.fl-row-unit {
   font-family: 'DM Mono', monospace;
   font-size: .56rem;
   color: var(--t2);
   margin-top: 2px;
 }
-#hub-diag .fl-row-del {
+.fl-row-del {
   appearance: none; -webkit-appearance: none;
   background: transparent;
   border: none;
@@ -1440,10 +1452,10 @@ body[data-hub="fuel"]::before { display: none !important; }
   font-size: 1rem;
   padding: 4px 8px;
 }
-#hub-diag .fl-row-del:hover { color: #ff8a82; }
+.fl-row-del:hover { color: #ff8a82; }
 
 /* Add modal — reuse gar-edit styles via piggybacking on same container */
-#hub-diag #fl-edit {
+#fl-edit {
   position: fixed; inset: 0;
   background: rgba(0,0,0,.6);
   backdrop-filter: blur(3px);
@@ -1452,13 +1464,13 @@ body[data-hub="fuel"]::before { display: none !important; }
   align-items: flex-end;
   justify-content: center;
 }
-#hub-diag #fl-edit.visible { display: flex; }
-@media (min-width: 600px) { #hub-diag #fl-edit { align-items: center; } }
-#hub-diag #fl-edit .gar-edit-card { /* reuse */ }
-#hub-diag #fl-edit .fl-fullbar {
+#fl-edit.visible { display: flex; }
+@media (min-width: 600px) { #fl-edit { align-items: center; } }
+#fl-edit .gar-edit-card { /* reuse */ }
+#fl-edit .fl-fullbar {
   display: flex; gap: 6px; margin-bottom: 12px;
 }
-#hub-diag #fl-edit .fl-fullbar button {
+#fl-edit .fl-fullbar button {
   flex: 1;
   appearance: none; -webkit-appearance: none;
   background: var(--surf2);
@@ -1470,16 +1482,144 @@ body[data-hub="fuel"]::before { display: none !important; }
   font-size: .72rem;
   cursor: pointer;
 }
-#hub-diag #fl-edit .fl-fullbar button.on {
+#fl-edit .fl-fullbar button.on {
   color: #b8d4ec;
   border-color: rgba(91,155,213,.5);
   background: rgba(91,155,213,.12);
 }
 
+/* ── Hide Diario / Promemoria from Diagnosi (now lives in Garage tab) ───
+   These are full duplicates of Consumi&Rifornimenti / Manutenzione,
+   so we hide their tab buttons and views entirely. */
+#hub-diag .nav-btn[data-view="promemoria"],
+#hub-diag .nav-btn[data-view="diario"] { display: none !important; }
+#hub-diag #view-promemoria,
+#hub-diag #view-diario { display: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   GARAGE SECTION — top-level tab containing the 3 vehicle modules
+   ═══════════════════════════════════════════════════════════════════ */
+#hub-garage { padding-bottom: 70px; }
+#hub-garage .garage-wrap {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 14px;
+}
+#hub-garage .garage-hdr {
+  padding: 22px 0 18px;
+}
+#hub-garage .garage-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+#hub-garage .garage-title-icon {
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, rgba(140,90,200,.25), rgba(140,90,200,.08));
+  border: 1px solid rgba(140,90,200,.35);
+  border-radius: 11px;
+  font-size: 1.4rem;
+}
+#hub-garage .garage-title h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400;
+  font-size: 1.6rem;
+  color: var(--t1);
+  letter-spacing: .04em;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+#hub-garage .garage-title small {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+#hub-garage .garage-main { padding-top: 4px; }
+
+/* Garage section uses the SAME launch button styles as diag.
+   Replicate them by mirroring the same selectors targeted at hub-garage. */
+#hub-garage .gar-launch,
+#hub-garage .fl-launch,
+#hub-garage .mt-launch {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem; font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+  border: 1px solid;
+}
+#hub-garage .gar-launch {
+  background: linear-gradient(135deg, rgba(224,60,52,.13), rgba(224,60,52,.04));
+  border-color: rgba(224,60,52,.28);
+  color: #ffb4a8;
+}
+#hub-garage .fl-launch {
+  background: linear-gradient(135deg, rgba(91,155,213,.13), rgba(91,155,213,.04));
+  border-color: rgba(91,155,213,.28);
+  color: #b8d4ec;
+}
+#hub-garage .mt-launch {
+  background: linear-gradient(135deg, rgba(76,175,125,.13), rgba(76,175,125,.04));
+  border-color: rgba(76,175,125,.3);
+  color: #b8e6cf;
+}
+#hub-garage .gar-launch:hover { border-color: rgba(224,60,52,.5); }
+#hub-garage .fl-launch:hover  { border-color: rgba(91,155,213,.5); }
+#hub-garage .mt-launch:hover  { border-color: rgba(76,175,125,.55); }
+#hub-garage .gar-launch:active,
+#hub-garage .fl-launch:active,
+#hub-garage .mt-launch:active { transform: scale(.99); }
+#hub-garage .gar-launch-icon,
+#hub-garage .fl-launch-icon,
+#hub-garage .mt-launch-icon { font-size: 1rem; }
+#hub-garage .gar-launch-text,
+#hub-garage .fl-launch-text,
+#hub-garage .mt-launch-text { flex: 1; text-align: left; }
+#hub-garage .gar-launch-active,
+#hub-garage .fl-launch-stat,
+#hub-garage .mt-launch-stat {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .58rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;
+}
+#hub-garage .gar-launch-active {
+  background: rgba(224,60,52,.18);
+  color: #ffe0db;
+}
+#hub-garage .fl-launch-stat {
+  background: rgba(91,155,213,.18);
+  color: #d8e8f7;
+}
+#hub-garage .mt-launch-stat {
+  background: rgba(76,175,125,.18);
+  color: #d4f0e2;
+}
+#hub-garage .mt-launch-stat.warn {
+  background: rgba(232,160,48,.2);
+  color: #ffe7c2;
+}
+#hub-garage .mt-launch-stat.crit {
+  background: rgba(224,90,74,.2);
+  color: #ffb4a8;
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    PASSI ALPINI / APPENNINICI — curated database for motorcyclists
    ═══════════════════════════════════════════════════════════════════ */
-#hub-diag .ps-launch {
+.ps-launch {
   display: flex; align-items: center; gap: 10px;
   width: 100%;
   background: linear-gradient(135deg, rgba(140,90,200,.15), rgba(140,90,200,.04));
@@ -1493,11 +1633,11 @@ body[data-hub="fuel"]::before { display: none !important; }
   cursor: pointer;
   transition: all .15s ease;
 }
-#hub-diag .ps-launch:hover { border-color: rgba(140,90,200,.55); }
-#hub-diag .ps-launch:active { transform: scale(.99); }
-#hub-diag .ps-launch-icon { font-size: 1rem; }
-#hub-diag .ps-launch-text { flex: 1; text-align: left; }
-#hub-diag .ps-launch-stat {
+.ps-launch:hover { border-color: rgba(140,90,200,.55); }
+.ps-launch:active { transform: scale(.99); }
+.ps-launch-icon { font-size: 1rem; }
+.ps-launch-text { flex: 1; text-align: left; }
+.ps-launch-stat {
   background: rgba(140,90,200,.18);
   color: #e8d5fa;
   padding: 3px 8px;
@@ -1507,27 +1647,27 @@ body[data-hub="fuel"]::before { display: none !important; }
   white-space: nowrap;
 }
 
-#hub-diag #ps-overlay {
+#ps-overlay {
   position: fixed; inset: 0;
   background: var(--bg);
   z-index: 70;
   display: none;
   flex-direction: column;
 }
-#hub-diag #ps-overlay.visible { display: flex; }
+#ps-overlay.visible { display: flex; }
 
-#hub-diag .ps-hdr {
+.ps-hdr {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 16px;
   border-bottom: 1px solid var(--brd);
   flex-shrink: 0; gap: 10px;
 }
-#hub-diag .ps-hdr h2 {
+.ps-hdr h2 {
   font-family: 'Bebas Neue', sans-serif;
   font-weight: 400; font-size: 1.2rem;
   color: var(--t1); letter-spacing: .02em;
 }
-#hub-diag .ps-hdr h2 small {
+.ps-hdr h2 small {
   display: block;
   font-family: 'DM Mono', monospace;
   font-size: .55rem; color: var(--t3);
@@ -1535,7 +1675,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   margin-top: 2px;
 }
 
-#hub-diag .ps-filters {
+.ps-filters {
   padding: 10px 14px;
   border-bottom: 1px solid var(--brd);
   flex-shrink: 0;
@@ -1543,8 +1683,8 @@ body[data-hub="fuel"]::before { display: none !important; }
   overflow-x: auto;
   scrollbar-width: none;
 }
-#hub-diag .ps-filters::-webkit-scrollbar { display: none; }
-#hub-diag .ps-fbtn {
+.ps-filters::-webkit-scrollbar { display: none; }
+.ps-fbtn {
   appearance: none; -webkit-appearance: none;
   background: var(--surf2);
   border: 1px solid var(--brd);
@@ -1558,19 +1698,19 @@ body[data-hub="fuel"]::before { display: none !important; }
   white-space: nowrap;
   transition: all .15s ease;
 }
-#hub-diag .ps-fbtn.on {
+.ps-fbtn.on {
   color: #d4bff0;
   border-color: rgba(140,90,200,.55);
   background: rgba(140,90,200,.13);
 }
 
-#hub-diag .ps-body {
+.ps-body {
   flex: 1; overflow-y: auto;
   padding: 12px;
   max-width: 700px; width: 100%; margin: 0 auto;
 }
 
-#hub-diag .ps-card {
+.ps-card {
   background: var(--surf);
   border: 1px solid var(--brd);
   border-radius: 12px;
@@ -1580,9 +1720,9 @@ body[data-hub="fuel"]::before { display: none !important; }
   transition: border-color .15s ease, transform .15s ease;
   position: relative;
 }
-#hub-diag .ps-card:hover { border-color: var(--brd2); }
-#hub-diag .ps-card:active { transform: scale(.99); }
-#hub-diag .ps-card-status {
+.ps-card:hover { border-color: var(--brd2); }
+.ps-card:active { transform: scale(.99); }
+.ps-card-status {
   position: absolute;
   top: 12px; right: 12px;
   font-family: 'DM Mono', monospace;
@@ -1591,44 +1731,44 @@ body[data-hub="fuel"]::before { display: none !important; }
   border-radius: 999px;
   letter-spacing: .04em;
 }
-#hub-diag .ps-card-status.open {
+.ps-card-status.open {
   background: rgba(76,175,125,.18);
   color: #6dd9a3;
   border: 1px solid rgba(76,175,125,.32);
 }
-#hub-diag .ps-card-status.closed {
+.ps-card-status.closed {
   background: rgba(224,90,74,.18);
   color: #ff8a82;
   border: 1px solid rgba(224,90,74,.32);
 }
-#hub-diag .ps-card-name {
+.ps-card-name {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700; font-size: 1.05rem;
   color: var(--t1); letter-spacing: -.01em;
   margin-bottom: 3px;
   padding-right: 80px;
 }
-#hub-diag .ps-card-region {
+.ps-card-region {
   font-family: 'DM Mono', monospace;
   font-size: .62rem;
   color: var(--t2);
   margin-bottom: 8px;
 }
-#hub-diag .ps-card-stats {
+.ps-card-stats {
   display: flex; gap: 12px;
   font-family: 'DM Mono', monospace;
   font-size: .65rem;
   color: var(--t1);
   flex-wrap: wrap;
 }
-#hub-diag .ps-card-stat-lbl {
+.ps-card-stat-lbl {
   color: var(--t3);
   font-size: .54rem;
   text-transform: uppercase;
   letter-spacing: .08em;
   margin-right: 3px;
 }
-#hub-diag .ps-card-diff {
+.ps-card-diff {
   display: inline-block;
   margin-left: 8px;
   letter-spacing: .04em;
@@ -1637,7 +1777,7 @@ body[data-hub="fuel"]::before { display: none !important; }
 }
 
 /* Detail modal */
-#hub-diag #ps-detail {
+#ps-detail {
   position: fixed; inset: 0;
   background: rgba(0,0,0,.7);
   backdrop-filter: blur(3px);
@@ -1646,9 +1786,9 @@ body[data-hub="fuel"]::before { display: none !important; }
   align-items: flex-end;
   justify-content: center;
 }
-#hub-diag #ps-detail.visible { display: flex; }
-@media (min-width: 600px) { #hub-diag #ps-detail { align-items: center; } }
-#hub-diag .ps-detail-card {
+#ps-detail.visible { display: flex; }
+@media (min-width: 600px) { #ps-detail { align-items: center; } }
+.ps-detail-card {
   background: var(--surf);
   border: 1px solid var(--brd2);
   border-radius: 14px 14px 0 0;
@@ -1657,49 +1797,49 @@ body[data-hub="fuel"]::before { display: none !important; }
   max-height: 90vh;
   overflow-y: auto;
 }
-@media (min-width: 600px) { #hub-diag .ps-detail-card { border-radius: 14px; } }
-#hub-diag .ps-detail-hdr {
+@media (min-width: 600px) { .ps-detail-card { border-radius: 14px; } }
+.ps-detail-hdr {
   padding: 16px 18px 12px;
   border-bottom: 1px solid var(--brd);
 }
-#hub-diag .ps-detail-hdr h3 {
+.ps-detail-hdr h3 {
   font-family: 'Fraunces', Georgia, serif;
   font-size: 1.3rem;
   color: var(--t1);
   letter-spacing: -.01em;
   margin-bottom: 3px;
 }
-#hub-diag .ps-detail-hdr-region {
+.ps-detail-hdr-region {
   font-family: 'DM Mono', monospace;
   font-size: .62rem;
   color: var(--t2);
 }
-#hub-diag .ps-detail-body { padding: 14px 18px; }
-#hub-diag .ps-detail-grid {
+.ps-detail-body { padding: 14px 18px; }
+.ps-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   margin-bottom: 14px;
 }
-#hub-diag .ps-detail-cell {
+.ps-detail-cell {
   background: var(--surf2);
   border: 1px solid var(--brd);
   border-radius: 8px;
   padding: 9px 11px;
 }
-#hub-diag .ps-detail-cell-lbl {
+.ps-detail-cell-lbl {
   font-family: 'DM Mono', monospace;
   font-size: .53rem;
   color: var(--t3);
   text-transform: uppercase; letter-spacing: .1em;
   margin-bottom: 3px;
 }
-#hub-diag .ps-detail-cell-val {
+.ps-detail-cell-val {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700; font-size: 1rem;
   color: var(--t1);
 }
-#hub-diag .ps-detail-desc {
+.ps-detail-desc {
   font-family: 'DM Mono', monospace;
   font-size: .72rem;
   color: var(--t2);
@@ -1710,7 +1850,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   border-radius: 8px;
   border-left: 3px solid rgba(140,90,200,.5);
 }
-#hub-diag .ps-detail-weather {
+.ps-detail-weather {
   background: var(--surf2);
   border: 1px solid var(--brd);
   border-radius: 10px;
@@ -1718,32 +1858,32 @@ body[data-hub="fuel"]::before { display: none !important; }
   margin-bottom: 14px;
   display: flex; align-items: center; gap: 12px;
 }
-#hub-diag .ps-detail-weather-icon { font-size: 2rem; }
-#hub-diag .ps-detail-weather-info { flex: 1; }
-#hub-diag .ps-detail-weather-temp {
+.ps-detail-weather-icon { font-size: 2rem; }
+.ps-detail-weather-info { flex: 1; }
+.ps-detail-weather-temp {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700; font-size: 1.4rem;
   color: var(--t1);
   letter-spacing: -.02em;
 }
-#hub-diag .ps-detail-weather-desc {
+.ps-detail-weather-desc {
   font-family: 'DM Mono', monospace;
   font-size: .62rem;
   color: var(--t2);
   margin-top: 3px;
 }
-#hub-diag .ps-detail-weather-loading {
+.ps-detail-weather-loading {
   font-family: 'DM Mono', monospace;
   font-size: .68rem;
   color: var(--t3);
 }
-#hub-diag .ps-detail-actions {
+.ps-detail-actions {
   display: flex; gap: 8px;
   padding: 12px 18px 18px;
   border-top: 1px solid var(--brd);
 }
-#hub-diag .ps-detail-actions button,
-#hub-diag .ps-detail-actions a {
+.ps-detail-actions button,
+.ps-detail-actions a {
   flex: 1;
   appearance: none; -webkit-appearance: none;
   text-align: center;
@@ -1757,18 +1897,18 @@ body[data-hub="fuel"]::before { display: none !important; }
   border: 1px solid;
   transition: all .15s ease;
 }
-#hub-diag .ps-detail-close {
+.ps-detail-close {
   background: var(--surf2);
   border-color: var(--brd2);
   color: var(--t2);
 }
-#hub-diag .ps-detail-maps {
+.ps-detail-maps {
   background: rgba(140,90,200,.85);
   border-color: rgba(140,90,200,.6);
   color: #fff;
 }
-#hub-diag .ps-detail-maps:hover { filter: brightness(1.1); }
-#hub-diag .ps-empty {
+.ps-detail-maps:hover { filter: brightness(1.1); }
+.ps-empty {
   text-align: center; padding: 30px 20px;
   font-family: 'DM Mono', monospace;
   font-size: .76rem; color: var(--t3);
@@ -1777,7 +1917,7 @@ body[data-hub="fuel"]::before { display: none !important; }
 /* ═══════════════════════════════════════════════════════════════════
    RIDE MODE — fullscreen GPS tracker (speed, distance, time)
    ═══════════════════════════════════════════════════════════════════ */
-#hub-diag .rd-launch {
+.rd-launch {
   display: flex; align-items: center; gap: 10px;
   width: 100%;
   background: linear-gradient(135deg, rgba(255,90,40,.18), rgba(255,90,40,.04));
@@ -1791,12 +1931,12 @@ body[data-hub="fuel"]::before { display: none !important; }
   cursor: pointer;
   transition: all .15s ease;
 }
-#hub-diag .rd-launch:hover { border-color: rgba(255,90,40,.55); }
-#hub-diag .rd-launch:active { transform: scale(.99); }
-#hub-diag .rd-launch-icon { font-size: 1rem; }
-#hub-diag .rd-launch-text { flex: 1; text-align: left; }
+.rd-launch:hover { border-color: rgba(255,90,40,.55); }
+.rd-launch:active { transform: scale(.99); }
+.rd-launch-icon { font-size: 1rem; }
+.rd-launch-text { flex: 1; text-align: left; }
 
-#hub-diag #rd-overlay {
+#rd-overlay {
   position: fixed; inset: 0;
   background: #000;
   z-index: 75;
@@ -1804,21 +1944,21 @@ body[data-hub="fuel"]::before { display: none !important; }
   flex-direction: column;
   color: #fff;
 }
-#hub-diag #rd-overlay.visible { display: flex; }
+#rd-overlay.visible { display: flex; }
 
-#hub-diag .rd-hdr {
+.rd-hdr {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 16px;
   flex-shrink: 0;
   border-bottom: 1px solid rgba(255,255,255,.08);
 }
-#hub-diag .rd-hdr h2 {
+.rd-hdr h2 {
   font-family: 'Bebas Neue', sans-serif;
   font-weight: 400; font-size: 1.2rem;
   letter-spacing: .04em;
   color: #ff5a28;
 }
-#hub-diag .rd-hdr h2 small {
+.rd-hdr h2 small {
   display: block;
   font-family: 'DM Mono', monospace;
   font-size: .55rem;
@@ -1826,7 +1966,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   text-transform: uppercase; letter-spacing: .1em;
   margin-top: 2px;
 }
-#hub-diag .rd-close {
+.rd-close {
   appearance: none; -webkit-appearance: none;
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.15);
@@ -1837,7 +1977,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   font-size: .68rem;
   cursor: pointer;
 }
-#hub-diag .rd-status {
+.rd-status {
   text-align: center;
   font-family: 'DM Mono', monospace;
   font-size: .58rem;
@@ -1847,8 +1987,8 @@ body[data-hub="fuel"]::before { display: none !important; }
   padding: 12px 0 6px;
   flex-shrink: 0;
 }
-#hub-diag .rd-status.recording { color: #ff5a28; }
-#hub-diag .rd-status.recording::before {
+.rd-status.recording { color: #ff5a28; }
+.rd-status.recording::before {
   content: '●';
   display: inline-block;
   margin-right: 6px;
@@ -1859,7 +1999,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   50% { opacity: .3; }
 }
 
-#hub-diag .rd-speedbox {
+.rd-speedbox {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1867,7 +2007,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   justify-content: center;
   padding: 10px;
 }
-#hub-diag .rd-speed {
+.rd-speed {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   font-size: 8rem;
@@ -1876,7 +2016,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   line-height: .9;
   font-variant-numeric: tabular-nums;
 }
-#hub-diag .rd-speed-unit {
+.rd-speed-unit {
   font-family: 'DM Mono', monospace;
   font-size: .8rem;
   color: rgba(255,255,255,.5);
@@ -1885,7 +2025,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   margin-top: 8px;
 }
 
-#hub-diag .rd-stats {
+.rd-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
@@ -1894,12 +2034,12 @@ body[data-hub="fuel"]::before { display: none !important; }
   border-radius: 12px;
   overflow: hidden;
 }
-#hub-diag .rd-stat {
+.rd-stat {
   background: rgba(0,0,0,.6);
   padding: 12px 10px;
   text-align: center;
 }
-#hub-diag .rd-stat-lbl {
+.rd-stat-lbl {
   font-family: 'DM Mono', monospace;
   font-size: .55rem;
   color: rgba(255,255,255,.4);
@@ -1907,7 +2047,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: .14em;
   margin-bottom: 5px;
 }
-#hub-diag .rd-stat-val {
+.rd-stat-val {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   font-size: 1.3rem;
@@ -1915,7 +2055,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: -.01em;
   font-variant-numeric: tabular-nums;
 }
-#hub-diag .rd-stat-sub {
+.rd-stat-sub {
   font-family: 'DM Mono', monospace;
   font-size: .54rem;
   color: rgba(255,255,255,.4);
@@ -1923,13 +2063,13 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: .04em;
 }
 
-#hub-diag .rd-actions {
+.rd-actions {
   display: flex;
   gap: 8px;
   padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px));
   flex-shrink: 0;
 }
-#hub-diag .rd-btn {
+.rd-btn {
   flex: 1;
   appearance: none; -webkit-appearance: none;
   border-radius: 12px;
@@ -1942,28 +2082,28 @@ body[data-hub="fuel"]::before { display: none !important; }
   border: 1px solid;
   transition: all .15s ease;
 }
-#hub-diag .rd-btn:active { transform: scale(.98); }
-#hub-diag .rd-btn-start {
+.rd-btn:active { transform: scale(.98); }
+.rd-btn-start {
   background: linear-gradient(135deg, rgba(255,90,40,.95), rgba(255,90,40,.7));
   border-color: rgba(255,90,40,.6);
   color: #fff;
 }
-#hub-diag .rd-btn-pause {
+.rd-btn-pause {
   background: rgba(255,255,255,.1);
   border-color: rgba(255,255,255,.2);
   color: #fff;
 }
-#hub-diag .rd-btn-stop {
+.rd-btn-stop {
   background: rgba(224,90,74,.85);
   border-color: rgba(224,90,74,.6);
   color: #fff;
 }
-#hub-diag .rd-btn-export {
+.rd-btn-export {
   background: rgba(91,155,213,.85);
   border-color: rgba(91,155,213,.6);
   color: #08131c;
 }
-#hub-diag .rd-error {
+.rd-error {
   margin: 12px 14px;
   padding: 10px 12px;
   background: rgba(224,90,74,.1);
@@ -1977,7 +2117,7 @@ body[data-hub="fuel"]::before { display: none !important; }
 /* ═══════════════════════════════════════════════════════════════════
    MAINTENANCE — service tracker per vehicle, by km AND date
    ═══════════════════════════════════════════════════════════════════ */
-#hub-diag .mt-launch {
+.mt-launch {
   display: flex; align-items: center; gap: 10px;
   width: 100%;
   background: linear-gradient(135deg, rgba(76,175,125,.13), rgba(76,175,125,.04));
@@ -1991,11 +2131,11 @@ body[data-hub="fuel"]::before { display: none !important; }
   cursor: pointer;
   transition: all .15s ease;
 }
-#hub-diag .mt-launch:hover { border-color: rgba(76,175,125,.55); }
-#hub-diag .mt-launch:active { transform: scale(.99); }
-#hub-diag .mt-launch-icon { font-size: 1rem; }
-#hub-diag .mt-launch-text { flex: 1; text-align: left; }
-#hub-diag .mt-launch-stat {
+.mt-launch:hover { border-color: rgba(76,175,125,.55); }
+.mt-launch:active { transform: scale(.99); }
+.mt-launch-icon { font-size: 1rem; }
+.mt-launch-text { flex: 1; text-align: left; }
+.mt-launch-stat {
   background: rgba(76,175,125,.18);
   color: #d4f0e2;
   padding: 3px 8px;
@@ -2004,36 +2144,36 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: .04em;
   white-space: nowrap;
 }
-#hub-diag .mt-launch-stat.warn {
+.mt-launch-stat.warn {
   background: rgba(232,160,48,.2);
   color: #ffe7c2;
 }
-#hub-diag .mt-launch-stat.crit {
+.mt-launch-stat.crit {
   background: rgba(224,90,74,.2);
   color: #ffb4a8;
 }
 
-#hub-diag #mt-overlay {
+#mt-overlay {
   position: fixed; inset: 0;
   background: var(--bg);
   z-index: 70;
   display: none;
   flex-direction: column;
 }
-#hub-diag #mt-overlay.visible { display: flex; }
+#mt-overlay.visible { display: flex; }
 
-#hub-diag .mt-hdr {
+.mt-hdr {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 16px;
   border-bottom: 1px solid var(--brd);
   flex-shrink: 0; gap: 10px;
 }
-#hub-diag .mt-hdr h2 {
+.mt-hdr h2 {
   font-family: 'Bebas Neue', sans-serif;
   font-weight: 400; font-size: 1.2rem;
   color: var(--t1); letter-spacing: .02em;
 }
-#hub-diag .mt-hdr h2 small {
+.mt-hdr h2 small {
   display: block;
   font-family: 'DM Mono', monospace;
   font-size: .55rem; color: var(--t3);
@@ -2043,13 +2183,13 @@ body[data-hub="fuel"]::before { display: none !important; }
   max-width: 220px;
 }
 
-#hub-diag .mt-body {
+.mt-body {
   flex: 1; overflow-y: auto;
   padding: 14px;
   max-width: 700px; width: 100%; margin: 0 auto;
 }
 
-#hub-diag .mt-veh-header {
+.mt-veh-header {
   background: var(--surf);
   border: 1px solid var(--brd);
   border-radius: 10px;
@@ -2059,22 +2199,22 @@ body[data-hub="fuel"]::before { display: none !important; }
   align-items: center;
   gap: 10px;
 }
-#hub-diag .mt-veh-icon { font-size: 1.4rem; }
-#hub-diag .mt-veh-info { flex: 1; min-width: 0; }
-#hub-diag .mt-veh-name {
+.mt-veh-icon { font-size: 1.4rem; }
+.mt-veh-info { flex: 1; min-width: 0; }
+.mt-veh-name {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   font-size: .95rem;
   color: var(--t1);
 }
-#hub-diag .mt-veh-km {
+.mt-veh-km {
   font-family: 'DM Mono', monospace;
   font-size: .65rem;
   color: var(--t2);
   margin-top: 2px;
 }
 
-#hub-diag .mt-card {
+.mt-card {
   background: var(--surf);
   border: 1px solid var(--brd);
   border-radius: 10px;
@@ -2083,15 +2223,15 @@ body[data-hub="fuel"]::before { display: none !important; }
   cursor: pointer;
   transition: border-color .15s ease, transform .15s ease;
 }
-#hub-diag .mt-card:hover { border-color: var(--brd2); }
-#hub-diag .mt-card:active { transform: scale(.99); }
-#hub-diag .mt-card.warn { border-color: rgba(232,160,48,.35); }
-#hub-diag .mt-card.crit { border-color: rgba(224,90,74,.4); }
-#hub-diag .mt-card-row {
+.mt-card:hover { border-color: var(--brd2); }
+.mt-card:active { transform: scale(.99); }
+.mt-card.warn { border-color: rgba(232,160,48,.35); }
+.mt-card.crit { border-color: rgba(224,90,74,.4); }
+.mt-card-row {
   display: flex; align-items: center; gap: 10px;
   margin-bottom: 8px;
 }
-#hub-diag .mt-card-icon {
+.mt-card-icon {
   flex-shrink: 0;
   width: 32px; height: 32px;
   display: flex; align-items: center; justify-content: center;
@@ -2099,20 +2239,20 @@ body[data-hub="fuel"]::before { display: none !important; }
   background: var(--surf2);
   font-size: 1.1rem;
 }
-#hub-diag .mt-card-info { flex: 1; min-width: 0; }
-#hub-diag .mt-card-name {
+.mt-card-info { flex: 1; min-width: 0; }
+.mt-card-name {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   font-size: .9rem;
   color: var(--t1);
 }
-#hub-diag .mt-card-meta {
+.mt-card-meta {
   font-family: 'DM Mono', monospace;
   font-size: .6rem;
   color: var(--t2);
   margin-top: 2px;
 }
-#hub-diag .mt-card-status {
+.mt-card-status {
   font-family: 'DM Mono', monospace;
   font-size: .56rem;
   padding: 3px 8px;
@@ -2121,37 +2261,37 @@ body[data-hub="fuel"]::before { display: none !important; }
   white-space: nowrap;
   flex-shrink: 0;
 }
-#hub-diag .mt-card-status.ok {
+.mt-card-status.ok {
   background: rgba(76,175,125,.16);
   color: #6dd9a3;
   border: 1px solid rgba(76,175,125,.3);
 }
-#hub-diag .mt-card-status.warn {
+.mt-card-status.warn {
   background: rgba(232,160,48,.16);
   color: #ffd699;
   border: 1px solid rgba(232,160,48,.3);
 }
-#hub-diag .mt-card-status.crit {
+.mt-card-status.crit {
   background: rgba(224,90,74,.16);
   color: #ff8a82;
   border: 1px solid rgba(224,90,74,.32);
 }
-#hub-diag .mt-card-bar {
+.mt-card-bar {
   height: 4px;
   background: var(--surf2);
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 6px;
 }
-#hub-diag .mt-card-bar-fill {
+.mt-card-bar-fill {
   height: 100%;
   border-radius: 2px;
   transition: width .3s ease;
 }
-#hub-diag .mt-card-bar-fill.ok { background: #4caf7d; }
-#hub-diag .mt-card-bar-fill.warn { background: #e8a030; }
-#hub-diag .mt-card-bar-fill.crit { background: #e05a4a; }
-#hub-diag .mt-card-detail {
+.mt-card-bar-fill.ok { background: #4caf7d; }
+.mt-card-bar-fill.warn { background: #e8a030; }
+.mt-card-bar-fill.crit { background: #e05a4a; }
+.mt-card-detail {
   font-family: 'DM Mono', monospace;
   font-size: .58rem;
   color: var(--t2);
@@ -2159,7 +2299,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   justify-content: space-between;
 }
 
-#hub-diag .mt-empty {
+.mt-empty {
   text-align: center;
   padding: 40px 20px;
   color: var(--t3);
@@ -2169,7 +2309,7 @@ body[data-hub="fuel"]::before { display: none !important; }
 }
 
 /* Maintenance log modal (record an intervention) */
-#hub-diag #mt-edit {
+#mt-edit {
   position: fixed; inset: 0;
   background: rgba(0,0,0,.6);
   backdrop-filter: blur(3px);
@@ -2178,8 +2318,8 @@ body[data-hub="fuel"]::before { display: none !important; }
   align-items: flex-end;
   justify-content: center;
 }
-#hub-diag #mt-edit.visible { display: flex; }
-@media (min-width: 600px) { #hub-diag #mt-edit { align-items: center; } }
+#mt-edit.visible { display: flex; }
+@media (min-width: 600px) { #mt-edit { align-items: center; } }
 #hub-fuel .hub-cmp-launch {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   width: 100%;
@@ -2360,15 +2500,15 @@ body:has(#hub-fuel #fav-view.visible) .hub-tabs,
 body:has(#hub-fuel #modal-overlay:not(.hidden)) .hub-tabs,
 body:has(#hub-fuel #fav-edit-overlay:not(.hidden)) .hub-tabs,
 body:has(#hub-fuel #hub-cmp-overlay.visible) .hub-tabs,
-body:has(#hub-diag #gar-overlay.visible) .hub-tabs,
-body:has(#hub-diag #gar-edit.visible) .hub-tabs,
-body:has(#hub-diag #fl-overlay.visible) .hub-tabs,
-body:has(#hub-diag #fl-edit.visible) .hub-tabs,
-body:has(#hub-diag #ps-overlay.visible) .hub-tabs,
-body:has(#hub-diag #ps-detail.visible) .hub-tabs,
-body:has(#hub-diag #rd-overlay.visible) .hub-tabs,
-body:has(#hub-diag #mt-overlay.visible) .hub-tabs,
-body:has(#hub-diag #mt-edit.visible) .hub-tabs,
+body:has(#gar-overlay.visible) .hub-tabs,
+body:has(#gar-edit.visible) .hub-tabs,
+body:has(#fl-overlay.visible) .hub-tabs,
+body:has(#fl-edit.visible) .hub-tabs,
+body:has(#ps-overlay.visible) .hub-tabs,
+body:has(#ps-detail.visible) .hub-tabs,
+body:has(#rd-overlay.visible) .hub-tabs,
+body:has(#mt-overlay.visible) .hub-tabs,
+body:has(#mt-edit.visible) .hub-tabs,
 body[data-pill-hidden="1"] .hub-tabs {
   opacity: 0;
   transform: translateX(-50%) translateY(24px);
@@ -3031,8 +3171,20 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 </head>
 <body data-hub="fuel">
 
-<!-- ═══ HUB FLOATING PILL ═════════════════════════════════════════ -->
+<!-- ═══ HUB FLOATING PILL (5 tabs) ═══════════════════════════════ -->
 <nav class="hub-tabs" role="tablist" aria-label="AutoHub sections">
+  <button class="hub-tab hub-tab-garage" data-hub="garage" onclick="hubGo('garage')"
+          role="tab" aria-selected="false" aria-label="Garage" title="Garage">
+    <span class="hub-icn" aria-hidden="true">🏎</span>
+  </button>
+  <button class="hub-tab hub-tab-passi" data-hub="passi" onclick="hubGo('passi')"
+          role="tab" aria-selected="false" aria-label="Passi alpini" title="Passi alpini">
+    <span class="hub-icn" aria-hidden="true">⛰</span>
+  </button>
+  <button class="hub-tab hub-tab-ride" data-hub="ride" onclick="hubGo('ride')"
+          role="tab" aria-selected="false" aria-label="Modalità Ride" title="Modalità Ride">
+    <span class="hub-icn" aria-hidden="true">🏁</span>
+  </button>
   <button class="hub-tab hub-tab-diag" data-hub="diag" onclick="hubGo('diag')"
           role="tab" aria-selected="false" aria-label="Diagnosi" title="Diagnosi">
     <span class="hub-icn" aria-hidden="true">🔧</span>
@@ -3352,6 +3504,24 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 <div class="disc"><strong>NOTA:</strong> Informazioni generate da AI a scopo informativo. Consultare sempre un meccanico qualificato per diagnosi e riparazioni. I costi sono stime indicative.</div>
 
 </div><!-- /wrap -->
+</section>
+
+<!-- ═══ SECTION: GARAGE (vehicles, fuel log, maintenance) ═══════════ -->
+<section id="hub-garage" class="hub-section" role="tabpanel" aria-labelledby="hub-tab-garage">
+<div class="wrap garage-wrap">
+  <header class="garage-hdr">
+    <div class="garage-title">
+      <span class="garage-title-icon">🏎</span>
+      <div>
+        <h1>IL MIO GARAGE</h1>
+        <small>Veicoli · Consumi · Manutenzione</small>
+      </div>
+    </div>
+  </header>
+  <main class="garage-main">
+    <div id="garage-launch-slot"></div>
+  </main>
+</div>
 </section>
 
 <!-- ═══ SECTION: CARBURANTI ═══════════════════════════════════════ -->
@@ -3715,13 +3885,18 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 
   var fuelInitialized = false;
   var _cmpFuel = null;
+  // Sezioni reali con DOM persistente
+  var SECTIONS = ['fuel', 'diag', 'garage'];
+  // Tab "azione": aprono un overlay e tornano alla sezione precedente
+  var ACTIONS  = ['passi', 'ride'];
+  var _lastSection = 'fuel';
+
   function hubGo(name) {
-    if (name !== 'diag' && name !== 'fuel') name = 'fuel';
-    document.body.dataset.hub = name;
+    var isSection = SECTIONS.indexOf(name) >= 0;
+    var isAction  = ACTIONS.indexOf(name) >= 0;
+    if (!isSection && !isAction) name = 'fuel';
 
-    document.getElementById('hub-diag').classList.toggle('active', name === 'diag');
-    document.getElementById('hub-fuel').classList.toggle('active', name === 'fuel');
-
+    // Update tab visual state (always)
     var btns = document.querySelectorAll('.hub-tab');
     btns.forEach(function(b) {
       var on = b.dataset.hub === name;
@@ -3729,15 +3904,37 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
       b.setAttribute('aria-selected', on ? 'true' : 'false');
     });
 
-    if (location.hash !== '#' + name) {
-      try { history.replaceState(null, '', '#' + name); } catch(e) { location.hash = name; }
-    }
-
-    // lazy-init fuel app on its first activation
-    if (name === 'fuel' && !fuelInitialized) {
-      fuelInitialized = true;
-      try { window._fuelLazyInit && window._fuelLazyInit(); }
-      catch (e) { console.error('Fuel init failed:', e); }
+    if (isSection) {
+      // Switch the visible section
+      _lastSection = name;
+      document.body.dataset.hub = name;
+      ['hub-diag', 'hub-fuel', 'hub-garage'].forEach(function(id) {
+        var sec = document.getElementById(id);
+        if (sec) sec.classList.toggle('active', id === ('hub-' + name));
+      });
+      if (location.hash !== '#' + name) {
+        try { history.replaceState(null, '', '#' + name); } catch(e) { location.hash = name; }
+      }
+      if (name === 'fuel' && !fuelInitialized) {
+        fuelInitialized = true;
+        try { window._fuelLazyInit && window._fuelLazyInit(); }
+        catch (e) { console.error('Fuel init failed:', e); }
+      }
+    } else if (isAction) {
+      // Open the corresponding overlay; section stays as it was
+      if (name === 'passi') {
+        if (typeof window.openPassi === 'function') window.openPassi();
+      } else if (name === 'ride') {
+        if (typeof window.openRide === 'function') window.openRide();
+      }
+      // After opening, after a short delay, revert tab visual to last section
+      setTimeout(function() {
+        document.querySelectorAll('.hub-tab').forEach(function(b) {
+          var on = b.dataset.hub === _lastSection;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+      }, 350);
     }
   }
   window.hubGo = hubGo;
@@ -3745,11 +3942,13 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   // initial route from hash — default = fuel (home)
   document.addEventListener('DOMContentLoaded', function() {
     var initial = (location.hash || '').replace('#', '');
-    hubGo(initial === 'diag' ? 'diag' : 'fuel');
+    var valid = ['fuel', 'diag', 'garage', 'passi', 'ride'];
+    hubGo(valid.indexOf(initial) >= 0 ? initial : 'fuel');
   });
   window.addEventListener('hashchange', function() {
     var n = (location.hash || '').replace('#', '');
-    hubGo(n === 'diag' ? 'diag' : 'fuel');
+    var valid = ['fuel', 'diag', 'garage', 'passi', 'ride'];
+    hubGo(valid.indexOf(n) >= 0 ? n : 'fuel');
   });
 
   /* Smart link: vehicle motore -> fuel filter on Carburanti */
@@ -12740,30 +12939,21 @@ async function runCmp() {
   function injectGarageUI() {
     if (document.getElementById('gar-overlay')) return;
 
-    var hubDiag = document.getElementById('hub-diag');
-    if (!hubDiag) return;
-
-    // Launch button (above diagnosis form)
-    var anaForm = document.getElementById('btn-analisi');
-    if (anaForm) {
-      var card = anaForm.closest('.cardx, .form-card, .card, .cs, [class*="card"]') || anaForm.parentElement;
+    var slot = document.getElementById('garage-launch-slot');
+    if (slot) {
       var btn = document.createElement('button');
       btn.id = 'gar-launch-btn';
       btn.className = 'gar-launch';
       btn.type = 'button';
       btn.innerHTML =
-        '<span class="gar-launch-icon">🏎</span>' +
-        '<span class="gar-launch-text">Il mio garage</span>' +
+        '<span class="gar-launch-icon">🚗</span>' +
+        '<span class="gar-launch-text">Veicoli</span>' +
         '<span class="gar-launch-active" id="gar-launch-active">Nessun veicolo</span>';
       btn.onclick = window.openGarage;
-      if (card && card.parentElement) {
-        card.parentElement.insertBefore(btn, card);
-      } else {
-        hubDiag.insertBefore(btn, hubDiag.firstChild);
-      }
+      slot.appendChild(btn);
     }
 
-    // Overlay
+    // Overlay + edit modal go to body so they survive section switches
     var ov = document.createElement('div');
     ov.id = 'gar-overlay';
     ov.innerHTML =
@@ -12775,9 +12965,8 @@ async function runCmp() {
         '<button class="gar-add-btn" onclick="openGarageEdit(null)">+ Aggiungi veicolo</button>' +
         '<div id="gar-list"></div>' +
       '</div>';
-    hubDiag.appendChild(ov);
+    document.body.appendChild(ov);
 
-    // Edit modal
     var em = document.createElement('div');
     em.id = 'gar-edit';
     em.onclick = function(e) { if (e.target === em) closeGarageEdit(); };
@@ -12827,7 +13016,7 @@ async function runCmp() {
           '<button type="button" class="gar-save" onclick="saveGarageEdit()">Salva</button>' +
         '</div>' +
       '</div>';
-    hubDiag.appendChild(em);
+    document.body.appendChild(em);
 
     refreshGarageBadge();
   }
@@ -13181,12 +13370,9 @@ async function runCmp() {
   /* ── UI INJECTION ───────────────────────────────────────────── */
   function injectFuelLogUI() {
     if (document.getElementById('fl-overlay')) return;
-    var hubDiag = document.getElementById('hub-diag');
-    if (!hubDiag) return;
 
-    // Launch button — placed right after the garage launch button
-    var garLaunch = document.getElementById('gar-launch-btn');
-    if (garLaunch) {
+    var slot = document.getElementById('garage-launch-slot');
+    if (slot) {
       var b = document.createElement('button');
       b.id = 'fl-launch-btn';
       b.className = 'fl-launch';
@@ -13196,10 +13382,9 @@ async function runCmp() {
         '<span class="fl-launch-text">Consumi & Rifornimenti</span>' +
         '<span class="fl-launch-stat" id="fl-launch-stat">—</span>';
       b.onclick = window.openFuelLog;
-      garLaunch.parentNode.insertBefore(b, garLaunch.nextSibling);
+      slot.appendChild(b);
     }
 
-    // Overlay
     var ov = document.createElement('div');
     ov.id = 'fl-overlay';
     ov.innerHTML =
@@ -13208,9 +13393,8 @@ async function runCmp() {
         '<button class="gar-close" onclick="closeFuelLog()">✕ Chiudi</button>' +
       '</div>' +
       '<div class="fl-body" id="fl-body"></div>';
-    hubDiag.appendChild(ov);
+    document.body.appendChild(ov);
 
-    // Edit modal
     var em = document.createElement('div');
     em.id = 'fl-edit';
     em.onclick = function(e) { if (e.target === em) closeFuelLogEdit(); };
@@ -13255,9 +13439,8 @@ async function runCmp() {
           '<button type="button" class="gar-save" onclick="saveFuelLogEdit()" style="background:rgba(91,155,213,.85);border-color:rgba(91,155,213,.6);color:#08131c">Salva</button>' +
         '</div>' +
       '</div>';
-    hubDiag.appendChild(em);
+    document.body.appendChild(em);
 
-    // Auto-compute totale when litri or prezzo changes
     function autoTotale() {
       var L = parseFloat(document.getElementById('fl-f-litri').value);
       var P = parseFloat(document.getElementById('fl-f-prezzo').value);
@@ -13579,26 +13762,9 @@ async function runCmp() {
   /* ── UI INJECTION ───────────────────────────────────────────── */
   function injectPassiUI() {
     if (document.getElementById('ps-overlay')) return;
-    var hubDiag = document.getElementById('hub-diag');
-    if (!hubDiag) return;
 
-    // Launch button below fuel-log
-    var flLaunch = document.getElementById('fl-launch-btn');
-    var anchor = flLaunch || document.getElementById('gar-launch-btn');
-    if (anchor) {
-      var b = document.createElement('button');
-      b.id = 'ps-launch-btn';
-      b.className = 'ps-launch';
-      b.type = 'button';
-      b.innerHTML =
-        '<span class="ps-launch-icon">⛰</span>' +
-        '<span class="ps-launch-text">Passi alpini & strade panoramiche</span>' +
-        '<span class="ps-launch-stat">' + PASSES.length + ' passi</span>';
-      b.onclick = window.openPassi;
-      anchor.parentNode.insertBefore(b, anchor.nextSibling);
-    }
+    // No launch button — Passi is reached only via the pill tab.
 
-    // Overlay
     var ov = document.createElement('div');
     ov.id = 'ps-overlay';
     ov.innerHTML =
@@ -13608,14 +13774,13 @@ async function runCmp() {
       '</div>' +
       '<div class="ps-filters" id="ps-filters"></div>' +
       '<div class="ps-body" id="ps-body"></div>';
-    hubDiag.appendChild(ov);
+    document.body.appendChild(ov);
 
-    // Detail modal
     var dm = document.createElement('div');
     dm.id = 'ps-detail';
     dm.onclick = function(e) { if (e.target === dm) closePassoDetail(); };
     dm.innerHTML = '<div class="ps-detail-card" id="ps-detail-card"></div>';
-    hubDiag.appendChild(dm);
+    document.body.appendChild(dm);
   }
 
   /* ── State + filters ───────────────────────────────────────── */
@@ -13850,23 +14015,8 @@ async function runCmp() {
 
   function injectRideUI() {
     if (document.getElementById('rd-overlay')) return;
-    var hubDiag = document.getElementById('hub-diag');
-    if (!hubDiag) return;
 
-    var psLaunch = document.getElementById('ps-launch-btn');
-    var anchor = psLaunch || document.getElementById('fl-launch-btn') || document.getElementById('gar-launch-btn');
-    if (anchor) {
-      var b = document.createElement('button');
-      b.id = 'rd-launch-btn';
-      b.className = 'rd-launch';
-      b.type = 'button';
-      b.innerHTML =
-        '<span class="rd-launch-icon">🏁</span>' +
-        '<span class="rd-launch-text">Modalità Ride</span>' +
-        '<span style="font-size:.58rem;color:rgba(255,196,176,.7);background:rgba(255,90,40,.15);padding:3px 8px;border-radius:999px">GPS · GPX</span>';
-      b.onclick = window.openRide;
-      anchor.parentNode.insertBefore(b, anchor.nextSibling);
-    }
+    // No launch button — Ride is reached only via the pill tab.
 
     var ov = document.createElement('div');
     ov.id = 'rd-overlay';
@@ -13898,7 +14048,7 @@ async function runCmp() {
         '</div>' +
       '</div>' +
       '<div class="rd-actions" id="rd-actions"></div>';
-    hubDiag.appendChild(ov);
+    document.body.appendChild(ov);
 
     renderActions();
   }
@@ -14215,13 +14365,9 @@ async function runCmp() {
 
   function injectMaintUI() {
     if (document.getElementById('mt-overlay')) return;
-    var hubDiag = document.getElementById('hub-diag');
-    if (!hubDiag) return;
 
-    var rdLaunch = document.getElementById('rd-launch-btn');
-    var anchor = rdLaunch || document.getElementById('ps-launch-btn') ||
-                 document.getElementById('fl-launch-btn') || document.getElementById('gar-launch-btn');
-    if (anchor) {
+    var slot = document.getElementById('garage-launch-slot');
+    if (slot) {
       var b = document.createElement('button');
       b.id = 'mt-launch-btn';
       b.className = 'mt-launch';
@@ -14231,7 +14377,7 @@ async function runCmp() {
         '<span class="mt-launch-text">Manutenzione</span>' +
         '<span class="mt-launch-stat" id="mt-launch-stat">—</span>';
       b.onclick = window.openMaint;
-      anchor.parentNode.insertBefore(b, anchor.nextSibling);
+      slot.appendChild(b);
     }
 
     var ov = document.createElement('div');
@@ -14242,7 +14388,7 @@ async function runCmp() {
         '<button class="gar-close" onclick="closeMaint()">✕ Chiudi</button>' +
       '</div>' +
       '<div class="mt-body" id="mt-body"></div>';
-    hubDiag.appendChild(ov);
+    document.body.appendChild(ov);
 
     var em = document.createElement('div');
     em.id = 'mt-edit';
@@ -14263,7 +14409,7 @@ async function runCmp() {
           '<button type="button" class="gar-save" onclick="saveMaintEvent()" style="background:rgba(76,175,125,.85);border-color:rgba(76,175,125,.6);color:#08160d">Salva</button>' +
         '</div>' +
       '</div>';
-    hubDiag.appendChild(em);
+    document.body.appendChild(em);
   }
 
   /* ── Public ─────────────────────────────────────────────────── */
