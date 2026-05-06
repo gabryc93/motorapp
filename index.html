@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Diagnosi & Carburanti</title>
@@ -842,8 +842,14 @@ select option{background:#1e1e28}
 
 /* ── iOS notch / Dynamic Island safe area ──────────────────────
    `viewport-fit=cover` is set in <meta>, so we MUST handle the top
-   inset everywhere a header or close button lives. */
+   inset everywhere a header or close button lives.
+   In standalone (PWA from home screen) iOS removes its own status bar
+   chrome, so we add a baseline minimum of ~50px to never overlap the
+   notch / clock / signal area. */
 :root { --hub-safe-top: env(safe-area-inset-top, 0px); }
+@media (display-mode: standalone) {
+  :root { --hub-safe-top: max(env(safe-area-inset-top, 0px), 50px); }
+}
 
 /* Section wraps */
 #hub-fuel header,
