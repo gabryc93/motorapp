@@ -4898,23 +4898,44 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     try {
       // 1. Clear all local caches that hold the medie data
       try { localStorage.removeItem('hub_medie_cache_v1'); } catch(_) {}
-      // The fuel app may also have its own cache key — clear the obvious ones:
       ['medie_cache','opf_medie_cache','last_medie','_lastMedie'].forEach(function(k) {
         try { localStorage.removeItem(k); } catch(_) {}
       });
-      // 2. Fetch fresh data bypassing HTTP cache
-      var url = (typeof window.WORKER_BASE === 'string' ? window.WORKER_BASE : 'https://osservaprezzi.gabrycois.workers.dev')
-                + '/api/medie';
-      var r = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      var data = await r.json();
-      // 3. Re-render via the fuel app's own renderer if available
-      if (typeof window.renderMedie === 'function') window.renderMedie(data);
-      if (typeof window.renderUpdateBar === 'function' && data._cachedAt) {
-        window.renderUpdateBar(data._cachedAt, data._nextUpdate, data._extractionDate);
+
+      // 2. Re-fetch. Strategy: prefer the fuel app's own loadMedie() — it knows the
+      //    correct WORKER URL (defined as a const inside its IIFE) and uses a plain
+      //    fetch that doesn't trigger a CORS preflight. We only add a cache-buster
+      //    via URL query so the browser/CDN can't serve a stale copy.
+      // The fuel app's `api()` calls `fetch(WORKER + path)` — we override that
+      // momentarily to inject a cache-buster, then call loadMedie().
+      if (typeof window.loadMedie === 'function') {
+        // Best path: use the app's own loader. To bust caches we patch fetch
+        // for ONE call only.
+        var _origFetch = window.fetch;
+        var patched = false;
+        window.fetch = function(url, opts) {
+          if (typeof url === 'string' && url.indexOf('/api/medie') >= 0) {
+            url = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+            // Restore real fetch immediately after the first matching call
+            window.fetch = _origFetch;
+            patched = true;
+          }
+          return _origFetch.call(this, url, opts);
+        };
+        try {
+          await window.loadMedie();
+        } finally {
+          if (!patched) window.fetch = _origFetch;
+        }
+      } else {
+        // Fallback: direct call (shouldn't happen on a healthy load)
+        var url = 'https://osservaprezzi.gabrycois.workers.dev/api/medie?_t=' + Date.now();
+        var r = await fetch(url);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var data = await r.json();
+        if (typeof window.renderMedie === 'function') window.renderMedie(data);
       }
       _hubCheckStaleness();
-      // Visual confirmation: brief flash
       btn.style.background = 'rgba(76,175,125,.25)';
       setTimeout(function() { btn.style.background = ''; }, 800);
     } catch (e) {
