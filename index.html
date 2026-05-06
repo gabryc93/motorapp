@@ -3711,6 +3711,46 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
    HUB HOME — hero card + skeleton (must be after fuel CSS to win cascade)
    ════════════════════════════════════════════════════════════════════ */
 
+/* ── Force-refresh button on update bar ──────────────────────── */
+#hub-fuel #hub-force-refresh {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd2);
+  color: var(--tx2);
+  width: 32px; height: 32px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  margin-left: 6px;
+  transition: all .15s ease;
+  flex-shrink: 0;
+}
+#hub-fuel #hub-force-refresh:hover {
+  color: var(--tx);
+  border-color: var(--am);
+  background: var(--am-d);
+}
+#hub-fuel #hub-force-refresh:active { transform: scale(.92); }
+#hub-fuel #hub-force-refresh.spinning { pointer-events: none; opacity: .6; }
+#hub-fuel #hub-force-refresh.spinning > span {
+  display: inline-block;
+  animation: hubSpin 1s linear infinite;
+}
+@keyframes hubSpin { to { transform: rotate(360deg); } }
+
+#hub-fuel .update-bar.has-stale-warning {
+  border-color: rgba(232, 160, 48, 0.35) !important;
+}
+#hub-fuel .update-stale-msg {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: #ffd699;
+  margin-top: 4px;
+  letter-spacing: .02em;
+  width: 100%;
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    HUB HOME — hero card + skeleton shimmer (replaces fullscreen loader)
    ═══════════════════════════════════════════════════════════════════ */
@@ -4769,6 +4809,122 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     };
   }
   document.addEventListener('DOMContentLoaded', _hubAutoLocalize);
+
+  /* ── FORCE REFRESH button: clears local caches and re-fetches ── */
+  function _hubInjectRefreshBtn() {
+    var bar = document.getElementById('update-bar');
+    if (!bar) return false;
+    if (document.getElementById('hub-force-refresh')) return true;
+    var btn = document.createElement('button');
+    btn.id = 'hub-force-refresh';
+    btn.title = 'Forza aggiornamento dati';
+    btn.setAttribute('aria-label', 'Forza aggiornamento');
+    btn.innerHTML = '<span>↻</span>';
+    btn.onclick = window.hubForceRefresh;
+    bar.appendChild(btn);
+
+    // Add stale-warning slot
+    if (!document.getElementById('hub-stale-warn')) {
+      var warn = document.createElement('div');
+      warn.id = 'hub-stale-warn';
+      warn.className = 'update-stale-msg';
+      warn.style.display = 'none';
+      bar.appendChild(warn);
+    }
+    _hubCheckStaleness();
+    return true;
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    // Inject when home is rendered (might be later than DOMContentLoaded)
+    var tries = 0;
+    var iv = setInterval(function() {
+      if (_hubInjectRefreshBtn() || ++tries > 20) clearInterval(iv);
+    }, 200);
+  });
+
+  function _hubCheckStaleness() {
+    var lastEl = document.getElementById('last-update');
+    var bar = document.getElementById('update-bar');
+    var warn = document.getElementById('hub-stale-warn');
+    if (!lastEl || !bar || !warn) return;
+    // Parse the date shown by renderUpdateBar: "DD/MM/YYYY · estrazione MIMIT"
+    var txt = lastEl.textContent || '';
+    var m = txt.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    if (!m) return;
+    var dataDate = new Date(+m[3], +m[2] - 1, +m[1]);
+    var today = new Date(); today.setHours(0,0,0,0);
+    var ageDays = Math.round((today - dataDate) / 86400000);
+    if (ageDays >= 1) {
+      bar.classList.add('has-stale-warning');
+      warn.style.display = 'block';
+      warn.textContent = '⚠ Dati di ' + ageDays + ' ' + (ageDays === 1 ? 'giorno' : 'giorni') +
+        ' fa. Tap ↻ per ricaricare dal server.';
+    } else {
+      bar.classList.remove('has-stale-warning');
+      warn.style.display = 'none';
+    }
+  }
+  // Re-check periodically and after renderUpdateBar updates the DOM
+  setInterval(_hubCheckStaleness, 30000);
+  // Patch renderUpdateBar to re-trigger our check
+  if (typeof window.renderUpdateBar === 'function') {
+    var _origRender = window.renderUpdateBar;
+    window.renderUpdateBar = function() {
+      var r = _origRender.apply(this, arguments);
+      try { _hubCheckStaleness(); } catch(_) {}
+      return r;
+    };
+  } else {
+    // It might not be defined yet when this script runs; wait and patch
+    var pTries = 0;
+    var pi = setInterval(function() {
+      if (typeof window.renderUpdateBar === 'function') {
+        var _o = window.renderUpdateBar;
+        window.renderUpdateBar = function() {
+          var r = _o.apply(this, arguments);
+          try { _hubCheckStaleness(); } catch(_) {}
+          return r;
+        };
+        clearInterval(pi);
+      }
+      if (++pTries > 30) clearInterval(pi);
+    }, 200);
+  }
+
+  window.hubForceRefresh = async function() {
+    var btn = document.getElementById('hub-force-refresh');
+    if (!btn) return;
+    btn.classList.add('spinning');
+    try {
+      // 1. Clear all local caches that hold the medie data
+      try { localStorage.removeItem('hub_medie_cache_v1'); } catch(_) {}
+      // The fuel app may also have its own cache key — clear the obvious ones:
+      ['medie_cache','opf_medie_cache','last_medie','_lastMedie'].forEach(function(k) {
+        try { localStorage.removeItem(k); } catch(_) {}
+      });
+      // 2. Fetch fresh data bypassing HTTP cache
+      var url = (typeof window.WORKER_BASE === 'string' ? window.WORKER_BASE : 'https://osservaprezzi.gabrycois.workers.dev')
+                + '/api/medie';
+      var r = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      var data = await r.json();
+      // 3. Re-render via the fuel app's own renderer if available
+      if (typeof window.renderMedie === 'function') window.renderMedie(data);
+      if (typeof window.renderUpdateBar === 'function' && data._cachedAt) {
+        window.renderUpdateBar(data._cachedAt, data._nextUpdate, data._extractionDate);
+      }
+      _hubCheckStaleness();
+      // Visual confirmation: brief flash
+      btn.style.background = 'rgba(76,175,125,.25)';
+      setTimeout(function() { btn.style.background = ''; }, 800);
+    } catch (e) {
+      console.error('[AutoHub] force refresh failed', e);
+      alert('Impossibile aggiornare i dati: ' + (e.message || e) +
+            '\n\nSe il problema persiste, il server MIMIT potrebbe non aver pubblicato dati recenti.');
+    } finally {
+      btn.classList.remove('spinning');
+    }
+  };
 
   /* ── #6 COMPARE FAVORITES OVERLAY ───────────────────────────── */
   function _hubInjectCompareUI() {
