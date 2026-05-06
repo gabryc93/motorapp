@@ -840,6 +840,38 @@ select option{background:#1e1e28}
    HUB SHELL — bottom tab bar uniting Diagnosi + Carburanti
    ═══════════════════════════════════════════════════════════════════ */
 
+/* ── iOS notch / Dynamic Island safe area ──────────────────────
+   `viewport-fit=cover` is set in <meta>, so we MUST handle the top
+   inset everywhere a header or close button lives. */
+:root { --hub-safe-top: env(safe-area-inset-top, 0px); }
+
+/* Section wraps */
+#hub-fuel header,
+#hub-diag .wrap > header,
+#hub-garage .garage-hdr {
+  padding-top: calc(14px + var(--hub-safe-top));
+}
+
+/* All fullscreen overlay headers */
+.gar-hdr, .fl-hdr, .mt-hdr, .ps-hdr, .rd-hdr, .rdl-hdr, .wp-hdr,
+#hub-cmp-overlay .hub-cmp-hdr {
+  padding-top: calc(14px + var(--hub-safe-top));
+}
+
+/* Fuel app's map view + favorites view headers — these are the bars that
+   sit at top:0 inside the fixed views. */
+#hub-fuel #map-view .map-header,
+#hub-fuel #fav-view .fav-view-hdr {
+  padding-top: calc(12px + var(--hub-safe-top));
+}
+
+/* Station detail modal — top sheet */
+#hub-fuel #modal-overlay > .modal,
+#hub-fuel #modal-overlay > div:first-child {
+  padding-top: calc(8px + var(--hub-safe-top));
+}
+
+
 /* Hide the diagnosis ::before grid when fuel section is active (it
    would bleed through fuel's transparent areas) */
 body[data-hub="fuel"]::before { display: none !important; }
@@ -2387,6 +2419,189 @@ body[data-hub="fuel"]::before { display: none !important; }
   text-align: center; padding: 30px 20px;
   font-family: 'DM Mono', monospace;
   font-size: .76rem; color: var(--t3);
+}
+
+/* ── Segmented control: Curati vs Vicini a me ─────────────────── */
+.ps-segctrl {
+  display: flex;
+  gap: 4px;
+  padding: 12px 14px 4px;
+  flex-shrink: 0;
+}
+.ps-seg {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.ps-seg.on {
+  color: #d4bff0;
+  border-color: rgba(140,90,200,.55);
+  background: rgba(140,90,200,.13);
+}
+.ps-seg:active { transform: scale(.98); }
+
+/* Hide the curated filters when in "nearby" mode */
+.ps-mode-nearby #ps-filters { display: none; }
+
+/* Nearby mode: search bar */
+.ps-nearby-bar {
+  padding: 8px 14px 12px;
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ps-nearby-bar label {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  flex-shrink: 0;
+}
+.ps-nearby-bar select {
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t1);
+  padding: 6px 9px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+}
+.ps-nearby-go {
+  appearance: none; -webkit-appearance: none;
+  background: linear-gradient(135deg, rgba(140,90,200,.85), rgba(110,70,180,.7));
+  border: 1px solid rgba(140,90,200,.55);
+  color: #fff;
+  padding: 7px 13px;
+  border-radius: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+}
+.ps-nearby-go:hover { filter: brightness(1.1); }
+.ps-nearby-go:active { transform: scale(.98); }
+.ps-nearby-go:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Nearby road card — same family as ps-card but with mini-map preview */
+.psn-card {
+  display: flex; gap: 10px;
+  align-items: center;
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  padding: 11px 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.psn-card:hover { border-color: var(--brd2); }
+.psn-card:active { transform: scale(.99); }
+.psn-card-map {
+  flex-shrink: 0;
+  width: 72px; height: 72px;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.psn-card-map svg { width: 100%; height: 100%; display: block; }
+.psn-card-info { flex: 1; min-width: 0; }
+.psn-card-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .92rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  margin-bottom: 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.psn-card-stats {
+  display: flex;
+  gap: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t1);
+  flex-wrap: wrap;
+}
+.psn-card-stat-lbl {
+  color: var(--t3);
+  font-size: .5rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-right: 3px;
+}
+.psn-card-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(140,90,200,.16);
+  color: #d4bff0;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(140,90,200,.3);
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+.psn-card-bonus {
+  display: inline-block;
+  margin-left: 4px;
+  background: rgba(232,160,48,.15);
+  color: #ffd699;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(232,160,48,.3);
+  font-size: .52rem;
+}
+.ps-nearby-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--t3);
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+}
+.ps-nearby-spinner::after {
+  content: '⟳';
+  display: inline-block;
+  margin-left: 6px;
+  animation: psnSpin 1.2s linear infinite;
+}
+@keyframes psnSpin { to { transform: rotate(360deg); } }
+.ps-nearby-error {
+  margin: 12px 14px;
+  padding: 12px 14px;
+  background: rgba(224,90,74,.1);
+  border: 1px solid rgba(224,90,74,.3);
+  border-radius: 10px;
+  color: #ffb4a8;
+  font-family: 'DM Mono', monospace;
+  font-size: .7rem;
+  line-height: 1.5;
+}
+.ps-nearby-disclaimer {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  line-height: 1.6;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -14264,7 +14479,21 @@ async function runCmp() {
         '<h2>PASSI & STRADE<small>Curato per motociclisti</small></h2>' +
         '<button class="gar-close" onclick="closePassi()">✕ Chiudi</button>' +
       '</div>' +
+      '<div class="ps-segctrl">' +
+        '<button class="ps-seg on" data-mode="curated">Curati (' + PASSES.length + ')</button>' +
+        '<button class="ps-seg" data-mode="nearby">📍 Vicini a me</button>' +
+      '</div>' +
       '<div class="ps-filters" id="ps-filters"></div>' +
+      '<div class="ps-nearby-bar" id="ps-nearby-bar" style="display:none">' +
+        '<label>Raggio</label>' +
+        '<select id="ps-nearby-radius">' +
+          '<option value="5">5 km</option>' +
+          '<option value="10" selected>10 km</option>' +
+          '<option value="15">15 km</option>' +
+          '<option value="25">25 km</option>' +
+        '</select>' +
+        '<button class="ps-nearby-go" id="ps-nearby-go" onclick="psNearbySearch()">Cerca</button>' +
+      '</div>' +
       '<div class="ps-body" id="ps-body"></div>';
     document.body.appendChild(ov);
 
@@ -14441,6 +14670,287 @@ async function runCmp() {
     return 'Temporale';
   }
 
+  /* ════════════════════════════════════════════════════════════════
+     NEARBY ROADS ENGINE — Overpass + curvature scoring
+     ════════════════════════════════════════════════════════════════ */
+  var _nearbyMode = false;
+  var _nearbyCache = {};   // key = `${lat3}_${lng3}_${radius}` → { ts, results }
+  var NEARBY_CACHE_KEY = 'hub_nearby_v1';
+  try {
+    _nearbyCache = JSON.parse(localStorage.getItem(NEARBY_CACHE_KEY) || '{}');
+  } catch(e) {}
+
+  function setMode(mode) {
+    var ov = document.getElementById('ps-overlay');
+    if (!ov) return;
+    _nearbyMode = (mode === 'nearby');
+    ov.classList.toggle('ps-mode-nearby', _nearbyMode);
+    document.querySelectorAll('.ps-seg').forEach(function(s) {
+      s.classList.toggle('on', s.dataset.mode === mode);
+    });
+    document.getElementById('ps-nearby-bar').style.display = _nearbyMode ? 'flex' : 'none';
+    if (_nearbyMode) {
+      renderNearbyIntro();
+    } else {
+      renderFilters();
+      renderList();
+    }
+  }
+
+  function renderNearbyIntro() {
+    var body = document.getElementById('ps-body');
+    if (!body) return;
+    body.innerHTML =
+      '<div class="ps-empty">' +
+        'Trova strade ad alta curvatura intorno a te.<br>' +
+        'Scegli un raggio e tap su <strong>Cerca</strong>.' +
+      '</div>' +
+      '<div class="ps-nearby-disclaimer">' +
+        'Dati strade da OpenStreetMap, calcolo curvatura locale. Niente account/API key. ' +
+        'Risultati cached 10 minuti per zona. ' +
+        'Niente filtro stagionale: in inverno strade alte potrebbero essere chiuse.' +
+      '</div>';
+  }
+
+  function haversineKm(a, b) {
+    var R = 6371, toRad = Math.PI / 180;
+    var dLat = (b[0] - a[0]) * toRad;
+    var dLng = (b[1] - a[1]) * toRad;
+    var la1 = a[0] * toRad, la2 = b[0] * toRad;
+    var x = Math.sin(dLat/2)**2 + Math.sin(dLng/2)**2 * Math.cos(la1) * Math.cos(la2);
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+  function turnAngleDeg(a, b, c) {
+    // bearing change at b, in degrees, absolute
+    var toRad = Math.PI / 180, toDeg = 180 / Math.PI;
+    function bearing(p, q) {
+      var dLng = (q[1] - p[1]) * toRad;
+      var la1 = p[0] * toRad, la2 = q[0] * toRad;
+      var y = Math.sin(dLng) * Math.cos(la2);
+      var x = Math.cos(la1) * Math.sin(la2) - Math.sin(la1) * Math.cos(la2) * Math.cos(dLng);
+      return Math.atan2(y, x) * toDeg;
+    }
+    var b1 = bearing(a, b), b2 = bearing(b, c);
+    var diff = b2 - b1;
+    while (diff > 180) diff -= 360;
+    while (diff < -180) diff += 360;
+    return Math.abs(diff);
+  }
+
+  function computeRoad(way, nodesById) {
+    var coords = way.nodes.map(function(id) {
+      var n = nodesById[id];
+      return n ? [n.lat, n.lon] : null;
+    }).filter(Boolean);
+    if (coords.length < 4) return null;
+    var lengthKm = 0;
+    for (var i = 1; i < coords.length; i++) lengthKm += haversineKm(coords[i-1], coords[i]);
+    if (lengthKm < 1.5) return null;
+
+    var totalTurn = 0;
+    var hairpinish = 0;
+    for (var i = 1; i < coords.length - 1; i++) {
+      var ang = turnAngleDeg(coords[i-1], coords[i], coords[i+1]);
+      totalTurn += ang;
+      if (ang > 60) hairpinish++;
+    }
+    var score = totalTurn / lengthKm; // °/km
+    if (score < 40) return null;
+    return {
+      id: way.id,
+      name: (way.tags && way.tags.name) || (way.tags && way.tags.ref) || 'Strada senza nome',
+      ref:  way.tags && way.tags.ref,
+      type: way.tags && way.tags.highway,
+      coords: coords,
+      lengthKm: lengthKm,
+      totalTurn: totalTurn,
+      score: score,
+      hairpins: hairpinish,
+      midpoint: coords[Math.floor(coords.length / 2)]
+    };
+  }
+
+  // Overpass query: highways within radius + viewpoints/peaks for bonus
+  function buildOverpassQuery(lat, lng, radiusKm) {
+    var r = Math.round(radiusKm * 1000);
+    return '[out:json][timeout:25];' +
+      '(' +
+        'way(around:' + r + ',' + lat + ',' + lng + ')' +
+          '["highway"~"^(primary|secondary|tertiary|unclassified|residential)$"]' +
+          '["surface"!="gravel"]["surface"!="dirt"]' +
+          '["area"!="yes"]' +
+          '["service"!~"."]' +
+          ';' +
+        'node(around:' + r + ',' + lat + ',' + lng + ')' +
+          '["natural"="peak"];' +
+        'node(around:' + r + ',' + lat + ',' + lng + ')' +
+          '["tourism"="viewpoint"];' +
+      ');' +
+      'out body geom;';
+  }
+
+  async function fetchOverpass(lat, lng, radiusKm) {
+    var key = lat.toFixed(3) + '_' + lng.toFixed(3) + '_' + radiusKm;
+    var now = Date.now();
+    var cached = _nearbyCache[key];
+    if (cached && (now - cached.ts) < 10 * 60 * 1000) {
+      return cached.data;
+    }
+    var endpoints = [
+      'https://overpass-api.de/api/interpreter',
+      'https://overpass.kumi.systems/api/interpreter',
+      'https://overpass.openstreetmap.fr/api/interpreter'
+    ];
+    var query = buildOverpassQuery(lat, lng, radiusKm);
+    var lastErr = null;
+    for (var i = 0; i < endpoints.length; i++) {
+      try {
+        var ctrl = new AbortController();
+        var timer = setTimeout(function() { ctrl.abort(); }, 30000);
+        var r = await fetch(endpoints[i], {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'data=' + encodeURIComponent(query),
+          signal: ctrl.signal
+        });
+        clearTimeout(timer);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var data = await r.json();
+        _nearbyCache[key] = { ts: now, data: data };
+        try { localStorage.setItem(NEARBY_CACHE_KEY, JSON.stringify(_nearbyCache)); } catch(_) {}
+        return data;
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    throw lastErr || new Error('Tutti gli endpoint Overpass non disponibili');
+  }
+
+  function processOverpass(data, centerLat, centerLng) {
+    if (!data || !data.elements) return { roads: [], pois: [] };
+    // Build node map
+    var nodesById = {};
+    var pois = [];
+    data.elements.forEach(function(el) {
+      if (el.type === 'node') {
+        nodesById[el.id] = { lat: el.lat, lon: el.lon };
+        if (el.tags && (el.tags.natural === 'peak' || el.tags.tourism === 'viewpoint')) {
+          pois.push({ lat: el.lat, lon: el.lon, kind: el.tags.natural || el.tags.tourism, name: el.tags.name });
+        }
+      } else if (el.type === 'way' && el.geometry && el.geometry.length) {
+        // Overpass with "out body geom" embeds geometry per way; but we requested "out body geom"
+        // which gives nodes ids, not geometry. We must request "out geom" to get coords inline.
+        // Fallback: synthesize nodesById from el.geometry.
+        el.nodes = el.nodes || el.geometry.map(function(_, i) { return el.id + '_' + i; });
+        for (var i = 0; i < el.geometry.length; i++) {
+          var nid = el.nodes[i];
+          if (!nodesById[nid]) nodesById[nid] = { lat: el.geometry[i].lat, lon: el.geometry[i].lon };
+        }
+      }
+    });
+
+    var roads = [];
+    data.elements.forEach(function(el) {
+      if (el.type !== 'way') return;
+      var road = computeRoad(el, nodesById);
+      if (!road) return;
+      // Bonus: ☆ if a POI is within 500m of any midway point
+      road.scenicBonus = false;
+      var mid = road.midpoint;
+      for (var p = 0; p < pois.length; p++) {
+        if (haversineKm(mid, [pois[p].lat, pois[p].lon]) < 0.5) {
+          road.scenicBonus = true; break;
+        }
+      }
+      roads.push(road);
+    });
+    roads.sort(function(a, b) { return b.score - a.score; });
+    return { roads: roads.slice(0, 10), pois: pois };
+  }
+
+  // Mini-map SVG of road coords
+  function roadSVG(coords, w, h) {
+    if (!coords || coords.length < 2) return '';
+    var lats = coords.map(function(c){return c[0];});
+    var lngs = coords.map(function(c){return c[1];});
+    var minLat = Math.min.apply(null, lats), maxLat = Math.max.apply(null, lats);
+    var minLng = Math.min.apply(null, lngs), maxLng = Math.max.apply(null, lngs);
+    var dLat = maxLat - minLat || 0.0005;
+    var dLng = maxLng - minLng || 0.0005;
+    var pad = 4;
+    var path = coords.map(function(c, i) {
+      var x = pad + (c[1] - minLng) / dLng * (w - 2*pad);
+      var y = pad + (maxLat - c[0]) / dLat * (h - 2*pad);
+      return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
+    }).join(' ');
+    return '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
+      '<path d="' + path + '" stroke="#c97fd4" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>';
+  }
+
+  function renderNearbyResults(roads, lat, lng) {
+    var body = document.getElementById('ps-body');
+    if (!body) return;
+    if (!roads || roads.length === 0) {
+      body.innerHTML =
+        '<div class="ps-empty">' +
+          'Nessuna strada con curvatura significativa trovata in quest\'area.<br>' +
+          'Prova ad aumentare il raggio.' +
+        '</div>';
+      return;
+    }
+    var html = roads.map(function(r) {
+      var bonus = r.scenicBonus ? '<span class="psn-card-bonus">☆ panorami</span>' : '';
+      var lat0 = r.midpoint[0], lng0 = r.midpoint[1];
+      return '<div class="psn-card" data-lat="' + lat0 + '" data-lng="' + lng0 + '" data-name="' + escSafe(r.name) + '">' +
+        '<div class="psn-card-map">' + roadSVG(r.coords, 72, 72) + '</div>' +
+        '<div class="psn-card-info">' +
+          '<div class="psn-card-name">' + escSafe(r.name) + bonus + '</div>' +
+          '<div class="psn-card-stats">' +
+            '<span class="psn-card-score">' + Math.round(r.score) + ' °/km</span>' +
+            '<span><span class="psn-card-stat-lbl">LUNGH</span>' + r.lengthKm.toFixed(1) + ' km</span>' +
+            '<span><span class="psn-card-stat-lbl">TORN</span>~' + r.hairpins + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    body.innerHTML = html;
+  }
+
+  window.psNearbySearch = async function() {
+    if (!navigator.geolocation) {
+      document.getElementById('ps-body').innerHTML = '<div class="ps-nearby-error">GPS non disponibile sul dispositivo.</div>';
+      return;
+    }
+    var radius = parseFloat(document.getElementById('ps-nearby-radius').value) || 10;
+    var btn = document.getElementById('ps-nearby-go');
+    var body = document.getElementById('ps-body');
+    btn.disabled = true;
+    body.innerHTML = '<div class="ps-nearby-loading ps-nearby-spinner">Acquisizione posizione</div>';
+
+    navigator.geolocation.getCurrentPosition(async function(pos) {
+      var lat = pos.coords.latitude;
+      var lng = pos.coords.longitude;
+      body.innerHTML = '<div class="ps-nearby-loading ps-nearby-spinner">Cerco strade entro ' + radius + ' km</div>';
+      try {
+        var raw = await fetchOverpass(lat, lng, radius);
+        body.innerHTML = '<div class="ps-nearby-loading ps-nearby-spinner">Calcolo curvatura</div>';
+        // Defer compute slightly to let the spinner render
+        await new Promise(function(r) { setTimeout(r, 30); });
+        var processed = processOverpass(raw, lat, lng);
+        renderNearbyResults(processed.roads, lat, lng);
+      } catch (e) {
+        body.innerHTML = '<div class="ps-nearby-error">Errore: ' + escSafe(e.message || String(e)) +
+          '<br><small>Overpass è gratis ma rate-limited. Riprova fra qualche minuto.</small></div>';
+      } finally {
+        btn.disabled = false;
+      }
+    }, function(err) {
+      btn.disabled = false;
+      body.innerHTML = '<div class="ps-nearby-error">GPS errore: ' + escSafe(err.message || ('code ' + err.code)) + '</div>';
+    }, { enableHighAccuracy: true, timeout: 15000 });
+  };
+
   /* ── Event delegation for cards + filters ──────────────────── */
   document.addEventListener('DOMContentLoaded', function() {
     setTimeout(injectPassiUI, 350);
@@ -14451,11 +14961,24 @@ async function runCmp() {
         openDetail(card.dataset.id);
         return;
       }
+      var ncard = ev.target.closest('#ps-body .psn-card');
+      if (ncard) {
+        var lat = ncard.dataset.lat, lng = ncard.dataset.lng;
+        var name = ncard.dataset.name || 'Strada';
+        var url = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '&travelmode=driving';
+        window.open(url, '_blank', 'noopener');
+        return;
+      }
       var fbtn = ev.target.closest('#ps-filters .ps-fbtn');
       if (fbtn) {
         _filter = fbtn.dataset.flt;
         renderFilters();
         renderList();
+        return;
+      }
+      var seg = ev.target.closest('.ps-seg');
+      if (seg) {
+        setMode(seg.dataset.mode);
       }
     });
   });
