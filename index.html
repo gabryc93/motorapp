@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
+<meta name="autohub-build" content="2026-05-06-1005">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Diagnosi & Carburanti</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
@@ -3841,34 +3842,35 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   background:
     linear-gradient(135deg, rgba(232,160,48,.12), rgba(232,160,48,.04) 60%, rgba(232,160,48,.08));
   border: 1px solid rgba(232,160,48,.28);
-  border-radius: 10px;
-  padding: 9px 12px;
+  border-radius: 9px;
+  padding: 7px 11px 8px !important;
   overflow: hidden;
 }
 #hub-fuel .hero-empty::before {
   content: '';
-  position: absolute; top: 0; right: 0; width: 70px; height: 70px;
+  position: absolute; top: 0; right: 0; width: 60px; height: 60px;
   background: radial-gradient(circle at 70% 30%, rgba(232,160,48,.22), transparent 60%);
   pointer-events: none;
 }
 #hub-fuel .hero-empty .hero-row {
   display: flex; align-items: center;
-  margin-bottom: 2px;
+  margin-bottom: 1px !important;
 }
 #hub-fuel .hero-empty .hero-label {
   font-family: 'DM Mono', monospace;
-  font-size: .56rem; font-weight: 500;
+  font-size: .54rem !important;
+  font-weight: 500;
   letter-spacing: .12em; text-transform: uppercase;
   color: var(--am);
   display: inline-flex; align-items: center; gap: 5px;
 }
-#hub-fuel .hero-empty .hero-icn { font-size: .72rem; line-height: 1; }
+#hub-fuel .hero-empty .hero-icn { font-size: .68rem; line-height: 1; }
 #hub-fuel .hero-empty .hero-empty-text {
   font-family: 'DM Mono', monospace;
-  font-size: .65rem;
+  font-size: .62rem !important;
   color: var(--tx2);
-  line-height: 1.35;
-  margin: 1px 0 7px;
+  line-height: 1.3 !important;
+  margin: 1px 0 6px !important;
 }
 #hub-fuel .hero-cta-btn {
   width: 100%;
@@ -3876,10 +3878,11 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   background: linear-gradient(135deg, rgba(232,160,48,.85), rgba(232,160,48,.65));
   color: #0d0e0f;
   border: 1px solid rgba(232,160,48,.6);
-  border-radius: 7px;
-  padding: 7px 10px;
+  border-radius: 6px;
+  padding: 6px 10px !important;
   font-family: 'DM Mono', monospace;
-  font-size: .68rem; font-weight: 600;
+  font-size: .66rem !important;
+  font-weight: 600;
   letter-spacing: .04em;
   cursor: pointer;
   transition: all .15s ease;
