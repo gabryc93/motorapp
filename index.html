@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-05-07-0619">
+<meta name="autohub-build" content="2026-05-07-0631">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Diagnosi & Carburanti</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
@@ -6508,27 +6508,28 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     if (!btn) return;
     btn.classList.add('spinning');
     try {
-      // 1. Clear all local caches that hold the medie data
+      // 1. Clear local caches
       try { localStorage.removeItem('hub_medie_cache_v1'); } catch(_) {}
       ['medie_cache','opf_medie_cache','last_medie','_lastMedie'].forEach(function(k) {
         try { localStorage.removeItem(k); } catch(_) {}
       });
 
-      // 2. Re-fetch. Strategy: prefer the fuel app's own loadMedie() — it knows the
-      //    correct WORKER URL (defined as a const inside its IIFE) and uses a plain
-      //    fetch that doesn't trigger a CORS preflight. We only add a cache-buster
-      //    via URL query so the browser/CDN can't serve a stale copy.
-      // The fuel app's `api()` calls `fetch(WORKER + path)` — we override that
-      // momentarily to inject a cache-buster, then call loadMedie().
+      // 2. NUKE server-side cache: hit /api/refresh which forces a fresh
+      //    MIMIT fetch on the Worker. Best-effort — if endpoint missing
+      //    (older Worker version), skip silently.
+      try {
+        var workerBase = (typeof window.WORKER === 'string') ? window.WORKER
+                        : 'https://osservaprezzi.gabrycois.workers.dev';
+        await fetch(workerBase + '/api/refresh?_t=' + Date.now());
+      } catch(_) { /* worker too old, ignore */ }
+
+      // 3. Re-fetch via the fuel app's own loader (handles render + UI)
       if (typeof window.loadMedie === 'function') {
-        // Best path: use the app's own loader. To bust caches we patch fetch
-        // for ONE call only.
         var _origFetch = window.fetch;
         var patched = false;
         window.fetch = function(url, opts) {
           if (typeof url === 'string' && url.indexOf('/api/medie') >= 0) {
             url = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
-            // Restore real fetch immediately after the first matching call
             window.fetch = _origFetch;
             patched = true;
           }
@@ -6539,21 +6540,14 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
         } finally {
           if (!patched) window.fetch = _origFetch;
         }
-      } else {
-        // Fallback: direct call (shouldn't happen on a healthy load)
-        var url = 'https://osservaprezzi.gabrycois.workers.dev/api/medie?_t=' + Date.now();
-        var r = await fetch(url);
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        var data = await r.json();
-        if (typeof window.renderMedie === 'function') window.renderMedie(data);
       }
       _hubCheckStaleness();
       btn.style.background = 'rgba(76,175,125,.25)';
       setTimeout(function() { btn.style.background = ''; }, 800);
     } catch (e) {
       console.error('[AutoHub] force refresh failed', e);
-      alert('Impossibile aggiornare i dati: ' + (e.message || e) +
-            '\n\nSe il problema persiste, il server MIMIT potrebbe non aver pubblicato dati recenti.');
+      alert('Aggiornamento fallito: ' + (e.message || e) +
+            '\n\nSe il problema persiste, il server MIMIT potrebbe non aver pubblicato dati nuovi.');
     } finally {
       btn.classList.remove('spinning');
     }
