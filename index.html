@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-05-07-0631">
+<meta name="autohub-build" content="2026-05-07-0637">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Diagnosi & Carburanti</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
@@ -18607,24 +18607,28 @@ async function runCmp() {
     var winds   = samples.map(function(s) { return s.weather.wind || 0; });
     var maxRain = Math.max.apply(null, precips);
     var totalRain = precips.reduce(function(a, b) { return a + b; }, 0);
-    var rainPoints = precips.filter(function(p) { return p > 0.5; }).length;
+    var rainPointsLight = precips.filter(function(p) { return p > 0.1; }).length;
+    var rainPointsHeavy = precips.filter(function(p) { return p > 0.5; }).length;
     var minTemp = Math.min.apply(null, temps);
     var maxTemp = Math.max.apply(null, temps);
     var maxWind = Math.max.apply(null, winds);
     var avgWind = winds.reduce(function(a, b) { return a + b; }, 0) / winds.length;
     var km = route.distanceKm;
 
-    // ── Blocker detection: any of these makes moto a bad idea ──
-    var hasBlocker = (maxRain > 0.5) || (minTemp < 5) || (maxWind > 30);
+    // ── Blocker: pioggia diffusa (≥2 punti) o forte (max>0.3mm), freddo, vento ──
+    var hasBlocker = (rainPointsLight >= 2) || (maxRain > 0.3) || (minTemp < 5) || (maxWind > 30);
 
     // ── Pioggia (most important factor) ──
-    if (maxRain > 3) {
-      autoScore += 8;
-      pros.push({ side:'auto', icn:'🌧', txt:'Pioggia intensa prevista (' + maxRain.toFixed(1) + ' mm)' });
-    } else if (maxRain > 0.5) {
-      autoScore += 6;
-      pros.push({ side:'auto', icn:'💧', txt:'Pioggia leggera in ' + rainPoints + '/' + samples.length + ' punti' });
-    } else if (totalRain < 0.1) {
+    if (maxRain > 3 || totalRain > 5) {
+      autoScore += 9;
+      pros.push({ side:'auto', icn:'🌧', txt:'Pioggia intensa prevista (max ' + maxRain.toFixed(1) + ' mm)' });
+    } else if (rainPointsHeavy >= 1 || rainPointsLight >= 2) {
+      autoScore += 7;
+      pros.push({ side:'auto', icn:'💧', txt:'Pioggia in ' + rainPointsLight + '/' + samples.length + ' punti del tragitto' });
+    } else if (maxRain > 0.1) {
+      autoScore += 4;
+      pros.push({ side:'auto', icn:'💧', txt:'Possibili gocce di pioggia' });
+    } else {
       motoScore += 3;
       pros.push({ side:'moto', icn:'☀', txt:'Niente pioggia su tutto il tragitto' });
     }
