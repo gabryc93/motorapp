@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-05-06-1722">
+<meta name="autohub-build" content="2026-05-07-0612">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Diagnosi & Carburanti</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
@@ -927,7 +927,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   background: transparent;
   border: none;
   border-radius: 999px;
-  width: 38px; height: 34px;
+  width: 34px; height: 32px;
   padding: 0;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
@@ -936,7 +936,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   font-size: 0;
 }
 .hub-tab .hub-icn {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1;
   opacity: 0.55;
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -965,6 +965,10 @@ body[data-hub="fuel"]::before { display: none !important; }
 .hub-tab.active.hub-tab-meteo {
   background: rgba(91, 155, 213, 0.22);
   box-shadow: 0 0 0 1px rgba(91, 155, 213, 0.4);
+}
+.hub-tab.active.hub-tab-ms {
+  background: rgba(232, 80, 80, 0.22);
+  box-shadow: 0 0 0 1px rgba(232, 80, 80, 0.4);
 }
 .hub-tab:active .hub-icn { transform: scale(0.88); }
 
@@ -2879,7 +2883,215 @@ body[data-hub="fuel"]::before { display: none !important; }
   color: #ff8a82;
 }
 
-/* ── Weather along route ──────────────────────────────────────── */
+/* ── MOTORSPORT & TRACK DAY overlay ──────────────────────────── */
+#ms-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#ms-overlay.visible { display: flex; }
+.ms-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+.ms-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1); letter-spacing: .02em;
+}
+.ms-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+.ms-segctrl {
+  display: flex;
+  gap: 4px;
+  padding: 12px 14px 0;
+  flex-shrink: 0;
+}
+.ms-seg {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.ms-seg.on {
+  color: #ffb4b4;
+  border-color: rgba(232,80,80,.5);
+  background: rgba(232,80,80,.13);
+}
+.ms-seg:active { transform: scale(.98); }
+.ms-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+.ms-filter-row {
+  display: flex; gap: 6px; margin-bottom: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-wrap: nowrap;
+}
+.ms-filter-row::-webkit-scrollbar { display: none; }
+.ms-fbtn {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t2);
+  padding: 5px 11px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.ms-fbtn.on {
+  color: #ffb4b4;
+  border-color: rgba(232,80,80,.5);
+  background: rgba(232,80,80,.13);
+}
+
+/* Race / track day cards */
+.ms-card {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: relative;
+}
+.ms-card.next {
+  border-color: rgba(232,80,80,.4);
+  background: linear-gradient(135deg, rgba(232,80,80,.08), rgba(232,80,80,.02));
+}
+.ms-card.past {
+  opacity: .5;
+}
+.ms-card-date {
+  flex-shrink: 0;
+  width: 56px;
+  text-align: center;
+  border-right: 1px solid var(--brd);
+  padding-right: 10px;
+}
+.ms-card-day {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--t1);
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+.ms-card-month {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-top: 4px;
+}
+.ms-card-info {
+  flex: 1; min-width: 0;
+}
+.ms-card-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  margin-bottom: 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ms-card-circuit {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t2);
+  margin-bottom: 6px;
+}
+.ms-card-tags {
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.ms-card-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  background: var(--surf2);
+  color: var(--t2);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.04);
+  letter-spacing: .04em;
+}
+.ms-card-tag.cat-f1   { background: rgba(232,80,80,.15);  color: #ff9999; }
+.ms-card-tag.cat-mgp  { background: rgba(255,90,40,.15);  color: #ffc4b0; }
+.ms-card-tag.cat-sbk  { background: rgba(91,155,213,.15); color: #b8d4ec; }
+.ms-card-tag.cat-wrc  { background: rgba(140,90,200,.15); color: #d4bff0; }
+.ms-card-tag.cat-moto { background: rgba(255,90,40,.15);  color: #ffc4b0; }
+.ms-card-tag.cat-auto { background: rgba(91,155,213,.15); color: #b8d4ec; }
+.ms-card-tag.cat-mix  { background: rgba(76,175,125,.15); color: #b8e6cf; }
+.ms-card-countdown {
+  flex-shrink: 0;
+  text-align: right;
+  font-family: 'DM Mono', monospace;
+}
+.ms-card-countdown-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+}
+.ms-card-countdown-lbl {
+  font-size: .54rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-top: 2px;
+}
+.ms-card.past .ms-card-countdown-val { color: var(--t3); }
+.ms-empty {
+  text-align: center;
+  padding: 30px 16px;
+  color: var(--t3);
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+  line-height: 1.6;
+}
+.ms-section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin: 14px 0 8px;
+}
+
+/* Track day info modal */
+.ms-card.track {
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.ms-card.track:hover { border-color: var(--brd2); }
+.ms-card.track:active { transform: scale(.99); }
 #wp-overlay {
   position: fixed; inset: 0;
   background: var(--bg);
@@ -3075,6 +3287,134 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: .04em;
 }
 
+/* ── Auto vs Moto decision card ──────────────────────────────── */
+.wp-decision {
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+}
+.wp-decision.dec-moto {
+  background: linear-gradient(135deg, rgba(255,90,40,.12), rgba(255,90,40,.04));
+  border-color: rgba(255,90,40,.4);
+}
+.wp-decision.dec-auto {
+  background: linear-gradient(135deg, rgba(91,155,213,.12), rgba(91,155,213,.04));
+  border-color: rgba(91,155,213,.4);
+}
+.wp-decision.dec-mixed {
+  background: linear-gradient(135deg, rgba(232,160,48,.12), rgba(232,160,48,.04));
+  border-color: rgba(232,160,48,.4);
+}
+.wp-decision::before {
+  content: '';
+  position: absolute; top: 0; right: 0; width: 110px; height: 110px;
+  pointer-events: none;
+}
+.wp-decision.dec-moto::before {
+  background: radial-gradient(circle at 70% 30%, rgba(255,90,40,.18), transparent 60%);
+}
+.wp-decision.dec-auto::before {
+  background: radial-gradient(circle at 70% 30%, rgba(91,155,213,.18), transparent 60%);
+}
+.wp-decision.dec-mixed::before {
+  background: radial-gradient(circle at 70% 30%, rgba(232,160,48,.18), transparent 60%);
+}
+.wp-decision-verdict {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400;
+  font-size: 1.4rem;
+  letter-spacing: .03em;
+  margin-bottom: 4px;
+  position: relative;
+}
+.wp-decision.dec-moto .wp-decision-verdict { color: #ffc4b0; }
+.wp-decision.dec-auto .wp-decision-verdict { color: #b8d4ec; }
+.wp-decision.dec-mixed .wp-decision-verdict { color: #ffe7c2; }
+.wp-decision-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t2);
+  margin-bottom: 12px;
+  position: relative;
+}
+.wp-decision-score {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.wp-decision-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,.04);
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  border: 1px solid rgba(255,255,255,.05);
+}
+.wp-decision-bar-icn { font-size: .8rem; }
+.wp-decision-bar-val {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--t1);
+  font-size: .68rem;
+  font-variant-numeric: tabular-nums;
+}
+.wp-decision-bar.high-moto { border-color: rgba(255,90,40,.35); }
+.wp-decision-bar.high-auto { border-color: rgba(91,155,213,.35); }
+.wp-decision-pros {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+}
+.wp-decision-pro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  color: var(--t2);
+}
+.wp-decision-pro-icn {
+  font-size: .85rem;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.wp-decision-pro-side {
+  font-size: .5rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: .04em;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+.wp-decision-pro-side.side-moto {
+  background: rgba(255,90,40,.18);
+  color: #ffc4b0;
+}
+.wp-decision-pro-side.side-auto {
+  background: rgba(91,155,213,.18);
+  color: #b8d4ec;
+}
+.wp-decision-note {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--t3);
+  position: relative;
+  letter-spacing: .04em;
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    PASSI ALPINI / APPENNINICI — curated database for motorcyclists
    ═══════════════════════════════════════════════════════════════════ */
@@ -3190,15 +3530,34 @@ body[data-hub="fuel"]::before { display: none !important; }
   border-radius: 999px;
   letter-spacing: .04em;
 }
-.ps-card-status.open {
+.ps-card-status.status-open {
   background: rgba(76,175,125,.18);
   color: #6dd9a3;
   border: 1px solid rgba(76,175,125,.32);
 }
-.ps-card-status.closed {
+.ps-card-status.status-caution {
+  background: rgba(232,160,48,.18);
+  color: #ffd699;
+  border: 1px solid rgba(232,160,48,.32);
+}
+.ps-card-status.status-closed {
   background: rgba(224,90,74,.18);
   color: #ff8a82;
   border: 1px solid rgba(224,90,74,.32);
+}
+.ps-card-status.status-unknown {
+  background: rgba(255,255,255,.06);
+  color: var(--t3);
+  border: 1px solid rgba(255,255,255,.08);
+}
+.ps-card-status-note {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  margin: 6px 0 8px;
+  padding-right: 70px;  /* avoid overlap with status pill */
+  letter-spacing: .02em;
+  line-height: 1.3;
 }
 .ps-card-name {
   font-family: 'Fraunces', Georgia, serif;
@@ -3644,10 +4003,25 @@ body[data-hub="fuel"]::before { display: none !important; }
 .rd-speedbox {
   flex: 1;
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 10px;
+}
+.rd-speed-col {
+  flex: 1;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+}
+.rd-speedbox.with-gmeter .rd-speed-col {
+  flex: 1;
+  border-right: 1px solid rgba(255,255,255,.06);
+}
+.rd-speedbox.with-gmeter .rd-speed {
+  font-size: 5.5rem;  /* shrink so it fits next to gmeter */
 }
 .rd-speed {
   font-family: 'Fraunces', Georgia, serif;
@@ -3657,6 +4031,7 @@ body[data-hub="fuel"]::before { display: none !important; }
   letter-spacing: -.04em;
   line-height: .9;
   font-variant-numeric: tabular-nums;
+  transition: font-size .2s ease;
 }
 .rd-speed-unit {
   font-family: 'DM Mono', monospace;
@@ -3783,51 +4158,61 @@ body[data-hub="fuel"]::before { display: none !important; }
   border-color: rgba(255,90,40,.4);
   color: #ffc4b0;
 }
+#rd-gmeter-btn.on {
+  background: rgba(91,155,213,.22);
+  border-color: rgba(91,155,213,.5);
+  color: #b8d4ec;
+}
 .rd-mode-btn:active { transform: scale(.96); }
 
 /* G-meter (always visible top-right) */
 .rd-gmeter {
-  position: absolute;
-  top: calc(64px + var(--hub-safe-top));
-  right: 14px;
-  width: 78px; height: 78px;
+  flex: 1;
+  position: relative;
+  width: 200px; height: 200px;
+  max-width: 50%;
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 50%;
-  display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 auto;
+  align-self: center;
   pointer-events: none;
-  z-index: 5;
+  z-index: 1;
+  flex: none;
 }
 .rd-gmeter-dot {
   position: absolute;
-  width: 8px; height: 8px;
+  width: 14px; height: 14px;
   border-radius: 50%;
   background: #ff5a28;
-  box-shadow: 0 0 10px rgba(255,90,40,.7);
+  box-shadow: 0 0 14px rgba(255,90,40,.7);
   transition: transform .08s ease-out;
 }
 .rd-gmeter-grid {
   position: absolute;
   inset: 0;
+  width: 100%; height: 100%;
   pointer-events: none;
 }
 .rd-gmeter-label {
   position: absolute;
-  bottom: -16px; left: 50%; transform: translateX(-50%);
+  bottom: 14px; left: 50%;
+  transform: translateX(-50%);
   font-family: 'DM Mono', monospace;
-  font-size: .5rem;
-  color: rgba(255,255,255,.45);
+  font-size: .68rem;
+  color: rgba(255,255,255,.55);
   letter-spacing: .1em;
   white-space: nowrap;
 }
 .rd-gmeter-val {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
-  font-size: .82rem;
+  font-size: 1.4rem;
   color: #fff;
   letter-spacing: -.02em;
+  margin-right: 4px;
 }
 
 /* Performance overlay shown DURING a run */
@@ -4345,6 +4730,7 @@ body:has(#rdl-overlay.visible) .hub-tabs,
 body:has(#rdl-detail.visible) .hub-tabs,
 body:has(#wp-overlay.visible) .hub-tabs,
 body:has(#tco-overlay.visible) .hub-tabs,
+body:has(#ms-overlay.visible) .hub-tabs,
 body[data-pill-hidden="1"] .hub-tabs {
   opacity: 0;
   transform: translateX(-50%) translateY(24px);
@@ -5067,6 +5453,10 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
           role="tab" aria-selected="false" aria-label="Meteo percorso" title="Meteo lungo il percorso">
     <span class="hub-icn" aria-hidden="true">🌦</span>
   </button>
+  <button class="hub-tab hub-tab-ms" data-hub="ms" onclick="hubGo('ms')"
+          role="tab" aria-selected="false" aria-label="Motorsport e pista" title="Motorsport &amp; Track day">
+    <span class="hub-icn" aria-hidden="true">🏆</span>
+  </button>
   <button class="hub-tab hub-tab-diag" data-hub="diag" onclick="hubGo('diag')"
           role="tab" aria-selected="false" aria-label="Diagnosi" title="Diagnosi">
     <span class="hub-icn" aria-hidden="true">🔧</span>
@@ -5770,7 +6160,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   // Sezioni reali con DOM persistente
   var SECTIONS = ['fuel', 'diag', 'garage'];
   // Tab "azione": aprono un overlay e tornano alla sezione precedente
-  var ACTIONS  = ['passi', 'ride', 'meteo'];
+  var ACTIONS  = ['passi', 'ride', 'meteo', 'ms'];
   var _lastSection = 'fuel';
 
   function hubGo(name) {
@@ -5810,6 +6200,8 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
         if (typeof window.openRide === 'function') window.openRide();
       } else if (name === 'meteo') {
         if (typeof window.openWeather === 'function') window.openWeather();
+      } else if (name === 'ms') {
+        if (typeof window.openMotorsport === 'function') window.openMotorsport();
       }
       // After opening, after a short delay, revert tab visual to last section
       setTimeout(function() {
@@ -5826,12 +6218,12 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   // initial route from hash — default = fuel (home)
   document.addEventListener('DOMContentLoaded', function() {
     var initial = (location.hash || '').replace('#', '');
-    var valid = ['fuel', 'diag', 'garage', 'passi', 'ride'];
+    var valid = ['fuel', 'diag', 'garage', 'passi', 'ride', 'meteo', 'ms'];
     hubGo(valid.indexOf(initial) >= 0 ? initial : 'fuel');
   });
   window.addEventListener('hashchange', function() {
     var n = (location.hash || '').replace('#', '');
-    var valid = ['fuel', 'diag', 'garage', 'passi', 'ride'];
+    var valid = ['fuel', 'diag', 'garage', 'passi', 'ride', 'meteo', 'ms'];
     hubGo(valid.indexOf(n) >= 0 ? n : 'fuel');
   });
 
@@ -5891,6 +6283,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     var rdd = document.getElementById('rdl-detail');
     var wpo = document.getElementById('wp-overlay');
     var tco = document.getElementById('tco-overlay');
+    var mso = document.getElementById('ms-overlay');
     var hide =
       (mv  && mv.classList.contains('visible')) ||
       (fv  && fv.classList.contains('visible')) ||
@@ -5909,7 +6302,8 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
       (rdl && rdl.classList.contains('visible')) ||
       (rdd && rdd.classList.contains('visible')) ||
       (wpo && wpo.classList.contains('visible')) ||
-      (tco && tco.classList.contains('visible'));
+      (tco && tco.classList.contains('visible')) ||
+      (mso && mso.classList.contains('visible'));
     if (hide) document.body.dataset.pillHidden = '1';
     else delete document.body.dataset.pillHidden;
   }
@@ -5917,7 +6311,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay',
                'hub-cmp-overlay', 'gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
                'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
-               'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay'];
+               'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay'];
     if (typeof MutationObserver === 'function') {
       var obs = new MutationObserver(_hubUpdatePillVisibility);
       ids.forEach(function(id) {
@@ -5927,7 +6321,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
       var lateRetry = setTimeout(function() {
         ['gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
          'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
-         'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay'].forEach(function(id) {
+         'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay'].forEach(function(id) {
           var el = document.getElementById(id);
           if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
         });
@@ -15972,6 +16366,118 @@ async function runCmp() {
     var m = (new Date().getMonth() + 1);
     return p.closed.indexOf(m) >= 0;
   }
+
+  /* ── Live status engine (stagione + meteo cima) ─────────────── */
+  // Cache shape: { ts: epochMs, data: { passId: {status, note} } }
+  // status: 'open' | 'caution' | 'closed' | 'unknown'
+  var STATUS_CACHE_KEY = 'hub_passi_status_v1';
+  var STATUS_TTL_MS = 6 * 3600 * 1000; // 6h
+  var _liveStatus = {}; // in-memory cache
+
+  function loadCachedStatus() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(STATUS_CACHE_KEY) || 'null');
+      if (raw && (Date.now() - raw.ts) < STATUS_TTL_MS) {
+        _liveStatus = raw.data || {};
+        return true;
+      }
+    } catch(_) {}
+    return false;
+  }
+  function saveCachedStatus() {
+    try {
+      localStorage.setItem(STATUS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: _liveStatus }));
+    } catch(_) {}
+  }
+
+  // Combine seasonal + weather to compute final status for a single pass
+  function computeStatus(p, w) {
+    if (isClosedNow(p)) {
+      return { status:'closed', note:'Chiuso (stagione)' };
+    }
+    if (!w) return { status:'open', note:'Aperto (verifica meteo)' };
+    // w shape: { tMin, tMax, snowSum, rainSum, windMax }
+    if (w.snowSum > 5) {
+      return { status:'caution', note:'⚠ Neve recente, possibile chiusura' };
+    }
+    if (w.tMin < -2 && w.snowSum > 0.5) {
+      return { status:'caution', note:'⚠ Gelo + neve, catene probabili' };
+    }
+    if (w.tMin < 0) {
+      return { status:'caution', note:'⚠ Gelo possibile in cima' };
+    }
+    if (w.windMax > 60) {
+      return { status:'caution', note:'⚠ Vento forte (' + Math.round(w.windMax) + ' km/h)' };
+    }
+    return { status:'open', note:'Aperto · meteo ok' };
+  }
+
+  // Open-Meteo batch fetch. Splits into chunks of 10 to avoid URL-length
+  // and CORS issues on long lat/lng lists. Failures degrade to 'unknown'
+  // status silently — no console.error spam.
+  async function fetchPassiWeatherBatch(passi) {
+    if (passi.length === 0) return {};
+    var CHUNK = 10;
+    var out = {};
+    for (var i = 0; i < passi.length; i += CHUNK) {
+      var chunk = passi.slice(i, i + CHUNK);
+      var lats = chunk.map(function(p) { return p.lat.toFixed(4); }).join(',');
+      var lngs = chunk.map(function(p) { return p.lng.toFixed(4); }).join(',');
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lats +
+        '&longitude=' + lngs +
+        '&daily=temperature_2m_min,temperature_2m_max,snowfall_sum,rain_sum,wind_speed_10m_max' +
+        '&past_days=1&forecast_days=2&timezone=auto';
+      try {
+        var ctrl = new AbortController();
+        var timer = setTimeout(function() { ctrl.abort(); }, 15000);
+        var r = await fetch(url, { signal: ctrl.signal });
+        clearTimeout(timer);
+        if (!r.ok) continue;  // skip this chunk, others may succeed
+        var data = await r.json();
+        var arr = Array.isArray(data) ? data : [data];
+        arr.forEach(function(d, j) {
+          var p = chunk[j];
+          if (!d.daily) return;
+          var tMin = Math.min.apply(null, d.daily.temperature_2m_min || [0]);
+          var tMax = Math.max.apply(null, d.daily.temperature_2m_max || [0]);
+          var snowSum = (d.daily.snowfall_sum || [0]).reduce(function(a, b) { return a + (b || 0); }, 0);
+          var rainSum = (d.daily.rain_sum || [0]).reduce(function(a, b) { return a + (b || 0); }, 0);
+          var windMax = Math.max.apply(null, d.daily.wind_speed_10m_max || [0]);
+          out[p.id] = { tMin: tMin, tMax: tMax, snowSum: snowSum, rainSum: rainSum, windMax: windMax };
+        });
+      } catch(e) {
+        // Network/timeout/CORS — silent fallback. Other chunks try anyway.
+      }
+    }
+    return out;
+  }
+
+  // Refresh all passes (seasonally open) and update cache.
+  // Returns when complete; renderList can be called immediately after.
+  async function refreshAllStatuses() {
+    var openPassi = PASSES.filter(function(p) { return !isClosedNow(p); });
+    var closedPassi = PASSES.filter(function(p) { return isClosedNow(p); });
+
+    // Mark closed-by-season immediately
+    closedPassi.forEach(function(p) {
+      _liveStatus[p.id] = { status:'closed', note:'Chiuso (stagione)' };
+    });
+
+    // Batch-fetch weather for open passes
+    if (openPassi.length > 0) {
+      var w = await fetchPassiWeatherBatch(openPassi);
+      openPassi.forEach(function(p) {
+        _liveStatus[p.id] = computeStatus(p, w[p.id]);
+      });
+    }
+    saveCachedStatus();
+  }
+
+  // Public: trigger manual refresh
+  window.psRefreshStatus = async function() {
+    await refreshAllStatuses();
+    if (typeof renderList === 'function') renderList();
+  };
   function difficultyLabel(d) {
     return d === 'easy' ? 'Facile' : d === 'medium' ? 'Medio' : 'Esperto';
   }
@@ -16021,11 +16527,18 @@ async function runCmp() {
     document.body.appendChild(dm);
   }
 
+  function statusFor(p) {
+    return _liveStatus[p.id] || { status: isClosedNow(p) ? 'closed' : 'unknown', note: isClosedNow(p) ? 'Chiuso (stagione)' : 'Stato in aggiornamento…' };
+  }
+
   /* ── State + filters ───────────────────────────────────────── */
-  var _filter = 'all';   // all | open | easy | medium | expert | dolomiti | alpi | appennino
+  var _filter = 'all';
   function applyFilter(p) {
     if (_filter === 'all') return true;
-    if (_filter === 'open') return !isClosedNow(p);
+    if (_filter === 'open') {
+      var s = statusFor(p).status;
+      return s === 'open' || s === 'caution';  // include "verifica catene" come usabile
+    }
     if (_filter === 'easy' || _filter === 'medium' || _filter === 'expert') return p.diff === _filter;
     if (_filter === 'dolomiti') return /Trentino|Veneto/.test(p.region) && p.alt > 1800;
     if (_filter === 'alpi')     return /Lombardia|Piemonte|Trentino|Veneto|Svizzera|Francia/.test(p.region);
@@ -16059,22 +16572,26 @@ async function runCmp() {
       body.innerHTML = '<div class="ps-empty">Nessun passo per il filtro selezionato.</div>';
       return;
     }
-    // Sort: open first, then by altitude desc
+    // Sort by status (open > caution > unknown > closed), then altitude desc
+    var statusRank = { open: 0, caution: 1, unknown: 2, closed: 3 };
     rows.sort(function(a, b) {
-      var ca = isClosedNow(a) ? 1 : 0;
-      var cb = isClosedNow(b) ? 1 : 0;
-      if (ca !== cb) return ca - cb;
+      var sa = statusRank[statusFor(a).status] || 2;
+      var sb = statusRank[statusFor(b).status] || 2;
+      if (sa !== sb) return sa - sb;
       return b.alt - a.alt;
     });
     body.innerHTML = rows.map(function(p) {
-      var closed = isClosedNow(p);
+      var st = statusFor(p);
       var diff = difficultyLabel(p.diff);
-      var diffClass = p.diff === 'easy' ? 'easy' : p.diff === 'expert' ? 'expert' : 'medium';
+      var statusLabel = st.status === 'open' ? '🟢 Aperto'
+                      : st.status === 'caution' ? '🟡 Verifica'
+                      : st.status === 'closed' ? '🔴 Chiuso'
+                      : '⚪ Ignoto';
       return '<div class="ps-card" data-id="' + p.id + '">' +
-        '<div class="ps-card-status ' + (closed ? 'closed' : 'open') + '">' +
-          (closed ? 'Chiuso' : 'Aperto') + '</div>' +
+        '<div class="ps-card-status status-' + st.status + '">' + statusLabel + '</div>' +
         '<div class="ps-card-name">' + escSafe(p.name) + '</div>' +
         '<div class="ps-card-region">' + escSafe(p.region) + '</div>' +
+        '<div class="ps-card-status-note">' + escSafe(st.note) + '</div>' +
         '<div class="ps-card-stats">' +
           '<span><span class="ps-card-stat-lbl">ALT</span>' + p.alt + ' m</span>' +
           '<span><span class="ps-card-stat-lbl">LUNGH</span>' + p.length + ' km</span>' +
@@ -16090,7 +16607,14 @@ async function runCmp() {
     injectPassiUI();
     document.getElementById('ps-overlay').classList.add('visible');
     renderFilters();
+    // Load cached statuses; if cache expired, render placeholder + refresh in background
+    var fresh = loadCachedStatus();
     renderList();
+    if (!fresh) {
+      refreshAllStatuses().then(function() {
+        renderList();  // re-render with fresh statuses
+      });
+    }
     if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
   };
   window.closePassi = function() {
@@ -16571,27 +17095,28 @@ async function runCmp() {
       '</div>' +
       '<div class="rd-modebar">' +
         '<button class="rd-mode-btn on" data-mode="normal" onclick="rideSetMode(\'normal\')">Normale</button>' +
-        '<button class="rd-mode-btn" data-mode="p0-100" onclick="rideSetMode(\'p0-100\')">0-100</button>' +
-        '<button class="rd-mode-btn" data-mode="p100-0" onclick="rideSetMode(\'p100-0\')">100-0</button>' +
-        '<button class="rd-mode-btn" data-mode="p0-400" onclick="rideSetMode(\'p0-400\')">¼ mi</button>' +
+        '<button class="rd-mode-btn" data-mode="p0-100" onclick="rideSetMode(\'p0-100\')">0-100 km/h</button>' +
+        '<button class="rd-mode-btn" data-mode="gmeter" onclick="rideToggleGMeter()" id="rd-gmeter-btn">G-meter</button>' +
       '</div>' +
       '<div class="rd-status" id="rd-status">In attesa</div>' +
       '<div class="rd-perf-modeline" id="rd-perf-modeline" style="display:none"></div>' +
       '<div id="rd-error-slot"></div>' +
-      '<div class="rd-speedbox">' +
-        '<div class="rd-speed" id="rd-speed">0</div>' +
-        '<div class="rd-speed-unit">km/h</div>' +
-      '</div>' +
-      '<div class="rd-gmeter" id="rd-gmeter" style="display:none">' +
-        '<svg class="rd-gmeter-grid" viewBox="0 0 78 78">' +
-          '<circle cx="39" cy="39" r="36" stroke="rgba(255,255,255,.1)" stroke-width="1" fill="none"/>' +
-          '<circle cx="39" cy="39" r="24" stroke="rgba(255,255,255,.07)" stroke-width="1" fill="none"/>' +
-          '<circle cx="39" cy="39" r="12" stroke="rgba(255,255,255,.07)" stroke-width="1" fill="none"/>' +
-          '<line x1="39" y1="3" x2="39" y2="75" stroke="rgba(255,255,255,.06)" stroke-width="1"/>' +
-          '<line x1="3" y1="39" x2="75" y2="39" stroke="rgba(255,255,255,.06)" stroke-width="1"/>' +
-        '</svg>' +
-        '<div class="rd-gmeter-dot" id="rd-gdot"></div>' +
-        '<div class="rd-gmeter-label"><span class="rd-gmeter-val" id="rd-gval">0.0</span> G</div>' +
+      '<div class="rd-speedbox" id="rd-speedbox">' +
+        '<div class="rd-speed-col">' +
+          '<div class="rd-speed" id="rd-speed">0</div>' +
+          '<div class="rd-speed-unit">km/h</div>' +
+        '</div>' +
+        '<div class="rd-gmeter" id="rd-gmeter" style="display:none">' +
+          '<svg class="rd-gmeter-grid" viewBox="0 0 200 200">' +
+            '<circle cx="100" cy="100" r="92" stroke="rgba(255,255,255,.1)" stroke-width="1" fill="none"/>' +
+            '<circle cx="100" cy="100" r="62" stroke="rgba(255,255,255,.07)" stroke-width="1" fill="none"/>' +
+            '<circle cx="100" cy="100" r="32" stroke="rgba(255,255,255,.07)" stroke-width="1" fill="none"/>' +
+            '<line x1="100" y1="8" x2="100" y2="192" stroke="rgba(255,255,255,.06)" stroke-width="1"/>' +
+            '<line x1="8" y1="100" x2="192" y2="100" stroke="rgba(255,255,255,.06)" stroke-width="1"/>' +
+          '</svg>' +
+          '<div class="rd-gmeter-dot" id="rd-gdot"></div>' +
+          '<div class="rd-gmeter-label"><span class="rd-gmeter-val" id="rd-gval">0.0</span> G</div>' +
+        '</div>' +
       '</div>' +
       '<div class="rd-stats">' +
         '<div class="rd-stat">' +
@@ -16890,9 +17415,9 @@ async function runCmp() {
       var dot = document.getElementById('rd-gdot');
       var val = document.getElementById('rd-gval');
       if (dot) {
-        // Center 39,39 in 78x78 box, max radius ~33px = 1.5G
-        var px = Math.max(-33, Math.min(33, -gX * 22));
-        var py = Math.max(-33, Math.min(33,  gY * 22));
+        // Container is now ~160px wide, dot can move ~70px from center for 1.5G
+        var px = Math.max(-70, Math.min(70, -gX * 50));
+        var py = Math.max(-70, Math.min(70,  gY * 50));
         dot.style.transform = 'translate(' + px + 'px, ' + py + 'px)';
       }
       if (val) val.textContent = mag.toFixed(2);
@@ -16904,19 +17429,32 @@ async function runCmp() {
         if (resp === 'granted') {
           window.addEventListener('devicemotion', handler);
           gSensorActive = true;
-          var el = document.getElementById('rd-gmeter');
-          if (el) el.style.display = 'flex';
         }
       }).catch(function() { /* user denied */ });
     } else if ('DeviceMotionEvent' in window) {
       window.addEventListener('devicemotion', handler);
       gSensorActive = true;
-      var el = document.getElementById('rd-gmeter');
-      if (el) el.style.display = 'flex';
     }
   }
 
   /* ── Mode switching ─────────────────────────────────────────── */
+  window.rideToggleGMeter = function() {
+    var el = document.getElementById('rd-gmeter');
+    var box = document.getElementById('rd-speedbox');
+    var btn = document.getElementById('rd-gmeter-btn');
+    if (!el || !box || !btn) return;
+    if (el.style.display === 'flex') {
+      el.style.display = 'none';
+      box.classList.remove('with-gmeter');
+      btn.classList.remove('on');
+    } else {
+      startGSensor();
+      el.style.display = 'flex';
+      box.classList.add('with-gmeter');
+      btn.classList.add('on');
+    }
+  };
+
   window.rideSetMode = function(mode) {
     if (state === 'recording') {
       alert('Ferma la registrazione prima di cambiare modalità.');
@@ -17002,8 +17540,6 @@ async function runCmp() {
     });
     tickInterval = setInterval(tick, 250);
     acquireWakeLock();
-    // Try to start G-sensor (asks permission on iOS 13+)
-    startGSensor();
   };
   window.ridePause = function() {
     if (state !== 'recording') return;
@@ -17962,6 +18498,9 @@ async function runCmp() {
         Math.floor(totalH) + 'h ' + Math.round((totalH % 1) * 60) + 'm</div>' +
     '</div>';
 
+    // Decision card: auto vs moto
+    var decisionHtml = buildDecisionCard(samples, route);
+
     // Find any rain/snow alert
     var hasRain = samples.some(function(s) { return s.weather.precipitation > 0.5; });
     var alertHtml = hasRain ? '<div class="wp-alert">⚠ Precipitazioni previste lungo il tragitto</div>' : '';
@@ -17988,7 +18527,154 @@ async function runCmp() {
       '</div>';
     }).join('');
 
-    document.getElementById('wp-result').innerHTML = headHtml + alertHtml + '<div class="wp-steps">' + rowsHtml + '</div>';
+    document.getElementById('wp-result').innerHTML =
+      headHtml + decisionHtml + alertHtml +
+      '<div class="wp-steps">' + rowsHtml + '</div>';
+  }
+
+  /* ── Auto vs Moto decision engine ────────────────────────────── */
+  function buildDecisionCard(samples, route) {
+    var motoScore = 0, autoScore = 0;
+    var pros = [];
+
+    var precips = samples.map(function(s) { return s.weather.precipitation || 0; });
+    var temps   = samples.map(function(s) { return s.weather.temperature; });
+    var winds   = samples.map(function(s) { return s.weather.wind || 0; });
+    var maxRain = Math.max.apply(null, precips);
+    var totalRain = precips.reduce(function(a, b) { return a + b; }, 0);
+    var rainPoints = precips.filter(function(p) { return p > 0.5; }).length;
+    var minTemp = Math.min.apply(null, temps);
+    var maxTemp = Math.max.apply(null, temps);
+    var maxWind = Math.max.apply(null, winds);
+    var avgWind = winds.reduce(function(a, b) { return a + b; }, 0) / winds.length;
+    var km = route.distanceKm;
+
+    // ── Blocker detection: any of these makes moto a bad idea ──
+    var hasBlocker = (maxRain > 0.5) || (minTemp < 5) || (maxWind > 30);
+
+    // ── Pioggia (most important factor) ──
+    if (maxRain > 3) {
+      autoScore += 8;
+      pros.push({ side:'auto', icn:'🌧', txt:'Pioggia intensa prevista (' + maxRain.toFixed(1) + ' mm)' });
+    } else if (maxRain > 0.5) {
+      autoScore += 6;
+      pros.push({ side:'auto', icn:'💧', txt:'Pioggia leggera in ' + rainPoints + '/' + samples.length + ' punti' });
+    } else if (totalRain < 0.1) {
+      motoScore += 3;
+      pros.push({ side:'moto', icn:'☀', txt:'Niente pioggia su tutto il tragitto' });
+    }
+
+    // ── Temperatura ──
+    if (minTemp < 3) {
+      autoScore += 6;
+      pros.push({ side:'auto', icn:'🥶', txt:'Freddo intenso (min ' + Math.round(minTemp) + '°C)' });
+    } else if (minTemp < 8) {
+      autoScore += 4;
+      pros.push({ side:'auto', icn:'❄', txt:'Freddo (min ' + Math.round(minTemp) + '°C), abbigliamento pesante' });
+    } else if (maxTemp > 34) {
+      autoScore += 3;
+      pros.push({ side:'auto', icn:'🥵', txt:'Caldo estremo (' + Math.round(maxTemp) + '°C), casco pesante' });
+    } else if (minTemp >= 14 && maxTemp <= 28 && !hasBlocker) {
+      motoScore += 3;
+      pros.push({ side:'moto', icn:'🌡', txt:'Temperatura ideale (' + Math.round(minTemp) + '-' + Math.round(maxTemp) + '°C)' });
+    } else if (minTemp >= 10 && maxTemp <= 32 && !hasBlocker) {
+      motoScore += 1;
+      pros.push({ side:'moto', icn:'🌡', txt:'Temperatura accettabile' });
+    }
+
+    // ── Vento ──
+    if (maxWind > 40) {
+      autoScore += 7;
+      pros.push({ side:'auto', icn:'💨', txt:'Vento forte (raffiche ' + Math.round(maxWind) + ' km/h)' });
+    } else if (maxWind > 25) {
+      autoScore += 4;
+      pros.push({ side:'auto', icn:'🌬', txt:'Vento moderato-forte (' + Math.round(maxWind) + ' km/h)' });
+    } else if (avgWind < 12 && !hasBlocker) {
+      motoScore += 1;
+      pros.push({ side:'moto', icn:'🍃', txt:'Aria calma' });
+    }
+
+    // ── Distanza (don't reward moto if blockers present) ──
+    if (km > 400) {
+      autoScore += 3;
+      pros.push({ side:'auto', icn:'🛣', txt:'Tragitto molto lungo (' + Math.round(km) + ' km)' });
+    } else if (km > 250) {
+      autoScore += 1;
+      pros.push({ side:'auto', icn:'🛣', txt:'Tragitto lungo (' + Math.round(km) + ' km)' });
+    } else if (km >= 50 && km <= 200 && !hasBlocker) {
+      motoScore += 2;
+      pros.push({ side:'moto', icn:'🛤', txt:'Distanza ideale per la moto' });
+    }
+
+    // ── Verdict ──
+    var diff = motoScore - autoScore;
+    var verdict, color, sub;
+    if (diff >= 4) {
+      verdict = '🏍 PRENDI LA MOTO';
+      color = 'moto';
+      sub = 'Condizioni ottime per uscire in due ruote';
+    } else if (diff >= 2) {
+      verdict = '🏍 LEGGERMENTE PRO MOTO';
+      color = 'moto';
+      sub = 'Condizioni favorevoli ma non perfette';
+    } else if (diff <= -4) {
+      verdict = '🚗 MEGLIO L\'AUTO';
+      color = 'auto';
+      sub = 'Le condizioni non aiutano la moto oggi';
+    } else if (diff <= -2) {
+      verdict = '🚗 LEGGERMENTE PRO AUTO';
+      color = 'auto';
+      sub = 'Qualche fattore consiglia di stare in abitacolo';
+    } else {
+      verdict = '⚖ DECIDI TU';
+      color = 'mixed';
+      sub = 'Condizioni miste, scelta personale';
+    }
+
+    // ── Garage check ──
+    var note = '';
+    try {
+      var g = (window.hubGarage && window.hubGarage.list) ? window.hubGarage.list() : [];
+      var hasAuto = g.some(function(v) { return v.type === 'auto'; });
+      var hasMoto = g.some(function(v) { return v.type === 'moto'; });
+      if (g.length === 0) {
+        note = 'Nessun veicolo in garage. Aggiungili per consigli più personalizzati.';
+      } else if (color === 'moto' && !hasMoto) {
+        note = 'Hai solo auto in garage — qui ti diciamo quale veicolo sarebbe meglio in queste condizioni.';
+      } else if (color === 'auto' && !hasAuto) {
+        note = 'Hai solo moto in garage — fai attenzione: le condizioni non sono ideali.';
+      }
+    } catch(_) {}
+
+    var prosHtml = pros.map(function(p) {
+      return '<div class="wp-decision-pro">' +
+        '<span class="wp-decision-pro-icn">' + p.icn + '</span>' +
+        '<span class="wp-decision-pro-side side-' + p.side + '">' + p.side + '</span>' +
+        '<span>' + escSafe(p.txt) + '</span>' +
+      '</div>';
+    }).join('');
+
+    var motoBarCls = motoScore > autoScore ? ' high-moto' : '';
+    var autoBarCls = autoScore > motoScore ? ' high-auto' : '';
+
+    return '<div class="wp-decision dec-' + color + '">' +
+      '<div class="wp-decision-verdict">' + verdict + '</div>' +
+      '<div class="wp-decision-sub">' + sub + '</div>' +
+      '<div class="wp-decision-score">' +
+        '<div class="wp-decision-bar' + motoBarCls + '">' +
+          '<span class="wp-decision-bar-icn">🏍</span>' +
+          '<span>Moto</span>' +
+          '<span class="wp-decision-bar-val">+' + motoScore + '</span>' +
+        '</div>' +
+        '<div class="wp-decision-bar' + autoBarCls + '">' +
+          '<span class="wp-decision-bar-icn">🚗</span>' +
+          '<span>Auto</span>' +
+          '<span class="wp-decision-bar-val">+' + autoScore + '</span>' +
+        '</div>' +
+      '</div>' +
+      (pros.length ? '<div class="wp-decision-pros">' + prosHtml + '</div>' : '') +
+      (note ? '<div class="wp-decision-note">ℹ ' + escSafe(note) + '</div>' : '') +
+    '</div>';
   }
 })();
 
@@ -18358,6 +19044,351 @@ async function runCmp() {
       return r;
     };
   }
+})();
+
+</script>
+
+<!-- HUB MOTORSPORT: F1/MotoGP/SBK/WRC + Italian track days -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB MOTORSPORT & TRACK DAY
+   Dataset curato 2026: F1, MotoGP, WSBK, WRC + circuiti italiani
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function escSafe(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // Calendar 2026 (curated). Dates are race-day; "weekend" implies Fri-Sun typically.
+  // category: 'f1' | 'mgp' | 'sbk' | 'wrc'
+  var RACES = [
+    // F1 2026 (Bahrain start, Australia, etc.)
+    { cat:'f1', date:'2026-03-08', name:'GP del Bahrain', circuit:'Sakhir', country:'Bahrain' },
+    { cat:'f1', date:'2026-03-22', name:'GP dell\'Arabia Saudita', circuit:'Jeddah', country:'Arabia Saudita' },
+    { cat:'f1', date:'2026-04-05', name:'GP d\'Australia', circuit:'Melbourne', country:'Australia' },
+    { cat:'f1', date:'2026-04-19', name:'GP del Giappone', circuit:'Suzuka', country:'Giappone' },
+    { cat:'f1', date:'2026-05-03', name:'GP di Cina', circuit:'Shanghai', country:'Cina' },
+    { cat:'f1', date:'2026-05-10', name:'GP di Miami', circuit:'Miami', country:'USA' },
+    { cat:'f1', date:'2026-05-24', name:'GP di Monaco', circuit:'Monte Carlo', country:'Monaco' },
+    { cat:'f1', date:'2026-06-07', name:'GP di Spagna', circuit:'Barcellona', country:'Spagna' },
+    { cat:'f1', date:'2026-06-14', name:'GP del Canada', circuit:'Montreal', country:'Canada' },
+    { cat:'f1', date:'2026-06-28', name:'GP d\'Austria', circuit:'Spielberg', country:'Austria' },
+    { cat:'f1', date:'2026-07-05', name:'GP di Gran Bretagna', circuit:'Silverstone', country:'UK' },
+    { cat:'f1', date:'2026-07-26', name:'GP del Belgio', circuit:'Spa-Francorchamps', country:'Belgio' },
+    { cat:'f1', date:'2026-08-23', name:'GP d\'Olanda', circuit:'Zandvoort', country:'Olanda' },
+    { cat:'f1', date:'2026-09-06', name:'GP d\'Italia', circuit:'Monza', country:'Italia' },
+    { cat:'f1', date:'2026-09-20', name:'GP di Singapore', circuit:'Marina Bay', country:'Singapore' },
+    { cat:'f1', date:'2026-10-04', name:'GP degli Stati Uniti', circuit:'COTA', country:'USA' },
+    { cat:'f1', date:'2026-10-25', name:'GP del Messico', circuit:'Città del Messico', country:'Messico' },
+    { cat:'f1', date:'2026-11-08', name:'GP del Brasile', circuit:'Interlagos', country:'Brasile' },
+    { cat:'f1', date:'2026-11-22', name:'GP di Las Vegas', circuit:'Las Vegas', country:'USA' },
+    { cat:'f1', date:'2026-12-06', name:'GP di Abu Dhabi', circuit:'Yas Marina', country:'EAU' },
+
+    // MotoGP 2026 (calendario tipico)
+    { cat:'mgp', date:'2026-03-01', name:'GP del Qatar', circuit:'Lusail', country:'Qatar' },
+    { cat:'mgp', date:'2026-03-15', name:'GP del Portogallo', circuit:'Portimão', country:'Portogallo' },
+    { cat:'mgp', date:'2026-03-29', name:'GP delle Americhe', circuit:'COTA', country:'USA' },
+    { cat:'mgp', date:'2026-04-12', name:'GP di Spagna', circuit:'Jerez', country:'Spagna' },
+    { cat:'mgp', date:'2026-04-26', name:'GP di Francia', circuit:'Le Mans', country:'Francia' },
+    { cat:'mgp', date:'2026-05-17', name:'GP d\'Italia', circuit:'Mugello', country:'Italia' },
+    { cat:'mgp', date:'2026-05-31', name:'GP di Catalogna', circuit:'Barcellona', country:'Spagna' },
+    { cat:'mgp', date:'2026-06-14', name:'GP di Germania', circuit:'Sachsenring', country:'Germania' },
+    { cat:'mgp', date:'2026-06-28', name:'GP d\'Olanda', circuit:'Assen', country:'Olanda' },
+    { cat:'mgp', date:'2026-07-12', name:'GP di Cechia', circuit:'Brno', country:'Repubblica Ceca' },
+    { cat:'mgp', date:'2026-08-16', name:'GP d\'Austria', circuit:'Red Bull Ring', country:'Austria' },
+    { cat:'mgp', date:'2026-08-30', name:'GP di Ungheria', circuit:'Balaton Park', country:'Ungheria' },
+    { cat:'mgp', date:'2026-09-13', name:'GP di San Marino', circuit:'Misano', country:'Italia' },
+    { cat:'mgp', date:'2026-09-27', name:'GP di Aragona', circuit:'MotorLand', country:'Spagna' },
+    { cat:'mgp', date:'2026-10-04', name:'GP del Giappone', circuit:'Motegi', country:'Giappone' },
+    { cat:'mgp', date:'2026-10-18', name:'GP d\'Indonesia', circuit:'Mandalika', country:'Indonesia' },
+    { cat:'mgp', date:'2026-10-25', name:'GP d\'Australia', circuit:'Phillip Island', country:'Australia' },
+    { cat:'mgp', date:'2026-11-01', name:'GP della Malesia', circuit:'Sepang', country:'Malesia' },
+    { cat:'mgp', date:'2026-11-15', name:'GP del Portogallo', circuit:'Portimão', country:'Portogallo' },
+    { cat:'mgp', date:'2026-11-22', name:'GP di Valencia', circuit:'Valencia', country:'Spagna' },
+
+    // WSBK 2026
+    { cat:'sbk', date:'2026-03-01', name:'Round Australia', circuit:'Phillip Island', country:'Australia' },
+    { cat:'sbk', date:'2026-04-12', name:'Round Olanda', circuit:'Assen', country:'Olanda' },
+    { cat:'sbk', date:'2026-05-10', name:'Round Italia', circuit:'Cremona', country:'Italia' },
+    { cat:'sbk', date:'2026-06-14', name:'Round Repubblica Ceca', circuit:'Most', country:'Repubblica Ceca' },
+    { cat:'sbk', date:'2026-07-05', name:'Round San Marino', circuit:'Misano', country:'Italia' },
+    { cat:'sbk', date:'2026-07-19', name:'Round Donington', circuit:'Donington Park', country:'UK' },
+    { cat:'sbk', date:'2026-08-02', name:'Round Ungheria', circuit:'Balaton Park', country:'Ungheria' },
+    { cat:'sbk', date:'2026-09-13', name:'Round Magny-Cours', circuit:'Magny-Cours', country:'Francia' },
+    { cat:'sbk', date:'2026-09-27', name:'Round Aragona', circuit:'MotorLand', country:'Spagna' },
+    { cat:'sbk', date:'2026-10-11', name:'Round Estoril', circuit:'Estoril', country:'Portogallo' },
+    { cat:'sbk', date:'2026-10-25', name:'Round Jerez', circuit:'Jerez', country:'Spagna' },
+
+    // WRC 2026 (calendario tipico)
+    { cat:'wrc', date:'2026-01-25', name:'Rally di Monte Carlo', circuit:'Monte Carlo', country:'Monaco' },
+    { cat:'wrc', date:'2026-02-15', name:'Rally di Svezia', circuit:'Umeå', country:'Svezia' },
+    { cat:'wrc', date:'2026-03-15', name:'Rally del Messico', circuit:'León', country:'Messico' },
+    { cat:'wrc', date:'2026-04-26', name:'Rally di Croazia', circuit:'Zagabria', country:'Croazia' },
+    { cat:'wrc', date:'2026-05-24', name:'Rally del Portogallo', circuit:'Matosinhos', country:'Portogallo' },
+    { cat:'wrc', date:'2026-06-07', name:'Rally d\'Italia Sardegna', circuit:'Alghero', country:'Italia' },
+    { cat:'wrc', date:'2026-06-28', name:'Rally del Kenya', circuit:'Naivasha', country:'Kenya' },
+    { cat:'wrc', date:'2026-08-02', name:'Rally d\'Estonia', circuit:'Tartu', country:'Estonia' },
+    { cat:'wrc', date:'2026-08-23', name:'Rally di Finlandia', circuit:'Jyväskylä', country:'Finlandia' },
+    { cat:'wrc', date:'2026-09-06', name:'Rally del Cile', circuit:'Concepción', country:'Cile' },
+    { cat:'wrc', date:'2026-10-04', name:'Rally del Centro Europa', circuit:'Praga', country:'Centro Europa' },
+    { cat:'wrc', date:'2026-10-25', name:'Rally del Giappone', circuit:'Aichi', country:'Giappone' },
+    { cat:'wrc', date:'2026-11-15', name:'Rally d\'Arabia Saudita', circuit:'Jeddah', country:'Arabia Saudita' }
+  ];
+
+  // Track days curated for IT circuits.
+  // type: 'auto' | 'moto' | 'mix'
+  var TRACKDAYS = [
+    { date:'2026-05-12', circuit:'Mugello', type:'mix', name:'Open day Mugello',
+      cost:'~250 €', org:'Auto Club Mugello', url:'https://www.mugellocircuit.com/' },
+    { date:'2026-05-19', circuit:'Misano', type:'moto', name:'Track day Misano (moto)',
+      cost:'~180 €', org:'Misano Track Day', url:'https://www.misanocircuit.com/' },
+    { date:'2026-05-26', circuit:'Vallelunga', type:'auto', name:'Track day Vallelunga (auto)',
+      cost:'~220 €', org:'Vallelunga', url:'https://www.vallelunga.it/' },
+    { date:'2026-06-02', circuit:'Cremona', type:'moto', name:'Track day Cremona Circuit',
+      cost:'~150 €', org:'Cremona Circuit', url:'https://www.cremonacircuit.com/' },
+    { date:'2026-06-09', circuit:'Monza', type:'auto', name:'Open Pirelli Monza',
+      cost:'~350 €', org:'Pirelli', url:'https://www.monzanet.it/' },
+    { date:'2026-06-16', circuit:'Imola', type:'mix', name:'Track day Imola',
+      cost:'~280 €', org:'Imola Circuit', url:'https://www.autodromoimola.it/' },
+    { date:'2026-06-23', circuit:'Modena', type:'moto', name:'Track day Modena (moto)',
+      cost:'~140 €', org:'Modena Autodromo', url:'https://www.autodromodimodena.it/' },
+    { date:'2026-06-30', circuit:'Adria', type:'auto', name:'Track day Adria International',
+      cost:'~190 €', org:'Adria Raceway', url:'https://www.adriaraceway.com/' },
+    { date:'2026-07-07', circuit:'Mugello', type:'moto', name:'Track day Mugello (moto)',
+      cost:'~270 €', org:'Mugello', url:'https://www.mugellocircuit.com/' },
+    { date:'2026-07-14', circuit:'Magione', type:'mix', name:'Track day Magione',
+      cost:'~130 €', org:'Magione', url:'https://www.autodromomagione.com/' },
+    { date:'2026-08-04', circuit:'Misano', type:'auto', name:'Track day Misano (auto)',
+      cost:'~210 €', org:'Misano', url:'https://www.misanocircuit.com/' },
+    { date:'2026-09-08', circuit:'Vallelunga', type:'mix', name:'Open day Vallelunga',
+      cost:'~230 €', org:'Vallelunga', url:'https://www.vallelunga.it/' },
+    { date:'2026-09-15', circuit:'Cremona', type:'auto', name:'Track day Cremona (auto)',
+      cost:'~170 €', org:'Cremona', url:'https://www.cremonacircuit.com/' },
+    { date:'2026-09-22', circuit:'Imola', type:'moto', name:'Track day Imola (moto)',
+      cost:'~260 €', org:'Imola', url:'https://www.autodromoimola.it/' },
+    { date:'2026-10-13', circuit:'Mugello', type:'auto', name:'Coppa Italia Mugello',
+      cost:'~290 €', org:'Mugello', url:'https://www.mugellocircuit.com/' },
+    { date:'2026-10-20', circuit:'Misano', type:'mix', name:'World Ducati Week (Misano)',
+      cost:'da 80 €', org:'Ducati', url:'https://www.misanocircuit.com/' },
+    { date:'2026-11-03', circuit:'Adria', type:'moto', name:'Chiusura stagione Adria',
+      cost:'~160 €', org:'Adria', url:'https://www.adriaraceway.com/' }
+  ];
+
+  var CAT_LABELS = { f1: 'F1', mgp: 'MotoGP', sbk: 'WSBK', wrc: 'WRC' };
+  var TYPE_LABELS = { auto: 'Auto', moto: 'Moto', mix: 'Mixed' };
+  var MONTHS_IT = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+
+  function injectMSUI() {
+    if (document.getElementById('ms-overlay')) return;
+    var ov = document.createElement('div');
+    ov.id = 'ms-overlay';
+    ov.innerHTML =
+      '<div class="ms-hdr">' +
+        '<h2>MOTORSPORT &amp; PISTA<small>Calendari 2026 · Dataset curato</small></h2>' +
+        '<button class="gar-close" onclick="closeMotorsport()">✕ Chiudi</button>' +
+      '</div>' +
+      '<div class="ms-segctrl">' +
+        '<button class="ms-seg on" data-tab="races">🏁 Motorsport</button>' +
+        '<button class="ms-seg" data-tab="track">🏎 Track day Italia</button>' +
+      '</div>' +
+      '<div class="ms-body" id="ms-body"></div>';
+    document.body.appendChild(ov);
+
+    document.getElementById('ms-overlay').addEventListener('click', function(ev) {
+      var seg = ev.target.closest('.ms-seg');
+      if (seg) {
+        _msTab = seg.dataset.tab;
+        _msFilter = 'all';  // reset on tab change (filters differ between tabs)
+        document.querySelectorAll('.ms-seg').forEach(function(s) {
+          s.classList.toggle('on', s.dataset.tab === _msTab);
+        });
+        renderMS();
+        return;
+      }
+      var fb = ev.target.closest('.ms-fbtn');
+      if (fb) {
+        _msFilter = fb.dataset.flt;
+        renderMS();
+        return;
+      }
+      var trackCard = ev.target.closest('.ms-card.track');
+      if (trackCard && trackCard.dataset.url) {
+        window.open(trackCard.dataset.url, '_blank', 'noopener');
+      }
+    });
+  }
+
+  var _msTab = 'races';
+  var _msFilter = 'all';
+
+  window.openMotorsport = function() {
+    injectMSUI();
+    _msFilter = 'all';  // also reset on each open
+    document.getElementById('ms-overlay').classList.add('visible');
+    renderMS();
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeMotorsport = function() {
+    document.getElementById('ms-overlay').classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+
+  function renderMS() {
+    var body = document.getElementById('ms-body');
+    if (!body) return;
+    if (_msTab === 'races') renderRaces(body);
+    else renderTrackDays(body);
+  }
+
+  function renderRaces(body) {
+    var today = new Date(); today.setHours(0,0,0,0);
+    var filtered = RACES.filter(function(r) {
+      if (_msFilter === 'all') return true;
+      return r.cat === _msFilter;
+    });
+
+    // Filters
+    var fltDefs = [
+      { id:'all', label:'Tutti' },
+      { id:'f1',  label:'F1' },
+      { id:'mgp', label:'MotoGP' },
+      { id:'sbk', label:'WSBK' },
+      { id:'wrc', label:'WRC' }
+    ];
+    var html = '<div class="ms-filter-row">' + fltDefs.map(function(f) {
+      return '<button class="ms-fbtn' + (f.id === _msFilter ? ' on' : '') + '" data-flt="' + f.id + '">' + f.label + '</button>';
+    }).join('') + '</div>';
+
+    // Split future / past
+    var future = filtered.filter(function(r) { return new Date(r.date) >= today; });
+    var past   = filtered.filter(function(r) { return new Date(r.date) <  today; });
+    future.sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+    past.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+
+    if (future.length === 0 && past.length === 0) {
+      html += '<div class="ms-empty">Nessuna gara per questo filtro.</div>';
+      body.innerHTML = html;
+      return;
+    }
+
+    function renderRow(r, isNext, isPast) {
+      var d = new Date(r.date);
+      var dayN = d.getDate();
+      var month = MONTHS_IT[d.getMonth()];
+      var diff = Math.round((d - today) / 86400000);
+      var cd = '';
+      if (isPast) {
+        cd = '<div class="ms-card-countdown"><div class="ms-card-countdown-val">—</div><div class="ms-card-countdown-lbl">passato</div></div>';
+      } else if (diff === 0) {
+        cd = '<div class="ms-card-countdown"><div class="ms-card-countdown-val" style="color:#ff8a82">OGGI</div><div class="ms-card-countdown-lbl">live</div></div>';
+      } else if (diff <= 31) {
+        cd = '<div class="ms-card-countdown"><div class="ms-card-countdown-val">' + diff + '</div><div class="ms-card-countdown-lbl">' + (diff === 1 ? 'giorno' : 'giorni') + '</div></div>';
+      } else {
+        var weeks = Math.round(diff / 7);
+        cd = '<div class="ms-card-countdown"><div class="ms-card-countdown-val">' + weeks + '</div><div class="ms-card-countdown-lbl">settim.</div></div>';
+      }
+      return '<div class="ms-card' + (isNext ? ' next' : '') + (isPast ? ' past' : '') + '">' +
+        '<div class="ms-card-date"><div class="ms-card-day">' + dayN + '</div><div class="ms-card-month">' + month + '</div></div>' +
+        '<div class="ms-card-info">' +
+          '<div class="ms-card-name">' + escSafe(r.name) + '</div>' +
+          '<div class="ms-card-circuit">' + escSafe(r.circuit) + ' · ' + escSafe(r.country) + '</div>' +
+          '<div class="ms-card-tags">' +
+            '<span class="ms-card-tag cat-' + r.cat + '">' + CAT_LABELS[r.cat] + '</span>' +
+          '</div>' +
+        '</div>' +
+        cd +
+      '</div>';
+    }
+
+    if (future.length > 0) {
+      html += '<div class="ms-section-title">Prossime gare (' + future.length + ')</div>';
+      html += renderRow(future[0], true, false);
+      for (var i = 1; i < future.length; i++) html += renderRow(future[i], false, false);
+    }
+    if (past.length > 0) {
+      html += '<div class="ms-section-title">Già disputate (' + past.length + ')</div>';
+      // Show only last 5 past races
+      past.slice(0, 5).forEach(function(r) { html += renderRow(r, false, true); });
+    }
+
+    body.innerHTML = html;
+  }
+
+  function renderTrackDays(body) {
+    var today = new Date(); today.setHours(0,0,0,0);
+    var filtered = TRACKDAYS.filter(function(t) {
+      if (_msFilter === 'all') return true;
+      return t.type === _msFilter;
+    });
+
+    var fltDefs = [
+      { id:'all',  label:'Tutti' },
+      { id:'auto', label:'Auto' },
+      { id:'moto', label:'Moto' },
+      { id:'mix',  label:'Mixed' }
+    ];
+    var html = '<div class="ms-filter-row">' + fltDefs.map(function(f) {
+      return '<button class="ms-fbtn' + (f.id === _msFilter ? ' on' : '') + '" data-flt="' + f.id + '">' + f.label + '</button>';
+    }).join('') + '</div>';
+
+    var future = filtered.filter(function(t) { return new Date(t.date) >= today; });
+    var past   = filtered.filter(function(t) { return new Date(t.date) <  today; });
+    future.sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+    past.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+
+    if (future.length === 0 && past.length === 0) {
+      html += '<div class="ms-empty">Nessun track day disponibile.</div>';
+      body.innerHTML = html;
+      return;
+    }
+
+    function renderRow(t, isNext, isPast) {
+      var d = new Date(t.date);
+      var dayN = d.getDate();
+      var month = MONTHS_IT[d.getMonth()];
+      var diff = Math.round((d - today) / 86400000);
+      var cd = '';
+      if (isPast) {
+        cd = '<div class="ms-card-countdown"><div class="ms-card-countdown-val">—</div><div class="ms-card-countdown-lbl">passato</div></div>';
+      } else if (diff === 0) {
+        cd = '<div class="ms-card-countdown"><div class="ms-card-countdown-val" style="color:#ff8a82">OGGI</div><div class="ms-card-countdown-lbl">live</div></div>';
+      } else if (diff <= 31) {
+        cd = '<div class="ms-card-countdown"><div class="ms-card-countdown-val">' + diff + '</div><div class="ms-card-countdown-lbl">' + (diff === 1 ? 'giorno' : 'giorni') + '</div></div>';
+      } else {
+        var weeks = Math.round(diff / 7);
+        cd = '<div class="ms-card-countdown"><div class="ms-card-countdown-val">' + weeks + '</div><div class="ms-card-countdown-lbl">settim.</div></div>';
+      }
+      return '<div class="ms-card track' + (isNext ? ' next' : '') + (isPast ? ' past' : '') + '" data-url="' + escSafe(t.url || '') + '">' +
+        '<div class="ms-card-date"><div class="ms-card-day">' + dayN + '</div><div class="ms-card-month">' + month + '</div></div>' +
+        '<div class="ms-card-info">' +
+          '<div class="ms-card-name">' + escSafe(t.name) + '</div>' +
+          '<div class="ms-card-circuit">' + escSafe(t.circuit) + ' · ' + escSafe(t.cost) + ' · ' + escSafe(t.org) + '</div>' +
+          '<div class="ms-card-tags">' +
+            '<span class="ms-card-tag cat-' + t.type + '">' + TYPE_LABELS[t.type] + '</span>' +
+          '</div>' +
+        '</div>' +
+        cd +
+      '</div>';
+    }
+
+    if (future.length > 0) {
+      html += '<div class="ms-section-title">Prossimi (' + future.length + ')</div>';
+      html += renderRow(future[0], true, false);
+      for (var i = 1; i < future.length; i++) html += renderRow(future[i], false, false);
+    }
+    if (past.length > 0) {
+      html += '<div class="ms-section-title">Già passati</div>';
+      past.slice(0, 3).forEach(function(t) { html += renderRow(t, false, true); });
+    }
+
+    body.innerHTML = html;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(injectMSUI, 600);
+  });
 })();
 
 </script>
