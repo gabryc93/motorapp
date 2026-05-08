@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-05-08-0906">
+<meta name="autohub-build" content="2026-05-08-1002">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Diagnosi & Carburanti</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
@@ -1513,7 +1513,203 @@ body[data-hub="fuel"]::before { display: none !important; }
   line-height: 1.6;
 }
 
-/* ── Vehicle photo: thumbnail + edit form input ───────────────── */
+/* ── Maintenance history modal + document upload + export ────── */
+#mt-history {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(3px);
+  z-index: 80;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#mt-history.visible { display: flex; }
+@media (min-width: 600px) { #mt-history { align-items: center; } }
+.mt-history-card {
+  background: var(--surf);
+  border: 1px solid var(--brd2);
+  border-radius: 14px 14px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+@media (min-width: 600px) { .mt-history-card { border-radius: 14px; } }
+.mt-history-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--brd);
+  position: relative;
+}
+.mt-history-hdr h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.1rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  flex: 1;
+}
+.mt-history-hdr small {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+.mt-history-close {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd2);
+  color: var(--t2);
+  padding: 6px 9px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  cursor: pointer;
+}
+.mt-history-body {
+  padding: 8px 14px;
+}
+.mt-hist-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--brd);
+}
+.mt-hist-row:last-child { border-bottom: none; }
+.mt-hist-info { flex: 1; min-width: 0; }
+.mt-hist-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .92rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+}
+.mt-hist-doc {
+  appearance: none; -webkit-appearance: none;
+  background: rgba(91,155,213,.18);
+  color: #b8d4ec;
+  border: 1px solid rgba(91,155,213,.35);
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-size: .7rem;
+  cursor: pointer;
+}
+.mt-hist-doc:hover { background: rgba(91,155,213,.3); }
+.mt-hist-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t2);
+  margin-top: 3px;
+  letter-spacing: .04em;
+}
+.mt-hist-note {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.mt-hist-del {
+  appearance: none; -webkit-appearance: none;
+  background: rgba(224,90,74,.12);
+  color: #ff8a82;
+  border: 1px solid rgba(224,90,74,.3);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: .9rem;
+  cursor: pointer;
+}
+.mt-hist-del:hover { background: rgba(224,90,74,.22); }
+.mt-history-actions {
+  padding: 10px 14px 14px;
+  border-top: 1px solid var(--brd);
+}
+.mt-history-add {
+  width: 100%;
+  appearance: none; -webkit-appearance: none;
+  background: rgba(76,175,125,.85);
+  border: 1px solid rgba(76,175,125,.6);
+  color: #08160d;
+  padding: 11px;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mt-history-add:active { transform: scale(.99); }
+
+/* Doc upload row */
+.mt-doc-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 9px;
+  padding: 10px 12px;
+}
+.mt-doc-preview {
+  flex-shrink: 0;
+  width: 64px; height: 64px;
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 7px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mt-doc-preview img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.mt-doc-empty {
+  font-size: 1.5rem;
+  opacity: .35;
+}
+.mt-doc-pdf {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t1);
+  text-align: center;
+  letter-spacing: .04em;
+}
+.mt-doc-actions {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.mt-doc-input { display: none; }
+
+/* Export button in maint header */
+.mt-export-btn {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd2);
+  color: var(--t1);
+  padding: 6px 11px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .85rem;
+  cursor: pointer;
+  margin-right: 6px;
+}
+.mt-export-btn:hover {
+  border-color: rgba(76,175,125,.5);
+  background: rgba(76,175,125,.1);
+}
+.mt-export-btn:active { transform: scale(.95); }
 .gar-veh-photo {
   flex-shrink: 0;
   width: 56px; height: 56px;
@@ -6349,6 +6545,39 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
       return r;
     };
   }
+  /* ── Export full app data as downloadable JSON ──────────────── */
+  window.hubExportData = function() {
+    try {
+      var keys = ['hub_garage_v1','hub_active_vehicle_v1','hub_refuels_v1',
+                  'hub_maint_v1','hub_rides_v1','hub_perf_best_v1'];
+      var dump = {
+        _exportedAt: new Date().toISOString(),
+        _appBuild: (document.querySelector('meta[name="autohub-build"]') || {}).content || 'unknown',
+        _note: 'Backup AutoHub. Foto veicoli e documenti fattura NON sono inclusi (storage IndexedDB binario).'
+      };
+      keys.forEach(function(k) {
+        try {
+          var v = localStorage.getItem(k);
+          dump[k] = v ? JSON.parse(v) : null;
+        } catch(e) { dump[k] = '<corrupted>'; }
+      });
+      var blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      var dateStr = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = 'autohub-export-' + dateStr + '.json';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function() {
+        try { URL.revokeObjectURL(url); } catch(_) {}
+        a.remove();
+      }, 100);
+    } catch (e) {
+      alert('Esportazione fallita: ' + (e.message || e));
+    }
+  };
+
   document.addEventListener('DOMContentLoaded', _hubAutoLocalize);
 
   /* ── Cache-buster patch + map auto-refresh ────────────────────
@@ -17858,6 +18087,104 @@ async function runCmp() {
   ];
 
   var MT_KEY = 'hub_maint_v1';
+
+  /* ── IndexedDB for invoices/receipts (separate from photos) ── */
+  var DB_NAME = 'autohub_v1';
+  var DOCS_STORE = 'maintdocs';
+  var _docDbPromise = null;
+  function openDocDB() {
+    if (_docDbPromise) return _docDbPromise;
+    _docDbPromise = new Promise(function(resolve, reject) {
+      if (!('indexedDB' in window)) { reject(new Error('IndexedDB not supported')); return; }
+      var req = indexedDB.open(DB_NAME, 2);
+      req.onupgradeneeded = function(ev) {
+        var db = ev.target.result;
+        if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains(DOCS_STORE)) db.createObjectStore(DOCS_STORE, { keyPath: 'id' });
+      };
+      req.onsuccess = function() { resolve(req.result); };
+      req.onerror = function() { reject(req.error); };
+    });
+    return _docDbPromise;
+  }
+  async function dbPutDoc(docId, dataUrl, mime) {
+    var db = await openDocDB();
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(DOCS_STORE, 'readwrite');
+      tx.objectStore(DOCS_STORE).put({ id: docId, dataUrl: dataUrl, mime: mime || 'image/jpeg', ts: Date.now() });
+      tx.oncomplete = function() { resolve(true); };
+      tx.onerror = function() { reject(tx.error); };
+    });
+  }
+  async function dbGetDoc(docId) {
+    try {
+      var db = await openDocDB();
+      return new Promise(function(resolve) {
+        var tx = db.transaction(DOCS_STORE, 'readonly');
+        var req = tx.objectStore(DOCS_STORE).get(docId);
+        req.onsuccess = function() { resolve(req.result || null); };
+        req.onerror = function() { resolve(null); };
+      });
+    } catch(e) { return null; }
+  }
+  async function dbDeleteDoc(docId) {
+    try {
+      var db = await openDocDB();
+      return new Promise(function(resolve) {
+        var tx = db.transaction(DOCS_STORE, 'readwrite');
+        tx.objectStore(DOCS_STORE).delete(docId);
+        tx.oncomplete = function() { resolve(true); };
+        tx.onerror = function() { resolve(false); };
+      });
+    } catch(e) { return false; }
+  }
+
+  // Pending doc state for the open edit modal:
+  //   null = no change, '' = remove, {dataUrl, mime} = new
+  var _pendingDoc = null;
+
+  window._mtDocChange = function(ev) {
+    var file = ev.target.files && ev.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File troppo grande (>5MB).');
+      ev.target.value = '';
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var dataUrl = e.target.result;
+      // If image, compress; if PDF, store as-is
+      if (file.type.startsWith('image/') && typeof window._hubCompressImage === 'function') {
+        window._hubCompressImage(file, 1400).then(function(compressed) {
+          _pendingDoc = { dataUrl: compressed, mime: 'image/jpeg' };
+          _mtDocShowPreview(compressed, 'image/jpeg');
+        }).catch(function() {
+          _pendingDoc = { dataUrl: dataUrl, mime: file.type };
+          _mtDocShowPreview(dataUrl, file.type);
+        });
+      } else {
+        _pendingDoc = { dataUrl: dataUrl, mime: file.type };
+        _mtDocShowPreview(dataUrl, file.type);
+      }
+    };
+    reader.readAsDataURL(file);
+    ev.target.value = '';
+  };
+  function _mtDocShowPreview(dataUrl, mime) {
+    var prev = document.getElementById('mt-doc-preview');
+    if (mime === 'application/pdf') {
+      prev.innerHTML = '<div class="mt-doc-pdf">📄 PDF</div>';
+    } else {
+      prev.innerHTML = '<img src="' + dataUrl + '" alt="">';
+    }
+    document.getElementById('mt-doc-rm').style.display = 'inline-block';
+  }
+  window._mtDocRemove = function() {
+    _pendingDoc = '';
+    document.getElementById('mt-doc-preview').innerHTML = '<div class="mt-doc-empty">📎</div>';
+    document.getElementById('mt-doc-rm').style.display = 'none';
+  };
   function loadAll() { try { return JSON.parse(localStorage.getItem(MT_KEY) || '[]'); } catch(e) { return []; } }
   function saveAll(r) { try { localStorage.setItem(MT_KEY, JSON.stringify(r)); } catch(e) {} }
 
@@ -17928,6 +18255,7 @@ async function runCmp() {
     ov.innerHTML =
       '<div class="mt-hdr">' +
         '<h2>MANUTENZIONE<small id="mt-hdr-veh">—</small></h2>' +
+        '<button class="mt-export-btn" onclick="hubExportData()" title="Esporta tutti i dati">⬇</button>' +
         '<button class="gar-close" onclick="closeMaint()">✕ Chiudi</button>' +
       '</div>' +
       '<div class="mt-body" id="mt-body"></div>';
@@ -17947,6 +18275,15 @@ async function runCmp() {
         '</div>' +
         '<div class="gar-field"><label>Costo €</label>' +
           '<input type="number" id="mt-f-cost" min="0" step="0.01" placeholder="120.00"></div>' +
+        '<div class="gar-field"><label>Documento (fattura, ricevuta...)</label>' +
+          '<div class="mt-doc-row" id="mt-doc-row">' +
+            '<div class="mt-doc-preview" id="mt-doc-preview"><div class="mt-doc-empty">📎</div></div>' +
+            '<div class="mt-doc-actions">' +
+              '<input type="file" accept="image/*,application/pdf" class="mt-doc-input" id="mt-doc-input" onchange="_mtDocChange(event)">' +
+              '<button type="button" class="gar-photo-btn" onclick="document.getElementById(\'mt-doc-input\').click()">📷 Carica</button>' +
+              '<button type="button" class="gar-photo-btn gar-photo-btn-rm" id="mt-doc-rm" onclick="_mtDocRemove()" style="display:none">Rimuovi</button>' +
+            '</div>' +
+          '</div></div>' +
         '<div class="gar-field"><label>Note</label>' +
           '<textarea id="mt-f-note" rows="2" placeholder="Es. olio Castrol 5W30, pastiglie EBC, da Officina XY..." maxlength="200"></textarea></div>' +
         '<div class="gar-edit-btns">' +
@@ -17977,6 +18314,7 @@ async function runCmp() {
   window.openMaintEdit = function(presetType) {
     injectMaintUI();
     _editingType = presetType;
+    _pendingDoc = null;
     var v = window.hubGarage && window.hubGarage.active();
     var preset = presetsFor(v).find(function(p) { return p.type === presetType; });
     document.getElementById('mt-edit-title').textContent = preset ? preset.name : 'Intervento';
@@ -17984,13 +18322,109 @@ async function runCmp() {
     document.getElementById('mt-f-km').value = (v && v.kmTot) || '';
     document.getElementById('mt-f-cost').value = '';
     document.getElementById('mt-f-note').value = '';
+    document.getElementById('mt-doc-preview').innerHTML = '<div class="mt-doc-empty">📎</div>';
+    document.getElementById('mt-doc-rm').style.display = 'none';
     document.getElementById('mt-edit').classList.add('visible');
   };
   window.closeMaintEdit = function() {
     document.getElementById('mt-edit').classList.remove('visible');
   };
 
-  window.saveMaintEvent = function() {
+  // Smart click: if no events for this preset → edit directly. Else → show history.
+  window._maintCardClick = function(presetType) {
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) return;
+    var events = loadAll().filter(function(e) {
+      return e.vehicleId === v.id && e.type === presetType;
+    });
+    if (events.length === 0) {
+      window.openMaintEdit(presetType);
+    } else {
+      window.openMaintHistory(presetType);
+    }
+  };
+
+  window.openMaintHistory = function(presetType) {
+    injectMaintUI();
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) return;
+    var preset = presetsFor(v).find(function(p) { return p.type === presetType; });
+    var events = loadAll().filter(function(e) {
+      return e.vehicleId === v.id && e.type === presetType;
+    }).sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); });
+
+    var modal = document.getElementById('mt-history');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'mt-history';
+      modal.onclick = function(e) { if (e.target === modal) modal.classList.remove('visible'); };
+      modal.innerHTML = '<div class="mt-history-card" id="mt-history-card"></div>';
+      document.body.appendChild(modal);
+    }
+
+    var rows = events.map(function(e) {
+      var dateStr = e.doneDate ? e.doneDate.split('-').reverse().join('/') : '—';
+      var costStr = (typeof e.cost === 'number' && !isNaN(e.cost)) ? e.cost.toFixed(0) + ' €' : '';
+      var docBadge = e.docId ? '<button class="mt-hist-doc" onclick="event.stopPropagation();viewMaintDoc(\'' + e.id + '\')" title="Apri documento">📎</button>' : '';
+      return '<div class="mt-hist-row" data-id="' + e.id + '">' +
+        '<div class="mt-hist-info">' +
+          '<div class="mt-hist-date">' + dateStr + ' ' + docBadge + '</div>' +
+          '<div class="mt-hist-meta">' + (e.doneKm != null ? e.doneKm.toLocaleString('it-IT') + ' km' : '—') +
+            (costStr ? ' · ' + costStr : '') + '</div>' +
+          (e.note ? '<div class="mt-hist-note">' + escSafe(e.note) + '</div>' : '') +
+        '</div>' +
+        '<button class="mt-hist-del" onclick="event.stopPropagation();deleteMaintEvent(\'' + e.id + '\',\'' + presetType + '\')">🗑</button>' +
+      '</div>';
+    }).join('');
+
+    document.getElementById('mt-history-card').innerHTML =
+      '<div class="mt-history-hdr">' +
+        '<h3>' + escSafe(preset ? preset.name : presetType) + '</h3>' +
+        '<small>' + events.length + ' intervent' + (events.length === 1 ? 'o' : 'i') + ' registrat' + (events.length === 1 ? 'o' : 'i') + '</small>' +
+        '<button class="mt-history-close" onclick="document.getElementById(\'mt-history\').classList.remove(\'visible\')">✕</button>' +
+      '</div>' +
+      '<div class="mt-history-body">' + rows + '</div>' +
+      '<div class="mt-history-actions">' +
+        '<button class="mt-history-add" onclick="document.getElementById(\'mt-history\').classList.remove(\'visible\');openMaintEdit(\'' + presetType + '\')">+ Nuovo intervento</button>' +
+      '</div>';
+    modal.classList.add('visible');
+  };
+
+  window.deleteMaintEvent = function(eventId, presetType) {
+    if (!confirm('Eliminare questo intervento?')) return;
+    var all = loadAll();
+    var ev = all.find(function(e) { return e.id === eventId; });
+    if (ev && ev.docId) { try { dbDeleteDoc(ev.docId); } catch(_) {} }
+    all = all.filter(function(e) { return e.id !== eventId; });
+    saveAll(all);
+    var v = window.hubGarage && window.hubGarage.active();
+    var remaining = all.filter(function(e) {
+      return e.vehicleId === v.id && e.type === presetType;
+    });
+    if (remaining.length > 0) {
+      openMaintHistory(presetType);
+    } else {
+      document.getElementById('mt-history').classList.remove('visible');
+    }
+    renderMaint();
+    refreshMaintBadge();
+  };
+
+  window.viewMaintDoc = async function(eventId) {
+    var ev = loadAll().find(function(e) { return e.id === eventId; });
+    if (!ev || !ev.docId) return;
+    var doc = await dbGetDoc(ev.docId);
+    if (!doc) { alert('Documento non trovato.'); return; }
+    var w = window.open();
+    if (!w) { alert('Pop-up bloccati. Abilita i pop-up per visualizzare il documento.'); return; }
+    if (doc.mime === 'application/pdf') {
+      w.document.write('<html><body style="margin:0;background:#000"><iframe src="' + doc.dataUrl + '" style="border:0;width:100%;height:100vh"></iframe></body></html>');
+    } else {
+      w.document.write('<html><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="' + doc.dataUrl + '" style="max-width:100%;max-height:100vh"></body></html>');
+    }
+  };
+
+  window.saveMaintEvent = async function() {
     var v = window.hubGarage && window.hubGarage.active();
     if (!v || !_editingType) { alert('Errore.'); return; }
     var date = document.getElementById('mt-f-date').value;
@@ -17999,19 +18433,30 @@ async function runCmp() {
     var costRaw = document.getElementById('mt-f-cost').value.replace(',', '.').trim();
     var cost = costRaw === '' ? null : parseFloat(costRaw);
     if (cost !== null && isNaN(cost)) cost = null;
+
+    var newId = uid();
+    var docId = null;
+    if (_pendingDoc && _pendingDoc !== '' && typeof _pendingDoc === 'object') {
+      docId = 'd' + newId;
+      try {
+        await dbPutDoc(docId, _pendingDoc.dataUrl, _pendingDoc.mime);
+      } catch(e) { console.error('[AutoHub] doc save failed', e); docId = null; }
+    }
+    _pendingDoc = null;
+
     var all = loadAll();
     all.push({
-      id: uid(),
+      id: newId,
       vehicleId: v.id,
       type: _editingType,
       doneKm: km,
       doneDate: date,
       cost: cost,
+      docId: docId,
       note: document.getElementById('mt-f-note').value.trim(),
       ts: Date.now()
     });
     saveAll(all);
-    // Update vehicle odometer if increased
     if (window.hubGarage && km > (v.kmTot || 0)) {
       window.hubGarage.update(v.id, { kmTot: km });
       if (typeof window._hubRefreshGarageBadge === 'function') window._hubRefreshGarageBadge();
@@ -18056,8 +18501,10 @@ async function runCmp() {
         statusClass = 'warn';
         detailParts.push('Tap per registrare il primo intervento');
       } else {
+        var allForType = loadAll().filter(function(e) { return e.vehicleId === v.id && e.type === p.type; });
         var doneStr = last.doneDate ? last.doneDate.split('-').reverse().join('/') : '—';
-        var lastLine = 'Ultimo: ' + doneStr + (last.doneKm != null ? ' · ' + last.doneKm.toLocaleString('it-IT') + ' km' : '');
+        var lastLine = (allForType.length > 1 ? allForType.length + 'ª volta · ' : 'Ultimo: ') +
+                       doneStr + (last.doneKm != null ? ' · ' + last.doneKm.toLocaleString('it-IT') + ' km' : '');
         if (typeof last.cost === 'number' && !isNaN(last.cost)) {
           lastLine += ' · ' + last.cost.toFixed(0) + ' €';
         }
@@ -18100,7 +18547,7 @@ async function runCmp() {
       if (p.km && p.months) nextInfoLeft += ' o ';
       if (p.months) nextInfoLeft += 'ogni ' + p.months + ' mesi';
 
-      return '<div class="' + cardClass + '" onclick="openMaintEdit(\'' + p.type + '\')">' +
+      return '<div class="' + cardClass + '" onclick="_maintCardClick(\'' + p.type + '\')">' +
         '<div class="mt-card-row">' +
           '<div class="mt-card-icon">' + p.icon + '</div>' +
           '<div class="mt-card-info">' +
