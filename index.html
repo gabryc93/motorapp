@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-05-08-0902">
+<meta name="autohub-build" content="2026-05-08-0906">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Diagnosi & Carburanti</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
@@ -17246,12 +17246,19 @@ async function runCmp() {
     document.getElementById('rd-time').textContent = fmtTime(elapsed);
   }
 
+  // GPS warm-up: ignore the first few fixes while signal stabilizes
+  var _gpsFixCount = 0;
+  var _GPS_WARMUP = 3;
+  var _MAX_REASONABLE_KMH = 320;  // cap (anything above is GPS glitch)
+
   function onPosition(pos) {
     if (state !== 'recording') return;
     var c = pos.coords;
     var now = pos.timestamp || Date.now();
     var fix = { lat: c.latitude, lng: c.longitude, ts: now, speed: c.speed, alt: c.altitude };
+    _gpsFixCount++;
 
+    // Compute candidate speed
     var kmh = 0;
     if (typeof c.speed === 'number' && c.speed >= 0 && !isNaN(c.speed)) {
       kmh = c.speed * 3.6;
@@ -17260,24 +17267,45 @@ async function runCmp() {
       if (dt > 0) kmh = haversineKm(lastFix, fix) * 3600 / dt;
     }
 
-    if (lastFix && c.accuracy && c.accuracy < 50) {
+    // ── Quality filters ──
+    var poorAccuracy = !c.accuracy || c.accuracy > 30;       // m
+    var isWarmup     = _gpsFixCount <= _GPS_WARMUP;
+    var isInsane     = kmh > _MAX_REASONABLE_KMH;
+    var isOutlier    = false;
+    if (lastFix && typeof lastFix._kmh === 'number') {
+      var deltaSec = Math.max(0.1, (now - lastFix.ts) / 1000);
+      var deltaKmh = Math.abs(kmh - lastFix._kmh);
+      // Reject jumps faster than ~30 km/h per second (~3g sustained: impossible)
+      if (deltaKmh / deltaSec > 30) isOutlier = true;
+    }
+
+    // Distance: only count when accuracy is good, no warm-up, no outlier
+    if (lastFix && !poorAccuracy && !isWarmup && !isOutlier) {
       var d = haversineKm(lastFix, fix) * 1000;
+      // Tiny jitter when stationary: ignore
       if (d > 1.5) distanceM += d;
     }
 
-    if (kmh > maxSpeed) maxSpeed = kmh;
-    if (kmh > 1) { sumSpeed += kmh; sumSpeedN++; }
+    // Max-speed update: very strict — must pass all filters
+    if (!poorAccuracy && !isWarmup && !isInsane && !isOutlier) {
+      if (kmh > maxSpeed) maxSpeed = kmh;
+      if (kmh > 1) { sumSpeed += kmh; sumSpeedN++; }
+    }
+
+    // Display: clamp insane values to 0 visually so user sees something sane
+    var displayKmh = (isInsane || isOutlier) ? 0 : kmh;
+    fix._kmh = kmh;  // store for next outlier comparison
 
     track.push(fix);
     lastFix = fix;
 
-    document.getElementById('rd-speed').textContent = Math.round(kmh);
+    document.getElementById('rd-speed').textContent = Math.round(displayKmh);
     document.getElementById('rd-dist').textContent = (distanceM / 1000).toFixed(1);
     document.getElementById('rd-max').textContent = Math.round(maxSpeed);
 
     // ── Performance mode detection ──
     if (rideMode !== 'normal') {
-      detectPerf(kmh, now);
+      detectPerf(displayKmh, now);
     }
   }
 
@@ -17462,32 +17490,72 @@ async function runCmp() {
   };
 
   /* ── G-sensor ─────────────────────────────────────────────── */
+  var _gCalibT0 = 0;          // timestamp first sample
+  var _gCalibSamples = 0;
+  var _gCalibSumX = 0;
+  var _gCalibSumY = 0;
+  var _gCalibX = 0, _gCalibY = 0;
+  var _G_CALIB_MS = 1500;     // calibrazione per 1.5s
+
   function startGSensor() {
     if (gSensorActive) return;
+
+    // Reset calibration
+    _gCalibT0 = 0; _gCalibSamples = 0;
+    _gCalibSumX = 0; _gCalibSumY = 0;
+    _gCalibX = 0; _gCalibY = 0;
+    gX = 0; gY = 0;
+
     function handler(ev) {
-      if (!ev.accelerationIncludingGravity) return;
-      var a = ev.accelerationIncludingGravity;
-      // Convert m/s² to G; remove gravity (~9.81 on dominant axis)
-      // Use lateral (x) + longitudinal (y) for the meter
-      var gxRaw = (a.x || 0) / 9.81;
-      var gyRaw = (a.y || 0) / 9.81;
-      // Smooth (low-pass)
-      gX = gX * 0.7 + gxRaw * 0.3;
-      gY = gY * 0.7 + gyRaw * 0.3;
+      // Prefer .acceleration (gravity already removed by OS); fallback to
+      // .accelerationIncludingGravity with calibration offset.
+      var raw = ev.acceleration || ev.accelerationIncludingGravity;
+      if (!raw) return;
+      var hasGravity = !ev.acceleration;  // we are using IncludingGravity
+
+      var ax = (raw.x || 0) / 9.81;
+      var ay = (raw.y || 0) / 9.81;
+
+      // Calibration phase (only if we are reading IncludingGravity)
+      if (hasGravity) {
+        var nowT = Date.now();
+        if (_gCalibT0 === 0) _gCalibT0 = nowT;
+        if (nowT - _gCalibT0 < _G_CALIB_MS) {
+          _gCalibSumX += ax;
+          _gCalibSumY += ay;
+          _gCalibSamples++;
+          // During calibration, force display to 0
+          var label0 = document.getElementById('rd-gval');
+          if (label0) label0.textContent = 'cal…';
+          return;
+        } else if (_gCalibSamples > 0 && _gCalibX === 0 && _gCalibY === 0) {
+          // First time we cross the threshold, lock the offsets
+          _gCalibX = _gCalibSumX / _gCalibSamples;
+          _gCalibY = _gCalibSumY / _gCalibSamples;
+        }
+        ax -= _gCalibX;
+        ay -= _gCalibY;
+      }
+
+      // Low-pass smoothing
+      gX = gX * 0.7 + ax * 0.3;
+      gY = gY * 0.7 + ay * 0.3;
+
       var mag = Math.sqrt(gX * gX + gY * gY);
+      // Cap insane values from noise
+      if (mag > 3) mag = 3;
       if (state === 'recording' && mag > perfMaxG) perfMaxG = mag;
-      // Render
+
       var dot = document.getElementById('rd-gdot');
       var val = document.getElementById('rd-gval');
       if (dot) {
-        // Container is now ~160px wide, dot can move ~70px from center for 1.5G
         var px = Math.max(-70, Math.min(70, -gX * 50));
         var py = Math.max(-70, Math.min(70,  gY * 50));
         dot.style.transform = 'translate(' + px + 'px, ' + py + 'px)';
       }
       if (val) val.textContent = mag.toFixed(2);
     }
-    // iOS 13+ requires permission
+
     if (typeof DeviceMotionEvent !== 'undefined' &&
         typeof DeviceMotionEvent.requestPermission === 'function') {
       DeviceMotionEvent.requestPermission().then(function(resp) {
@@ -17587,6 +17655,7 @@ async function runCmp() {
     if (state === 'idle') {
       distanceM = 0; maxSpeed = 0; sumSpeed = 0; sumSpeedN = 0;
       elapsedMs = 0; track = []; lastFix = null;
+      _gpsFixCount = 0;
       // Reset perf state
       perfStartTs = null;
       perfStartSpeed = null;
