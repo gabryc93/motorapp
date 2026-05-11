@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-05-08-1002">
+<meta name="autohub-build" content="2026-05-11-1856">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Diagnosi & Carburanti</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
@@ -1863,6 +1863,110 @@ body[data-hub="fuel"]::before { display: none !important; }
 }
 .gar-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .gar-typebar { display: flex; gap: 6px; margin-bottom: 12px; }
+
+.gar-section {
+  margin: 8px 0;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+/* ── Auto-fill button + result feedback ──────────────────────── */
+.gar-autofill-btn {
+  width: 100%;
+  appearance: none; -webkit-appearance: none;
+  background: rgba(91,155,213,.12);
+  border: 1px solid rgba(91,155,213,.35);
+  color: #b8d4ec;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  margin: 4px 0 8px;
+  transition: background .12s ease;
+}
+.gar-autofill-btn:hover {
+  background: rgba(91,155,213,.2);
+  border-color: rgba(91,155,213,.5);
+}
+.gar-autofill-btn:active { transform: scale(.99); }
+.gar-autofill-result {
+  display: none;
+  font-family: 'DM Mono', monospace;
+  font-size: .64rem;
+  padding: 9px 12px;
+  border-radius: 7px;
+  margin-bottom: 10px;
+  border: 1px solid;
+  line-height: 1.45;
+}
+.gar-autofill-result small {
+  font-size: .58rem;
+  color: var(--t3);
+  letter-spacing: .03em;
+}
+.gar-autofill-result strong {
+  font-family: 'Fraunces', Georgia, serif;
+  color: var(--t1);
+}
+.gar-autofill-result.gar-af-ok {
+  background: rgba(76,175,125,.08);
+  border-color: rgba(76,175,125,.3);
+  color: #6dd9a3;
+}
+.gar-autofill-result.gar-af-warn {
+  background: rgba(232,160,48,.08);
+  border-color: rgba(232,160,48,.3);
+  color: #ffd699;
+}
+.gar-autofill-result.gar-af-err {
+  background: rgba(224,90,74,.08);
+  border-color: rgba(224,90,74,.3);
+  color: #ff8a82;
+}
+.gar-section > summary {
+  padding: 11px 13px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  font-weight: 600;
+  color: var(--t1);
+  letter-spacing: .04em;
+  list-style: none;
+  user-select: none;
+}
+.gar-section > summary::-webkit-details-marker { display: none; }
+.gar-section > summary::after {
+  content: '▸';
+  float: right;
+  transition: transform .15s ease;
+  color: var(--t3);
+}
+.gar-section[open] > summary::after { transform: rotate(90deg); }
+.gar-section[open] > summary {
+  border-bottom: 1px solid var(--brd);
+}
+.gar-section .gar-field { padding: 0 13px; }
+.gar-section .gar-field:first-of-type { padding-top: 11px; }
+.gar-section .gar-field:last-of-type { padding-bottom: 11px; }
+.gar-section .gar-row2 { padding: 0 13px; }
+.gar-section .gar-row2 .gar-field { padding: 0; }
+.gar-section .gar-row2:first-of-type { padding-top: 11px; }
+.gar-section .gar-row2:last-of-type { padding-bottom: 11px; }
+.gar-section select {
+  width: 100%;
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  color: var(--t1);
+  padding: 8px 10px;
+  border-radius: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+}
 .gar-typebar button {
   flex: 1;
   appearance: none; -webkit-appearance: none;
@@ -2153,6 +2257,142 @@ body[data-hub="fuel"]::before { display: none !important; }
   margin: 0 auto;
   padding: 0 14px;
 }
+/* ── Showroom card: featured active vehicle ─────────────────── */
+.sr-card {
+  display: flex;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(140,90,200,.12), rgba(140,90,200,.04));
+  border: 1px solid rgba(140,90,200,.28);
+  border-radius: 16px;
+  padding: 14px;
+  margin: 8px 0 18px;
+  cursor: pointer;
+  transition: transform .12s ease, border-color .15s;
+  position: relative;
+  overflow: hidden;
+}
+.sr-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 140px; height: 140px;
+  background: radial-gradient(circle at 70% 30%, rgba(140,90,200,.18), transparent 65%);
+  pointer-events: none;
+}
+.sr-card:hover { border-color: rgba(140,90,200,.5); }
+.sr-card:active { transform: scale(.99); }
+
+.sr-photo {
+  flex-shrink: 0;
+  width: 120px; height: 120px;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sr-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.sr-photo-placeholder {
+  font-size: 2.4rem;
+  opacity: .35;
+}
+
+.sr-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+.sr-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sr-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.sr-birthday {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: #ffd699;
+  background: rgba(232,160,48,.14);
+  border: 1px solid rgba(232,160,48,.3);
+  border-radius: 6px;
+  padding: 3px 7px;
+  margin-bottom: 6px;
+  align-self: flex-start;
+}
+.sr-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.sr-stat {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 7px;
+  padding: 5px 9px;
+  min-width: 56px;
+}
+.sr-stat-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .48rem;
+  color: var(--t3);
+  letter-spacing: .1em;
+}
+.sr-stat-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--t1);
+  font-variant-numeric: tabular-nums;
+  margin-top: 1px;
+}
+.sr-alerts {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.sr-alert {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: .04em;
+  border: 1px solid;
+}
+.sr-alert-ok   { background: rgba(76,175,125,.14); color: #6dd9a3; border-color: rgba(76,175,125,.28); }
+.sr-alert-warn { background: rgba(232,160,48,.14); color: #ffd699; border-color: rgba(232,160,48,.3); }
+.sr-alert-crit { background: rgba(224,90,74,.14); color: #ff8a82; border-color: rgba(224,90,74,.3); }
+
+@media (max-width: 480px) {
+  .sr-photo { width: 96px; height: 96px; }
+  .sr-name { font-size: 1.1rem; }
+  .sr-stat { padding: 4px 7px; min-width: 50px; }
+  .sr-stat-val { font-size: .82rem; }
+}
+
 #hub-garage .garage-hdr {
   padding: 22px 0 18px;
 }
@@ -5987,6 +6227,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     </div>
   </header>
   <main class="garage-main">
+    <div id="garage-showroom-slot"></div>
     <div id="garage-launch-slot"></div>
   </main>
 </div>
@@ -15600,6 +15841,219 @@ async function runCmp() {
 <!-- HUB GARAGE ADDON: multi-vehicle profile (must run AFTER diag JS) -->
 <script>
 
+/* ════════════════════════════════════════════════════════════════
+   AutoHub — Vehicle specs auto-fill database
+   Curated dataset of popular Italian-market vehicles. Only the fields
+   we don't know are left null — never invent numbers.
+   Schema per entry:
+     { marca, modello, anni: [start, end], variant?,
+       cv, nm, peso, cc, kmh0_100, vmax, cambio, trazione, alim }
+   ════════════════════════════════════════════════════════════════ */
+(function() {
+  'use strict';
+
+  var AUTO_DB = [
+    // ─── Fiat ───
+    { marca:'Fiat', modello:'Panda', anni:[2012,2024], cv:69, nm:102, peso:940, cc:1242, kmh0_100:14.2, vmax:164, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Fiat', modello:'500', anni:[2007,2024], cv:69, nm:102, peso:940, cc:1242, kmh0_100:12.9, vmax:160, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Fiat', modello:'500 Abarth', anni:[2008,2024], cv:165, nm:230, peso:1035, cc:1368, kmh0_100:7.4, vmax:211, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Fiat', modello:'Tipo', anni:[2015,2024], cv:120, nm:200, peso:1320, cc:1368, kmh0_100:9.7, vmax:200, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Fiat', modello:'500X', anni:[2014,2024], cv:120, nm:215, peso:1395, cc:1332, kmh0_100:10.5, vmax:188, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Fiat', modello:'Punto', anni:[2005,2018], cv:77, nm:115, peso:1080, cc:1242, kmh0_100:13.5, vmax:170, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    // ─── Alfa Romeo ───
+    { marca:'Alfa Romeo', modello:'Giulia', anni:[2016,2024], cv:200, nm:330, peso:1429, cc:1995, kmh0_100:6.6, vmax:235, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'Alfa Romeo', modello:'Giulia Quadrifoglio', anni:[2016,2024], cv:510, nm:600, peso:1580, cc:2891, kmh0_100:3.9, vmax:307, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'Alfa Romeo', modello:'Stelvio', anni:[2017,2024], cv:200, nm:330, peso:1660, cc:1995, kmh0_100:7.2, vmax:215, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Alfa Romeo', modello:'Stelvio Quadrifoglio', anni:[2017,2024], cv:510, nm:600, peso:1830, cc:2891, kmh0_100:3.8, vmax:283, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Alfa Romeo', modello:'Tonale', anni:[2022,2025], cv:160, nm:240, peso:1525, cc:1469, kmh0_100:9.3, vmax:212, cambio:'dct', trazione:'fwd', alim:'ibrida' },
+    { marca:'Alfa Romeo', modello:'Mito', anni:[2008,2018], cv:120, nm:215, peso:1145, cc:1368, kmh0_100:8.8, vmax:198, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    // ─── Lancia ───
+    { marca:'Lancia', modello:'Ypsilon', anni:[2011,2024], cv:69, nm:102, peso:980, cc:1242, kmh0_100:13.7, vmax:160, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    // ─── BMW ───
+    { marca:'BMW', modello:'Serie 1', anni:[2019,2024], cv:178, nm:280, peso:1465, cc:1998, kmh0_100:7.1, vmax:235, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'BMW', modello:'Serie 3', anni:[2018,2024], cv:184, nm:300, peso:1545, cc:1998, kmh0_100:7.1, vmax:235, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'BMW', modello:'M3', anni:[2021,2024], cv:510, nm:650, peso:1730, cc:2993, kmh0_100:3.5, vmax:290, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'BMW', modello:'M3 Competition', anni:[2014,2020], cv:450, nm:550, peso:1635, cc:2979, kmh0_100:4.0, vmax:290, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'BMW', modello:'M2', anni:[2016,2024], cv:460, nm:550, peso:1725, cc:2993, kmh0_100:4.1, vmax:285, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'BMW', modello:'X1', anni:[2015,2024], cv:150, nm:250, peso:1535, cc:1499, kmh0_100:9.7, vmax:205, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'BMW', modello:'X3', anni:[2017,2024], cv:184, nm:400, peso:1820, cc:1995, kmh0_100:8.0, vmax:213, cambio:'automatico', trazione:'awd', alim:'diesel' },
+    { marca:'BMW', modello:'X5', anni:[2018,2024], cv:265, nm:620, peso:2185, cc:2993, kmh0_100:6.5, vmax:230, cambio:'automatico', trazione:'awd', alim:'diesel' },
+    // ─── Mercedes ───
+    { marca:'Mercedes', modello:'Classe A', anni:[2018,2024], cv:163, nm:250, peso:1395, cc:1332, kmh0_100:8.2, vmax:225, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Mercedes', modello:'A45 AMG', anni:[2020,2024], cv:421, nm:500, peso:1620, cc:1991, kmh0_100:3.9, vmax:270, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Mercedes', modello:'Classe C', anni:[2021,2024], cv:204, nm:300, peso:1655, cc:1999, kmh0_100:7.3, vmax:246, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'Mercedes', modello:'C63 AMG', anni:[2014,2020], cv:476, nm:650, peso:1745, cc:3982, kmh0_100:4.1, vmax:250, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'Mercedes', modello:'GLA', anni:[2020,2024], cv:163, nm:250, peso:1530, cc:1332, kmh0_100:8.7, vmax:215, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Mercedes', modello:'GLC', anni:[2022,2024], cv:258, nm:400, peso:1900, cc:1999, kmh0_100:6.2, vmax:240, cambio:'automatico', trazione:'awd', alim:'ibrida' },
+    // ─── Audi ───
+    { marca:'Audi', modello:'A1', anni:[2018,2024], cv:116, nm:200, peso:1175, cc:999, kmh0_100:9.4, vmax:203, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Audi', modello:'A3', anni:[2020,2024], cv:150, nm:250, peso:1370, cc:1498, kmh0_100:8.4, vmax:224, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Audi', modello:'S3', anni:[2020,2024], cv:310, nm:400, peso:1545, cc:1984, kmh0_100:4.8, vmax:250, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Audi', modello:'RS3', anni:[2021,2024], cv:400, nm:500, peso:1565, cc:2480, kmh0_100:3.8, vmax:290, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Audi', modello:'A4', anni:[2019,2024], cv:204, nm:320, peso:1525, cc:1984, kmh0_100:7.3, vmax:241, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Audi', modello:'Q3', anni:[2018,2024], cv:150, nm:250, peso:1545, cc:1498, kmh0_100:9.3, vmax:207, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Audi', modello:'Q5', anni:[2020,2024], cv:204, nm:400, peso:1860, cc:1968, kmh0_100:7.6, vmax:222, cambio:'dct', trazione:'awd', alim:'diesel' },
+    // ─── Volkswagen ───
+    { marca:'Volkswagen', modello:'Polo', anni:[2017,2024], cv:95, nm:175, peso:1185, cc:999, kmh0_100:10.8, vmax:187, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Volkswagen', modello:'Golf', anni:[2020,2024], cv:130, nm:200, peso:1320, cc:1498, kmh0_100:9.2, vmax:212, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Volkswagen', modello:'Golf GTI', anni:[2020,2024], cv:245, nm:370, peso:1462, cc:1984, kmh0_100:6.3, vmax:250, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Volkswagen', modello:'Golf R', anni:[2021,2024], cv:320, nm:420, peso:1564, cc:1984, kmh0_100:4.7, vmax:270, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Volkswagen', modello:'T-Roc', anni:[2018,2024], cv:150, nm:250, peso:1380, cc:1498, kmh0_100:8.4, vmax:206, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Volkswagen', modello:'Tiguan', anni:[2016,2024], cv:150, nm:250, peso:1620, cc:1498, kmh0_100:9.2, vmax:202, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    // ─── Peugeot/Citroen/Renault ───
+    { marca:'Peugeot', modello:'208', anni:[2019,2024], cv:100, nm:205, peso:1090, cc:1199, kmh0_100:9.9, vmax:188, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Peugeot', modello:'308', anni:[2021,2024], cv:130, nm:230, peso:1320, cc:1199, kmh0_100:10.1, vmax:206, cambio:'automatico', trazione:'fwd', alim:'benzina' },
+    { marca:'Peugeot', modello:'3008', anni:[2017,2024], cv:130, nm:230, peso:1370, cc:1199, kmh0_100:10.8, vmax:188, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Renault', modello:'Clio', anni:[2019,2024], cv:91, nm:160, peso:1090, cc:999, kmh0_100:11.8, vmax:188, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Renault', modello:'Captur', anni:[2019,2024], cv:91, nm:160, peso:1219, cc:999, kmh0_100:13.5, vmax:171, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Renault', modello:'Megane', anni:[2016,2022], cv:140, nm:240, peso:1294, cc:1332, kmh0_100:9.1, vmax:201, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Citroen', modello:'C3', anni:[2016,2024], cv:83, nm:118, peso:1080, cc:1199, kmh0_100:13.9, vmax:174, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Citroen', modello:'C4', anni:[2020,2024], cv:130, nm:230, peso:1316, cc:1199, kmh0_100:9.5, vmax:207, cambio:'automatico', trazione:'fwd', alim:'benzina' },
+    // ─── Toyota / Honda / Hyundai ───
+    { marca:'Toyota', modello:'Yaris', anni:[2020,2024], cv:116, nm:120, peso:1085, cc:1490, kmh0_100:9.7, vmax:175, cambio:'cvt', trazione:'fwd', alim:'ibrida' },
+    { marca:'Toyota', modello:'Corolla', anni:[2019,2024], cv:122, nm:142, peso:1320, cc:1798, kmh0_100:10.9, vmax:180, cambio:'cvt', trazione:'fwd', alim:'ibrida' },
+    { marca:'Toyota', modello:'C-HR', anni:[2020,2024], cv:184, nm:190, peso:1485, cc:1987, kmh0_100:8.2, vmax:180, cambio:'cvt', trazione:'fwd', alim:'ibrida' },
+    { marca:'Toyota', modello:'Yaris GR', anni:[2020,2024], cv:261, nm:360, peso:1280, cc:1618, kmh0_100:5.5, vmax:230, cambio:'manuale', trazione:'awd', alim:'benzina' },
+    { marca:'Honda', modello:'Civic', anni:[2022,2024], cv:184, nm:315, peso:1518, cc:1993, kmh0_100:7.9, vmax:180, cambio:'cvt', trazione:'fwd', alim:'ibrida' },
+    { marca:'Honda', modello:'Civic Type R', anni:[2017,2024], cv:329, nm:420, peso:1429, cc:1996, kmh0_100:5.4, vmax:272, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Hyundai', modello:'Tucson', anni:[2021,2024], cv:150, nm:250, peso:1465, cc:1598, kmh0_100:9.6, vmax:201, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Hyundai', modello:'i30 N', anni:[2017,2024], cv:280, nm:392, peso:1467, cc:1998, kmh0_100:5.9, vmax:250, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    // ─── Ford ───
+    { marca:'Ford', modello:'Fiesta', anni:[2017,2023], cv:100, nm:170, peso:1170, cc:998, kmh0_100:10.5, vmax:185, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Ford', modello:'Focus', anni:[2018,2024], cv:125, nm:200, peso:1340, cc:998, kmh0_100:10.2, vmax:200, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Ford', modello:'Focus ST', anni:[2019,2024], cv:280, nm:420, peso:1454, cc:2261, kmh0_100:5.7, vmax:250, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Ford', modello:'Mustang GT', anni:[2018,2024], cv:450, nm:529, peso:1738, cc:5038, kmh0_100:4.8, vmax:250, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    // ─── Sportive ───
+    { marca:'Porsche', modello:'911 Carrera', anni:[2019,2024], cv:385, nm:450, peso:1505, cc:2981, kmh0_100:4.2, vmax:293, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'Porsche', modello:'911 Turbo S', anni:[2020,2024], cv:650, nm:800, peso:1640, cc:3745, kmh0_100:2.7, vmax:330, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Porsche', modello:'Cayman', anni:[2017,2024], cv:300, nm:380, peso:1365, cc:1988, kmh0_100:5.1, vmax:275, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'Porsche', modello:'Macan', anni:[2019,2024], cv:265, nm:400, peso:1845, cc:1984, kmh0_100:6.7, vmax:232, cambio:'dct', trazione:'awd', alim:'benzina' },
+    // ─── Mini ───
+    { marca:'Mini', modello:'Cooper', anni:[2014,2024], cv:136, nm:220, peso:1160, cc:1499, kmh0_100:7.9, vmax:210, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Mini', modello:'Cooper S', anni:[2014,2024], cv:178, nm:280, peso:1240, cc:1998, kmh0_100:6.8, vmax:235, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Mini', modello:'JCW', anni:[2015,2024], cv:231, nm:320, peso:1280, cc:1998, kmh0_100:6.1, vmax:246, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+  ];
+
+  var MOTO_DB = [
+    // ─── Ducati ───
+    { marca:'Ducati', modello:'Panigale V4', anni:[2018,2024], cv:215, nm:124, peso:198, cc:1103, kmh0_100:2.9, vmax:299, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'Panigale V2', anni:[2020,2024], cv:155, nm:104, peso:200, cc:955, kmh0_100:3.1, vmax:260, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'Streetfighter V4', anni:[2020,2024], cv:208, nm:123, peso:201, cc:1103, kmh0_100:3.0, vmax:280, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'Monster', anni:[2021,2024], cv:111, nm:93, peso:188, cc:937, kmh0_100:3.5, vmax:225, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'Multistrada V4', anni:[2021,2024], cv:170, nm:125, peso:243, cc:1158, kmh0_100:3.3, vmax:265, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'Diavel V4', anni:[2023,2024], cv:168, nm:126, peso:236, cc:1158, kmh0_100:3.2, vmax:260, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'Scrambler', anni:[2015,2024], cv:73, nm:65, peso:185, cc:803, kmh0_100:4.2, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    // ─── Aprilia ───
+    { marca:'Aprilia', modello:'RSV4', anni:[2021,2024], cv:217, nm:125, peso:202, cc:1099, kmh0_100:2.9, vmax:300, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Aprilia', modello:'Tuono V4', anni:[2021,2024], cv:175, nm:121, peso:209, cc:1077, kmh0_100:3.0, vmax:280, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Aprilia', modello:'RS 660', anni:[2020,2024], cv:100, nm:67, peso:183, cc:659, kmh0_100:3.6, vmax:240, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Aprilia', modello:'Tuareg 660', anni:[2022,2024], cv:80, nm:70, peso:204, cc:659, kmh0_100:4.5, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    // ─── Yamaha ───
+    { marca:'Yamaha', modello:'YZF-R1', anni:[2015,2024], cv:200, nm:113, peso:201, cc:998, kmh0_100:3.0, vmax:299, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'YZF-R6', anni:[2017,2020], cv:118, nm:62, peso:190, cc:599, kmh0_100:3.4, vmax:262, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'MT-09', anni:[2021,2024], cv:119, nm:93, peso:189, cc:889, kmh0_100:3.2, vmax:230, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'MT-07', anni:[2014,2024], cv:73, nm:67, peso:184, cc:689, kmh0_100:3.6, vmax:210, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'MT-10', anni:[2022,2024], cv:166, nm:112, peso:212, cc:998, kmh0_100:3.0, vmax:269, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'Ténéré 700', anni:[2019,2024], cv:73, nm:68, peso:204, cc:689, kmh0_100:4.1, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'Tracer 9', anni:[2021,2024], cv:119, nm:93, peso:213, cc:889, kmh0_100:3.3, vmax:230, cambio:'sequenziale', trazione:'catena' },
+    // ─── Honda ───
+    { marca:'Honda', modello:'CBR1000RR-R', anni:[2020,2024], cv:217, nm:113, peso:201, cc:999, kmh0_100:3.0, vmax:299, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Honda', modello:'CBR600RR', anni:[2007,2024], cv:118, nm:64, peso:194, cc:599, kmh0_100:3.4, vmax:260, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Honda', modello:'CB650R', anni:[2019,2024], cv:95, nm:64, peso:202, cc:649, kmh0_100:3.6, vmax:230, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Honda', modello:'Africa Twin', anni:[2020,2024], cv:102, nm:105, peso:226, cc:1084, kmh0_100:3.7, vmax:215, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Honda', modello:'Hornet 750', anni:[2023,2024], cv:92, nm:75, peso:190, cc:755, kmh0_100:3.4, vmax:215, cambio:'sequenziale', trazione:'catena' },
+    // ─── Kawasaki ───
+    { marca:'Kawasaki', modello:'Ninja ZX-10R', anni:[2021,2024], cv:203, nm:114, peso:207, cc:998, kmh0_100:3.0, vmax:299, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Kawasaki', modello:'Z900', anni:[2017,2024], cv:125, nm:98, peso:212, cc:948, kmh0_100:3.5, vmax:240, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Kawasaki', modello:'Z650', anni:[2017,2024], cv:68, nm:64, peso:188, cc:649, kmh0_100:4.0, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Kawasaki', modello:'Versys 650', anni:[2015,2024], cv:67, nm:61, peso:217, cc:649, kmh0_100:4.5, vmax:195, cambio:'sequenziale', trazione:'catena' },
+    // ─── Suzuki ───
+    { marca:'Suzuki', modello:'GSX-R1000', anni:[2017,2024], cv:202, nm:118, peso:202, cc:999, kmh0_100:3.0, vmax:299, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Suzuki', modello:'GSX-S1000', anni:[2021,2024], cv:152, nm:106, peso:214, cc:999, kmh0_100:3.2, vmax:250, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Suzuki', modello:'V-Strom 650', anni:[2017,2024], cv:71, nm:62, peso:213, cc:645, kmh0_100:4.4, vmax:185, cambio:'sequenziale', trazione:'catena' },
+    // ─── BMW Moto ───
+    { marca:'BMW Moto', modello:'S 1000 RR', anni:[2019,2024], cv:210, nm:113, peso:197, cc:999, kmh0_100:3.0, vmax:299, cambio:'sequenziale', trazione:'catena' },
+    { marca:'BMW Moto', modello:'S 1000 R', anni:[2021,2024], cv:165, nm:114, peso:199, cc:999, kmh0_100:3.1, vmax:250, cambio:'sequenziale', trazione:'catena' },
+    { marca:'BMW Moto', modello:'R 1250 GS', anni:[2019,2023], cv:136, nm:143, peso:249, cc:1254, kmh0_100:3.3, vmax:225, cambio:'sequenziale', trazione:'cardano' },
+    { marca:'BMW Moto', modello:'R 1300 GS', anni:[2024,2024], cv:145, nm:149, peso:237, cc:1300, kmh0_100:3.2, vmax:230, cambio:'sequenziale', trazione:'cardano' },
+    { marca:'BMW Moto', modello:'F 900 R', anni:[2020,2024], cv:105, nm:92, peso:211, cc:895, kmh0_100:3.8, vmax:225, cambio:'sequenziale', trazione:'catena' },
+    // ─── KTM / Triumph ───
+    { marca:'KTM', modello:'1290 Super Duke R', anni:[2020,2024], cv:180, nm:140, peso:189, cc:1301, kmh0_100:2.6, vmax:280, cambio:'sequenziale', trazione:'catena' },
+    { marca:'KTM', modello:'890 Duke R', anni:[2020,2024], cv:121, nm:99, peso:166, cc:889, kmh0_100:3.3, vmax:240, cambio:'sequenziale', trazione:'catena' },
+    { marca:'KTM', modello:'790 Adventure', anni:[2019,2024], cv:95, nm:88, peso:189, cc:799, kmh0_100:3.6, vmax:215, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Triumph', modello:'Speed Triple 1200', anni:[2021,2024], cv:180, nm:125, peso:198, cc:1160, kmh0_100:3.1, vmax:265, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Triumph', modello:'Street Triple', anni:[2020,2024], cv:123, nm:80, peso:189, cc:765, kmh0_100:3.5, vmax:235, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Triumph', modello:'Tiger 900', anni:[2020,2024], cv:95, nm:87, peso:201, cc:888, kmh0_100:3.7, vmax:215, cambio:'sequenziale', trazione:'catena' },
+  ];
+
+  // Normalizes for matching: lowercase, strip diacritics, collapse spaces
+  function norm(s) {
+    return String(s || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ').trim();
+  }
+
+  // Score an entry vs query. Higher = better match. 0 = reject.
+  function score(entry, q) {
+    var qMarca = norm(q.marca);
+    var qMod   = norm(q.modello);
+    if (!qMarca || !qMod) return 0;
+    if (norm(entry.marca) !== qMarca) return 0;
+    var em = norm(entry.modello);
+    var s = 0;
+    if (em === qMod) s += 100;
+    else if (em.indexOf(qMod) >= 0) s += 50;
+    else if (qMod.indexOf(em) >= 0) s += 40;
+    else return 0;
+    // Year matches inside range gets bonus; outside cuts in half
+    if (q.anno && entry.anni) {
+      if (q.anno >= entry.anni[0] && q.anno <= entry.anni[1]) s += 20;
+      else s = Math.floor(s / 2);
+    }
+    // Prefer specific (longer) model name over short
+    s += em.length;
+    return s;
+  }
+
+  // Public API:
+  //   _hubVehicleDB.lookup({ marca, modello, anno, type })
+  //     → null OR { specs: {...}, source: 'auto-fill' }
+  //   _hubVehicleDB.suggest({ marca, type })
+  //     → string[] with model suggestions
+  window._hubVehicleDB = {
+    lookup: function(query) {
+      var db = (query.type === 'moto') ? MOTO_DB : AUTO_DB;
+      var ranked = db.map(function(e) { return { e: e, s: score(e, query) }; })
+                     .filter(function(r) { return r.s > 0; })
+                     .sort(function(a, b) { return b.s - a.s; });
+      if (ranked.length === 0) return null;
+      var top = ranked[0].e;
+      return {
+        specs: {
+          cv: top.cv, nm: top.nm, peso: top.peso, cc: top.cc,
+          kmh0_100: top.kmh0_100, vmax: top.vmax,
+          cambio: top.cambio, trazione: top.trazione, alim: top.alim
+        },
+        matchedAs: top.marca + ' ' + top.modello + (top.anni ? ' (' + top.anni[0] + '-' + top.anni[1] + ')' : ''),
+        source: 'auto-fill'
+      };
+    },
+    listMarche: function(type) {
+      var db = (type === 'moto') ? MOTO_DB : AUTO_DB;
+      var seen = {};
+      db.forEach(function(e) { seen[e.marca] = true; });
+      return Object.keys(seen).sort();
+    },
+    listModelli: function(marca, type) {
+      var db = (type === 'moto') ? MOTO_DB : AUTO_DB;
+      var qm = norm(marca);
+      return db.filter(function(e) { return norm(e.marca) === qm; })
+               .map(function(e) { return e.modello; });
+    }
+  };
+})();
+
+
 /* ═══════════════════════════════════════════════════════════════════
    HUB GARAGE — multi-vehicle profile management
    Stores: hub_garage_v1 (array), hub_active_vehicle_v1 (id)
@@ -15803,6 +16257,8 @@ async function runCmp() {
           '<div class="gar-field"><label>Motore</label>' +
             '<input type="text" id="gar-f-motore" placeholder="2.2 JTDM" maxlength="30"></div>' +
         '</div>' +
+        '<button type="button" class="gar-autofill-btn" onclick="_garAutoFill()">🔍 Cerca specs nel database</button>' +
+        '<div id="gar-autofill-result" class="gar-autofill-result"></div>' +
         '<div class="gar-row2">' +
           '<div class="gar-field"><label>Targa</label>' +
             '<input type="text" id="gar-f-targa" placeholder="AB123CD" maxlength="10" style="text-transform:uppercase"></div>' +
@@ -15829,15 +16285,92 @@ async function runCmp() {
         '</div>' +
         '<div class="gar-field"><label>Prossimo tagliando</label>' +
           '<input type="date" id="gar-f-tag"></div>' +
-        '<div class="gar-row2">' +
-          '<div class="gar-field"><label>Costo bollo annuo €</label>' +
-            '<input type="number" id="gar-f-cost-bollo" min="0" step="1" placeholder="195"></div>' +
-          '<div class="gar-field"><label>Costo RCA annuo €</label>' +
-            '<input type="number" id="gar-f-cost-rca" min="0" step="1" placeholder="450"></div>' +
-        '</div>' +
-        '<div class="gar-field"><label>Altri costi fissi annui €</label>' +
-          '<input type="number" id="gar-f-cost-other" min="0" step="1" placeholder="Garage, lavaggio... opzionale"></div>' +
-        '<div class="gar-field"><label>Note</label>' +
+
+        '<details class="gar-section"><summary>⚙ Specifiche tecniche</summary>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Potenza CV</label>' +
+              '<input type="number" id="gar-f-cv" min="0" step="1" placeholder="184"></div>' +
+            '<div class="gar-field"><label>Coppia Nm</label>' +
+              '<input type="number" id="gar-f-nm" min="0" step="1" placeholder="380"></div>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Peso kg</label>' +
+              '<input type="number" id="gar-f-peso" min="0" step="1" placeholder="1480"></div>' +
+            '<div class="gar-field"><label>Cilindrata cc</label>' +
+              '<input type="number" id="gar-f-cc" min="0" step="1" placeholder="1995"></div>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>0-100 sec</label>' +
+              '<input type="number" id="gar-f-0100" min="0" step="0.1" placeholder="6.5"></div>' +
+            '<div class="gar-field"><label>Vmax km/h</label>' +
+              '<input type="number" id="gar-f-vmax" min="0" step="1" placeholder="240"></div>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Cambio</label>' +
+              '<select id="gar-f-cambio">' +
+                '<option value="">—</option>' +
+                '<option value="manuale">Manuale</option>' +
+                '<option value="automatico">Automatico</option>' +
+                '<option value="dct">DCT/DSG</option>' +
+                '<option value="cvt">CVT</option>' +
+                '<option value="sequenziale">Sequenziale</option>' +
+              '</select></div>' +
+            '<div class="gar-field"><label>Trazione</label>' +
+              '<select id="gar-f-traz">' +
+                '<option value="">—</option>' +
+                '<option value="fwd">Anteriore (FWD)</option>' +
+                '<option value="rwd">Posteriore (RWD)</option>' +
+                '<option value="awd">Integrale (AWD)</option>' +
+                '<option value="catena">Catena (moto)</option>' +
+                '<option value="cardano">Cardano (moto)</option>' +
+                '<option value="cinghia">Cinghia (moto)</option>' +
+              '</select></div>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Costo acquisto €</label>' +
+              '<input type="number" id="gar-f-acq-cost" min="0" step="100" placeholder="42000"></div>' +
+            '<div class="gar-field"><label>Data acquisto</label>' +
+              '<input type="date" id="gar-f-acq-date"></div>' +
+          '</div>' +
+        '</details>' +
+
+        '<details class="gar-section"><summary>🛞 Gomme</summary>' +
+          '<div class="gar-field"><label>Misura (es. 225/45 R17)</label>' +
+            '<input type="text" id="gar-f-gomme-misura" placeholder="225/45 R17" maxlength="20"></div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Marca</label>' +
+              '<input type="text" id="gar-f-gomme-marca" placeholder="Michelin" maxlength="30"></div>' +
+            '<div class="gar-field"><label>Modello</label>' +
+              '<input type="text" id="gar-f-gomme-modello" placeholder="Pilot Sport 4" maxlength="40"></div>' +
+          '</div>' +
+          '<div class="gar-field"><label>Tipo</label>' +
+            '<select id="gar-f-gomme-tipo">' +
+              '<option value="">—</option>' +
+              '<option value="estive">Estive</option>' +
+              '<option value="invernali">Invernali</option>' +
+              '<option value="all-season">All Season (4 stagioni)</option>' +
+              '<option value="track">Track / semislick</option>' +
+            '</select></div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Data montaggio</label>' +
+              '<input type="date" id="gar-f-gomme-data"></div>' +
+            '<div class="gar-field"><label>Km al montaggio</label>' +
+              '<input type="number" id="gar-f-gomme-km" min="0" step="100" placeholder="50000"></div>' +
+          '</div>' +
+        '</details>' +
+
+        '<details class="gar-section"><summary>📋 Note tecniche personali</summary>' +
+          '<div class="gar-field"><label>Pressioni gomme</label>' +
+            '<input type="text" id="gar-f-press" placeholder="Es. 2.3 ant / 2.5 post" maxlength="60"></div>' +
+          '<div class="gar-field"><label>Olio motore</label>' +
+            '<input type="text" id="gar-f-olio" placeholder="Es. 5W30 fully synth, 4.5L" maxlength="60"></div>' +
+          '<div class="gar-field"><label>Codici componenti</label>' +
+            '<textarea id="gar-f-codici" rows="3" placeholder="Es. filtro olio K&N HF-303, pastiglie EBC FA424" maxlength="500"></textarea></div>' +
+          '<div class="gar-field"><label>Settings sospensioni / ECU</label>' +
+            '<textarea id="gar-f-settings" rows="2" placeholder="Es. molla post +2, comp -3, mappa 2" maxlength="300"></textarea></div>' +
+        '</details>' +
+
+        '<div class="gar-field"><label>Note generali</label>' +
           '<textarea id="gar-f-note" rows="2" placeholder="Es. blu Misano, cerchi 19..." maxlength="200"></textarea></div>' +
         '<div class="gar-edit-btns">' +
           '<button type="button" class="gar-cancel" onclick="closeGarageEdit()">Annulla</button>' +
@@ -15909,6 +16442,8 @@ async function runCmp() {
     document.getElementById('gar-f-modello').value = v ? (v.modello || '') : '';
     document.getElementById('gar-f-anno').value    = v ? (v.anno || '') : '';
     document.getElementById('gar-f-motore').value  = v ? (v.motore || '') : '';
+    var afResult = document.getElementById('gar-autofill-result');
+    if (afResult) { afResult.style.display = 'none'; afResult.innerHTML = ''; }
     document.getElementById('gar-f-targa').value   = v ? (v.targa || '') : '';
     document.getElementById('gar-f-km').value      = v ? (v.kmTot || '') : '';
     document.getElementById('gar-f-bollo').value   = v ? (v.scadBollo || '') : '';
@@ -15918,6 +16453,32 @@ async function runCmp() {
     document.getElementById('gar-f-bollo-cost').value = v ? (v.costoBollo || '') : '';
     document.getElementById('gar-f-rca-cost').value   = v ? (v.costoRca || '') : '';
     document.getElementById('gar-f-rev-cost').value   = v ? (v.costoRev || '') : '';
+    // Specs tecniche
+    var specs = (v && v.specs) || {};
+    document.getElementById('gar-f-cv').value      = specs.cv || '';
+    document.getElementById('gar-f-nm').value      = specs.nm || '';
+    document.getElementById('gar-f-peso').value    = specs.peso || '';
+    document.getElementById('gar-f-cc').value      = specs.cc || '';
+    document.getElementById('gar-f-0100').value    = specs.kmh0_100 || '';
+    document.getElementById('gar-f-vmax').value    = specs.vmax || '';
+    document.getElementById('gar-f-cambio').value  = specs.cambio || '';
+    document.getElementById('gar-f-traz').value    = specs.trazione || '';
+    document.getElementById('gar-f-acq-cost').value = specs.acqCost || '';
+    document.getElementById('gar-f-acq-date').value = specs.acqDate || '';
+    // Gomme
+    var g = (v && v.gomme) || {};
+    document.getElementById('gar-f-gomme-misura').value  = g.misura || '';
+    document.getElementById('gar-f-gomme-marca').value   = g.marca || '';
+    document.getElementById('gar-f-gomme-modello').value = g.modello || '';
+    document.getElementById('gar-f-gomme-tipo').value    = g.tipo || '';
+    document.getElementById('gar-f-gomme-data').value    = g.dataMontaggio || '';
+    document.getElementById('gar-f-gomme-km').value      = g.kmMontaggio || '';
+    // Note tecniche
+    var nt = (v && v.noteTec) || {};
+    document.getElementById('gar-f-press').value    = nt.pressioni || '';
+    document.getElementById('gar-f-olio').value     = nt.olio || '';
+    document.getElementById('gar-f-codici').value   = nt.codici || '';
+    document.getElementById('gar-f-settings').value = nt.settings || '';
     document.getElementById('gar-f-note').value    = v ? (v.note || '') : '';
     _garSetType(v ? (v.type || 'auto') : 'auto');
 
@@ -15948,6 +16509,72 @@ async function runCmp() {
     });
   };
 
+  // Auto-fill specs from local DB. Populates ONLY empty fields; never overrides
+  // anything the user has already typed.
+  window._garAutoFill = function() {
+    var marca   = document.getElementById('gar-f-marca').value.trim();
+    var modello = document.getElementById('gar-f-modello').value.trim();
+    var annoStr = document.getElementById('gar-f-anno').value.trim();
+    var anno    = parseInt(annoStr, 10) || null;
+    var result  = document.getElementById('gar-autofill-result');
+
+    if (!marca || !modello) {
+      result.className = 'gar-autofill-result gar-af-err';
+      result.innerHTML = '⚠ Inserisci almeno marca e modello prima di cercare';
+      result.style.display = 'block';
+      return;
+    }
+    if (!window._hubVehicleDB) {
+      result.className = 'gar-autofill-result gar-af-err';
+      result.innerHTML = '⚠ Database non caricato';
+      result.style.display = 'block';
+      return;
+    }
+
+    var match = window._hubVehicleDB.lookup({
+      marca: marca, modello: modello, anno: anno, type: _editingType
+    });
+
+    if (!match) {
+      result.className = 'gar-autofill-result gar-af-warn';
+      result.innerHTML = '🔍 Modello non trovato nel database.<br><small>Compila i campi specs manualmente. Se conosci più dettagli aggiungili in <em>Specifiche tecniche</em>.</small>';
+      result.style.display = 'block';
+      return;
+    }
+
+    var s = match.specs;
+    var filled = [];
+    // For each spec field: fill only if currently empty
+    function maybeFill(elId, value, label) {
+      if (value === null || value === undefined || value === '') return;
+      var el = document.getElementById(elId);
+      if (!el) return;
+      if (el.value && el.value.trim() !== '') return; // preserve user value
+      el.value = value;
+      filled.push(label);
+    }
+    maybeFill('gar-f-cv',   s.cv,       'CV');
+    maybeFill('gar-f-nm',   s.nm,       'Nm');
+    maybeFill('gar-f-peso', s.peso,     'Peso');
+    maybeFill('gar-f-cc',   s.cc,       'Cilindrata');
+    maybeFill('gar-f-0100', s.kmh0_100, '0-100');
+    maybeFill('gar-f-vmax', s.vmax,     'Vmax');
+    maybeFill('gar-f-cambio', s.cambio,   'Cambio');
+    maybeFill('gar-f-traz',   s.trazione, 'Trazione');
+
+    // Auto-open the specs section so user sees what got filled
+    var detailsEl = document.querySelector('#gar-edit details.gar-section');
+    if (detailsEl) detailsEl.open = true;
+
+    result.className = 'gar-autofill-result gar-af-ok';
+    if (filled.length === 0) {
+      result.innerHTML = '✓ Match: <strong>' + match.matchedAs + '</strong><br><small>Tutti i campi specs erano già compilati, niente sovrascritto.</small>';
+    } else {
+      result.innerHTML = '✓ Match: <strong>' + match.matchedAs + '</strong><br><small>Compilati: ' + filled.join(', ') + '</small>';
+    }
+    result.style.display = 'block';
+  };
+
   window.saveGarageEdit = async function() {
     var name = document.getElementById('gar-f-name').value.trim();
     var marca = document.getElementById('gar-f-marca').value.trim();
@@ -15974,6 +16601,32 @@ async function runCmp() {
       costoBollo: parseFloat(document.getElementById('gar-f-bollo-cost').value) || 0,
       costoRca:   parseFloat(document.getElementById('gar-f-rca-cost').value)   || 0,
       costoRev:   parseFloat(document.getElementById('gar-f-rev-cost').value)   || 0,
+      specs: {
+        cv:       parseFloat(document.getElementById('gar-f-cv').value)       || null,
+        nm:       parseFloat(document.getElementById('gar-f-nm').value)       || null,
+        peso:     parseFloat(document.getElementById('gar-f-peso').value)     || null,
+        cc:       parseFloat(document.getElementById('gar-f-cc').value)       || null,
+        kmh0_100: parseFloat(document.getElementById('gar-f-0100').value)     || null,
+        vmax:     parseFloat(document.getElementById('gar-f-vmax').value)     || null,
+        cambio:   document.getElementById('gar-f-cambio').value || '',
+        trazione: document.getElementById('gar-f-traz').value   || '',
+        acqCost:  parseFloat(document.getElementById('gar-f-acq-cost').value) || null,
+        acqDate:  document.getElementById('gar-f-acq-date').value || ''
+      },
+      gomme: {
+        misura:        document.getElementById('gar-f-gomme-misura').value.trim(),
+        marca:         document.getElementById('gar-f-gomme-marca').value.trim(),
+        modello:       document.getElementById('gar-f-gomme-modello').value.trim(),
+        tipo:          document.getElementById('gar-f-gomme-tipo').value,
+        dataMontaggio: document.getElementById('gar-f-gomme-data').value || '',
+        kmMontaggio:   parseInt(document.getElementById('gar-f-gomme-km').value, 10) || null
+      },
+      noteTec: {
+        pressioni: document.getElementById('gar-f-press').value.trim(),
+        olio:      document.getElementById('gar-f-olio').value.trim(),
+        codici:    document.getElementById('gar-f-codici').value.trim(),
+        settings:  document.getElementById('gar-f-settings').value.trim()
+      },
       note: document.getElementById('gar-f-note').value.trim()
     };
     var g = loadGarage();
@@ -16115,8 +16768,104 @@ async function runCmp() {
     } else {
       b.textContent = 'Nessun veicolo';
     }
+    renderShowroom();
   }
   window._hubRefreshGarageBadge = refreshGarageBadge;
+
+  /* ── Showroom card: featured active vehicle in garage section ── */
+  function renderShowroom() {
+    var slot = document.getElementById('garage-showroom-slot');
+    if (!slot) return;
+    var v = getActiveVehicle();
+    if (!v) {
+      slot.innerHTML = '';
+      return;
+    }
+    var name = v.customName || (v.marca + ' ' + v.modello);
+    var sub = [v.marca, v.modello, v.anno].filter(Boolean).join(' · ');
+    var icon = v.type === 'moto' ? '🏍' : '🚗';
+
+    // Compute kg/cv if specs present
+    var kgcv = '';
+    if (v.specs && v.specs.peso && v.specs.cv) {
+      var ratio = (v.specs.peso / v.specs.cv).toFixed(2);
+      kgcv = ratio;
+    }
+
+    // Birthday check (today is anniversary of acquisition)
+    var birthday = '';
+    if (v.specs && v.specs.acqDate) {
+      var acq = new Date(v.specs.acqDate);
+      var today = new Date();
+      if (acq.getMonth() === today.getMonth() && acq.getDate() === today.getDate()) {
+        var years = today.getFullYear() - acq.getFullYear();
+        if (years >= 1) birthday = '🎂 oggi ' + years + ' ann' + (years === 1 ? 'o' : 'i') + ' insieme!';
+      }
+    }
+
+    // Stats grid: km, cv, kg/cv, costoAcquisto/eta
+    var stats = [];
+    if (typeof v.kmTot === 'number' && v.kmTot > 0) stats.push({ lbl: 'KM', val: v.kmTot.toLocaleString('it-IT') });
+    if (v.specs && v.specs.cv) stats.push({ lbl: 'CV', val: Math.round(v.specs.cv) });
+    if (kgcv) stats.push({ lbl: 'KG/CV', val: kgcv });
+    if (v.specs && v.specs.kmh0_100) stats.push({ lbl: '0-100', val: v.specs.kmh0_100 + 's' });
+
+    // Upcoming scadenze
+    var alerts = [];
+    var now = Date.now();
+    function daysUntil(dStr) {
+      if (!dStr) return null;
+      return Math.round((new Date(dStr).getTime() - now) / 86400000);
+    }
+    [
+      { date: v.scadBollo, lbl: 'Bollo' },
+      { date: v.scadRca,   lbl: 'RCA' },
+      { date: v.scadRev,   lbl: 'Revisione' },
+      { date: v.scadTagliando, lbl: 'Tagliando' }
+    ].forEach(function(s) {
+      var d = daysUntil(s.date);
+      if (d !== null && d <= 30) {
+        var cls = d < 0 ? 'crit' : d <= 7 ? 'warn' : 'ok';
+        var txt = d < 0 ? 'scaduto ' + Math.abs(d) + 'gg' : 'tra ' + d + 'gg';
+        alerts.push({ lbl: s.lbl, txt: txt, cls: cls });
+      }
+    });
+
+    var statsHtml = stats.length ? '<div class="sr-stats">' + stats.map(function(s) {
+      return '<div class="sr-stat"><div class="sr-stat-lbl">' + s.lbl + '</div><div class="sr-stat-val">' + s.val + '</div></div>';
+    }).join('') + '</div>' : '';
+
+    var alertsHtml = alerts.length ? '<div class="sr-alerts">' + alerts.map(function(a) {
+      return '<span class="sr-alert sr-alert-' + a.cls + '">' + a.lbl + ' ' + a.txt + '</span>';
+    }).join('') + '</div>' : '';
+
+    var birthdayHtml = birthday ? '<div class="sr-birthday">' + birthday + '</div>' : '';
+
+    slot.innerHTML =
+      '<div class="sr-card" onclick="openGarage()">' +
+        '<div class="sr-photo" id="sr-photo" data-vid="' + v.id + '">' +
+          '<div class="sr-photo-placeholder">' + icon + '</div>' +
+        '</div>' +
+        '<div class="sr-info">' +
+          '<div class="sr-name">' + escSafe(name) + '</div>' +
+          '<div class="sr-sub">' + escSafe(sub) + '</div>' +
+          birthdayHtml +
+          statsHtml +
+          alertsHtml +
+        '</div>' +
+      '</div>';
+
+    // Lazy load photo
+    if (typeof window._hubPhotoGet === 'function') {
+      window._hubPhotoGet(v.id).then(function(dataUrl) {
+        if (!dataUrl) return;
+        var photoEl = document.getElementById('sr-photo');
+        if (photoEl && photoEl.dataset.vid === v.id) {
+          photoEl.innerHTML = '<img src="' + dataUrl + '" alt="">';
+        }
+      });
+    }
+  }
 
   /* ── Apply selected vehicle to the diagnosis dropdowns ─────── */
   function applyVehicleToDiagnosis(v) {
