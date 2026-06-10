@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-05-11-1856">
+<meta name="autohub-build" content="2026-05-13-0551">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Diagnosi & Carburanti</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
@@ -121,6 +121,8 @@ nav.top{display:flex;border-bottom:1px solid var(--b1);margin-bottom:24px}
 /* ── VIEWS ──────────────────────────────────────────────────────── */
 .view{display:none}
 .view.active{display:block;animation:up .22s ease}
+@keyframes hubToastIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes hubToastOut{to{opacity:0;transform:translateX(-50%) translateY(8px)}}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── PANEL ──────────────────────────────────────────────────────── */
@@ -5299,6 +5301,15 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 /* RESULTS */
 #hub-fuel .res-hdr {display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;flex-wrap:wrap;gap:6px}
 #hub-fuel .res-title {font-family:var(--fd);font-weight:700;font-size:.95rem;color:var(--tx)}
+.pieno-card{background:linear-gradient(135deg,rgba(76,175,125,.08),rgba(76,175,125,.03));border:1px solid rgba(76,175,125,.25);border-radius:12px;padding:14px 16px;margin:12px 0 4px}
+.pieno-title{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.pieno-row{display:flex;gap:8px;margin-bottom:8px}
+.pieno-cell{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:8px;text-align:center}
+.pieno-val{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.05rem;color:var(--t1);font-variant-numeric:tabular-nums}
+.pieno-lbl{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--t3);letter-spacing:.05em;margin-top:2px}
+.pieno-sub{font-family:'DM Mono',monospace;font-size:.57rem;color:var(--t3);letter-spacing:.04em}
+.pieno-edit{color:rgba(91,155,213,.8);cursor:pointer;text-decoration:underline}
+.pieno-edit:hover{color:#b8d4ec}
 #hub-fuel .res-sub {font-size:0.68rem;color:var(--mut)}
 
 #hub-fuel .slist {display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
@@ -6629,6 +6640,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
         try { window._fuelLazyInit && window._fuelLazyInit(); }
         catch (e) { console.error('Fuel init failed:', e); }
       }
+      if (name === 'fuel') { setTimeout(_hubAutoSelectFuel, 80); }
     } else if (isAction) {
       // Open the corresponding overlay; section stays as it was
       if (name === 'passi') {
@@ -6651,6 +6663,66 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     }
   }
   window.hubGo = hubGo;
+
+  /* ── Auto-select fuel from active garage vehicle ─────────── */
+  function _hubAutoSelectFuel() {
+    var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active();
+    if (!v) return;
+    var alim   = ((v.specs && v.specs.alim) || '').toLowerCase();
+    var motore = (v.motore || '').toLowerCase();
+    var s = alim + ' ' + motore;
+    var target = 'Benzina';
+    if (/elettr|bev|electric|\bev\b/.test(s))        target = 'EV';
+    else if (/metano|cng|gnc/.test(s))                target = 'Metano';
+    else if (/gpl|lpg/.test(s))                       target = 'GPL';
+    else if (/hvo/.test(s))                           target = 'HVO';
+    else if (/diesel|tdi|cdi|jtd|dci|crdi|hdi|cdti|mjet|d4d|jtdm|bluehdi|ecoblue|skyactiv-d/.test(s)) target = 'Diesel';
+    var listBtn = document.querySelector('.fb[data-f="' + target + '"]');
+    if (listBtn && typeof window.setFuel === 'function') {
+      var cur = document.querySelector('.fb[data-f].on');
+      if (!cur || cur.dataset.f !== target) {
+        window.setFuel(listBtn);
+        var vName = v.customName || ((v.marca||'')+' '+(v.modello||'')).trim();
+        _hubFuelToast('⛽ ' + target + ' · dal veicolo ' + (vName || 'attivo'));
+      }
+    }
+    var mapBtn = document.querySelector('.fb[data-mf="' + target + '"]');
+    if (mapBtn && typeof window.setMapFuel === 'function') {
+      var curMap = document.querySelector('.fb[data-mf].on');
+      if (!curMap || curMap.dataset.mf !== target) window.setMapFuel(mapBtn);
+    }
+  }
+
+  function _hubFuelToast(msg) {
+    var t = document.getElementById('hub-fuel-toast');
+    if (t) t.remove();
+    t = document.createElement('div');
+    t.id = 'hub-fuel-toast';
+    t.textContent = msg;
+    Object.assign(t.style, {
+      position:'fixed', bottom:'calc(72px + env(safe-area-inset-bottom,0px))',
+      left:'50%', transform:'translateX(-50%)',
+      background:'rgba(28,28,32,.96)', border:'1px solid rgba(255,255,255,.11)',
+      color:'#ddd', fontFamily:'"DM Mono",monospace', fontSize:'.61rem',
+      letterSpacing:'.04em', padding:'6px 14px', borderRadius:'999px',
+      zIndex:'9999', whiteSpace:'nowrap', pointerEvents:'none',
+      animation:'hubToastIn .2s ease'
+    });
+    document.body.appendChild(t);
+    setTimeout(function() {
+      t.style.animation = 'hubToastOut .3s ease forwards';
+      setTimeout(function() { if (t.parentNode) t.remove(); }, 300);
+    }, 2500);
+  }
+
+  window._hubOpenTankEdit = function() {
+    var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active();
+    if (!v) { alert('Nessun veicolo attivo.'); return; }
+    if (typeof window.openGarageEdit === 'function') {
+      window.hubGo('garage');
+      setTimeout(function() { window.openGarageEdit(v.id); }, 220);
+    }
+  };
 
   // initial route from hash — default = fuel (home)
   document.addEventListener('DOMContentLoaded', function() {
@@ -14275,6 +14347,37 @@ function renderStations(data) {
   });
   html += '</div>';
   if (data.length === 60) html += `<div style="font-size:.68rem;color:var(--mut);text-align:center;margin-top:-10px;margin-bottom:16px">Mostrati i 60 più economici</div>`;
+
+  // ── Costo pieno dal veicolo attivo ──────────────────────────
+  try {
+    var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active();
+    var tank = v && (v.serbatoio || (v.type === 'moto' ? 18 : 50)); // litri
+    if (v && tank && minP && activeFuel !== 'EV') {
+      var pienoCheap = (minP * tank).toFixed(2);
+      var pienoAvg   = ((minP + maxP) / 2 * tank).toFixed(2);
+      var risparmio  = ((maxP - minP) * tank).toFixed(2);
+      var vName = v.customName || ((v.marca || '') + ' ' + (v.modello || '')).trim() || 'il tuo veicolo';
+      html += '<div class="pieno-card">' +
+        '<div class="pieno-title">⛽ Costo pieno · ' + esc(vName) + '</div>' +
+        '<div class="pieno-row">' +
+          '<div class="pieno-cell">' +
+            '<div class="pieno-val" style="color:var(--gn)">€' + pienoCheap + '</div>' +
+            '<div class="pieno-lbl">più economica</div>' +
+          '</div>' +
+          '<div class="pieno-cell">' +
+            '<div class="pieno-val">€' + pienoAvg + '</div>' +
+            '<div class="pieno-lbl">prezzo medio</div>' +
+          '</div>' +
+          '<div class="pieno-cell">' +
+            '<div class="pieno-val" style="color:#ffd699">€' + risparmio + '</div>' +
+            '<div class="pieno-lbl">risparmio max</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pieno-sub">Calcolato su ' + tank + ' lt · <span class="pieno-edit" onclick="_hubOpenTankEdit()">modifica serbatoio</span></div>' +
+      '</div>';
+    }
+  } catch(_e) {}
+
   area.innerHTML = html;
   buildBandieraFilter(data);
   renderFavSection();
@@ -15932,6 +16035,131 @@ async function runCmp() {
     { marca:'Mini', modello:'Cooper', anni:[2014,2024], cv:136, nm:220, peso:1160, cc:1499, kmh0_100:7.9, vmax:210, cambio:'manuale', trazione:'fwd', alim:'benzina' },
     { marca:'Mini', modello:'Cooper S', anni:[2014,2024], cv:178, nm:280, peso:1240, cc:1998, kmh0_100:6.8, vmax:235, cambio:'manuale', trazione:'fwd', alim:'benzina' },
     { marca:'Mini', modello:'JCW', anni:[2015,2024], cv:231, nm:320, peso:1280, cc:1998, kmh0_100:6.1, vmax:246, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+
+    // ─── Alfa Romeo (storici) ───
+    { marca:'Alfa Romeo', modello:'Giulietta', anni:[2010,2020], cv:170, nm:250, peso:1320, cc:1368, kmh0_100:7.7, vmax:218, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Alfa Romeo', modello:'Giulietta QV', anni:[2014,2020], cv:240, nm:340, peso:1395, cc:1742, kmh0_100:6.0, vmax:244, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Alfa Romeo', modello:'4C', anni:[2013,2020], cv:240, nm:350, peso:895, cc:1742, kmh0_100:4.5, vmax:258, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'Alfa Romeo', modello:'159', anni:[2005,2011], cv:200, nm:400, peso:1610, cc:2387, kmh0_100:7.9, vmax:235, cambio:'manuale', trazione:'fwd', alim:'diesel' },
+    { marca:'Alfa Romeo', modello:'Brera', anni:[2005,2010], cv:185, nm:230, peso:1505, cc:2198, kmh0_100:8.6, vmax:222, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+
+    // ─── BMW (estesi) ───
+    { marca:'BMW', modello:'Serie 5', anni:[2017,2024], cv:252, nm:350, peso:1645, cc:1998, kmh0_100:6.2, vmax:250, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'BMW', modello:'M5 Competition', anni:[2018,2024], cv:625, nm:750, peso:1855, cc:4395, kmh0_100:3.3, vmax:305, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'BMW', modello:'M4 Competition', anni:[2021,2024], cv:510, nm:650, peso:1745, cc:2993, kmh0_100:3.5, vmax:290, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'BMW', modello:'M8 Competition', anni:[2019,2024], cv:625, nm:750, peso:1885, cc:4395, kmh0_100:3.2, vmax:305, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'BMW', modello:'Z4 M40i', anni:[2019,2024], cv:340, nm:500, peso:1535, cc:2998, kmh0_100:4.5, vmax:250, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'BMW', modello:'X4 M Competition', anni:[2019,2024], cv:510, nm:600, peso:2020, cc:2993, kmh0_100:3.8, vmax:285, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'BMW', modello:'X6 M Competition', anni:[2020,2024], cv:625, nm:750, peso:2295, cc:4395, kmh0_100:3.8, vmax:290, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'BMW', modello:'i4 M50', anni:[2022,2024], cv:544, nm:795, peso:2290, cc:0, kmh0_100:3.9, vmax:225, cambio:'automatico', trazione:'awd', alim:'elettrica' },
+
+    // ─── Mercedes (estesi) ───
+    { marca:'Mercedes', modello:'Classe E', anni:[2016,2023], cv:258, nm:370, peso:1700, cc:1991, kmh0_100:6.4, vmax:250, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'Mercedes', modello:'E63 AMG S', anni:[2017,2023], cv:612, nm:850, peso:2010, cc:3982, kmh0_100:3.4, vmax:300, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Mercedes', modello:'G63 AMG', anni:[2018,2024], cv:585, nm:850, peso:2560, cc:3982, kmh0_100:4.5, vmax:240, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Mercedes', modello:'AMG GT', anni:[2014,2021], cv:476, nm:630, peso:1645, cc:3982, kmh0_100:4.0, vmax:304, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'Mercedes', modello:'AMG GT R', anni:[2016,2021], cv:585, nm:700, peso:1555, cc:3982, kmh0_100:3.6, vmax:318, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'Mercedes', modello:'CLA', anni:[2019,2024], cv:163, nm:250, peso:1410, cc:1332, kmh0_100:8.5, vmax:225, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Mercedes', modello:'CLA 45 AMG', anni:[2019,2024], cv:421, nm:500, peso:1620, cc:1991, kmh0_100:4.0, vmax:270, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Mercedes', modello:'GLE', anni:[2019,2024], cv:367, nm:500, peso:2185, cc:2999, kmh0_100:5.7, vmax:250, cambio:'automatico', trazione:'awd', alim:'benzina' },
+
+    // ─── Audi (estesi) ───
+    { marca:'Audi', modello:'A5', anni:[2016,2024], cv:190, nm:320, peso:1480, cc:1984, kmh0_100:7.7, vmax:240, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Audi', modello:'RS5', anni:[2017,2024], cv:450, nm:600, peso:1655, cc:2894, kmh0_100:3.9, vmax:250, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Audi', modello:'A6', anni:[2018,2024], cv:204, nm:370, peso:1700, cc:1984, kmh0_100:7.9, vmax:241, cambio:'automatico', trazione:'fwd', alim:'benzina' },
+    { marca:'Audi', modello:'RS6 Avant', anni:[2019,2024], cv:600, nm:800, peso:2075, cc:3996, kmh0_100:3.6, vmax:305, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Audi', modello:'RS7 Sportback', anni:[2019,2024], cv:600, nm:800, peso:2065, cc:3996, kmh0_100:3.6, vmax:305, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Audi', modello:'Q7', anni:[2019,2024], cv:286, nm:600, peso:2070, cc:2967, kmh0_100:6.5, vmax:241, cambio:'automatico', trazione:'awd', alim:'diesel' },
+    { marca:'Audi', modello:'Q8', anni:[2018,2024], cv:340, nm:500, peso:2145, cc:2995, kmh0_100:5.9, vmax:250, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Audi', modello:'TT', anni:[2014,2023], cv:230, nm:370, peso:1335, cc:1984, kmh0_100:6.0, vmax:250, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Audi', modello:'TT RS', anni:[2016,2023], cv:400, nm:480, peso:1450, cc:2480, kmh0_100:3.7, vmax:250, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Audi', modello:'R8 V10', anni:[2015,2024], cv:570, nm:540, peso:1660, cc:5204, kmh0_100:3.4, vmax:330, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Audi', modello:'e-tron GT', anni:[2021,2024], cv:530, nm:640, peso:2300, cc:0, kmh0_100:4.1, vmax:245, cambio:'automatico', trazione:'awd', alim:'elettrica' },
+
+    // ─── Volkswagen (estesi) ───
+    { marca:'Volkswagen', modello:'Up GTI', anni:[2018,2024], cv:115, nm:200, peso:1080, cc:999, kmh0_100:8.8, vmax:196, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Volkswagen', modello:'Polo GTI', anni:[2017,2024], cv:207, nm:320, peso:1255, cc:1984, kmh0_100:6.7, vmax:240, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Volkswagen', modello:'Passat', anni:[2014,2024], cv:150, nm:250, peso:1450, cc:1498, kmh0_100:9.1, vmax:215, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Volkswagen', modello:'Arteon', anni:[2017,2024], cv:190, nm:320, peso:1604, cc:1984, kmh0_100:8.3, vmax:225, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Volkswagen', modello:'ID.3', anni:[2020,2024], cv:204, nm:310, peso:1812, cc:0, kmh0_100:7.3, vmax:160, cambio:'automatico', trazione:'rwd', alim:'elettrica' },
+    { marca:'Volkswagen', modello:'ID.4', anni:[2020,2024], cv:204, nm:310, peso:2125, cc:0, kmh0_100:8.5, vmax:160, cambio:'automatico', trazione:'rwd', alim:'elettrica' },
+    { marca:'Volkswagen', modello:'Touareg', anni:[2018,2024], cv:286, nm:600, peso:2070, cc:2967, kmh0_100:6.1, vmax:235, cambio:'automatico', trazione:'awd', alim:'diesel' },
+
+    // ─── Skoda ───
+    { marca:'Skoda', modello:'Octavia', anni:[2019,2024], cv:150, nm:250, peso:1400, cc:1498, kmh0_100:8.5, vmax:223, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Skoda', modello:'Octavia RS', anni:[2020,2024], cv:245, nm:370, peso:1450, cc:1984, kmh0_100:6.7, vmax:250, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Skoda', modello:'Superb', anni:[2015,2024], cv:190, nm:320, peso:1550, cc:1984, kmh0_100:7.7, vmax:235, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Skoda', modello:'Kodiaq', anni:[2016,2024], cv:190, nm:320, peso:1715, cc:1984, kmh0_100:8.2, vmax:213, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Skoda', modello:'Fabia', anni:[2021,2024], cv:95, nm:175, peso:1180, cc:999, kmh0_100:10.6, vmax:185, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+
+    // ─── Volvo ───
+    { marca:'Volvo', modello:'XC40', anni:[2017,2024], cv:197, nm:300, peso:1670, cc:1969, kmh0_100:8.4, vmax:210, cambio:'automatico', trazione:'fwd', alim:'benzina' },
+    { marca:'Volvo', modello:'XC60', anni:[2017,2024], cv:197, nm:300, peso:1830, cc:1969, kmh0_100:7.8, vmax:220, cambio:'automatico', trazione:'fwd', alim:'benzina' },
+    { marca:'Volvo', modello:'XC90 T8', anni:[2015,2024], cv:455, nm:709, peso:2300, cc:1969, kmh0_100:5.3, vmax:180, cambio:'automatico', trazione:'awd', alim:'ibrida' },
+
+    // ─── Mazda ───
+    { marca:'Mazda', modello:'MX-5', anni:[2015,2024], cv:184, nm:205, peso:1050, cc:1998, kmh0_100:6.5, vmax:219, cambio:'manuale', trazione:'rwd', alim:'benzina' },
+    { marca:'Mazda', modello:'CX-5', anni:[2017,2024], cv:165, nm:213, peso:1580, cc:1998, kmh0_100:9.9, vmax:200, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Mazda', modello:'3', anni:[2019,2024], cv:122, nm:213, peso:1340, cc:1998, kmh0_100:10.4, vmax:197, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+
+    // ─── Nissan ───
+    { marca:'Nissan', modello:'Qashqai', anni:[2021,2024], cv:158, nm:270, peso:1570, cc:1332, kmh0_100:9.5, vmax:198, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Nissan', modello:'GT-R', anni:[2017,2024], cv:570, nm:637, peso:1752, cc:3799, kmh0_100:2.9, vmax:315, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Nissan', modello:'370Z', anni:[2009,2020], cv:328, nm:363, peso:1496, cc:3696, kmh0_100:5.3, vmax:250, cambio:'manuale', trazione:'rwd', alim:'benzina' },
+
+    // ─── Hyundai / Kia ───
+    { marca:'Hyundai', modello:'i30 N Performance', anni:[2017,2024], cv:280, nm:392, peso:1467, cc:1998, kmh0_100:5.9, vmax:250, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Hyundai', modello:'Ioniq 5', anni:[2021,2024], cv:305, nm:605, peso:2100, cc:0, kmh0_100:5.2, vmax:185, cambio:'automatico', trazione:'awd', alim:'elettrica' },
+    { marca:'Kia', modello:'Sportage', anni:[2021,2024], cv:150, nm:250, peso:1545, cc:1598, kmh0_100:9.4, vmax:201, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Kia', modello:'EV6 GT', anni:[2022,2024], cv:585, nm:740, peso:2160, cc:0, kmh0_100:3.5, vmax:260, cambio:'automatico', trazione:'awd', alim:'elettrica' },
+
+    // ─── Opel / Dacia / Seat / Cupra ───
+    { marca:'Opel', modello:'Corsa', anni:[2019,2024], cv:100, nm:205, peso:1158, cc:1199, kmh0_100:10.0, vmax:188, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Opel', modello:'Astra', anni:[2021,2024], cv:130, nm:230, peso:1330, cc:1199, kmh0_100:10.6, vmax:210, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Opel', modello:'Mokka', anni:[2020,2024], cv:130, nm:230, peso:1240, cc:1199, kmh0_100:9.2, vmax:202, cambio:'automatico', trazione:'fwd', alim:'benzina' },
+    { marca:'Dacia', modello:'Sandero', anni:[2020,2024], cv:91, nm:160, peso:1148, cc:999, kmh0_100:11.7, vmax:184, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Dacia', modello:'Duster', anni:[2017,2024], cv:91, nm:160, peso:1346, cc:999, kmh0_100:13.5, vmax:166, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Seat', modello:'Ibiza', anni:[2017,2024], cv:110, nm:200, peso:1186, cc:999, kmh0_100:10.2, vmax:200, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Seat', modello:'Leon', anni:[2020,2024], cv:150, nm:250, peso:1340, cc:1498, kmh0_100:8.4, vmax:223, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Cupra', modello:'Formentor', anni:[2020,2024], cv:310, nm:400, peso:1645, cc:1984, kmh0_100:4.9, vmax:250, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Cupra', modello:'Formentor VZ5', anni:[2021,2024], cv:390, nm:480, peso:1645, cc:2480, kmh0_100:4.2, vmax:250, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Cupra', modello:'Leon VZ', anni:[2020,2024], cv:245, nm:370, peso:1390, cc:1984, kmh0_100:6.4, vmax:250, cambio:'dct', trazione:'fwd', alim:'benzina' },
+
+    // ─── Tesla ───
+    { marca:'Tesla', modello:'Model 3', anni:[2017,2024], cv:283, nm:493, peso:1845, cc:0, kmh0_100:4.4, vmax:233, cambio:'automatico', trazione:'awd', alim:'elettrica' },
+    { marca:'Tesla', modello:'Model 3 Performance', anni:[2018,2024], cv:510, nm:660, peso:1844, cc:0, kmh0_100:3.3, vmax:261, cambio:'automatico', trazione:'awd', alim:'elettrica' },
+    { marca:'Tesla', modello:'Model Y', anni:[2020,2024], cv:295, nm:493, peso:1979, cc:0, kmh0_100:5.0, vmax:217, cambio:'automatico', trazione:'awd', alim:'elettrica' },
+    { marca:'Tesla', modello:'Model Y Performance', anni:[2020,2024], cv:534, nm:660, peso:2003, cc:0, kmh0_100:3.7, vmax:250, cambio:'automatico', trazione:'awd', alim:'elettrica' },
+    { marca:'Tesla', modello:'Model S Plaid', anni:[2021,2024], cv:1020, nm:1420, peso:2162, cc:0, kmh0_100:2.1, vmax:322, cambio:'automatico', trazione:'awd', alim:'elettrica' },
+
+    // ─── Sportive iconiche ───
+    { marca:'Toyota', modello:'Supra GR', anni:[2019,2024], cv:340, nm:500, peso:1495, cc:2998, kmh0_100:4.3, vmax:250, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'Toyota', modello:'GR86', anni:[2021,2024], cv:234, nm:250, peso:1275, cc:2387, kmh0_100:6.3, vmax:226, cambio:'manuale', trazione:'rwd', alim:'benzina' },
+    { marca:'Subaru', modello:'WRX STI', anni:[2014,2021], cv:300, nm:407, peso:1505, cc:2457, kmh0_100:5.2, vmax:255, cambio:'manuale', trazione:'awd', alim:'benzina' },
+    { marca:'Mitsubishi', modello:'Lancer Evo X', anni:[2008,2016], cv:295, nm:407, peso:1500, cc:1998, kmh0_100:4.9, vmax:250, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Honda', modello:'NSX', anni:[2016,2022], cv:581, nm:646, peso:1725, cc:3493, kmh0_100:2.9, vmax:308, cambio:'dct', trazione:'awd', alim:'ibrida' },
+    { marca:'Honda', modello:'S2000', anni:[1999,2009], cv:240, nm:208, peso:1265, cc:1997, kmh0_100:6.4, vmax:240, cambio:'manuale', trazione:'rwd', alim:'benzina' },
+    { marca:'Renault', modello:'Clio RS Trophy', anni:[2018,2022], cv:220, nm:280, peso:1280, cc:1798, kmh0_100:6.6, vmax:235, cambio:'dct', trazione:'fwd', alim:'benzina' },
+    { marca:'Renault', modello:'Megane RS Trophy-R', anni:[2019,2021], cv:300, nm:420, peso:1306, cc:1798, kmh0_100:5.4, vmax:262, cambio:'manuale', trazione:'fwd', alim:'benzina' },
+    { marca:'Lotus', modello:'Elise', anni:[2010,2021], cv:220, nm:250, peso:924, cc:1798, kmh0_100:4.6, vmax:234, cambio:'manuale', trazione:'rwd', alim:'benzina' },
+    { marca:'Lotus', modello:'Emira V6', anni:[2022,2024], cv:405, nm:430, peso:1458, cc:3456, kmh0_100:4.3, vmax:290, cambio:'manuale', trazione:'rwd', alim:'benzina' },
+    { marca:'Alpine', modello:'A110', anni:[2017,2024], cv:252, nm:320, peso:1110, cc:1798, kmh0_100:4.4, vmax:260, cambio:'dct', trazione:'rwd', alim:'benzina' },
+
+    // ─── Supercar italiane ───
+    { marca:'Maserati', modello:'Ghibli', anni:[2013,2024], cv:350, nm:500, peso:1810, cc:2979, kmh0_100:5.5, vmax:267, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'Maserati', modello:'Quattroporte', anni:[2013,2024], cv:530, nm:710, peso:1900, cc:3799, kmh0_100:4.7, vmax:310, cambio:'automatico', trazione:'rwd', alim:'benzina' },
+    { marca:'Maserati', modello:'Levante GTS', anni:[2017,2024], cv:550, nm:730, peso:2170, cc:3799, kmh0_100:4.2, vmax:292, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Maserati', modello:'MC20', anni:[2020,2024], cv:630, nm:730, peso:1500, cc:2992, kmh0_100:2.9, vmax:325, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'Lamborghini', modello:'Huracan', anni:[2014,2024], cv:610, nm:560, peso:1422, cc:5204, kmh0_100:3.2, vmax:325, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Lamborghini', modello:'Huracan Performante', anni:[2017,2019], cv:640, nm:600, peso:1382, cc:5204, kmh0_100:2.9, vmax:325, cambio:'dct', trazione:'awd', alim:'benzina' },
+    { marca:'Lamborghini', modello:'Urus', anni:[2018,2024], cv:650, nm:850, peso:2197, cc:3996, kmh0_100:3.6, vmax:305, cambio:'automatico', trazione:'awd', alim:'benzina' },
+    { marca:'Lamborghini', modello:'Aventador', anni:[2011,2022], cv:700, nm:690, peso:1575, cc:6498, kmh0_100:2.9, vmax:350, cambio:'sequenziale', trazione:'awd', alim:'benzina' },
+    { marca:'Ferrari', modello:'488 GTB', anni:[2015,2019], cv:670, nm:760, peso:1370, cc:3902, kmh0_100:3.0, vmax:330, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'Ferrari', modello:'F8 Tributo', anni:[2019,2022], cv:720, nm:770, peso:1330, cc:3902, kmh0_100:2.9, vmax:340, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'Ferrari', modello:'296 GTB', anni:[2022,2024], cv:830, nm:740, peso:1470, cc:2992, kmh0_100:2.9, vmax:330, cambio:'dct', trazione:'rwd', alim:'ibrida' },
+    { marca:'Ferrari', modello:'Roma', anni:[2020,2024], cv:620, nm:760, peso:1472, cc:3855, kmh0_100:3.4, vmax:320, cambio:'dct', trazione:'rwd', alim:'benzina' },
+    { marca:'Ferrari', modello:'SF90 Stradale', anni:[2019,2024], cv:1000, nm:800, peso:1570, cc:3990, kmh0_100:2.5, vmax:340, cambio:'dct', trazione:'awd', alim:'ibrida' },
+    { marca:'McLaren', modello:'720S', anni:[2017,2023], cv:720, nm:770, peso:1283, cc:3994, kmh0_100:2.9, vmax:341, cambio:'dct', trazione:'rwd', alim:'benzina' },
   ];
 
   var MOTO_DB = [
@@ -15984,6 +16212,86 @@ async function runCmp() {
     { marca:'Triumph', modello:'Speed Triple 1200', anni:[2021,2024], cv:180, nm:125, peso:198, cc:1160, kmh0_100:3.1, vmax:265, cambio:'sequenziale', trazione:'catena' },
     { marca:'Triumph', modello:'Street Triple', anni:[2020,2024], cv:123, nm:80, peso:189, cc:765, kmh0_100:3.5, vmax:235, cambio:'sequenziale', trazione:'catena' },
     { marca:'Triumph', modello:'Tiger 900', anni:[2020,2024], cv:95, nm:87, peso:201, cc:888, kmh0_100:3.7, vmax:215, cambio:'sequenziale', trazione:'catena' },
+
+    // ─── Ducati (estesi) ───
+    { marca:'Ducati', modello:'1299 Panigale', anni:[2015,2017], cv:205, nm:144, peso:190, cc:1285, kmh0_100:2.9, vmax:295, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'1199 Panigale', anni:[2012,2014], cv:195, nm:132, peso:188, cc:1198, kmh0_100:3.0, vmax:290, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'Hypermotard 950', anni:[2019,2024], cv:114, nm:96, peso:178, cc:937, kmh0_100:3.5, vmax:225, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'SuperSport', anni:[2017,2024], cv:113, nm:96, peso:184, cc:937, kmh0_100:3.5, vmax:230, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'Multistrada V2', anni:[2022,2024], cv:113, nm:96, peso:199, cc:937, kmh0_100:3.6, vmax:225, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Ducati', modello:'Monster 1200', anni:[2014,2020], cv:135, nm:124, peso:209, cc:1198, kmh0_100:3.4, vmax:240, cambio:'sequenziale', trazione:'catena' },
+
+    // ─── Aprilia (estesi) ───
+    { marca:'Aprilia', modello:'Dorsoduro 900', anni:[2017,2020], cv:95, nm:90, peso:212, cc:896, kmh0_100:3.5, vmax:215, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Aprilia', modello:'Shiver 900', anni:[2017,2020], cv:95, nm:90, peso:218, cc:896, kmh0_100:3.6, vmax:220, cambio:'sequenziale', trazione:'catena' },
+
+    // ─── Yamaha (estesi) ───
+    { marca:'Yamaha', modello:'YZF-R125', anni:[2019,2024], cv:15, nm:11, peso:144, cc:125, kmh0_100:12.0, vmax:130, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'YZF-R3', anni:[2019,2024], cv:42, nm:30, peso:168, cc:321, kmh0_100:5.9, vmax:188, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'MT-03', anni:[2016,2024], cv:42, nm:30, peso:168, cc:321, kmh0_100:5.8, vmax:185, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'MT-125', anni:[2014,2024], cv:15, nm:11, peso:140, cc:125, kmh0_100:12.5, vmax:122, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'Tracer 7', anni:[2020,2024], cv:73, nm:67, peso:196, cc:689, kmh0_100:3.7, vmax:210, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'XSR700', anni:[2016,2024], cv:73, nm:67, peso:186, cc:689, kmh0_100:3.6, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'XSR900', anni:[2022,2024], cv:119, nm:93, peso:193, cc:889, kmh0_100:3.2, vmax:230, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Yamaha', modello:'TMAX 560', anni:[2020,2024], cv:47, nm:56, peso:218, cc:562, kmh0_100:4.7, vmax:175, cambio:'cvt', trazione:'cinghia' },
+
+    // ─── Honda (estesi) ───
+    { marca:'Honda', modello:'CBR500R', anni:[2019,2024], cv:47, nm:43, peso:192, cc:471, kmh0_100:5.0, vmax:185, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Honda', modello:'CB500F', anni:[2019,2024], cv:47, nm:43, peso:189, cc:471, kmh0_100:5.2, vmax:178, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Honda', modello:'CB300R', anni:[2018,2024], cv:31, nm:28, peso:144, cc:286, kmh0_100:6.5, vmax:160, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Honda', modello:'Transalp 750', anni:[2023,2024], cv:91, nm:75, peso:208, cc:755, kmh0_100:3.6, vmax:215, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Honda', modello:'NC750X', anni:[2021,2024], cv:58, nm:69, peso:217, cc:745, kmh0_100:4.5, vmax:180, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Honda', modello:'Forza 750', anni:[2021,2024], cv:58, nm:69, peso:235, cc:745, kmh0_100:5.0, vmax:180, cambio:'cvt', trazione:'cinghia' },
+
+    // ─── Kawasaki (estesi) ───
+    { marca:'Kawasaki', modello:'Ninja 400', anni:[2018,2024], cv:49, nm:38, peso:173, cc:399, kmh0_100:5.4, vmax:190, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Kawasaki', modello:'Z400', anni:[2019,2024], cv:49, nm:38, peso:167, cc:399, kmh0_100:5.5, vmax:185, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Kawasaki', modello:'Z650RS', anni:[2022,2024], cv:68, nm:64, peso:187, cc:649, kmh0_100:4.0, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Kawasaki', modello:'Versys 1000', anni:[2019,2024], cv:120, nm:102, peso:257, cc:1043, kmh0_100:3.5, vmax:230, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Kawasaki', modello:'Ninja H2', anni:[2015,2024], cv:200, nm:134, peso:238, cc:998, kmh0_100:2.9, vmax:299, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Kawasaki', modello:'ZX-6R', anni:[2013,2024], cv:130, nm:71, peso:196, cc:636, kmh0_100:3.4, vmax:262, cambio:'sequenziale', trazione:'catena' },
+
+    // ─── Suzuki (estesi) ───
+    { marca:'Suzuki', modello:'SV650', anni:[2016,2024], cv:76, nm:64, peso:197, cc:645, kmh0_100:3.9, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Suzuki', modello:'Hayabusa', anni:[2021,2024], cv:190, nm:150, peso:264, cc:1340, kmh0_100:3.2, vmax:299, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Suzuki', modello:'V-Strom 1050', anni:[2020,2024], cv:107, nm:100, peso:247, cc:1037, kmh0_100:3.7, vmax:215, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Suzuki', modello:'GSX-S950', anni:[2022,2024], cv:95, nm:82, peso:214, cc:999, kmh0_100:3.5, vmax:225, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Suzuki', modello:'Burgman 400', anni:[2017,2024], cv:31, nm:36, peso:215, cc:399, kmh0_100:5.5, vmax:170, cambio:'cvt', trazione:'cinghia' },
+
+    // ─── BMW Moto (estesi) ───
+    { marca:'BMW Moto', modello:'F 850 GS', anni:[2018,2024], cv:95, nm:92, peso:229, cc:853, kmh0_100:3.6, vmax:219, cambio:'sequenziale', trazione:'catena' },
+    { marca:'BMW Moto', modello:'F 750 GS', anni:[2018,2024], cv:77, nm:83, peso:224, cc:853, kmh0_100:3.9, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    { marca:'BMW Moto', modello:'R nineT', anni:[2014,2024], cv:109, nm:116, peso:220, cc:1170, kmh0_100:3.5, vmax:200, cambio:'sequenziale', trazione:'cardano' },
+    { marca:'BMW Moto', modello:'R 18', anni:[2021,2024], cv:91, nm:158, peso:345, cc:1802, kmh0_100:4.8, vmax:180, cambio:'sequenziale', trazione:'cardano' },
+    { marca:'BMW Moto', modello:'M 1000 RR', anni:[2021,2024], cv:212, nm:113, peso:192, cc:999, kmh0_100:2.9, vmax:306, cambio:'sequenziale', trazione:'catena' },
+    { marca:'BMW Moto', modello:'K 1600 GT', anni:[2017,2024], cv:160, nm:175, peso:343, cc:1649, kmh0_100:3.3, vmax:225, cambio:'sequenziale', trazione:'cardano' },
+
+    // ─── KTM (estesi) ───
+    { marca:'KTM', modello:'390 Duke', anni:[2017,2024], cv:44, nm:37, peso:158, cc:373, kmh0_100:5.5, vmax:170, cambio:'sequenziale', trazione:'catena' },
+    { marca:'KTM', modello:'690 Duke', anni:[2017,2024], cv:75, nm:74, peso:148, cc:693, kmh0_100:3.9, vmax:210, cambio:'sequenziale', trazione:'catena' },
+    { marca:'KTM', modello:'1290 Super Adventure S', anni:[2021,2024], cv:160, nm:138, peso:220, cc:1301, kmh0_100:3.0, vmax:240, cambio:'sequenziale', trazione:'catena' },
+
+    // ─── Triumph (estesi) ───
+    { marca:'Triumph', modello:'Bonneville T120', anni:[2016,2024], cv:80, nm:105, peso:224, cc:1200, kmh0_100:4.0, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Triumph', modello:'Speed Twin 1200', anni:[2019,2024], cv:100, nm:112, peso:216, cc:1200, kmh0_100:3.5, vmax:225, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Triumph', modello:'Daytona 675', anni:[2013,2017], cv:128, nm:74, peso:184, cc:675, kmh0_100:3.4, vmax:255, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Triumph', modello:'Rocket 3', anni:[2020,2024], cv:167, nm:221, peso:291, cc:2458, kmh0_100:2.8, vmax:240, cambio:'sequenziale', trazione:'cardano' },
+    { marca:'Triumph', modello:'Tiger 1200', anni:[2022,2024], cv:150, nm:130, peso:240, cc:1160, kmh0_100:3.2, vmax:230, cambio:'sequenziale', trazione:'cardano' },
+
+    // ─── MV Agusta ───
+    { marca:'MV Agusta', modello:'F3 800', anni:[2014,2024], cv:148, nm:88, peso:173, cc:798, kmh0_100:3.2, vmax:269, cambio:'sequenziale', trazione:'catena' },
+    { marca:'MV Agusta', modello:'Brutale 800', anni:[2016,2024], cv:140, nm:87, peso:175, cc:798, kmh0_100:3.3, vmax:245, cambio:'sequenziale', trazione:'catena' },
+    { marca:'MV Agusta', modello:'Dragster 800', anni:[2014,2024], cv:140, nm:87, peso:168, cc:798, kmh0_100:3.4, vmax:245, cambio:'sequenziale', trazione:'catena' },
+
+    // ─── Harley / Husqvarna / Royal Enfield ───
+    { marca:'Harley-Davidson', modello:'Sportster S', anni:[2021,2024], cv:121, nm:125, peso:228, cc:1252, kmh0_100:3.5, vmax:200, cambio:'sequenziale', trazione:'cinghia' },
+    { marca:'Harley-Davidson', modello:'Iron 883', anni:[2014,2022], cv:50, nm:70, peso:256, cc:883, kmh0_100:6.0, vmax:175, cambio:'sequenziale', trazione:'cinghia' },
+    { marca:'Harley-Davidson', modello:'Pan America', anni:[2021,2024], cv:152, nm:128, peso:245, cc:1252, kmh0_100:3.4, vmax:220, cambio:'sequenziale', trazione:'cinghia' },
+    { marca:'Husqvarna', modello:'Vitpilen 401', anni:[2017,2024], cv:44, nm:37, peso:152, cc:373, kmh0_100:5.5, vmax:170, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Husqvarna', modello:'701 Supermoto', anni:[2016,2024], cv:75, nm:73, peso:145, cc:693, kmh0_100:3.8, vmax:200, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Royal Enfield', modello:'Continental GT 650', anni:[2018,2024], cv:47, nm:52, peso:211, cc:648, kmh0_100:5.5, vmax:160, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Royal Enfield', modello:'Himalayan', anni:[2018,2024], cv:25, nm:32, peso:199, cc:411, kmh0_100:8.0, vmax:140, cambio:'sequenziale', trazione:'catena' },
+    { marca:'Royal Enfield', modello:'Classic 350', anni:[2021,2024], cv:20, nm:27, peso:195, cc:349, kmh0_100:9.0, vmax:120, cambio:'sequenziale', trazione:'catena' },
   ];
 
   // Normalizes for matching: lowercase, strip diacritics, collapse spaces
@@ -16257,6 +16565,8 @@ async function runCmp() {
           '<div class="gar-field"><label>Motore</label>' +
             '<input type="text" id="gar-f-motore" placeholder="2.2 JTDM" maxlength="30"></div>' +
         '</div>' +
+        '<div class="gar-field"><label>Serbatoio lt</label>' +
+          '<input type="number" id="gar-f-tank" min="1" max="200" step="1" placeholder="Auto 50 · Moto 18"></div>' +
         '<button type="button" class="gar-autofill-btn" onclick="_garAutoFill()">🔍 Cerca specs nel database</button>' +
         '<div id="gar-autofill-result" class="gar-autofill-result"></div>' +
         '<div class="gar-row2">' +
@@ -16442,6 +16752,7 @@ async function runCmp() {
     document.getElementById('gar-f-modello').value = v ? (v.modello || '') : '';
     document.getElementById('gar-f-anno').value    = v ? (v.anno || '') : '';
     document.getElementById('gar-f-motore').value  = v ? (v.motore || '') : '';
+    var tankEl = document.getElementById('gar-f-tank'); if (tankEl) tankEl.value = v ? (v.serbatoio || '') : '';
     var afResult = document.getElementById('gar-autofill-result');
     if (afResult) { afResult.style.display = 'none'; afResult.innerHTML = ''; }
     document.getElementById('gar-f-targa').value   = v ? (v.targa || '') : '';
@@ -16598,6 +16909,7 @@ async function runCmp() {
       scadRca: document.getElementById('gar-f-rca').value || '',
       scadRev: document.getElementById('gar-f-rev').value || '',
       scadTagliando: document.getElementById('gar-f-tag').value || '',
+      serbatoio: (function(){ var e=document.getElementById('gar-f-tank'); return e?(parseFloat(e.value)||null):null; })(),
       costoBollo: parseFloat(document.getElementById('gar-f-bollo-cost').value) || 0,
       costoRca:   parseFloat(document.getElementById('gar-f-rca-cost').value)   || 0,
       costoRev:   parseFloat(document.getElementById('gar-f-rev-cost').value)   || 0,
@@ -20410,77 +20722,80 @@ async function runCmp() {
   // Calendar 2026 (curated). Dates are race-day; "weekend" implies Fri-Sun typically.
   // category: 'f1' | 'mgp' | 'sbk' | 'wrc'
   var RACES = [
-    // F1 2026 (Bahrain start, Australia, etc.)
-    { cat:'f1', date:'2026-03-08', name:'GP del Bahrain', circuit:'Sakhir', country:'Bahrain' },
-    { cat:'f1', date:'2026-03-22', name:'GP dell\'Arabia Saudita', circuit:'Jeddah', country:'Arabia Saudita' },
-    { cat:'f1', date:'2026-04-05', name:'GP d\'Australia', circuit:'Melbourne', country:'Australia' },
-    { cat:'f1', date:'2026-04-19', name:'GP del Giappone', circuit:'Suzuka', country:'Giappone' },
-    { cat:'f1', date:'2026-05-03', name:'GP di Cina', circuit:'Shanghai', country:'Cina' },
-    { cat:'f1', date:'2026-05-10', name:'GP di Miami', circuit:'Miami', country:'USA' },
-    { cat:'f1', date:'2026-05-24', name:'GP di Monaco', circuit:'Monte Carlo', country:'Monaco' },
-    { cat:'f1', date:'2026-06-07', name:'GP di Spagna', circuit:'Barcellona', country:'Spagna' },
-    { cat:'f1', date:'2026-06-14', name:'GP del Canada', circuit:'Montreal', country:'Canada' },
-    { cat:'f1', date:'2026-06-28', name:'GP d\'Austria', circuit:'Spielberg', country:'Austria' },
+    // F1 2026 — 22 GP (Bahrain e Arabia Saudita cancellati per guerra in Iran)
+    { cat:'f1', date:'2026-03-08', name:"GP d'Australia", circuit:'Albert Park', country:'Australia' },
+    { cat:'f1', date:'2026-03-15', name:'GP di Cina', circuit:'Shanghai', country:'Cina' },
+    { cat:'f1', date:'2026-03-29', name:'GP del Giappone', circuit:'Suzuka', country:'Giappone' },
+    { cat:'f1', date:'2026-05-03', name:'GP di Miami', circuit:'Miami', country:'USA' },
+    { cat:'f1', date:'2026-05-24', name:'GP del Canada', circuit:'Gilles-Villeneuve', country:'Canada' },
+    { cat:'f1', date:'2026-06-07', name:'GP di Monaco', circuit:'Monte Carlo', country:'Monaco' },
+    { cat:'f1', date:'2026-06-14', name:'GP di Barcellona-Catalogna', circuit:'Circuit de Catalunya', country:'Spagna' },
+    { cat:'f1', date:'2026-06-28', name:"GP d'Austria", circuit:'Red Bull Ring', country:'Austria' },
     { cat:'f1', date:'2026-07-05', name:'GP di Gran Bretagna', circuit:'Silverstone', country:'UK' },
-    { cat:'f1', date:'2026-07-26', name:'GP del Belgio', circuit:'Spa-Francorchamps', country:'Belgio' },
-    { cat:'f1', date:'2026-08-23', name:'GP d\'Olanda', circuit:'Zandvoort', country:'Olanda' },
-    { cat:'f1', date:'2026-09-06', name:'GP d\'Italia', circuit:'Monza', country:'Italia' },
-    { cat:'f1', date:'2026-09-20', name:'GP di Singapore', circuit:'Marina Bay', country:'Singapore' },
-    { cat:'f1', date:'2026-10-04', name:'GP degli Stati Uniti', circuit:'COTA', country:'USA' },
-    { cat:'f1', date:'2026-10-25', name:'GP del Messico', circuit:'Città del Messico', country:'Messico' },
+    { cat:'f1', date:'2026-07-19', name:'GP del Belgio', circuit:'Spa-Francorchamps', country:'Belgio' },
+    { cat:'f1', date:'2026-07-26', name:"GP d'Ungheria", circuit:'Hungaroring', country:'Ungheria' },
+    { cat:'f1', date:'2026-08-23', name:"GP d'Olanda", circuit:'Zandvoort', country:'Olanda' },
+    { cat:'f1', date:'2026-09-06', name:"GP d'Italia", circuit:'Monza', country:'Italia' },
+    { cat:'f1', date:'2026-09-13', name:'GP di Madrid', circuit:'IFEMA Madrid', country:'Spagna' },
+    { cat:'f1', date:'2026-09-26', name:"GP dell'Azerbaigian", circuit:'Baku', country:'Azerbaigian' },
+    { cat:'f1', date:'2026-10-11', name:'GP di Singapore', circuit:'Marina Bay', country:'Singapore' },
+    { cat:'f1', date:'2026-10-25', name:'GP degli Stati Uniti', circuit:'COTA', country:'USA' },
+    { cat:'f1', date:'2026-11-01', name:'GP del Messico', circuit:'Città del Messico', country:'Messico' },
     { cat:'f1', date:'2026-11-08', name:'GP del Brasile', circuit:'Interlagos', country:'Brasile' },
-    { cat:'f1', date:'2026-11-22', name:'GP di Las Vegas', circuit:'Las Vegas', country:'USA' },
+    { cat:'f1', date:'2026-11-21', name:'GP di Las Vegas', circuit:'Las Vegas', country:'USA' },
+    { cat:'f1', date:'2026-11-29', name:'GP del Qatar', circuit:'Lusail', country:'Qatar' },
     { cat:'f1', date:'2026-12-06', name:'GP di Abu Dhabi', circuit:'Yas Marina', country:'EAU' },
-
-    // MotoGP 2026 (calendario tipico)
-    { cat:'mgp', date:'2026-03-01', name:'GP del Qatar', circuit:'Lusail', country:'Qatar' },
-    { cat:'mgp', date:'2026-03-15', name:'GP del Portogallo', circuit:'Portimão', country:'Portogallo' },
-    { cat:'mgp', date:'2026-03-29', name:'GP delle Americhe', circuit:'COTA', country:'USA' },
-    { cat:'mgp', date:'2026-04-12', name:'GP di Spagna', circuit:'Jerez', country:'Spagna' },
-    { cat:'mgp', date:'2026-04-26', name:'GP di Francia', circuit:'Le Mans', country:'Francia' },
-    { cat:'mgp', date:'2026-05-17', name:'GP d\'Italia', circuit:'Mugello', country:'Italia' },
-    { cat:'mgp', date:'2026-05-31', name:'GP di Catalogna', circuit:'Barcellona', country:'Spagna' },
-    { cat:'mgp', date:'2026-06-14', name:'GP di Germania', circuit:'Sachsenring', country:'Germania' },
-    { cat:'mgp', date:'2026-06-28', name:'GP d\'Olanda', circuit:'Assen', country:'Olanda' },
-    { cat:'mgp', date:'2026-07-12', name:'GP di Cechia', circuit:'Brno', country:'Repubblica Ceca' },
-    { cat:'mgp', date:'2026-08-16', name:'GP d\'Austria', circuit:'Red Bull Ring', country:'Austria' },
-    { cat:'mgp', date:'2026-08-30', name:'GP di Ungheria', circuit:'Balaton Park', country:'Ungheria' },
+    // MotoGP 2026 — 22 GP (Qatar spostato da aprile a novembre per conflitto Golfo)
+    { cat:'mgp', date:'2026-03-01', name:'GP della Thailandia', circuit:'Chang Circuit Buriram', country:'Thailandia' },
+    { cat:'mgp', date:'2026-03-22', name:'GP del Brasile', circuit:'Goiania', country:'Brasile' },
+    { cat:'mgp', date:'2026-03-31', name:'GP degli Stati Uniti', circuit:'COTA', country:'USA' },
+    { cat:'mgp', date:'2026-04-26', name:'GP di Spagna', circuit:'Jerez', country:'Spagna' },
+    { cat:'mgp', date:'2026-05-10', name:'GP di Francia', circuit:'Le Mans', country:'Francia' },
+    { cat:'mgp', date:'2026-05-17', name:'GP di Catalogna', circuit:'Circuit de Catalunya', country:'Spagna' },
+    { cat:'mgp', date:'2026-05-31', name:"GP d'Italia", circuit:'Mugello', country:'Italia' },
+    { cat:'mgp', date:'2026-06-07', name:"GP d'Ungheria", circuit:'Balaton Park', country:'Ungheria' },
+    { cat:'mgp', date:'2026-06-21', name:'GP di Repubblica Ceca', circuit:'Brno', country:'Repubblica Ceca' },
+    { cat:'mgp', date:'2026-06-28', name:"GP d'Olanda", circuit:'Assen', country:'Olanda' },
+    { cat:'mgp', date:'2026-07-12', name:'GP di Germania', circuit:'Sachsenring', country:'Germania' },
+    { cat:'mgp', date:'2026-08-09', name:'GP di Gran Bretagna', circuit:'Silverstone', country:'UK' },
+    { cat:'mgp', date:'2026-08-30', name:'GP di Aragona', circuit:'MotorLand', country:'Spagna' },
     { cat:'mgp', date:'2026-09-13', name:'GP di San Marino', circuit:'Misano', country:'Italia' },
-    { cat:'mgp', date:'2026-09-27', name:'GP di Aragona', circuit:'MotorLand', country:'Spagna' },
+    { cat:'mgp', date:'2026-09-20', name:"GP d'Austria", circuit:'Red Bull Ring', country:'Austria' },
     { cat:'mgp', date:'2026-10-04', name:'GP del Giappone', circuit:'Motegi', country:'Giappone' },
-    { cat:'mgp', date:'2026-10-18', name:'GP d\'Indonesia', circuit:'Mandalika', country:'Indonesia' },
-    { cat:'mgp', date:'2026-10-25', name:'GP d\'Australia', circuit:'Phillip Island', country:'Australia' },
+    { cat:'mgp', date:'2026-10-11', name:"GP d'Indonesia", circuit:'Mandalika', country:'Indonesia' },
+    { cat:'mgp', date:'2026-10-25', name:"GP d'Australia", circuit:'Phillip Island', country:'Australia' },
     { cat:'mgp', date:'2026-11-01', name:'GP della Malesia', circuit:'Sepang', country:'Malesia' },
-    { cat:'mgp', date:'2026-11-15', name:'GP del Portogallo', circuit:'Portimão', country:'Portogallo' },
-    { cat:'mgp', date:'2026-11-22', name:'GP di Valencia', circuit:'Valencia', country:'Spagna' },
-
-    // WSBK 2026
-    { cat:'sbk', date:'2026-03-01', name:'Round Australia', circuit:'Phillip Island', country:'Australia' },
-    { cat:'sbk', date:'2026-04-12', name:'Round Olanda', circuit:'Assen', country:'Olanda' },
-    { cat:'sbk', date:'2026-05-10', name:'Round Italia', circuit:'Cremona', country:'Italia' },
-    { cat:'sbk', date:'2026-06-14', name:'Round Repubblica Ceca', circuit:'Most', country:'Repubblica Ceca' },
-    { cat:'sbk', date:'2026-07-05', name:'Round San Marino', circuit:'Misano', country:'Italia' },
-    { cat:'sbk', date:'2026-07-19', name:'Round Donington', circuit:'Donington Park', country:'UK' },
-    { cat:'sbk', date:'2026-08-02', name:'Round Ungheria', circuit:'Balaton Park', country:'Ungheria' },
-    { cat:'sbk', date:'2026-09-13', name:'Round Magny-Cours', circuit:'Magny-Cours', country:'Francia' },
-    { cat:'sbk', date:'2026-09-27', name:'Round Aragona', circuit:'MotorLand', country:'Spagna' },
+    { cat:'mgp', date:'2026-11-22', name:'GP del Qatar', circuit:'Losail', country:'Qatar' },
+    { cat:'mgp', date:'2026-11-29', name:'GP del Portogallo', circuit:'Portimão', country:'Portogallo' },
+    { cat:'mgp', date:'2026-12-06', name:'GP di Valencia', circuit:'Ricardo Tormo', country:'Spagna' },
+    // WSBK 2026 — 12 round
+    { cat:'sbk', date:'2026-02-22', name:'Round Australia', circuit:'Phillip Island', country:'Australia' },
+    { cat:'sbk', date:'2026-03-29', name:'Round Portogallo', circuit:'Algarve (Portimão)', country:'Portogallo' },
+    { cat:'sbk', date:'2026-04-19', name:'Round Olanda', circuit:'Assen', country:'Olanda' },
+    { cat:'sbk', date:'2026-05-03', name:'Round Ungheria', circuit:'Balaton Park', country:'Ungheria' },
+    { cat:'sbk', date:'2026-05-17', name:'Round Repubblica Ceca', circuit:'Most', country:'Repubblica Ceca' },
+    { cat:'sbk', date:'2026-05-31', name:'Round Aragona', circuit:'MotorLand', country:'Spagna' },
+    { cat:'sbk', date:'2026-06-14', name:'Round San Marino', circuit:'Misano', country:'Italia' },
+    { cat:'sbk', date:'2026-07-12', name:'Round Donington', circuit:'Donington Park', country:'UK' },
+    { cat:'sbk', date:'2026-09-06', name:'Round Francia', circuit:'Magny-Cours', country:'Francia' },
+    { cat:'sbk', date:'2026-09-27', name:'Round Italia', circuit:'Cremona Circuit', country:'Italia' },
     { cat:'sbk', date:'2026-10-11', name:'Round Estoril', circuit:'Estoril', country:'Portogallo' },
-    { cat:'sbk', date:'2026-10-25', name:'Round Jerez', circuit:'Jerez', country:'Spagna' },
-
-    // WRC 2026 (calendario tipico)
-    { cat:'wrc', date:'2026-01-25', name:'Rally di Monte Carlo', circuit:'Monte Carlo', country:'Monaco' },
+    { cat:'sbk', date:'2026-10-18', name:'Round Spagna', circuit:'Jerez', country:'Spagna' },
+    // WRC 2026 — 14 round
+    { cat:'wrc', date:'2026-01-25', name:'Rallye Monte-Carlo', circuit:'Monte Carlo', country:'Monaco' },
     { cat:'wrc', date:'2026-02-15', name:'Rally di Svezia', circuit:'Umeå', country:'Svezia' },
-    { cat:'wrc', date:'2026-03-15', name:'Rally del Messico', circuit:'León', country:'Messico' },
-    { cat:'wrc', date:'2026-04-26', name:'Rally di Croazia', circuit:'Zagabria', country:'Croazia' },
-    { cat:'wrc', date:'2026-05-24', name:'Rally del Portogallo', circuit:'Matosinhos', country:'Portogallo' },
-    { cat:'wrc', date:'2026-06-07', name:'Rally d\'Italia Sardegna', circuit:'Alghero', country:'Italia' },
-    { cat:'wrc', date:'2026-06-28', name:'Rally del Kenya', circuit:'Naivasha', country:'Kenya' },
-    { cat:'wrc', date:'2026-08-02', name:'Rally d\'Estonia', circuit:'Tartu', country:'Estonia' },
-    { cat:'wrc', date:'2026-08-23', name:'Rally di Finlandia', circuit:'Jyväskylä', country:'Finlandia' },
-    { cat:'wrc', date:'2026-09-06', name:'Rally del Cile', circuit:'Concepción', country:'Cile' },
-    { cat:'wrc', date:'2026-10-04', name:'Rally del Centro Europa', circuit:'Praga', country:'Centro Europa' },
-    { cat:'wrc', date:'2026-10-25', name:'Rally del Giappone', circuit:'Aichi', country:'Giappone' },
-    { cat:'wrc', date:'2026-11-15', name:'Rally d\'Arabia Saudita', circuit:'Jeddah', country:'Arabia Saudita' }
+    { cat:'wrc', date:'2026-03-15', name:'Safari Rally Kenya', circuit:'Naivasha', country:'Kenya' },
+    { cat:'wrc', date:'2026-04-12', name:'Rally di Croazia', circuit:'Zagabria', country:'Croazia' },
+    { cat:'wrc', date:'2026-04-26', name:'Rally Isole Canarie', circuit:'Las Palmas', country:'Spagna' },
+    { cat:'wrc', date:'2026-05-10', name:'Rally del Portogallo', circuit:'Matosinhos', country:'Portogallo' },
+    { cat:'wrc', date:'2026-05-31', name:'Rally del Giappone', circuit:'Aichi', country:'Giappone' },
+    { cat:'wrc', date:'2026-06-28', name:'Acropolis Rally Grecia', circuit:'Atene', country:'Grecia' },
+    { cat:'wrc', date:'2026-07-19', name:"Rally d'Estonia", circuit:'Tartu', country:'Estonia' },
+    { cat:'wrc', date:'2026-08-02', name:'Rally di Finlandia', circuit:'Jyväskylä', country:'Finlandia' },
+    { cat:'wrc', date:'2026-08-30', name:'Rally del Paraguay', circuit:'Asunción', country:'Paraguay' },
+    { cat:'wrc', date:'2026-09-13', name:'Rally del Cile', circuit:'Concepción', country:'Cile' },
+    { cat:'wrc', date:'2026-10-04', name:"Rally d'Italia Sardegna", circuit:'Alghero', country:'Italia' },
+    { cat:'wrc', date:'2026-11-14', name:"Rally d'Arabia Saudita", circuit:'Jeddah', country:'Arabia Saudita' }
   ];
 
   // Track days curated for IT circuits.
