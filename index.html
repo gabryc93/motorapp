@@ -5301,6 +5301,8 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 /* RESULTS */
 #hub-fuel .res-hdr {display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;flex-wrap:wrap;gap:6px}
 #hub-fuel .res-title {font-family:var(--fd);font-weight:700;font-size:.95rem;color:var(--tx)}
+.best-tag{display:inline-flex;align-items:center;background:rgba(76,175,125,.18);color:#6dd9a3;border:1px solid rgba(76,175,125,.35);border-radius:5px;font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.04em;padding:1px 6px;font-weight:600}
+.station-best{border-left:2px solid rgba(76,175,125,.5)!important;background:rgba(76,175,125,.04)!important}
 .pieno-card{background:linear-gradient(135deg,rgba(76,175,125,.08),rgba(76,175,125,.03));border:1px solid rgba(76,175,125,.25);border-radius:12px;padding:14px 16px;margin:12px 0 4px}
 .pieno-title{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
 .pieno-row{display:flex;gap:8px;margin-bottom:8px}
@@ -6383,7 +6385,12 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
       <button class="fb" data-f="GPL" onclick="setFuel(this)">GPL</button>
       <button class="fb" data-f="Metano" onclick="setFuel(this)">Metano</button>
       <button class="fb" id="self-btn" onclick="toggleSelf()">Solo self</button>
-      <button class="fb" id="sort-dist-btn" onclick="toggleSortDist()" style="display:none">↕ Distanza</button>
+      <button class="fb" id="sort-dist-btn" onclick="toggleSortDist()" style="display:none">📍 Distanza</button>
+    </div>
+    <div id="radius-row" style="display:none;align-items:center;gap:8px;padding:4px 0 2px;margin-bottom:4px">
+      <span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--t3);white-space:nowrap;letter-spacing:.04em">Raggio</span>
+      <input type="range" id="radius-slider" min="1" max="20" value="10" step="1" style="flex:1;accent-color:#f5a623;height:4px;cursor:pointer" oninput="_hubRadiusChange(this.value)">
+      <span id="radius-label" style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--t1);min-width:34px;text-align:right;font-variant-numeric:tabular-nums">10 km</span>
     </div>
     <div class="bandiera-row" id="brow"></div>
 
@@ -6715,7 +6722,30 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     }, 2500);
   }
 
-  window._hubOpenTankEdit = function() {
+  var _radiusKm = 10;
+var _radiusTimer = null;
+window._hubRadiusChange = function(val) {
+  _radiusKm = parseInt(val, 10);
+  var lbl = document.getElementById('radius-label');
+  if (lbl) lbl.textContent = _radiusKm + ' km';
+  clearTimeout(_radiusTimer);
+  _radiusTimer = setTimeout(function() {
+    if (!_gpsActive || !_gpsLat) return;
+    (async function() {
+      setStatus('ld', 'Cerco in ' + _radiusKm + ' km…');
+      try {
+        var url = '/api/vicini?lat=' + _gpsLat + '&lng=' + _gpsLng +
+          '&carburante=' + encodeURIComponent(activeFuel) +
+          '&self=' + (activeSelf ? 1 : 0) + '&raggio=' + _radiusKm;
+        var data = await api(url);
+        renderStations(data, { gps: true, lat: _gpsLat, lng: _gpsLng });
+        setStatus('ok', data.length + ' impianti entro ' + _radiusKm + ' km');
+      } catch(e) { setStatus('err', 'Errore: ' + e.message); }
+    })();
+  }, 600);
+};
+
+window._hubOpenTankEdit = function() {
     var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active();
     if (!v) { alert('Nessun veicolo attivo.'); return; }
     if (typeof window.openGarageEdit === 'function') {
@@ -15077,17 +15107,19 @@ async function doGPS() {
       document.getElementById('frow').style.display = 'flex';
       document.getElementById('sort-dist-btn').style.display = '';
       document.getElementById('sort-dist-btn').classList.remove('on');
-      document.getElementById('sort-dist-btn').textContent = '↕ Distanza';
+      document.getElementById('sort-dist-btn').textContent = '📍 Distanza';
+      var rr = document.getElementById('radius-row'); if(rr) rr.style.display = 'flex';
       resetFilters();
       setStatus('ld', 'Cerco distributori vicino a te…');
       showGPSLocation(lat, lng);
       try {
-        const url = `/api/vicini?lat=${lat}&lng=${lng}&carburante=${encodeURIComponent(activeFuel)}&self=${activeSelf?1:0}&raggio=10`;
+        const rKm = _radiusKm || 10;
+        const url = `/api/vicini?lat=${lat}&lng=${lng}&carburante=${encodeURIComponent(activeFuel)}&self=${activeSelf?1:0}&raggio=${rKm}`;
         const data = await api(url);
         renderStations(data, { gps: true, lat, lng });
         _gpsLat = pos.coords.latitude;
         _gpsLng = pos.coords.longitude;
-        setStatus('ok', `${data.length} impianti entro 10 km`);
+        setStatus('ok', `${data.length} impianti entro ${rKm} km`);
       } catch(e) { setStatus('err', 'Errore: ' + e.message); }
       btn.classList.remove('active');
       btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7" stroke-dasharray="2 2" opacity=".4"/></svg> Vicino a me`;
