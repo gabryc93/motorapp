@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-11-16-0801">
+<meta name="autohub-build" content="2026-11-16-1301">
 <meta name="theme-color" content="#0b0b0d">
 <title>AutoHub · Carburanti, Garage, Usato, Diagnosi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
@@ -5599,6 +5599,15 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 #hub-fuel .map-weather-temp {font-family:var(--fd);font-size:1.1rem;font-weight:700;color:var(--tx);line-height:1.2}
 #hub-fuel .map-weather-desc {font-size:0.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin-top:1px}
 
+
+/* Tile OpenStreetMap scurite: solo ripiego quando OpenFreeMap/MapLibre non è disponibile */
+.leaflet-tile.tiles-dark,
+.tiles-dark .leaflet-tile {
+  filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.88) saturate(.55);
+}
+
+/* Il canvas MapLibre va sotto marker e popup di Leaflet */
+#leaflet-map .leaflet-gl-layer { z-index: 1; }
 
 /* ════════════════════════════════════════════════════════════════════
    HUB HOME — hero card + skeleton (must be after fuel CSS to win cascade)
@@ -14891,6 +14900,67 @@ function scheduleWeatherUpdate(lat, lng) {
   _weatherTimer = setTimeout(() => updateMapWeather(lat, lng), 600);
 }
 
+/* ── Sfondo della mappa ────────────────────────────────────────────
+   1. OpenFreeMap "dark" (vettoriale, gratis, senza chiave né registrazione).
+      Serve MapLibre: viene scaricato solo la prima volta che apri la mappa.
+   2. Se MapLibre non parte (niente WebGL o CDN irraggiungibile): OpenStreetMap
+      scurito via CSS. Nota: OSM blocca le pagine aperte da file:// (manca il Referer).
+   CARTO dal 25/09/2026 vuole una chiave: se ne hai una, mettila in CARTO_KEY
+   e viene usata al posto di tutto il resto. */
+const CARTO_KEY = '';
+const OFM_STYLE = 'https://tiles.openfreemap.org/styles/dark';
+const MAPLIBRE_JS  = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js';
+const MAPLIBRE_CSS = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css';
+const MAPLIBRE_LEAFLET_JS = 'https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js';
+const OSM_ATTR = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+
+function loadAsset(url, isCss) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector((isCss ? 'link[href="' : 'script[src="') + url + '"]')) return resolve();
+    const el = document.createElement(isCss ? 'link' : 'script');
+    if (isCss) { el.rel = 'stylesheet'; el.href = url; } else { el.src = url; }
+    el.onload = () => resolve();
+    el.onerror = () => reject(new Error('non caricato: ' + url));
+    document.head.appendChild(el);
+  });
+}
+
+function hasWebGL() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(c.getContext('webgl2') || c.getContext('webgl'));
+  } catch (e) { return false; }
+}
+
+function addOsmFallback(map) {
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: OSM_ATTR, maxZoom: 19, className: 'tiles-dark',
+  }).addTo(map);
+}
+
+async function addBasemap(map) {
+  if (CARTO_KEY) {
+    L.tileLayer('https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=' + encodeURIComponent(CARTO_KEY), {
+      attribution: OSM_ATTR + ' © <a href="https://carto.com/attributions">CARTO</a>', maxZoom: 19,
+    }).addTo(map);
+    return;
+  }
+  if (!hasWebGL()) { addOsmFallback(map); return; }
+  try {
+    await Promise.all([loadAsset(MAPLIBRE_CSS, true), loadAsset(MAPLIBRE_JS)]);
+    await loadAsset(MAPLIBRE_LEAFLET_JS);
+    if (!L.maplibreGL) throw new Error('plugin MapLibre-Leaflet assente');
+    L.maplibreGL({ style: OFM_STYLE }).addTo(map);
+    // Attribuzione obbligatoria per OpenFreeMap: il plugin non la passa a Leaflet, la aggiungiamo noi
+    if (map.attributionControl) {
+      map.attributionControl.addAttribution('<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> ' + OSM_ATTR);
+    }
+  } catch (e) {
+    console.warn('[mappa] OpenFreeMap non disponibile, uso OSM:', e.message);
+    addOsmFallback(map);
+  }
+}
+
 function initMap() {
   _map = L.map('leaflet-map', {
     center: [41.9, 12.5], // Centro Italia
@@ -14898,11 +14968,7 @@ function initMap() {
     zoomControl: true,
   });
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap © CartoDB',
-    subdomains: 'abcd',
-    maxZoom: 19,
-  }).addTo(_map);
+  addBasemap(_map);
 
   _map.on('moveend', () => {
     const z = _map.getZoom();
