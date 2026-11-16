@@ -404,7 +404,7 @@
   window.rideHud = function() {
     var ov = $('rd-overlay'), on = !ov.classList.contains('rd-hud');
     ov.classList.toggle('rd-hud', on);
-    if (on) showError('');
+    if (on) { showError(''); startG(); }   // nell'HUD il G-meter è sempre visibile
   };
 
   /* ── Wake lock ───────────────────────────────────────────────── */

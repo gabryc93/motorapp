@@ -450,9 +450,25 @@
 .rd-hist-h b { color: #c97fd4; }
 .rd-hist-r { display: grid; grid-template-columns: 50px 70px 1fr; gap: 8px; font-family: 'DM Mono', monospace; font-size: .64rem; color: rgba(255,255,255,.65); padding: 3px 0; }
 .rd-hist-r.best { color: #c97fd4; } .rd-hist-r.nv { color: rgba(255,255,255,.35); }
-/* HUD: solo la velocità, a specchio, da riflettere sul parabrezza di notte */
-#rd-overlay.rd-hud > *:not(.rd-speedbox) { display: none !important; }
-#rd-overlay.rd-hud .rd-speedbox { transform: scaleX(-1); cursor: pointer; }
-#rd-overlay.rd-hud .rd-gmeter, #rd-overlay.rd-hud .rd-sub { display: none !important; }
-#rd-overlay.rd-hud .rd-speed { font-size: min(48vw, 60vh); color: #7dffb0; }
-#rd-overlay.rd-hud .rd-speed-unit { color: #7dffb0; opacity: .7; }
+/* HUD: velocità, G-meter e dati di guida, a specchio per il parabrezza di notte */
+#rd-overlay.rd-hud { transform: scaleX(-1); justify-content: center; gap: 2vh; --hud: #7dffb0; }
+#rd-overlay.rd-hud > *:not(.rd-speedbox):not(.rd-stats) { display: none !important; }
+#rd-overlay.rd-hud .rd-speedbox { flex: 1 1 auto; gap: 5vw; cursor: pointer; padding: 2vh 4vw; }
+#rd-overlay.rd-hud .rd-speed-col { flex: 0 0 auto; border: 0; }
+#rd-overlay.rd-hud .rd-speed { font-size: min(30vw, 40vh); color: var(--hud); }
+#rd-overlay.rd-hud .rd-speed-unit { color: var(--hud); opacity: .7; font-size: min(3.5vw, 3vh); }
+#rd-overlay.rd-hud .rd-sub { display: none; }
+#rd-overlay.rd-hud .rd-gmeter { display: flex !important; flex: 0 0 auto; width: min(36vw, 46vh); height: min(36vw, 46vh); max-width: none; margin: 0;
+  border-color: rgba(125,255,176,.35); background: transparent; }
+#rd-overlay.rd-hud .rd-gmeter-grid circle, #rd-overlay.rd-hud .rd-gmeter-grid line { stroke: rgba(125,255,176,.22); }
+#rd-overlay.rd-hud .rd-gmeter-dot { background: var(--hud); box-shadow: 0 0 12px var(--hud); }
+#rd-overlay.rd-hud .rd-gmeter-label, #rd-overlay.rd-hud .rd-gmeter-val { color: var(--hud); }
+#rd-overlay.rd-hud .rd-stats { background: transparent; gap: 2vw; margin: 0 3vw 3vh; }
+#rd-overlay.rd-hud .rd-stat { background: transparent; border-top: 1px solid rgba(125,255,176,.25); padding: 1.2vh 0 0; }
+#rd-overlay.rd-hud .rd-stat-lbl, #rd-overlay.rd-hud .rd-stat-sub { color: var(--hud); opacity: .65; font-size: min(2.6vw, 2.2vh); }
+#rd-overlay.rd-hud .rd-stat-val { color: var(--hud); font-size: min(7vw, 7vh); }
+@media (orientation: portrait) {
+  #rd-overlay.rd-hud .rd-speedbox { flex-direction: column; gap: 3vh; }
+  #rd-overlay.rd-hud .rd-speed { font-size: min(40vw, 26vh); }
+  #rd-overlay.rd-hud .rd-gmeter { width: min(60vw, 30vh); height: min(60vw, 30vh); }
+}
