@@ -433,12 +433,13 @@
     var ts = window.hubTripStats(S.vehicle);
     document.getElementById('vi-body').innerHTML =
       '<p class="vi-done">✓ ' + (r.added === 1 ? 'Importato <b>1</b> viaggio' : 'Importati <b>' + r.added + '</b> viaggi') + (r.dup ? ' · ' + r.dup + ' già presenti, saltati' : '') + '.</p>' +
-      (ts.consumo != null ? '<p class="vi-sum">Consumo medio dai viaggi: <b>' + ts.consumo.toFixed(1) + '</b> su ' + Math.round(ts.km).toLocaleString('it-IT') + ' km. Lo trovi anche in Consumi.</p>' : '') +
+      (ts.consumo != null ? '<p class="vi-sum">Consumo medio dai viaggi: <b>' + ts.consumo.toFixed(1) + '</b> su ' + Math.round(ts.km).toLocaleString('it-IT') + ' km. Lo trovi in Consumi e nel Costo di possesso.</p>' : '') +
       (r.km ? '<p class="vi-sum">Contachilometri aggiornato a <b>' + r.km.toLocaleString('it-IT') + ' km</b>.</p>' : '') +
       '<div class="vi-act"><button type="button" class="vi-btn2" onclick="_viRestart()">Importa un altro file</button><button type="button" class="vi-btn" onclick="closeViaggiImport()">Fatto</button></div>';
     if (window._hubRideLogRender) window._hubRideLogRender();
     if (window._hubRefreshRideLogBadge) window._hubRefreshRideLogBadge();
     if (window._hubRefreshFuelLogBadge) window._hubRefreshFuelLogBadge();
+    if (window._hubRefreshTCOBadge) window._hubRefreshTCOBadge();
   };
 
   window.openViaggiImport = function() {

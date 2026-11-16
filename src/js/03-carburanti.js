@@ -70,6 +70,9 @@ async function api(path) {
 
 // ── Medie nazionali ───────────────────────────────────────────
 function renderMedie(data) {
+  // medie del giorno disponibili anche al costo di possesso (stima carburante dai viaggi)
+  window.hubMedie = data;
+  try { localStorage.setItem('hub_medie_v1', JSON.stringify({ Benzina: data.Benzina, Diesel: data.Diesel, GPL: data.GPL, Metano: data.Metano, at: Date.now() })); } catch (e) {}
   if (data._cachedAt && data._nextUpdate) renderUpdateBar(data._cachedAt, data._nextUpdate, data._extractionDate);
   const map = { bz:'Benzina', go:'Diesel', gpl:'GPL', met:'Metano' };
   for (const [k, fuel] of Object.entries(map)) {

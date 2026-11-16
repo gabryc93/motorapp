@@ -47,6 +47,28 @@
   }
 
   /* ── Compute TCO breakdown for a vehicle/period ─────────────── */
+  // Consumo medio dai rifornimenti a pieno (litri tra due pieni / km)
+  function refuelAvgCons(refuels) {
+    var s = refuels.slice().sort(function(a, b) { return a.km - b.km; }), prev = null, l = 0, L = 0, K = 0;
+    s.forEach(function(r) {
+      if (prev) { l += Number(r.litri) || 0; if (r.isFull && r.km > prev.km) { L += l; K += r.km - prev.km; prev = r; l = 0; } }
+      else if (r.isFull) prev = r;
+    });
+    return K > 0 ? L / K * 100 : null;
+  }
+  // Prezzo al litro: ultimo rifornimento del veicolo → media nazionale del giorno (Carburanti) → valore indicativo
+  function fuelPrice(vehicle, refuels) {
+    var last = refuels.filter(function(r) { return Number(r.prezzoPerLitro) > 0; }).sort(function(a, b) { return (b.date || '').localeCompare(a.date || ''); })[0];
+    if (last) return { eur: Number(last.prezzoPerLitro), src: 'il tuo ultimo rifornimento' };
+    var a = vehicle.alim || '', fuel = /diesel/.test(a) ? 'Diesel' : a === 'gpl' ? 'GPL' : a === 'metano' ? 'Metano' : 'Benzina';
+    var m = null;
+    try { m = window.hubMedie || JSON.parse(localStorage.getItem('hub_medie_v1') || 'null'); } catch(_) {}
+    var d = m && m[fuel];
+    if (d && (d.self || d.serv)) return { eur: d.self || d.serv, src: 'media nazionale ' + fuel.toLowerCase() + ' self' };
+    var fb = { Benzina: 1.75, Diesel: 1.70, GPL: 0.70, Metano: 1.40 }[fuel];
+    return { eur: fb, src: 'prezzo indicativo ' + fuel.toLowerCase() };
+  }
+
   function computeTCO(vehicle, period) {
     var cutoff = periodCutoffMs(period);
     var firstTs = null;
@@ -68,6 +90,33 @@
       }
     });
     var kmInPeriod = (kmRange.max > kmRange.min) ? (kmRange.max - kmRange.min) : 0;
+    var refuelsInPeriod = refuels.filter(function(r) { var t = r.date ? new Date(r.date).getTime() : 0; return !cutoff || !t || t >= cutoff; });
+
+    // Viaggi del Diario uscite (ride registrate e viaggi importati da MyPeugeot, Google Maps…)
+    var trips = [];
+    try { trips = JSON.parse(localStorage.getItem('hub_rides_v1') || '[]'); } catch(_) {}
+    trips = trips.filter(function(r) { return r.vehicleId === vehicle.id && r.distanceKm > 0 && (!cutoff || (r.startTs || 0) >= cutoff); });
+    var tripKm = 0, consKm = 0, consL = 0;
+    trips.forEach(function(r) {
+      tripKm += r.distanceKm;
+      if (r.startTs && (!firstTs || r.startTs < firstTs)) firstTs = r.startTs;
+      if (r.consumo != null) { consKm += r.distanceKm; consL += r.litri != null ? r.litri : r.consumo * r.distanceKm / 100; }
+    });
+    // Senza rifornimenti nel periodo il carburante si stima dai viaggi: litri (consumo del viaggio,
+    // oppure consumo medio per i viaggi senza dato) × prezzo al litro
+    var fuelSrc = refuelsInPeriod.length ? 'rifornimenti' : 'nessuno', fuelEst = null;
+    if (!refuelsInPeriod.length && tripKm > 0) {
+      var avgCons = consKm > 0 ? consL / consKm * 100 : refuelAvgCons(refuels);
+      if (avgCons) {
+        var litri = consL + (tripKm - consKm) * avgCons / 100, pr = fuelPrice(vehicle, refuels);
+        if (pr && vehicle.alim !== 'elettrica') {
+          fuelCost = litri * pr.eur;
+          fuelSrc = 'viaggi';
+          fuelEst = { litri: litri, prezzo: pr.eur, prezzoSrc: pr.src, consumo: avgCons, consMisurato: consKm > 0, km: tripKm, viaggi: trips.length };
+        }
+      }
+    }
+    kmInPeriod = Math.max(kmInPeriod, Math.round(tripKm));
 
     // Maintenance (officina/ricambi)
     var maint = [];
@@ -107,7 +156,11 @@
     var revCost = (vehicle.costoRev ? vehicle.costoRev / 24 : revPerMese) * months;
 
     var total = fuelCost + maintCost + bolloCost + rcaCost + revCost;
-    var costPerKm = kmInPeriod > 0 ? total / kmInPeriod : 0;
+    // €/km: i costi fissi (bollo, assicurazione, revisione) contano solo per i mesi coperti dai dati,
+    // altrimenti pochi km registrati darebbero un €/km enorme
+    var fixedPerMonth = months > 0 ? (bolloCost + rcaCost + revCost) / months : 0;
+    var covered = firstTs ? Math.min(months, Math.max(1, (Date.now() - firstTs) / (30.44 * 86400000))) : months;
+    var costPerKm = kmInPeriod > 0 ? (fuelCost + maintCost + fixedPerMonth * covered) / kmInPeriod : 0;
     var costPerMonth = months > 0 ? total / months : 0;
 
     return {
@@ -125,6 +178,9 @@
       months: months,
       firstTs: firstTs,
       refuelCount: refuels.length,
+      tripCount: trips.length,
+      fuelSrc: fuelSrc,
+      fuelEst: fuelEst,
       maintCount: maint.length
     };
   }
@@ -226,10 +282,10 @@
     // Compute
     var tco = computeTCO(v, _tcoPeriod);
 
-    if (tco.refuelCount === 0 && tco.maintCount === 0) {
+    if (tco.refuelCount === 0 && tco.maintCount === 0 && !tco.tripCount) {
       html += '<div class="tco-empty">' +
-        'Nessun rifornimento o intervento registrato.<br>' +
-        'Aggiungi rifornimenti in <strong>Consumi & Rifornimenti</strong> e interventi in <strong>Manutenzione</strong> per vedere il TCO reale.' +
+        'Nessun rifornimento, intervento o viaggio registrato.<br>' +
+        'Aggiungi rifornimenti in <strong>Consumi & Rifornimenti</strong>, interventi in <strong>Manutenzione</strong> o importa i viaggi nel <strong>Diario uscite</strong> per vedere il costo di possesso.' +
       '</div>';
       body.innerHTML = html;
       return;
@@ -255,14 +311,14 @@
         '</div>' +
         '<div class="tco-totals-cell">' +
           '<div class="tco-totals-lbl">Interventi</div>' +
-          '<div class="tco-totals-val">' + tco.refuelCount + ' rif. · ' + tco.maintCount + ' man.</div>' +
+          '<div class="tco-totals-val">' + tco.refuelCount + ' rif. · ' + tco.maintCount + ' man.' + (tco.tripCount ? ' · ' + tco.tripCount + ' viaggi' : '') + '</div>' +
         '</div>' +
       '</div>' +
     '</div>';
 
     // Breakdown
     var rows = [
-      { lbl: 'Carburante',   val: tco.fuel,      color: '#5b9bd5' },
+      { lbl: 'Carburante' + (tco.fuelSrc === 'viaggi' ? ' (stima dai viaggi)' : ''), val: tco.fuel, color: '#5b9bd5' },
       { lbl: 'Manutenzione', val: tco.maint,     color: '#4caf7d' },
       { lbl: 'Bollo' + (tco.bolloSrc === 'tuo' ? '' : ' (stima)'),val: tco.bollo,     color: '#e8a030' },
       { lbl: 'Assicurazione' + (tco.rcaSrc === 'tuo' ? '' : ' (stima)'),  val: tco.rca,       color: '#c97fd4' },
@@ -320,6 +376,16 @@
         txt: 'Costo €/km eccellente (<strong>' + fmtEur2(tco.costPerKm) + ' €/km</strong>). Sei sotto la media nazionale auto (~0.30 €/km).'
       });
     }
+    if (tco.fuelEst) {
+      var fe = tco.fuelEst;
+      insights.unshift({
+        icon: '🧮',
+        txt: 'Carburante stimato dal Diario uscite: <strong>' + Math.round(fe.km).toLocaleString('it-IT') + ' km</strong> in ' + fe.viaggi + ' viaggi × ' +
+          fe.consumo.toFixed(1) + ' l/100 km' + (fe.consMisurato ? ' (dai resoconti)' : ' (dai rifornimenti)') + ' = <strong>' + fe.litri.toFixed(0) + ' l</strong> a ' +
+          fe.prezzo.toFixed(3) + ' €/l (' + fe.prezzoSrc + '). Registrando i rifornimenti il dato diventa reale.' +
+          (v.alim === 'plugin' ? ' Per un plug-in conta solo la benzina: la ricarica elettrica non è inclusa.' : '')
+      });
+    }
     var srcTxt = { tuo: 'importo inserito da te', stima: 'stima calcolata nel Garage', media: 'media generica' };
     if (tco.bolloSrc !== 'tuo' || tco.rcaSrc !== 'tuo') insights.push({
       icon: 'ℹ',
@@ -343,7 +409,7 @@
     var v = window.hubGarage && window.hubGarage.active();
     if (!v) { b.textContent = '—'; return; }
     var tco = computeTCO(v, '12m');
-    if (tco.refuelCount === 0 && tco.maintCount === 0) {
+    if (tco.refuelCount === 0 && tco.maintCount === 0 && !tco.tripCount) {
       b.textContent = 'Vuoto';
     } else if (tco.costPerKm > 0) {
       b.textContent = fmtEur2(tco.costPerKm) + ' €/km';
