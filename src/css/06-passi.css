@@ -1,0 +1,500 @@
+
+/* ═══════════════════════════════════════════════════════════════════
+   PASSI ALPINI / APPENNINICI — curated database for motorcyclists
+   ═══════════════════════════════════════════════════════════════════ */
+.ps-launch {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(140,90,200,.15), rgba(140,90,200,.04));
+  border: 1px solid rgba(140,90,200,.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: #d4bff0;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.ps-launch:hover { border-color: rgba(140,90,200,.55); }
+.ps-launch:active { transform: scale(.99); }
+.ps-launch-icon { font-size: 1rem; }
+.ps-launch-text { flex: 1; text-align: left; }
+.ps-launch-stat {
+  background: rgba(140,90,200,.18);
+  color: #e8d5fa;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .58rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+#ps-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#ps-overlay.visible { display: flex; }
+
+.ps-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+.ps-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1); letter-spacing: .02em;
+}
+.ps-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+
+.ps-filters {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0;
+  display: flex; gap: 6px; flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ps-filters::-webkit-scrollbar { display: none; }
+.ps-fbtn {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t2);
+  padding: 6px 11px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: all .15s ease;
+}
+.ps-fbtn.on {
+  color: #d4bff0;
+  border-color: rgba(140,90,200,.55);
+  background: rgba(140,90,200,.13);
+}
+
+.ps-body {
+  flex: 1; overflow-y: auto;
+  padding: 12px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+
+.ps-card {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+  position: relative;
+}
+.ps-card:hover { border-color: var(--brd2); }
+.ps-card:active { transform: scale(.99); }
+.ps-card-status {
+  position: absolute;
+  top: 12px; right: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: .04em;
+}
+.ps-card-status.status-open {
+  background: rgba(76,175,125,.18);
+  color: #6dd9a3;
+  border: 1px solid rgba(76,175,125,.32);
+}
+.ps-card-status.status-caution {
+  background: rgba(232,160,48,.18);
+  color: #ffd699;
+  border: 1px solid rgba(232,160,48,.32);
+}
+.ps-card-status.status-closed {
+  background: rgba(224,90,74,.18);
+  color: #ff8a82;
+  border: 1px solid rgba(224,90,74,.32);
+}
+.ps-card-status.status-unknown {
+  background: rgba(255,255,255,.06);
+  color: var(--t3);
+  border: 1px solid rgba(255,255,255,.08);
+}
+.ps-card-status-note {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  margin: 6px 0 8px;
+  padding-right: 70px;  /* avoid overlap with status pill */
+  letter-spacing: .02em;
+  line-height: 1.3;
+}
+.ps-card-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.05rem;
+  color: var(--t1); letter-spacing: -.01em;
+  margin-bottom: 3px;
+  padding-right: 80px;
+}
+.ps-card-region {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t2);
+  margin-bottom: 8px;
+}
+.ps-card-stats {
+  display: flex; gap: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  color: var(--t1);
+  flex-wrap: wrap;
+}
+.ps-card-stat-lbl {
+  color: var(--t3);
+  font-size: .54rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-right: 3px;
+}
+.ps-card-diff {
+  display: inline-block;
+  margin-left: 8px;
+  letter-spacing: .04em;
+  font-size: .68rem;
+  color: #d4bff0;
+}
+
+/* Detail modal */
+#ps-detail {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(3px);
+  z-index: 80;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#ps-detail.visible { display: flex; }
+@media (min-width: 600px) { #ps-detail { align-items: center; } }
+.ps-detail-card {
+  background: var(--surf);
+  border: 1px solid var(--brd2);
+  border-radius: 14px 14px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@media (min-width: 600px) { .ps-detail-card { border-radius: 14px; } }
+.ps-detail-hdr {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--brd);
+}
+.ps-detail-hdr h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.3rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  margin-bottom: 3px;
+}
+.ps-detail-hdr-region {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t2);
+}
+.ps-detail-body { padding: 14px 18px; }
+.ps-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ps-detail-cell {
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 8px;
+  padding: 9px 11px;
+}
+.ps-detail-cell-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .53rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 3px;
+}
+.ps-detail-cell-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1rem;
+  color: var(--t1);
+}
+.ps-detail-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  color: var(--t2);
+  line-height: 1.55;
+  margin-bottom: 14px;
+  padding: 11px 12px;
+  background: var(--surf2);
+  border-radius: 8px;
+  border-left: 3px solid rgba(140,90,200,.5);
+}
+.ps-detail-weather {
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.ps-detail-weather-icon { font-size: 2rem; }
+.ps-detail-weather-info { flex: 1; }
+.ps-detail-weather-temp {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.4rem;
+  color: var(--t1);
+  letter-spacing: -.02em;
+}
+.ps-detail-weather-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t2);
+  margin-top: 3px;
+}
+.ps-detail-weather-loading {
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  color: var(--t3);
+}
+.ps-detail-actions {
+  display: flex; gap: 8px;
+  padding: 12px 18px 18px;
+  border-top: 1px solid var(--brd);
+}
+.ps-detail-actions button,
+.ps-detail-actions a {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: .7rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all .15s ease;
+}
+.ps-detail-close {
+  background: var(--surf2);
+  border-color: var(--brd2);
+  color: var(--t2);
+}
+.ps-detail-maps {
+  background: rgba(140,90,200,.85);
+  border-color: rgba(140,90,200,.6);
+  color: #fff;
+}
+.ps-detail-maps:hover { filter: brightness(1.1); }
+.ps-empty {
+  text-align: center; padding: 30px 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; color: var(--t3);
+}
+
+/* ── Segmented control: Curati vs Vicini a me ─────────────────── */
+.ps-segctrl {
+  display: flex;
+  gap: 4px;
+  padding: 12px 14px 4px;
+  flex-shrink: 0;
+}
+.ps-seg {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.ps-seg.on {
+  color: #d4bff0;
+  border-color: rgba(140,90,200,.55);
+  background: rgba(140,90,200,.13);
+}
+.ps-seg:active { transform: scale(.98); }
+
+/* Hide the curated filters when in "nearby" mode */
+.ps-mode-nearby #ps-filters { display: none; }
+
+/* Nearby mode: search bar */
+.ps-nearby-bar {
+  padding: 8px 14px 12px;
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ps-nearby-bar label {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  flex-shrink: 0;
+}
+.ps-nearby-bar select {
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t1);
+  padding: 6px 9px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+}
+.ps-nearby-go {
+  appearance: none; -webkit-appearance: none;
+  background: linear-gradient(135deg, rgba(140,90,200,.85), rgba(110,70,180,.7));
+  border: 1px solid rgba(140,90,200,.55);
+  color: #fff;
+  padding: 7px 13px;
+  border-radius: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+}
+.ps-nearby-go:hover { filter: brightness(1.1); }
+.ps-nearby-go:active { transform: scale(.98); }
+.ps-nearby-go:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Nearby road card — same family as ps-card but with mini-map preview */
+.psn-card {
+  display: flex; gap: 10px;
+  align-items: center;
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  padding: 11px 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.psn-card:hover { border-color: var(--brd2); }
+.psn-card:active { transform: scale(.99); }
+.psn-card-map {
+  flex-shrink: 0;
+  width: 72px; height: 72px;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.psn-card-map svg { width: 100%; height: 100%; display: block; }
+.psn-card-info { flex: 1; min-width: 0; }
+.psn-card-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .92rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  margin-bottom: 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.psn-card-stats {
+  display: flex;
+  gap: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem;
+  color: var(--t1);
+  flex-wrap: wrap;
+}
+.psn-card-stat-lbl {
+  color: var(--t3);
+  font-size: .5rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-right: 3px;
+}
+.psn-card-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(140,90,200,.16);
+  color: #d4bff0;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(140,90,200,.3);
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+.psn-card-bonus {
+  display: inline-block;
+  margin-left: 4px;
+  background: rgba(232,160,48,.15);
+  color: #ffd699;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(232,160,48,.3);
+  font-size: .52rem;
+}
+.ps-nearby-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--t3);
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+}
+.ps-nearby-spinner::after {
+  content: '⟳';
+  display: inline-block;
+  margin-left: 6px;
+  animation: psnSpin 1.2s linear infinite;
+}
+@keyframes psnSpin { to { transform: rotate(360deg); } }
+.ps-nearby-error {
+  margin: 12px 14px;
+  padding: 12px 14px;
+  background: rgba(224,90,74,.1);
+  border: 1px solid rgba(224,90,74,.3);
+  border-radius: 10px;
+  color: #ffb4a8;
+  font-family: 'DM Mono', monospace;
+  font-size: .7rem;
+  line-height: 1.5;
+}
+.ps-nearby-disclaimer {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  line-height: 1.6;
+}

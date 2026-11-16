@@ -1,0 +1,410 @@
+
+/* ═══════════════════════════════════════════════════════════════════
+   MAINTENANCE — service tracker per vehicle, by km AND date
+   ═══════════════════════════════════════════════════════════════════ */
+.mt-launch {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(76,175,125,.13), rgba(76,175,125,.04));
+  border: 1px solid rgba(76,175,125,.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: #b8e6cf;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.mt-launch:hover { border-color: rgba(76,175,125,.55); }
+.mt-launch:active { transform: scale(.99); }
+.mt-launch-icon { font-size: 1rem; }
+.mt-launch-text { flex: 1; text-align: left; }
+.mt-launch-stat {
+  background: rgba(76,175,125,.18);
+  color: #d4f0e2;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .58rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.mt-launch-stat.warn {
+  background: rgba(232,160,48,.2);
+  color: #ffe7c2;
+}
+.mt-launch-stat.crit {
+  background: rgba(224,90,74,.2);
+  color: #ffb4a8;
+}
+
+#mt-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#mt-overlay.visible { display: flex; }
+
+.mt-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+.mt-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1); letter-spacing: .02em;
+}
+.mt-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 220px;
+}
+
+.mt-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+
+.mt-veh-header {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mt-veh-icon { font-size: 1.4rem; }
+.mt-veh-info { flex: 1; min-width: 0; }
+.mt-veh-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--t1);
+}
+.mt-veh-km {
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  color: var(--t2);
+  margin-top: 2px;
+}
+
+.mt-card {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.mt-card:hover { border-color: var(--brd2); }
+.mt-card:active { transform: scale(.99); }
+.mt-card.warn { border-color: rgba(232,160,48,.35); }
+.mt-card.crit { border-color: rgba(224,90,74,.4); }
+.mt-card-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 8px;
+}
+.mt-card-icon {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: var(--surf2);
+  font-size: 1.1rem;
+}
+.mt-card-info { flex: 1; min-width: 0; }
+.mt-card-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--t1);
+}
+.mt-card-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: .6rem;
+  color: var(--t2);
+  margin-top: 2px;
+}
+.mt-card-status {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.mt-card-status.ok {
+  background: rgba(76,175,125,.16);
+  color: #6dd9a3;
+  border: 1px solid rgba(76,175,125,.3);
+}
+.mt-card-status.warn {
+  background: rgba(232,160,48,.16);
+  color: #ffd699;
+  border: 1px solid rgba(232,160,48,.3);
+}
+.mt-card-status.crit {
+  background: rgba(224,90,74,.16);
+  color: #ff8a82;
+  border: 1px solid rgba(224,90,74,.32);
+}
+.mt-card-bar {
+  height: 4px;
+  background: var(--surf2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.mt-card-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .3s ease;
+}
+.mt-card-bar-fill.ok { background: #4caf7d; }
+.mt-card-bar-fill.warn { background: #e8a030; }
+.mt-card-bar-fill.crit { background: #e05a4a; }
+.mt-card-detail {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t2);
+  display: flex;
+  justify-content: space-between;
+}
+
+.mt-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--t3);
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+}
+
+/* Maintenance log modal (record an intervention) */
+#mt-edit {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(3px);
+  z-index: 80;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#mt-edit.visible { display: flex; }
+@media (min-width: 600px) { #mt-edit { align-items: center; } }
+#hub-fuel .hub-cmp-launch {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(232,160,48,.16), rgba(232,160,48,.06));
+  border: 1px solid rgba(232,160,48,.3);
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: var(--am);
+  letter-spacing: .02em;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#hub-fuel .hub-cmp-launch:hover { filter: brightness(1.1); border-color: rgba(232,160,48,.5); }
+#hub-fuel .hub-cmp-launch:active { transform: scale(.99); }
+#hub-fuel .hub-cmp-launch[hidden] { display: none; }
+
+#hub-fuel #hub-cmp-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#hub-fuel #hub-cmp-overlay.visible { display: flex; }
+
+#hub-fuel .hub-cmp-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0;
+  gap: 10px;
+}
+#hub-fuel .hub-cmp-hdr h2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1rem;
+  color: var(--tx); letter-spacing: -.01em;
+}
+#hub-fuel .hub-cmp-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--mut);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+
+#hub-fuel .hub-cmp-tabs {
+  display: flex; gap: 6px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--brd);
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+#hub-fuel .hub-cmp-tabs::-webkit-scrollbar { display: none; }
+#hub-fuel .hub-cmp-tab {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf);
+  border: 1px solid var(--brd2);
+  color: var(--tx2);
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem; font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+#hub-fuel .hub-cmp-tab.on {
+  color: var(--am);
+  border-color: var(--am);
+  background: var(--am-d);
+}
+#hub-fuel .hub-cmp-tab .hub-cmp-tab-n {
+  font-size: .58rem;
+  margin-left: 4px;
+  opacity: .7;
+}
+
+#hub-fuel .hub-cmp-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+
+#hub-fuel .hub-cmp-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--mut);
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+}
+
+#hub-fuel .hub-cmp-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  transition: border-color .15s ease;
+}
+#hub-fuel .hub-cmp-row.hub-cmp-best {
+  background: linear-gradient(135deg, rgba(76,175,125,.08), rgba(76,175,125,.02));
+  border-color: rgba(76,175,125,.35);
+}
+#hub-fuel .hub-cmp-rank {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--surf2);
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem; font-weight: 600;
+  color: var(--tx2);
+}
+#hub-fuel .hub-cmp-row.hub-cmp-best .hub-cmp-rank {
+  background: var(--gn-d);
+  color: var(--gn);
+  font-size: .9rem;
+}
+#hub-fuel .hub-cmp-info { flex: 1; min-width: 0; }
+#hub-fuel .hub-cmp-row .hub-cmp-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: .85rem;
+  color: var(--tx); letter-spacing: -.01em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  margin-bottom: 2px;
+}
+#hub-fuel .hub-cmp-meta {
+  display: flex; gap: 8px; align-items: center;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem; color: var(--tx2);
+}
+#hub-fuel .hub-cmp-meta-tag {
+  background: rgba(255,255,255,.04);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+#hub-fuel .hub-cmp-price {
+  flex-shrink: 0;
+  text-align: right;
+  padding-left: 10px;
+  border-left: 1px solid var(--brd);
+}
+#hub-fuel .hub-cmp-price-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700; font-size: 1.05rem;
+  color: var(--tx); letter-spacing: -.01em;
+  line-height: 1;
+}
+#hub-fuel .hub-cmp-row.hub-cmp-best .hub-cmp-price-val { color: var(--gn); }
+#hub-fuel .hub-cmp-diff {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--rd);
+  margin-top: 3px;
+}
+#hub-fuel .hub-cmp-row.hub-cmp-best .hub-cmp-diff { color: var(--gn); }
+#hub-fuel .hub-cmp-date {
+  font-family: 'DM Mono', monospace;
+  font-size: .52rem;
+  color: var(--mut);
+  margin-top: 2px;
+}
+
+/* ── Hide pill when fullscreen modal views are open in fuel section ──
+   The pill duplicates UX inside fullscreen views (map/favorites/modals)
+   and steals space. We use both: native :has() (modern browsers) + a JS
+   class fallback (body[data-pill-hidden="1"]) for older WebKit. */
+body:has(#hub-fuel #map-view.visible) .hub-tabs,
+body:has(#hub-fuel #fav-view.visible) .hub-tabs,
+body:has(#hub-fuel #modal-overlay:not(.hidden)) .hub-tabs,
+body:has(#hub-fuel #fav-edit-overlay:not(.hidden)) .hub-tabs,
+body:has(#hub-fuel #hub-cmp-overlay.visible) .hub-tabs,
+body:has(#gar-overlay.visible) .hub-tabs,
+body:has(#gar-edit.visible) .hub-tabs,
+body:has(#fl-overlay.visible) .hub-tabs,
+body:has(#fl-edit.visible) .hub-tabs,
+body:has(#ps-overlay.visible) .hub-tabs,
+body:has(#ps-detail.visible) .hub-tabs,
+body:has(#rd-overlay.visible) .hub-tabs,
+body:has(#mt-overlay.visible) .hub-tabs,
+body:has(#mt-edit.visible) .hub-tabs,
+body:has(#rdl-overlay.visible) .hub-tabs,
+body:has(#rdl-detail.visible) .hub-tabs,
+body:has(#wp-overlay.visible) .hub-tabs,
+body:has(#tco-overlay.visible) .hub-tabs,
+body:has(#ms-overlay.visible) .hub-tabs,
+body[data-pill-hidden="1"] .hub-tabs {
+  opacity: 0;
+  transform: translateX(-50%) translateY(24px);
+  pointer-events: none;
+}
+.hub-tabs {
+  transition: opacity .22s ease, transform .22s ease;
+}
+

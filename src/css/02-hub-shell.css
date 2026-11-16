@@ -1,0 +1,90 @@
+
+/* ════════════════════════════════════════════════════════════════════
+   HUB SHELL — bottom tab bar + section routing
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB SHELL — bottom tab bar uniting Diagnosi + Carburanti
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── iOS notch / Dynamic Island safe area ──────────────────────
+   `viewport-fit=cover` is set in <meta>, so we MUST handle the top
+   inset everywhere a header or close button lives.
+   In standalone (PWA from home screen) iOS removes its own status bar
+   chrome, so we add a baseline minimum of ~50px to never overlap the
+   notch / clock / signal area. */
+:root { --hub-safe-top: env(safe-area-inset-top, 0px); }
+@media (display-mode: standalone) {
+  :root { --hub-safe-top: max(env(safe-area-inset-top, 0px), 50px); }
+}
+
+/* Section wraps */
+#hub-fuel header,
+#hub-diag .wrap > header,
+#hub-garage .garage-hdr {
+  padding-top: calc(14px + var(--hub-safe-top));
+}
+
+/* All fullscreen overlay headers */
+.gar-hdr, .fl-hdr, .mt-hdr, .ps-hdr, .rd-hdr, .rdl-hdr, .wp-hdr,
+#hub-cmp-overlay .hub-cmp-hdr {
+  padding-top: calc(14px + var(--hub-safe-top));
+}
+
+/* Fuel app's map view + favorites view headers — these are the bars that
+   sit at top:0 inside the fixed views. */
+#hub-fuel #map-view .map-header,
+#hub-fuel #fav-view .fav-view-hdr {
+  padding-top: calc(12px + var(--hub-safe-top));
+}
+
+/* Station detail modal — top sheet */
+#hub-fuel #modal-overlay > .modal,
+#hub-fuel #modal-overlay > div:first-child {
+  padding-top: calc(8px + var(--hub-safe-top));
+}
+
+
+/* Hide the diagnosis ::before grid when fuel section is active (it
+   would bleed through fuel's transparent areas) */
+body[data-hub="fuel"]::before { display: none !important; }
+
+/* Sections — only one visible at a time */
+.hub-section { display: none; }
+.hub-section.active { display: block; }
+
+/* Diagnosis section keeps its original wrap; we just wrap it for routing */
+#hub-diag, #hub-fuel, #hub-garage, #hub-usato { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); } /* spazio per la barra */
+
+/* The fuel app uses position:fixed map view; the pill auto-hides when these
+   open (see :has() rule below), so they can be true fullscreen — no padding. */
+#hub-fuel #map-view, #hub-fuel #fav-view { padding-bottom: 0; }
+
+/* (stili della barra di navigazione: vedi 11-nav.css) */
+/* Map controls can stay at their original bottom position — pill is hidden
+   when the map is open, so no risk of overlap. (No override needed.) */
+
+/* Brand row scrolls horizontally on the map (same behavior as fuel row),
+   instead of wrapping into multiple lines and stealing vertical space. */
+#hub-fuel #map-brow.bandiera-row {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 0;
+}
+#hub-fuel #map-brow.bandiera-row::-webkit-scrollbar { display: none; }
+#hub-fuel #map-brow .bfb { flex-shrink: 0; }
+
+/* Same horizontal-scroll behaviour for the HOME filter rows */
+#hub-fuel #frow.filter-row,
+#hub-fuel #brow.bandiera-row {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+#hub-fuel #frow.filter-row::-webkit-scrollbar,
+#hub-fuel #brow.bandiera-row::-webkit-scrollbar { display: none; }
+#hub-fuel #frow .fbtn,
+#hub-fuel #brow .bfb { flex-shrink: 0; }

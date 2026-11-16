@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="AutoHub">
+<meta name="autohub-build" content="2026-05-13-0551">
+<meta name="theme-color" content="#0b0b0d">
+<title>AutoHub · Carburanti, Garage, Usato, Diagnosi</title>
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEi0lEQVR4nMWXXYhVVRTHf2vvc7/GmTuj4zCZ0EMl+KQVlZGOPghFbyJoSNqH0FvRg4EUfqQFQfhQ+VSEYQSRTVA9aFGEWERYZEb14ps2fs3MnY/7MXfOPXuvHs6dcWa8595rDrRgcznn7rPXf6/9X/+9lgDoQYwcwl87vmZDJrAvRV4HnKdPFcMimAjeGoYDIz9MR+6d/mf++HHGp+iJbVa2f+auHFt7OJsxrwRWgmqoOK+L4XvWrBGyaSFyGlWn/Zsrdp8/oCe2WQEYOrb20J296QPXxmpeVRURIyCLCUBBUfUiIv1LU+byaHh45e7zB+Xqhw88EgT6k/fqnMeKJDvWhKAoYNqEq4pagzNGbBTJo4GK35tJGSlNeRGRxGW8QiYQGs0QoFpTaCNsIojzKrmMkZrzewOBjdXQIyI26SPnoTMrDBUiIgfG1Ldd916LlLuWp6g5RZWGIOeDEFsNPQIbA2CZ88mTnYfeLsOpcxV2Hb1CJfRYI7GjeEeEoeflLb28/mQvExWP0joSdZ/LgmaTvMY7//pcme1HLnP/PVl2rO+iHCpGYk5kU8Jfl0KOfD6CAK9uXUY11LYpnAhA62d+aTTiqXev8tCqLIN7VtLXbYmczguzFWF53vLW4AirV6bZsb6LsbLDSGPOzLVEoVEgMFCsespVz+7NPSzPG4YKNQolx0jRMVp0XJ9wlKqenRu7kLShWPWzTtMJpG0LwAwIIyAGqqESOUhZwRohMPVfGzspT8cE7MqZWSJeHotJ2wxEW1I7s2DThSQeZy9MkUsLo0XPwIGLfPVrka6cSVTWpiS8FXMO8h2G906O05cPeH5zN+Nlz0jRxYRN+K5tAKrzx03vgcjBg6tzvDE4ylAhIt9hMC1I0DaAlBUyqXjYObrrFTIpIZcWSlOeF5/o4eJIxP6PhyGoz21yr7UFQATGKo5/ChHjZYedsysP5FLC9ckIBCYqnn27+rhwJeSj78axLVjWEoBzkM8aXvt0hH2fxGIzd0MzzykLOKUrazj9S4mTv5XBCK1u9ZYAjIGpmrJ1XRcP35uhUlfBGVON8/36hOPoqTFO/13hy+Ml7ugJqISKc81VsSUAEQhryuP3LeHZx7qpFKObOJBLG/68OM0H309w/NtxNq3t5O3n+tiw/1Kz428PQIwCSlVPaSKKJXYBgI60Z3IqVsyBNUsY3LOC4UlHuRjRqrJpOwuMQFBXwYURCIwQ2DhST2/qpmeJpTKtvP/CCtatylGq6jzi/icAbZnAdE2pRUoqgJ0DeSqhEkaaqKKLC4Abkq0KY2UfH8HtkPB2rJUG3BIArxC5uFzXhe/9bIVzy9ZWGgJ0Zg2d3QHG0DANl066ljdmEoCCNY3rQgFqUZwB3/xeZqwUJQrRcNGhUVygtoPBGnCeQqBwJps2W0pTzs2tjIU4tPmc4e7+FF+cLTL4c7GpFHd2GLo7TMvjUFWXTVtbqvozTRuTmbKsUPJUQ8VaGt9scuNK7s/bpuq3sDFp2ZopkDIS9wItTImPIOG/xq1ZO81pUkvWyJJI2LQ5/T/b838BFFBhr8vWE6IAAAAASUVORK5CYII=">
+<link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFBklEQVR4nO3dvXXbWBSF0SutKUKpg8ldkiqYYlyBS1LuYFJ3YQcUJf6KAAEQeO/sHc5aliHP+fBAUbKfaiN+//z+Z+1r4HFeXt+e1r6GqqrVLsLgObRWEA/9TY2eIR4Zw+K/kdEzxdIxLPbBDZ85LRXC7B/U8FnS3CE8z/nBjJ+lzb2xWWoyfNYwx2kw+QQwftYyx/YmBWD8rG3qBu86QgyfLbrnkWj0CWD8bNU92xwVgPGzdWM3OjgA46cVY7Y66/sA0JpBAbj705qhm70ZgPHTqiHb/TIA46d1tzbsNQDRrgbg7k8vvtryxQCMn95c27RHIKKdBeDuT68ubdsJQLSjANz96d3pxp0ARBMA0T4C8PhDisOtOwGIJgCiPVd5/CHPfvNOAKIJgGgCINqT53+SOQGI9s/aF7BF//73/9qXcNWvH9/WvoSueAQ6sOXhnxLCPDwCvWtp/FXtXe9WCaDaHVOr170l8QG0PqLWr39t0QH0Mp5ePo81xAbQ22h6+3weJTKAXsfS6+e1pLgAeh9J75/f3KLeB7hnHFv4enur192CmBOg5RHdcx1OgmEiAmh5/HsiWEb3AfQw/j0RzK/rAHoa/54I5tV1AGNtffx7rVxnC7oNYOxdr7VRjb1ep8Bl3QYwRmvj32v1urckPoDWR9T69a8tOoBextPL57GG6ABAAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDR/O3QjHb4rdWtfx+SABjs0s8U7P9bqyF4BCKaAIJM+amwW7+21Z84E0CYVoe6FAEEEsEnAYQSwY4AgolAAPHSIxAA0REIgKrKjUAAfEiMQAAcSYtAAJxJikAAXJQSgQC4KiECAQTxj2ucE0AYERwTQKBWf3hlCQIIJYIdAQQTgQDipUcgAKIjEABVlRuBAPiQGIEAOJIWgQA4kxSBALgoJQIBcFVCBALgqp6/B2gv+i/HTfgffK+UPxsnAGdSxl8lAE4kjb9KABxIG3+VAHiXOP4qAVC5468SQLzk8VcJIFr6+KsEEMv4d6LfCOvprf4xgzb+T06AMPeMv6cbxSkBBDH+cwLgqt7HXyUArkgYf5UAuCBl/FUC4ETS+KsEwIG08VcJgHeJ468SAJU7/ioBxEsef5UAoqWPv0oAsYx/RwCBjP+TAMIY/zEBBJky/lu/ttWwBEC06B+IYZz9Xf7w26pbvfPvCYDRWh/9IY9ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANGeX17fnta+CFjDy+vbkxOAaNH/SN7hv3ZIJicA0Z6rds9Ca18IPNJ+804AogmAaB8BeAwixeHWuz0Bfv34tvYlbIo/j8u6DQCGOHvs+f3z+581LmRJyV/vd+c/dvqoH/FGmBFwzdkjkBfD9OrStr0GINrFAJwC9Obapq+eACKgF19t2SMQ0b4MwClA625t+OYJIAJaNWS7gx6BREBrhm7WawCiDQ7AKUArxmx11AkgArZu7EZHPwKJgK26Z5uTxtzjd47Snik35Ukvgp0GrG3qBid/FUgErGWO7c06Xo9EPMKcN91Z3wdwGrC0uTe22GCdBsxpqZvr4ndsITDF0k8VD31kEQNDPPJRerVndjFwaK3Xj5t50SqILFv5gslfyy6BfAIvJcwAAAAASUVORK5CYII=">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFBklEQVR4nO3dvXXbWBSF0SutKUKpg8ldkiqYYlyBS1LuYFJ3YQcUJf6KAAEQeO/sHc5aliHP+fBAUbKfaiN+//z+Z+1r4HFeXt+e1r6GqqrVLsLgObRWEA/9TY2eIR4Zw+K/kdEzxdIxLPbBDZ85LRXC7B/U8FnS3CE8z/nBjJ+lzb2xWWoyfNYwx2kw+QQwftYyx/YmBWD8rG3qBu86QgyfLbrnkWj0CWD8bNU92xwVgPGzdWM3OjgA46cVY7Y66/sA0JpBAbj705qhm70ZgPHTqiHb/TIA46d1tzbsNQDRrgbg7k8vvtryxQCMn95c27RHIKKdBeDuT68ubdsJQLSjANz96d3pxp0ARBMA0T4C8PhDisOtOwGIJgCiPVd5/CHPfvNOAKIJgGgCINqT53+SOQGI9s/aF7BF//73/9qXcNWvH9/WvoSueAQ6sOXhnxLCPDwCvWtp/FXtXe9WCaDaHVOr170l8QG0PqLWr39t0QH0Mp5ePo81xAbQ22h6+3weJTKAXsfS6+e1pLgAeh9J75/f3KLeB7hnHFv4enur192CmBOg5RHdcx1OgmEiAmh5/HsiWEb3AfQw/j0RzK/rAHoa/54I5tV1AGNtffx7rVxnC7oNYOxdr7VRjb1ep8Bl3QYwRmvj32v1urckPoDWR9T69a8tOoBextPL57GG6ABAAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDR/O3QjHb4rdWtfx+SABjs0s8U7P9bqyF4BCKaAIJM+amwW7+21Z84E0CYVoe6FAEEEsEnAYQSwY4AgolAAPHSIxAA0REIgKrKjUAAfEiMQAAcSYtAAJxJikAAXJQSgQC4KiECAQTxj2ucE0AYERwTQKBWf3hlCQIIJYIdAQQTgQDipUcgAKIjEABVlRuBAPiQGIEAOJIWgQA4kxSBALgoJQIBcFVCBALgqp6/B2gv+i/HTfgffK+UPxsnAGdSxl8lAE4kjb9KABxIG3+VAHiXOP4qAVC5468SQLzk8VcJIFr6+KsEEMv4d6LfCOvprf4xgzb+T06AMPeMv6cbxSkBBDH+cwLgqt7HXyUArkgYf5UAuCBl/FUC4ETS+KsEwIG08VcJgHeJ468SAJU7/ioBxEsef5UAoqWPv0oAsYx/RwCBjP+TAMIY/zEBBJky/lu/ttWwBEC06B+IYZz9Xf7w26pbvfPvCYDRWh/9IY9ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANGeX17fnta+CFjDy+vbkxOAaNH/SN7hv3ZIJicA0Z6rds9Ca18IPNJ+804AogmAaB8BeAwixeHWuz0Bfv34tvYlbIo/j8u6DQCGOHvs+f3z+581LmRJyV/vd+c/dvqoH/FGmBFwzdkjkBfD9OrStr0GINrFAJwC9Obapq+eACKgF19t2SMQ0b4MwClA625t+OYJIAJaNWS7gx6BREBrhm7WawCiDQ7AKUArxmx11AkgArZu7EZHPwKJgK26Z5uTxtzjd47Snik35Ukvgp0GrG3qBid/FUgErGWO7c06Xo9EPMKcN91Z3wdwGrC0uTe22GCdBsxpqZvr4ndsITDF0k8VD31kEQNDPPJRerVndjFwaK3Xj5t50SqILFv5gslfyy6BfAIvJcwAAAAASUVORK5CYII=">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFBklEQVR4nO3dvXXbWBSF0SutKUKpg8ldkiqYYlyBS1LuYFJ3YQcUJf6KAAEQeO/sHc5aliHP+fBAUbKfaiN+//z+Z+1r4HFeXt+e1r6GqqrVLsLgObRWEA/9TY2eIR4Zw+K/kdEzxdIxLPbBDZ85LRXC7B/U8FnS3CE8z/nBjJ+lzb2xWWoyfNYwx2kw+QQwftYyx/YmBWD8rG3qBu86QgyfLbrnkWj0CWD8bNU92xwVgPGzdWM3OjgA46cVY7Y66/sA0JpBAbj705qhm70ZgPHTqiHb/TIA46d1tzbsNQDRrgbg7k8vvtryxQCMn95c27RHIKKdBeDuT68ubdsJQLSjANz96d3pxp0ARBMA0T4C8PhDisOtOwGIJgCiPVd5/CHPfvNOAKIJgGgCINqT53+SOQGI9s/aF7BF//73/9qXcNWvH9/WvoSueAQ6sOXhnxLCPDwCvWtp/FXtXe9WCaDaHVOr170l8QG0PqLWr39t0QH0Mp5ePo81xAbQ22h6+3weJTKAXsfS6+e1pLgAeh9J75/f3KLeB7hnHFv4enur192CmBOg5RHdcx1OgmEiAmh5/HsiWEb3AfQw/j0RzK/rAHoa/54I5tV1AGNtffx7rVxnC7oNYOxdr7VRjb1ep8Bl3QYwRmvj32v1urckPoDWR9T69a8tOoBextPL57GG6ABAAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDR/O3QjHb4rdWtfx+SABjs0s8U7P9bqyF4BCKaAIJM+amwW7+21Z84E0CYVoe6FAEEEsEnAYQSwY4AgolAAPHSIxAA0REIgKrKjUAAfEiMQAAcSYtAAJxJikAAXJQSgQC4KiECAQTxj2ucE0AYERwTQKBWf3hlCQIIJYIdAQQTgQDipUcgAKIjEABVlRuBAPiQGIEAOJIWgQA4kxSBALgoJQIBcFVCBALgqp6/B2gv+i/HTfgffK+UPxsnAGdSxl8lAE4kjb9KABxIG3+VAHiXOP4qAVC5468SQLzk8VcJIFr6+KsEEMv4d6LfCOvprf4xgzb+T06AMPeMv6cbxSkBBDH+cwLgqt7HXyUArkgYf5UAuCBl/FUC4ETS+KsEwIG08VcJgHeJ468SAJU7/ioBxEsef5UAoqWPv0oAsYx/RwCBjP+TAMIY/zEBBJky/lu/ttWwBEC06B+IYZz9Xf7w26pbvfPvCYDRWh/9IY9ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANGeX17fnta+CFjDy+vbkxOAaNH/SN7hv3ZIJicA0Z6rds9Ca18IPNJ+804AogmAaB8BeAwixeHWuz0Bfv34tvYlbIo/j8u6DQCGOHvs+f3z+581LmRJyV/vd+c/dvqoH/FGmBFwzdkjkBfD9OrStr0GINrFAJwC9Obapq+eACKgF19t2SMQ0b4MwClA625t+OYJIAJaNWS7gx6BREBrhm7WawCiDQ7AKUArxmx11AkgArZu7EZHPwKJgK26Z5uTxtzjd47Snik35Ukvgp0GrG3qBid/FUgErGWO7c06Xo9EPMKcN91Z3wdwGrC0uTe22GCdBsxpqZvr4ndsITDF0k8VD31kEQNDPPJRerVndjFwaK3Xj5t50SqILFv5gslfyy6BfAIvJcwAAAAASUVORK5CYII=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+/*@CSS@*/</style>
+</head>
+<body data-hub="fuel">
+
+<!-- ═══ BARRA DI NAVIGAZIONE: 4 sezioni + "Altro" (strumenti, tema, backup) ═══ -->
+<nav class="hub-tabs" role="tablist" aria-label="Sezioni AutoHub">
+  <button class="hub-tab hub-tab-fuel" id="hub-tab-fuel" data-hub="fuel" onclick="hubGo('fuel')" role="tab" aria-selected="false">
+    <svg class="hub-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h12"/><path d="M4 11h10"/><path d="M14 8h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V9l-3-3"/></svg><span class="hub-lbl">Carburanti</span>
+  </button>
+  <button class="hub-tab hub-tab-garage" id="hub-tab-garage" data-hub="garage" onclick="hubGo('garage')" role="tab" aria-selected="false">
+    <svg class="hub-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14v-5l-2-5H7l-2 5z"/><path d="M5 12h14"/><circle cx="8" cy="17" r="1.7"/><circle cx="16" cy="17" r="1.7"/></svg><span class="hub-lbl">Garage</span>
+  </button>
+  <button class="hub-tab hub-tab-usato" id="hub-tab-usato" data-hub="usato" onclick="hubGo('usato')" role="tab" aria-selected="false">
+    <svg class="hub-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/><path d="M8.5 11h5M11 8.5v5"/></svg><span class="hub-lbl">Usato</span>
+  </button>
+  <button class="hub-tab hub-tab-diag" id="hub-tab-diag" data-hub="diag" onclick="hubGo('diag')" role="tab" aria-selected="false">
+    <svg class="hub-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.2 5.2L3 18l3 3 6.5-6.5a4 4 0 0 0 5.2-5.2l-2.5 2.5-2.2-.6-.6-2.2z"/></svg><span class="hub-lbl">Diagnosi</span>
+  </button>
+  <button class="hub-tab hub-tab-more" id="hub-tab-more" onclick="hubMore()" aria-haspopup="dialog" aria-expanded="false">
+    <svg class="hub-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><span class="hub-lbl">Altro</span>
+  </button>
+</nav>
+
+<!-- ═══ FOGLIO "ALTRO" ═══════════════════════════════════════════ -->
+<div id="hub-more" class="hub-more" role="dialog" aria-label="Altri strumenti" onclick="if(event.target===this)hubMore(false)">
+  <div class="hub-more-sheet">
+    <div class="hub-more-grip" aria-hidden="true"></div>
+    <div class="hub-more-h">Strumenti</div>
+    <div class="hub-more-grid">
+      <button onclick="hubGo('passi')"><span aria-hidden="true">⛰</span>Passi alpini</button>
+      <button onclick="hubGo('ride')"><span aria-hidden="true">🏁</span>Modalità Ride</button>
+      <button onclick="hubGo('meteo')"><span aria-hidden="true">🌦</span>Meteo percorso</button>
+      <button onclick="hubGo('ms')"><span aria-hidden="true">🏆</span>Motorsport</button>
+    </div>
+    <div class="hub-more-h">Impostazioni e dati</div>
+    <div class="hub-more-list">
+      <button onclick="hubToggleTheme()">Tema della Diagnosi <b id="hub-more-theme">Scuro</b></button>
+      <button onclick="hubExportData()">Esporta backup <b>file .json</b></button>
+      <button onclick="document.getElementById('hub-import-file').click()">Ripristina backup <b>da file</b></button>
+      <input type="file" id="hub-import-file" accept="application/json,.json" hidden onchange="hubImportData(this)">
+    </div>
+    <div class="hub-more-foot">AutoHub · <span id="hub-more-build"></span></div>
+  </div>
+</div>
+
+
+<!-- ═══ SECTION: DIAGNOSI ═════════════════════════════════════════ -->
+<section id="hub-diag" class="hub-section" role="tabpanel" aria-labelledby="hub-tab-diag">
+<div class="wrap">
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24"><path d="M19 17H5v-1.26A2 2 0 0 1 3 14v-3a9 9 0 0 1 18 0v3a2 2 0 0 1-2 1.74V17zm-2 2H7v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1zM7.5 10a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm9 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg>
+  </div>
+  <div>
+    <h1>AutoDiagnosi</h1>
+    <p>Diagnosi · VIN · Confronto · Promemoria</p>
+  </div>
+</header>
+
+<!-- ══ TOP NAV ══════════════════════════════════════════════════════════════ -->
+<nav class="top">
+  <button class="nav-btn active" data-view="analisi"    onclick="switchView('analisi')">⚙ Analisi</button>
+  <button class="nav-btn"        data-view="vin"        onclick="switchView('vin')">🔑 Decoder VIN</button>
+  <button class="nav-btn"        data-view="confronto"  onclick="switchView('confronto')">⚖ Confronto</button>
+  <button class="nav-btn"        data-view="promemoria" onclick="switchView('promemoria')">📅 Promemoria</button>
+  <button class="nav-btn"        data-view="diario"    onclick="switchView('diario')">📓 Diario</button>
+  <button class="nav-btn"        data-view="obd-scan"  onclick="switchView('obd-scan')">🔌 OBD Live</button>
+</nav>
+
+<!-- ══ VIEW: ANALISI ════════════════════════════════════════════════════════ -->
+<div class="view active" id="view-analisi">
+
+  <div class="panel p-red">
+    <div class="plabel">// Seleziona il veicolo</div>
+    <div class="type-toggle">
+      <button class="type-btn active" id="type-auto" onclick="setVehicleMode('auto')">🚗 Automobile</button>
+      <button class="type-btn" id="type-moto" onclick="setVehicleMode('moto')">🏍 Motocicletta</button>
+    </div>
+    <div class="moto-hint" id="moto-hint">
+      ℹ Stai analizzando una motocicletta — la manutenzione include catena, valvole e check specifici moto
+    </div>
+    <div class="grid4">
+      <div class="fg">
+        <label>Marca</label>
+        <div class="sw">
+          <span class="si">⌕</span>
+          <input class="si-input" id="search-marca" placeholder="Cerca marca…" autocomplete="off"
+            oninput="filterSearch('marca')" onfocus="openDropdown('marca')" onblur="closeDropdown('marca')">
+          <div class="sd" id="drop-marca"></div>
+        </div>
+        <input type="hidden" id="sel-marca">
+      </div>
+      <div class="fg">
+        <label>Modello</label>
+        <div class="sw">
+          <span class="si">⌕</span>
+          <input class="si-input" id="search-modello" placeholder="Prima seleziona marca" autocomplete="off"
+            oninput="filterSearch('modello')" onfocus="openDropdown('modello')" onblur="closeDropdown('modello')" disabled>
+          <div class="sd" id="drop-modello"></div>
+        </div>
+        <input type="hidden" id="sel-modello">
+      </div>
+      <div class="fg">
+        <label>Anno</label>
+        <select id="sel-anno" onchange="updateMotori()">
+          <option value="">— Anno —</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Motorizzazione</label>
+        <select id="sel-motore">
+          <option value="">— Motore —</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-red" id="btn-analisi" onclick="avviaDiagnosi()">⚙ ANALIZZA PROBLEMI NOTI</button>
+  </div>
+
+  <div id="vehicle-bar"></div>
+
+  <div id="filter-bar">
+    <span class="flabel">Filtra:</span>
+    <button class="fbtn fa" data-sev="all"   onclick="applyFilter('all')">Tutti</button>
+    <button class="fbtn"    data-sev="alta"   onclick="applyFilter('alta')">🔴 Alta</button>
+    <button class="fbtn"    data-sev="media"  onclick="applyFilter('media')">🟡 Media</button>
+    <button class="fbtn"    data-sev="bassa"  onclick="applyFilter('bassa')">🟢 Bassa</button>
+  </div>
+
+  <div id="tabs">
+    <button class="tab-btn active" data-tab="problemi"     onclick="switchTab('problemi')">⚙ Problemi</button>
+    <button class="tab-btn"        data-tab="stats"        onclick="switchTab('stats')">📊 Statistiche</button>
+    <button class="tab-btn"        data-tab="manutenzione" onclick="switchTab('manutenzione')">🔧 Manutenzione</button>
+    <button class="tab-btn"        data-tab="checklist"    onclick="switchTab('checklist')">✓ Checklist</button>
+    <button class="tab-btn"        data-tab="domande"      onclick="switchTab('domande')">💬 Domande</button>
+    <button class="tab-btn"        data-tab="tecnico"      onclick="switchTab('tecnico')">📐 Tecnico</button>
+    <button class="tab-btn"        data-tab="scheda"       onclick="switchTab('scheda')">📋 Scheda</button>
+    <button class="tab-btn"        data-tab="obd"          onclick="switchTab('obd')">🔍 OBD</button>
+    <button class="tab-btn"        data-tab="extra"        onclick="switchTab('extra')">ℹ Extra</button>
+  </div>
+
+  <div class="loading" id="loading"><div class="spin"></div><p id="load-msg">Caricamento…</p></div>
+  <div class="ebox" id="error-box"><span>⚠</span><span id="error-msg">Errore.</span></div>
+  <div id="results"></div>
+
+</div><!-- /view-analisi -->
+
+<!-- ══ VIEW: VIN ════════════════════════════════════════════════════════════ -->
+<div class="view" id="view-vin">
+  <div class="panel p-blue">
+    <div class="plabel plabel-blue">// Decodifica numero di telaio (VIN)</div>
+    <p class="hint">Il VIN è un codice di 17 caratteri che identifica univocamente il veicolo. Lo trovi sul parabrezza (angolo inferiore sinistro), sul libretto di circolazione o sul montante porta.</p>
+    <div class="vin-row">
+      <input class="vin-in" id="vin-input" maxlength="17" placeholder="Es: WBA3A5109DF123456"
+        oninput="this.value=this.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g,'')"
+        onkeydown="if(event.key==='Enter')decodeVIN()">
+      <button class="btn btn-blue" onclick="decodeVIN()">🔍 DECODIFICA</button>
+    </div>
+    <div class="vin-err" id="vin-error">VIN non valido — 17 caratteri alfanumerici (no I, O, Q)</div>
+    <div class="vin-res" id="vin-result">
+      <div class="vin-chars" id="vin-chars"></div>
+      <div class="vin-grid" id="vin-grid"></div>
+      <button class="btn-link btn-link-blue" onclick="gotoAnalisiFromVIN()">⚙ Apri Analisi per questo veicolo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VIEW: CONFRONTO ══════════════════════════════════════════════════════ -->
+<div class="view" id="view-confronto">
+  <div class="cg2">
+    <div class="cp ca">
+      <div class="cplb">// Veicolo A</div>
+      <div class="cps" id="compare-selectors-a"></div>
+    </div>
+    <div class="cp cb3">
+      <div class="cplb">// Veicolo B</div>
+      <div class="cps" id="compare-selectors-b"></div>
+    </div>
+  </div>
+  <button class="btn btn-grad" style="margin-bottom:18px" onclick="avviaConfronto()">⚖ CONFRONTA VEICOLI</button>
+  <div class="cres" id="compare-results"></div>
+</div>
+
+<!-- ══ VIEW: PROMEMORIA ═════════════════════════════════════════════════════ -->
+<div class="view" id="view-promemoria">
+  <div class="panel p-grn">
+    <div class="plabel plabel-grn">// Promemoria manutenzione</div>
+    <p class="hint">Seleziona il veicolo e inserisci il chilometraggio attuale. L'app calcola quando è prevista ogni operazione e salva i dati nel browser.</p>
+    <div class="grid3">
+      <div class="fg">
+        <label>Marca</label>
+        <div class="sw">
+          <span class="si">⌕</span>
+          <input class="si-input" id="search-rem-marca" placeholder="Cerca marca…" autocomplete="off"
+            oninput="filterSearchRem()" onfocus="openDropdownRem()" onblur="closeDropdownRem()">
+          <div class="sd" id="drop-rem-marca"></div>
+        </div>
+        <input type="hidden" id="sel-rem-marca">
+      </div>
+      <div class="fg">
+        <label>Modello · Anno · Motore</label>
+        <select id="sel-rem-combo"><option value="">— Seleziona prima la marca —</option></select>
+      </div>
+      <div class="fg">
+        <label>Km attuali</label>
+        <input class="si-input" id="km-input" type="number" min="0" max="999999"
+          placeholder="Es: 85000" step="1000" style="padding-left:10px">
+      </div>
+    </div>
+    <button class="btn btn-grn" onclick="calcolaPromemoria()">📅 CALCOLA SCADENZE</button>
+  </div>
+  <div class="rem-saved" id="reminder-saved">✓ Dati salvati nel browser</div>
+  <div class="rcards" id="reminder-cards"></div>
+</div>
+
+  <!-- ══ VIEW: OBD LIVE ══════════════════════════════════════════════════════ -->
+  <div class="view" id="view-obd-scan">
+
+    <div class="obd-compat">
+      <strong>⚠ Compatibilità:</strong> richiede Chrome o Edge su <strong>desktop o Android</strong>.
+      Safari e Firefox non supportano Web Bluetooth. Serve un dongle OBD-II Bluetooth LE (BLE)
+      ELM327 (~10–20€ su Amazon — cerca "OBD2 BLE ELM327").
+    </div>
+
+    <!-- Connect bar -->
+    <div class="obd-connect-bar">
+      <div id="obd-status" style="color:var(--t3)">📡 Non connesso</div>
+      <button class="btn btn-blue" id="obd-btn-connect" onclick="obdConnect()" style="font-size:.85rem;padding:9px 16px">
+        🔌 CONNETTI OBD
+      </button>
+      <button class="btn btn-outline" id="obd-btn-disconnect" onclick="obdDisconnect()" style="display:none">
+        ✕ Disconnetti
+      </button>
+    </div>
+
+    <!-- Controls -->
+    <div class="obd-controls" id="obd-controls">
+      <button class="btn btn-grn"     onclick="obdStartLive()"  style="font-size:.85rem;padding:9px 16px">▶ LIVE</button>
+      <button class="btn btn-outline" onclick="obdStopLive()"   style="font-size:.85rem;padding:9px 16px">⏹ Stop</button>
+      <button class="btn btn-outline" onclick="obdReadDTC()"    style="font-size:.85rem;padding:9px 16px;color:var(--warn);border-color:rgba(245,158,11,.4)">🔍 Leggi errori</button>
+      <button class="btn btn-outline" onclick="obdReadFreeze()" style="font-size:.85rem;padding:9px 16px">❄ Freeze Frame</button>
+      <button class="btn btn-outline" onclick="obdClearDTC()"   style="font-size:.85rem;padding:9px 16px;color:var(--err);border-color:rgba(239,68,68,.3)">🗑 Cancella errori</button>
+    </div>
+
+    <!-- Live panel -->
+    <div id="obd-panel-live">
+      <div class="shd">// Dati in tempo reale</div>
+      <div class="obd-live-grid" id="obd-live-grid">
+        <!-- Cards generate here -->
+      </div>
+    </div>
+
+    <!-- DTC panel -->
+    <div class="panel p-red" style="margin-top:4px">
+      <div class="plabel">// Codici di errore (DTC)</div>
+      <div class="obd-dtc-status" id="obd-dtc-status"></div>
+      <div id="obd-dtc-list">
+        <div style="color:var(--t3);font-size:.82rem;line-height:1.65">
+          Connetti un adattatore OBD e premi <strong style="color:var(--t1)">Leggi errori</strong>
+          per vedere i codici di guasto presenti in centralina.<br>
+          Puoi anche premere <strong style="color:var(--t1)">LIVE</strong> per monitorare
+          RPM, temperatura, velocità e altri parametri in tempo reale.
+        </div>
+      </div>
+    </div>
+
+    <!-- How-to -->
+    <div class="panel" style="margin-top:4px">
+      <div class="plabel">// Come si usa</div>
+      <div style="font-size:.83rem;color:var(--t2);line-height:1.8">
+        <strong style="color:var(--t1)">1.</strong> Acquista un dongle OBD-II Bluetooth LE (BLE) ELM327
+        — cerca su Amazon "OBD2 BLE ELM327", preferibilmente marca KONNWEI, Viecar o Veepeak (~15€)<br>
+        <strong style="color:var(--t1)">2.</strong> Inseriscilo nella presa OBD della tua auto
+        (sotto al cruscotto lato guida, spesso vicino al volante)<br>
+        <strong style="color:var(--t1)">3.</strong> Accendi il quadro (posizione MAR, motore non necessario)<br>
+        <strong style="color:var(--t1)">4.</strong> Apri questa pagina in <strong style="color:var(--t1)">Chrome o Edge</strong> e premi <strong style="color:var(--t1)">Connetti OBD</strong><br>
+        <strong style="color:var(--t1)">5.</strong> Seleziona il dispositivo dalla lista Bluetooth del browser<br>
+        <strong style="color:var(--t1)">6.</strong> Usa <strong style="color:var(--t1)">LIVE</strong> per dati in tempo reale o <strong style="color:var(--t1)">Leggi errori</strong> per i DTC
+      </div>
+    </div>
+
+  </div><!-- /view-obd-scan -->
+
+
+  <!-- ══ VIEW: DIARIO ════════════════════════════════════════════════════════ -->
+  <div class="view" id="view-diario">
+    <div class="diary-layout">
+      <div class="diary-sidebar">
+        <div class="diary-car-select panel p-grn">
+          <div class="plabel plabel-grn">// Veicolo</div>
+          <div class="fg">
+            <label>Targa / Nome</label>
+            <input class="diary-input" id="diary-car-name" placeholder="Es: Giulia AB123CD"
+              oninput="diaryRender()" style="margin-bottom:8px">
+          </div>
+          <div class="fg" style="margin-top:8px">
+            <label>Km iniziali (al primo inserimento)</label>
+            <input class="diary-input" id="diary-km-start" type="number" placeholder="Es: 80000"
+              oninput="diaryUpdateStats()">
+          </div>
+        </div>
+        <div class="diary-stats-mini">
+          <div class="dsm"><div class="dsm-lb">Spesa totale</div><div class="dsm-v" id="ds-total">€0</div></div>
+          <div class="dsm"><div class="dsm-lb">Interventi</div><div class="dsm-v" id="ds-count">0</div></div>
+          <div class="dsm"><div class="dsm-lb">Costo/km</div><div class="dsm-v" id="ds-cpkm">—</div></div>
+          <div class="dsm"><div class="dsm-lb">Anno corrente</div><div class="dsm-v" id="ds-year">€0</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="diary-form">
+          <div class="plabel plabel-grn">// Aggiungi intervento</div>
+          <div class="diary-type-pills" id="diary-type-pills"></div>
+          <div class="diary-form-grid">
+            <div class="fg"><label>Titolo / descrizione</label>
+              <input class="diary-input" id="di-title" placeholder="Es: Tagliando 90.000 km"></div>
+            <div class="fg"><label>Data</label>
+              <input class="diary-input" id="di-date" type="date"></div>
+            <div class="fg"><label>Costo (€)</label>
+              <input class="diary-input" id="di-cost" type="number" placeholder="0" step="0.01" min="0"></div>
+            <div class="fg"><label>Km odometro</label>
+              <input class="diary-input" id="di-km" type="number" placeholder="Es: 87500"></div>
+            <div class="fg" style="grid-column:1/-1"><label>Note aggiuntive</label>
+              <input class="diary-input" id="di-notes" placeholder="Officina, ricambi, garanzia…"></div>
+          </div>
+          <div id="di-fuel-extra" style="display:none">
+            <div class="diary-form-grid" style="margin-top:-4px;margin-bottom:10px">
+              <div class="fg"><label>Litri riforniti</label>
+                <input class="diary-input" id="di-liters" type="number" placeholder="Es: 45.2" step="0.1"></div>
+              <div class="fg"><label>€/litro</label>
+                <input class="diary-input" id="di-ppl" type="number" placeholder="Es: 1.82" step="0.001"></div>
+            </div>
+          </div>
+          <button class="btn btn-grn" onclick="diaryAdd()" style="width:100%;font-size:.95rem">+ AGGIUNGI</button>
+        </div>
+        <div class="diary-actions">
+          <button class="btn-outline" onclick="diaryExportCSV()">📤 Esporta CSV</button>
+          <button class="btn-outline" onclick="diaryClear()" style="color:var(--err);border-color:rgba(239,68,68,.3)">🗑 Cancella tutto</button>
+          <div style="margin-left:auto;font-family:var(--mono);font-size:.62rem;color:var(--t3);display:flex;align-items:center">
+            💾 Dati salvati nel browser
+          </div>
+        </div>
+        <div class="diary-charts" id="diary-charts" style="display:none"></div>
+        <div id="diary-list"></div>
+      </div>
+    </div>
+  </div><!-- /view-diario -->
+
+
+
+
+<div class="disc"><strong>NOTA:</strong> Informazioni generate da AI a scopo informativo. Consultare sempre un meccanico qualificato per diagnosi e riparazioni. I costi sono stime indicative.</div>
+
+</div><!-- /wrap -->
+</section>
+
+<!-- ═══ SECTION: GARAGE (vehicles, fuel log, maintenance) ═══════════ -->
+<section id="hub-garage" class="hub-section" role="tabpanel" aria-labelledby="hub-tab-garage">
+<div class="wrap garage-wrap">
+  <header class="garage-hdr">
+    <div class="garage-title">
+      <span class="garage-title-icon">🏎</span>
+      <div>
+        <h1>IL MIO GARAGE</h1>
+        <small>Veicoli · Consumi · Manutenzione</small>
+      </div>
+    </div>
+  </header>
+  <main class="garage-main">
+    <div id="garage-showroom-slot"></div>
+    <div id="garage-launch-slot"></div>
+  </main>
+</div>
+</section>
+
+<!-- ═══ SECTION: USATO ═══════════════════════════════════════════ -->
+<section id="hub-usato" class="hub-section" role="tabpanel" aria-labelledby="hub-tab-usato">
+<div class="us-wrap">
+  <header class="us-hdr">
+    <span class="us-hdr-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/><path d="M8.5 11h5M11 8.5v5"/></svg></span>
+    <div>
+      <h1>USATO</h1>
+      <small>Ricerche · Annunci · Confronto</small>
+    </div>
+  </header>
+  <main id="usato-root"></main>
+</div>
+</section>
+
+<!-- Usato: scheda annuncio -->
+<div id="us-detail" class="us-ov" role="dialog" aria-label="Scheda annuncio">
+  <div class="us-ov-hdr"><span>Scheda annuncio</span><button data-act="close-detail">× Chiudi</button></div>
+  <div class="us-ov-body" id="us-detail-body"></div>
+</div>
+<!-- Usato: form annuncio / ricerca -->
+<div id="us-edit" class="us-ov" role="dialog" aria-labelledby="us-edit-title">
+  <div class="us-ov-hdr"><span id="us-edit-title">Nuovo annuncio</span><button data-act="close-edit">× Chiudi</button></div>
+  <div class="us-ov-body" id="us-edit-body"></div>
+</div>
+<!-- Usato: import dei risultati di Claude -->
+<div id="us-import" class="us-ov" role="dialog" aria-label="Importa da Claude">
+  <div class="us-ov-hdr"><span>Importa da Claude</span><button data-act="close-import">× Chiudi</button></div>
+  <div class="us-ov-body">
+    <p class="us-fine">Incolla qui il blocco JSON che Claude aggiunge alla fine della ricerca (lo ottieni con "Copia richiesta per Claude" in Ricerche). Gli annunci con un link già salvato vengono saltati.</p>
+    <textarea id="us-import-text" rows="12" placeholder='[{"titolo":"Fiat Panda 1.2","prezzo":2500,"km":120000, …}]'></textarea>
+    <div class="us-bar"><button class="us-btn us-pri" data-act="do-import">Importa annunci</button></div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: CARBURANTI ═══════════════════════════════════════ -->
+<section id="hub-fuel" class="hub-section active" role="tabpanel" aria-labelledby="hub-tab-fuel">
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-logo">
+    <div class="ld-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d0e0f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 22V4a2 2 0 012-2h6a2 2 0 012 2v18"/><path d="M5 12h10"/>
+        <path d="M15 7l4 4-4 4"/><path d="M19 7v8"/>
+      </svg>
+    </div>
+    <h2>OsservaPrezzi</h2>
+  </div>
+  <div class="ld-bar-w"><div class="ld-bar" id="lbar"></div></div>
+  <div class="ld-msg" id="lmsg">Carico dati…</div>
+  <div class="ld-err" id="lerr"></div>
+  <button class="btn-retry" id="lretry" onclick="loadMedie()">↻ Riprova</button>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="f-logo">
+      <div class="h-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d0e0f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 22V4a2 2 0 012-2h6a2 2 0 012 2v18"/><path d="M5 12h10"/>
+          <path d="M15 7l4 4-4 4"/><path d="M19 7v8"/>
+        </svg>
+      </div>
+      <div><h1>OsservaPrezzi <small>Carburanti</small></h1></div>
+    </div>
+    <div class="hdr-r">
+      <span class="data-badge" id="data-badge">—</span>
+      <span class="ts-badge" id="ts-badge">—</span>
+      <button class="btn-xs" id="btn-open-favs" onclick="openFavView()" title="Preferiti">★<span id="fav-hdr-count" style="font-size:0.6rem;vertical-align:super;line-height:0"></span></button>
+      <button class="btn-xs" onclick="openMapView()">🗺 Mappa</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero-slot" id="hero-slot"></div>
+    <div class="home-error" id="home-error" onclick="loadMedie()">—</div>
+    <div class="sect">Medie nazionali <span class="tag tag-src">MIMIT live</span></div>
+    <div class="cards-grid">
+      <div class="card c-bz">
+        <div class="clabel">Benzina</div>
+        <div class="cprice" id="avg-bz">—</div>
+        <div class="cunit">€/litro</div>
+        <div class="cmode">
+          <span class="mb mb-s" id="s-bz">self —</span>
+          <span class="mb mb-v" id="v-bz">serv. —</span>
+        </div>
+      </div>
+      <div class="card c-go">
+        <div class="clabel">Diesel</div>
+        <div class="cprice" id="avg-go">—</div>
+        <div class="cunit">€/litro</div>
+        <div class="cmode">
+          <span class="mb mb-s" id="s-go">self —</span>
+          <span class="mb mb-v" id="v-go">serv. —</span>
+        </div>
+      </div>
+      <div class="card c-gpl">
+        <div class="clabel">GPL</div>
+        <div class="cprice" id="avg-gpl">—</div>
+        <div class="cunit">€/litro</div>
+        <div class="cmode">
+          <span class="mb mb-s" id="s-gpl">self —</span>
+          <span class="mb mb-v" id="v-gpl">serv. —</span>
+        </div>
+      </div>
+      <div class="card c-met">
+        <div class="clabel">Metano</div>
+        <div class="cprice" id="avg-met">—</div>
+        <div class="cunit">€/kg</div>
+        <div class="cmode">
+          <span class="mb mb-s" id="s-met">self —</span>
+          <span class="mb mb-v" id="v-met">serv. —</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPDATE BAR -->
+    <div class="update-bar" id="update-bar">
+      <div class="update-col">
+        <div class="update-label">Ultimo aggiornamento dati</div>
+        <div class="update-val" id="last-update">—</div>
+      </div>
+      <div class="update-divider"></div>
+      <div class="update-col">
+        <div class="update-label">Prossimo aggiornamento</div>
+        <div class="update-val" id="next-update">—</div>
+      </div>
+      <div class="update-divider"></div>
+      <div class="update-col">
+        <div class="update-label">Fonte</div>
+        <div class="update-val" style="color:var(--mut)">MIMIT · ogni 4 ore</div>
+      </div>
+    </div>
+
+    <!-- NEW DATA BANNER -->
+    <div class="new-data-banner hidden" id="new-data-banner">
+      <div class="banner-text">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Nuovi dati disponibili
+      </div>
+      <button class="btn-refresh" onclick="doRefresh()">↻ Aggiorna ora</button>
+    </div>
+
+    <div class="sect">Cerca impianti</div>
+    <div class="search-box">
+      <div class="search-wrap">
+        <input type="text" id="qinput" placeholder="Comune o CAP — es. Abbiategrasso, 20081…" autocomplete="off" autocorrect="off" autocapitalize="words" inputmode="text" />
+      </div>
+      <button class="btn-go" id="sbtn" onclick="doSearch()">Cerca</button>
+      <button class="btn-gps" id="gps-btn" onclick="doGPS()" title="Usa la mia posizione">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7" stroke-dasharray="2 2" opacity=".4"/></svg>
+        Vicino a me
+      </button>
+    </div>
+    <div class="gps-location" id="gps-location">
+      <span class="gps-pin">📍</span>
+      <div class="gps-loc-text">
+        <div class="gps-loc-name" id="gps-loc-name">—</div>
+        <div class="gps-loc-coords" id="gps-loc-coords"></div>
+      </div>
+      <button class="gps-loc-close" onclick="clearGPSLocation()" title="Chiudi">✕</button>
+    </div>
+    <div class="sug" id="sug"></div>
+
+    <div class="filter-row" id="frow">
+      <button class="fb on" data-f="Benzina" onclick="setFuel(this)">Benzina</button>
+      <button class="fb" data-f="Diesel" onclick="setFuel(this)">Diesel</button>
+      <button class="fb" data-f="Benzina Premium" onclick="setFuel(this)">Benzina Prem.</button>
+      <button class="fb" data-f="Diesel Premium" onclick="setFuel(this)">Diesel Prem.</button>
+      <button class="fb" data-f="HVO" onclick="setFuel(this)">HVO</button>
+      <button class="fb" data-f="GPL" onclick="setFuel(this)">GPL</button>
+      <button class="fb" data-f="Metano" onclick="setFuel(this)">Metano</button>
+      <button class="fb" id="self-btn" onclick="toggleSelf()">Solo self</button>
+      <button class="fb" id="sort-dist-btn" onclick="toggleSortDist()" style="display:none">↕ Distanza</button>
+    </div>
+    <div class="bandiera-row" id="brow"></div>
+
+    <div class="status">
+      <div class="dot" id="sdot"></div>
+      <span id="stxt">Pronto</span>
+    </div>
+
+    <div id="fuel-results"></div>
+    <div class="ev-section hidden" id="ev-results"></div>
+  </main>
+
+  <footer>
+    Dati: <a href="https://www.mimit.gov.it/it/open-data/elenco-dataset/carburanti-prezzi-praticati-e-anagrafica-degli-impianti" target="_blank">Open data MIMIT</a>
+    · aggiornamento giornaliero ore 08:00 · Licenza IODL 2.0
+  </footer>
+  <!-- MAP VIEW -->
+  <div id="map-view">
+    <div class="map-header">
+      <div class="map-header-left">
+        <div class="h-icon" style="width:30px;height:30px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d0e0f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 22V4a2 2 0 012-2h6a2 2 0 012 2v18"/><path d="M5 12h10"/>
+            <path d="M15 7l4 4-4 4"/><path d="M19 7v8"/>
+          </svg>
+        </div>
+        <div class="map-title">Mappa distributori <small>Carburanti Italia</small></div>
+      </div>
+      <button class="btn-close-map" onclick="closeMapView()">✕ Chiudi</button>
+    </div>
+    <!-- MAP SEARCH -->
+    <div class="map-search-bar" id="map-search-bar">
+      <input class="map-search-input" id="map-search-input"
+        type="text" placeholder="🔍 Cerca una città o indirizzo…"
+        autocomplete="off" autocorrect="off" autocapitalize="off" />
+      <button class="map-search-btn" onclick="mapGoToPlace()">Vai</button>
+      <div class="map-search-sug hidden" id="map-search-sug"></div>
+    </div>
+
+    <div class="map-fuel-row" id="map-fuel-row">
+      <button class="fb on" data-mf="Benzina" onclick="setMapFuel(this)">Benzina</button>
+      <button class="fb" data-mf="Diesel" onclick="setMapFuel(this)">Diesel</button>
+      <button class="fb" data-mf="GPL" onclick="setMapFuel(this)">GPL</button>
+      <button class="fb" data-mf="Metano" onclick="setMapFuel(this)">Metano</button>
+      <button class="fb" data-mf="HVO" onclick="setMapFuel(this)">HVO</button>
+      <button class="fb" data-mf="Diesel Premium" onclick="setMapFuel(this)">Diesel Prem.</button>
+      <button class="fb" data-mf="EV" onclick="setMapFuel(this)">⚡ EV</button>
+    </div>
+    <div class="bandiera-row" id="map-brow" style="padding:0 12px 8px;display:none"></div>
+    <div id="map-container">
+      <div id="leaflet-map"></div>
+      <div class="map-status hidden" id="map-status">—</div>
+      <!-- WEATHER WIDGET -->
+      <div class="map-weather" id="map-weather">
+        <div class="map-weather-icon" id="map-weather-icon">—</div>
+        <div class="map-weather-temp" id="map-weather-temp">—</div>
+        <div class="map-weather-desc" id="map-weather-desc"></div>
+      </div>
+      <div class="map-controls">
+        <button class="map-ctrl-btn active" id="map-gps-btn" onclick="mapLocateMe()">📍 Localizzami</button>
+        <button class="map-ctrl-btn" id="map-self-btn" onclick="toggleMapSelf()">Servito</button>
+        <button class="map-ctrl-btn" id="map-reload-btn" onclick="loadMapStations()" disabled>↻ Aggiorna area</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAV EDIT MODAL -->
+  <div class="fav-modal-overlay hidden" id="fav-edit-overlay">
+    <div class="fav-modal">
+      <h3>Modifica preferito</h3>
+      <label>Nome personalizzato</label>
+      <input type="text" id="fav-edit-name" placeholder="Es. Distributore vicino casa" maxlength="60" />
+      <label>Nota</label>
+      <textarea id="fav-edit-note" rows="2" placeholder="Es. Aperto 24h, accetta carta…" maxlength="120"></textarea>
+      <div class="fav-modal-btns">
+        <button class="btn-fav-cancel" onclick="closeFavModal()">Annulla</button>
+        <button class="btn-fav-delete" onclick="deleteFavFromModal()">Elimina</button>
+        <button class="btn-fav-save" onclick="saveFavModal()">Salva</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DETTAGLIO -->
+  <div class="overlay hidden" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" id="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title" id="modal-nome">—</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-price-row">
+        <div class="modal-price" id="modal-prezzo">—</div>
+        <div class="modal-price-meta" id="modal-price-meta">€/litro · —</div>
+      </div>
+      <div class="modal-rows">
+        <div class="modal-row">
+          <div class="modal-row-icon">📍</div>
+          <div class="modal-row-content">
+            <div class="modal-row-label">Indirizzo</div>
+            <div class="modal-row-val" id="modal-addr">—</div>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-row-icon">⛽</div>
+          <div class="modal-row-content">
+            <div class="modal-row-label">Gestore · Bandiera</div>
+            <div class="modal-row-val" id="modal-gestore">—</div>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-row-icon">🔧</div>
+          <div class="modal-row-content">
+            <div class="modal-row-label">Modalità</div>
+            <div class="modal-row-val" id="modal-mode">—</div>
+          </div>
+        </div>
+        <div class="modal-row" id="modal-dist-row" style="display:none">
+          <div class="modal-row-icon">📍</div>
+          <div class="modal-row-content">
+            <div class="modal-row-label">Distanza</div>
+            <div class="modal-row-val" id="modal-dist-val">—</div>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-row-icon">📅</div>
+          <div class="modal-row-content">
+            <div class="modal-row-label">Ultimo aggiornamento prezzo</div>
+            <div class="modal-row-val" id="modal-dt">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-btns">
+        <a class="btn-maps" id="btn-gmaps" href="#" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Google Maps
+        </a>
+        <a class="btn-maps btn-maps-apple" id="btn-apple" href="#" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Apple Maps
+        </a>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="fav-btn" id="modal-fav-btn" onclick="toggleFavFromModal()" style="flex:1;padding:9px;font-size:0.8rem;border-radius:7px">☆ Aggiungi ai preferiti</button>
+        <button class="fav-btn" id="modal-share-btn" onclick="shareStation()" style="padding:9px 13px;border-radius:7px" title="Condividi">&#x1F4E4;</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- FAV VIEW -->
+  <div id="fav-view">
+    <div class="fav-view-hdr">
+      <div class="f-logo">
+        <div class="h-icon" style="background:var(--am);width:30px;height:30px">
+          <span style="font-size:14px;line-height:30px;display:block;text-align:center">★</span>
+        </div>
+        <div><h1 style="font-family:var(--fd);font-weight:700;font-size:.95rem;letter-spacing:-.02em">Preferiti <small style="font-size:.55rem;color:var(--mut);display:block;text-transform:uppercase;letter-spacing:.1em">Distributori salvati</small></h1></div>
+      </div>
+      <button class="btn-close-map" onclick="closeFavView()">✕ Chiudi</button>
+    </div>
+    <div class="fav-view-body" id="fav-view-body"></div>
+  </div>
+
+  <!-- FAV EDIT MODAL -->
+  <div class="fov hidden" id="fov-overlay" onclick="if(event.target===this)closeFavEdit()">
+    <div class="fov-card">
+      <h3>Modifica preferito</h3>
+      <label>Nome personalizzato</label>
+      <input type="text" id="fov-name" placeholder="Es. Stazione vicino casa" maxlength="60"/>
+      <label>Nota</label>
+      <textarea id="fov-note" rows="2" placeholder="Es. Aperto 24h, accetta carta…" maxlength="120"></textarea>
+      <div class="fov-btns">
+        <button class="fov-cancel" onclick="closeFavEdit()">Annulla</button>
+        <button class="fov-del" onclick="deleteFavEdit()">Elimina</button>
+        <button class="fov-save" onclick="saveFavEdit()">Salva</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARE MODAL -->
+  <div class="cmp-overlay hidden" id="cmp-overlay" onclick="if(event.target===this)closeCmp()">
+    <div class="cmp-card">
+      <h3>Confronta con i distributori vicini</h3>
+      <p id="cmp-subtitle">—</p>
+      <div class="radius-row">
+        <label>Raggio</label>
+        <input type="range" id="cmp-radius" min="5" max="20" step="1" value="10"
+          oninput="document.getElementById('cmp-radius-val').textContent=this.value+' km'"/>
+        <span class="radius-val" id="cmp-radius-val">10 km</span>
+      </div>
+      <div class="radius-row" style="margin-top:8px">
+        <label>Litri pieno</label>
+        <input type="range" id="cmp-liters" min="20" max="100" step="5" value="50"
+          oninput="document.getElementById('cmp-liters-val').textContent=this.value+' L';saveCmpLiters(this.value)"/>
+        <span class="radius-val" id="cmp-liters-val">50 L</span>
+      </div>
+      <button class="btn-cmp-go" id="btn-cmp-go" onclick="runCmp()">Confronta</button>
+      <div class="cmp-list" id="cmp-list"></div>
+      <button class="btn-cmp-close" onclick="closeCmp()">Chiudi</button>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<script>/*@JS:01-hub-core@*/</script>
+
+<!-- AutoDiagnosi JS (untouched) -->
+<script>/*@JS:02a-diagnosi-data@*/</script>
+<script>/*@JS:02b-diagnosi@*/</script>
+
+<!-- OsservaPrezzi JS (toggleCard→fuelToggleCard, results→fuel-results, lazy init) -->
+<script>/*@JS:03-carburanti@*/</script>
+
+<!-- HUB HOME ADDON: skeleton loader + hero card (must run AFTER fuel JS) -->
+<script>/*@JS:04-hub-home@*/</script>
+
+<!-- HUB GARAGE ADDON: multi-vehicle profile (must run AFTER diag JS) -->
+<script>/*@JS:05-garage@*/</script>
+
+<!-- HUB FUEL LOG: refuel diary + consumption stats per vehicle -->
+<script>/*@JS:06-fuel-log@*/</script>
+
+<!-- HUB PASSI: curated alpine/apennine pass database -->
+<script>/*@JS:07-passi@*/</script>
+
+<!-- HUB RIDE: GPS tracker with GPX export -->
+<script>/*@JS:08-ride@*/</script>
+
+<!-- HUB MAINT: per-vehicle maintenance tracker -->
+<script>/*@JS:09-manutenzione@*/</script>
+
+<!-- HUB RIDELOG: ride diary auto-saved on rideStop -->
+<script>/*@JS:10-ridelog@*/</script>
+
+<!-- HUB WEATHER: meteo lungo il percorso (geocoding+OSRM+Open-Meteo) -->
+<script>/*@JS:11-meteo@*/</script>
+
+<!-- HUB TCO: total cost of ownership per vehicle -->
+<script>/*@JS:12-tco@*/</script>
+
+<!-- HUB MOTORSPORT: F1/MotoGP/SBK/WRC + Italian track days -->
+<script>/*@JS:13-motorsport@*/</script>
+<script>/*@JS:14-usato@*/</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+</body>
+</html>

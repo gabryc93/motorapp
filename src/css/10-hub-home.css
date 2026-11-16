@@ -1,0 +1,196 @@
+
+/* ════════════════════════════════════════════════════════════════════
+   HUB HOME — hero card + skeleton (must be after fuel CSS to win cascade)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Force-refresh button on update bar ──────────────────────── */
+#hub-fuel #hub-force-refresh {
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd2);
+  color: var(--tx2);
+  width: 32px; height: 32px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  margin-left: 6px;
+  transition: all .15s ease;
+  flex-shrink: 0;
+}
+#hub-fuel #hub-force-refresh:hover {
+  color: var(--tx);
+  border-color: var(--am);
+  background: var(--am-d);
+}
+#hub-fuel #hub-force-refresh:active { transform: scale(.92); }
+#hub-fuel #hub-force-refresh.spinning { pointer-events: none; opacity: .6; }
+#hub-fuel #hub-force-refresh.spinning > span {
+  display: inline-block;
+  animation: hubSpin 1s linear infinite;
+}
+@keyframes hubSpin { to { transform: rotate(360deg); } }
+
+#hub-fuel .update-bar.has-stale-warning {
+  border-color: rgba(232, 160, 48, 0.35) !important;
+}
+#hub-fuel .update-stale-msg {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: #ffd699;
+  margin-top: 4px;
+  letter-spacing: .02em;
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HUB HOME — hero card + skeleton shimmer (replaces fullscreen loader)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Skeleton CSS removed — original fullscreen loader is back ─── */
+/* (kept intentionally empty — see startApp logic to skip loader if cache hit) */
+
+/* Hero slot — sits above "Medie nazionali" */
+#hub-fuel .hero-slot { padding: 10px 12px 0; }
+
+/* ── Compact favorite row (when user has favs) ─────────────────── */
+#hub-fuel .hero-fav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(232,160,48,.10), rgba(232,160,48,.04));
+  border: 1px solid rgba(232,160,48,.22);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  overflow: hidden;
+}
+#hub-fuel .hero-fav:active { transform: scale(.99); }
+#hub-fuel .hero-fav:hover { border-color: rgba(232,160,48,.4); }
+
+#hub-fuel .hero-fav-star {
+  font-size: .85rem;
+  color: var(--am);
+  flex-shrink: 0;
+  line-height: 1;
+}
+#hub-fuel .hero-fav-name {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--tx);
+  letter-spacing: -.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#hub-fuel .hero-fav-price {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--am);
+  letter-spacing: -.01em;
+  flex-shrink: 0;
+  line-height: 1;
+}
+#hub-fuel .hero-fav-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--tx2);
+  margin-left: 3px;
+  letter-spacing: .04em;
+}
+#hub-fuel .hero-fav-more {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  color: var(--am);
+  background: rgba(232,160,48,.13);
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(232,160,48,.25);
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+#hub-fuel .hero-fav-chev {
+  color: var(--mut);
+  font-size: .8rem;
+  flex-shrink: 0;
+}
+
+/* ── Empty state hero (no favs) — keeps the larger CTA card ─────── */
+#hub-fuel .hero-empty {
+  position: relative;
+  background:
+    linear-gradient(135deg, rgba(232,160,48,.12), rgba(232,160,48,.04) 60%, rgba(232,160,48,.08));
+  border: 1px solid rgba(232,160,48,.28);
+  border-radius: 9px;
+  padding: 7px 11px 8px !important;
+  overflow: hidden;
+}
+#hub-fuel .hero-empty::before {
+  content: '';
+  position: absolute; top: 0; right: 0; width: 60px; height: 60px;
+  background: radial-gradient(circle at 70% 30%, rgba(232,160,48,.22), transparent 60%);
+  pointer-events: none;
+}
+#hub-fuel .hero-empty .hero-row {
+  display: flex; align-items: center;
+  margin-bottom: 1px !important;
+}
+#hub-fuel .hero-empty .hero-label {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem !important;
+  font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--am);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+#hub-fuel .hero-empty .hero-icn { font-size: .68rem; line-height: 1; }
+#hub-fuel .hero-empty .hero-empty-text {
+  font-family: 'DM Mono', monospace;
+  font-size: .62rem !important;
+  color: var(--tx2);
+  line-height: 1.3 !important;
+  margin: 1px 0 6px !important;
+}
+#hub-fuel .hero-cta-btn {
+  width: 100%;
+  appearance: none; -webkit-appearance: none;
+  background: linear-gradient(135deg, rgba(232,160,48,.85), rgba(232,160,48,.65));
+  color: #0d0e0f;
+  border: 1px solid rgba(232,160,48,.6);
+  border-radius: 6px;
+  padding: 6px 10px !important;
+  font-family: 'DM Mono', monospace;
+  font-size: .66rem !important;
+  font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#hub-fuel .hero-cta-btn:hover { filter: brightness(1.1); }
+#hub-fuel .hero-cta-btn:active { transform: scale(.98); }
+
+/* Inline error (replaces fullscreen loader error) */
+#hub-fuel .home-error {
+  margin: 12px 12px 0;
+  padding: 12px 14px;
+  background: rgba(224,90,74,.1);
+  border: 1px solid rgba(224,90,74,.3);
+  border-radius: 10px;
+  color: #ffb4a8;
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  line-height: 1.4;
+  cursor: pointer;
+  display: none;
+}
+#hub-fuel .home-error::before { content: '⚠ '; opacity: .8; }
+#hub-fuel .home-error:hover { background: rgba(224,90,74,.15); }
+
+/* (Skeleton shimmer rules removed — back to original loader UX) */
+

@@ -1,0 +1,234 @@
+
+/* ═══════════════════════════════════════════════════════════════════
+   FUEL LOG — record refuels per active vehicle, compute L/100km, €/km
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fl-launch {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(91,155,213,.13), rgba(91,155,213,.04));
+  border: 1px solid rgba(91,155,213,.28);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: #b8d4ec;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.fl-launch:hover { border-color: rgba(91,155,213,.5); }
+.fl-launch:active { transform: scale(.99); }
+.fl-launch-icon { font-size: 1rem; }
+.fl-launch-text { flex: 1; text-align: left; }
+.fl-launch-stat {
+  background: rgba(91,155,213,.18);
+  color: #d8e8f7;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .58rem;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+#fl-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+}
+#fl-overlay.visible { display: flex; }
+
+.fl-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--brd);
+  flex-shrink: 0; gap: 10px;
+}
+.fl-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  color: var(--t1); letter-spacing: .02em;
+}
+.fl-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 220px;
+}
+
+.fl-body {
+  flex: 1; overflow-y: auto;
+  padding: 14px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+
+/* Stats grid */
+.fl-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.fl-stat {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.fl-stat-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+.fl-stat-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  line-height: 1;
+}
+.fl-stat-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t2);
+  margin-top: 3px;
+}
+.fl-stat-trend-up { color: #ff8a82; }
+.fl-stat-trend-down { color: #6dd9a3; }
+.fl-stat-trend-flat { color: var(--t2); }
+
+.fl-add-btn {
+  appearance: none; -webkit-appearance: none;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(91,155,213,.85), rgba(91,155,213,.65));
+  color: #08131c;
+  border: 1px solid rgba(91,155,213,.6);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: all .15s ease;
+}
+.fl-add-btn:hover { filter: brightness(1.1); }
+.fl-add-btn:active { transform: scale(.99); }
+
+.fl-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--t3);
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+}
+
+.fl-list-title {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin: 16px 0 8px;
+}
+
+.fl-row {
+  background: var(--surf);
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.fl-row-info { flex: 1; min-width: 0; }
+.fl-row-date {
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  color: var(--t1);
+  margin-bottom: 2px;
+}
+.fl-row-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: .6rem;
+  color: var(--t2);
+}
+.fl-row-cons {
+  text-align: right;
+  flex-shrink: 0;
+  padding-left: 10px;
+  border-left: 1px solid var(--brd);
+}
+.fl-row-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--t1);
+  letter-spacing: -.01em;
+  line-height: 1;
+}
+.fl-row-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: .56rem;
+  color: var(--t2);
+  margin-top: 2px;
+}
+.fl-row-del {
+  appearance: none; -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--t3);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px 8px;
+}
+.fl-row-del:hover { color: #ff8a82; }
+
+/* Add modal — reuse gar-edit styles via piggybacking on same container */
+#fl-edit {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(3px);
+  z-index: 80;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#fl-edit.visible { display: flex; }
+@media (min-width: 600px) { #fl-edit { align-items: center; } }
+#fl-edit .gar-edit-card { /* reuse */ }
+#fl-edit .fl-fullbar {
+  display: flex; gap: 6px; margin-bottom: 12px;
+}
+#fl-edit .fl-fullbar button {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  background: var(--surf2);
+  border: 1px solid var(--brd);
+  color: var(--t2);
+  padding: 8px 10px;
+  border-radius: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  cursor: pointer;
+}
+#fl-edit .fl-fullbar button.on {
+  color: #b8d4ec;
+  border-color: rgba(91,155,213,.5);
+  background: rgba(91,155,213,.12);
+}
+
+/* ── Hide Diario / Promemoria from Diagnosi (now lives in Garage tab) ───
+   These are full duplicates of Consumi&Rifornimenti / Manutenzione,
+   so we hide their tab buttons and views entirely. */
+#hub-diag .nav-btn[data-view="promemoria"],
+#hub-diag .nav-btn[data-view="diario"] { display: none !important; }
+#hub-diag #view-promemoria,
+#hub-diag #view-diario { display: none !important; }

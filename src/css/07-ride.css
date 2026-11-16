@@ -1,0 +1,416 @@
+
+/* ═══════════════════════════════════════════════════════════════════
+   RIDE MODE — fullscreen GPS tracker (speed, distance, time)
+   ═══════════════════════════════════════════════════════════════════ */
+.rd-launch {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(255,90,40,.18), rgba(255,90,40,.04));
+  border: 1px solid rgba(255,90,40,.32);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem; font-weight: 600;
+  color: #ffc4b0;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.rd-launch:hover { border-color: rgba(255,90,40,.55); }
+.rd-launch:active { transform: scale(.99); }
+.rd-launch-icon { font-size: 1rem; }
+.rd-launch-text { flex: 1; text-align: left; }
+
+#rd-overlay {
+  position: fixed; inset: 0;
+  background: #000;
+  z-index: 75;
+  display: none;
+  flex-direction: column;
+  color: #fff;
+}
+#rd-overlay.visible { display: flex; }
+
+.rd-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.rd-hdr h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400; font-size: 1.2rem;
+  letter-spacing: .04em;
+  color: #ff5a28;
+}
+.rd-hdr h2 small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem;
+  color: rgba(255,255,255,.45);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-top: 2px;
+}
+.rd-close {
+  appearance: none; -webkit-appearance: none;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  cursor: pointer;
+}
+.rd-status {
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: rgba(255,255,255,.5);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  padding: 12px 0 6px;
+  flex-shrink: 0;
+}
+.rd-status.recording { color: #ff5a28; }
+.rd-status.recording::before {
+  content: '●';
+  display: inline-block;
+  margin-right: 6px;
+  animation: rdBlink 1s ease-in-out infinite;
+}
+@keyframes rdBlink {
+  0%,100% { opacity: 1; }
+  50% { opacity: .3; }
+}
+
+.rd-speedbox {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 10px;
+}
+.rd-speed-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.rd-speedbox.with-gmeter .rd-speed-col {
+  flex: 1;
+  border-right: 1px solid rgba(255,255,255,.06);
+}
+.rd-speedbox.with-gmeter .rd-speed {
+  font-size: 5.5rem;  /* shrink so it fits next to gmeter */
+}
+.rd-speed {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 8rem;
+  color: #fff;
+  letter-spacing: -.04em;
+  line-height: .9;
+  font-variant-numeric: tabular-nums;
+  transition: font-size .2s ease;
+}
+.rd-speed-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: .8rem;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+.rd-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,.06);
+  margin: 0 12px 12px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.rd-stat {
+  background: rgba(0,0,0,.6);
+  padding: 12px 10px;
+  text-align: center;
+}
+.rd-stat-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .55rem;
+  color: rgba(255,255,255,.4);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  margin-bottom: 5px;
+}
+.rd-stat-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #fff;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+.rd-stat-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: .54rem;
+  color: rgba(255,255,255,.4);
+  margin-top: 2px;
+  letter-spacing: .04em;
+}
+
+.rd-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+  flex-shrink: 0;
+}
+.rd-btn {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: .76rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all .15s ease;
+}
+.rd-btn:active { transform: scale(.98); }
+.rd-btn-start {
+  background: linear-gradient(135deg, rgba(255,90,40,.95), rgba(255,90,40,.7));
+  border-color: rgba(255,90,40,.6);
+  color: #fff;
+}
+.rd-btn-pause {
+  background: rgba(255,255,255,.1);
+  border-color: rgba(255,255,255,.2);
+  color: #fff;
+}
+.rd-btn-stop {
+  background: rgba(224,90,74,.85);
+  border-color: rgba(224,90,74,.6);
+  color: #fff;
+}
+.rd-btn-export {
+  background: rgba(91,155,213,.85);
+  border-color: rgba(91,155,213,.6);
+  color: #08131c;
+}
+.rd-error {
+  margin: 12px 14px;
+  padding: 10px 12px;
+  background: rgba(224,90,74,.1);
+  border: 1px solid rgba(224,90,74,.3);
+  border-radius: 8px;
+  color: #ff8a82;
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+}
+
+/* ── Mode segmented control (Normal / Performance) ────────────── */
+.rd-modebar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 14px 0;
+  flex-shrink: 0;
+}
+.rd-mode-btn {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.6);
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.rd-mode-btn.on {
+  background: rgba(255,90,40,.2);
+  border-color: rgba(255,90,40,.4);
+  color: #ffc4b0;
+}
+#rd-gmeter-btn.on {
+  background: rgba(91,155,213,.22);
+  border-color: rgba(91,155,213,.5);
+  color: #b8d4ec;
+}
+.rd-mode-btn:active { transform: scale(.96); }
+
+/* G-meter (always visible top-right) */
+.rd-gmeter {
+  flex: 1;
+  position: relative;
+  width: 200px; height: 200px;
+  max-width: 50%;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  align-self: center;
+  pointer-events: none;
+  z-index: 1;
+  flex: none;
+}
+.rd-gmeter-dot {
+  position: absolute;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #ff5a28;
+  box-shadow: 0 0 14px rgba(255,90,40,.7);
+  transition: transform .08s ease-out;
+}
+.rd-gmeter-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.rd-gmeter-label {
+  position: absolute;
+  bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  color: rgba(255,255,255,.55);
+  letter-spacing: .1em;
+  white-space: nowrap;
+}
+.rd-gmeter-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #fff;
+  letter-spacing: -.02em;
+  margin-right: 4px;
+}
+
+/* Performance overlay shown DURING a run */
+.rd-perf-modeline {
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  color: rgba(255,90,40,.9);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  padding: 4px 0;
+  flex-shrink: 0;
+}
+
+/* Performance result modal — shown after a completed run */
+.rd-perf-result {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 20px;
+}
+.rd-perf-result.visible { display: flex; }
+.rd-perf-result-inner {
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+}
+.rd-perf-result-title {
+  font-family: 'DM Mono', monospace;
+  font-size: .65rem;
+  color: rgba(255,255,255,.55);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  margin-bottom: 14px;
+}
+.rd-perf-result-time {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 5rem;
+  color: #fff;
+  letter-spacing: -.04em;
+  line-height: 1;
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.rd-perf-result-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: .85rem;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .1em;
+  margin-bottom: 24px;
+}
+.rd-perf-result-best {
+  font-family: 'DM Mono', monospace;
+  font-size: .68rem;
+  color: #6dd9a3;
+  margin-bottom: 6px;
+}
+.rd-perf-result-best-old {
+  color: rgba(255,255,255,.4);
+}
+.rd-perf-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 18px 0 24px;
+}
+.rd-perf-result-cell {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  padding: 9px 11px;
+  text-align: left;
+}
+.rd-perf-result-cell-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: .52rem;
+  color: rgba(255,255,255,.45);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-bottom: 3px;
+}
+.rd-perf-result-cell-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: .95rem;
+  color: #fff;
+}
+.rd-perf-result-actions {
+  display: flex;
+  gap: 8px;
+}
+.rd-perf-result-actions button {
+  flex: 1;
+  appearance: none; -webkit-appearance: none;
+  border-radius: 8px;
+  padding: 11px;
+  font-family: 'DM Mono', monospace;
+  font-size: .72rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+}
+.rd-perf-again {
+  background: rgba(255,90,40,.85);
+  border-color: rgba(255,90,40,.6);
+  color: #fff;
+}
+.rd-perf-close {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.15);
+  color: #fff;
+}
