@@ -232,3 +232,7 @@
 #hub-diag .nav-btn[data-view="diario"] { display: none !important; }
 #hub-diag #view-promemoria,
 #hub-diag #view-diario { display: none !important; }
+
+/* Consumo dai viaggi importati */
+.fl-trips { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surf); border: 1px solid rgba(91,155,213,.35); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+.fl-trips-btn { appearance: none; -webkit-appearance: none; background: none; border: 1px solid var(--brd); color: var(--t2); border-radius: 8px; padding: 8px 10px; min-height: 36px; font: 500 .66rem 'DM Mono', monospace; cursor: pointer; flex-shrink: 0; }

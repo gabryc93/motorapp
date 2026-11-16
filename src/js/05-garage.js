@@ -623,16 +623,50 @@
             '<input type="number" id="gar-f-km" placeholder="0" min="0"></div>' +
         '</div>' +
         '<div class="gar-row2">' +
-          '<div class="gar-field"><label>Scadenza bollo</label>' +
-            '<input type="date" id="gar-f-bollo"></div>' +
-          '<div class="gar-field"><label>€ bollo / anno</label>' +
-            '<input type="number" id="gar-f-bollo-cost" min="0" step="1" placeholder="180"></div>' +
+          '<div class="gar-field"><label>Alimentazione</label>' +
+            '<select id="gar-f-alim" onchange="_garCostiUpdate()">' +
+              '<option value="">—</option><option value="benzina">Benzina</option><option value="diesel">Diesel</option>' +
+              '<option value="gpl">GPL</option><option value="metano">Metano</option><option value="ibrida">Ibrida benzina</option>' +
+              '<option value="diesel-ibrida">Ibrida diesel</option><option value="plugin">Plug-in</option><option value="elettrica">Elettrica</option>' +
+            '</select></div>' +
+          '<div class="gar-field"><label>Classe Euro</label>' +
+            '<select id="gar-f-euro" onchange="_garCostiUpdate()">' +
+              '<option value="">—</option><option value="6">Euro 6</option><option value="5">Euro 5</option><option value="4">Euro 4</option>' +
+              '<option value="3">Euro 3</option><option value="2">Euro 2</option><option value="1">Euro 1</option><option value="0">Euro 0</option>' +
+            '</select></div>' +
         '</div>' +
-        '<div class="gar-row2">' +
-          '<div class="gar-field"><label>Scadenza RCA</label>' +
-            '<input type="date" id="gar-f-rca"></div>' +
-          '<div class="gar-field"><label>€ RCA / anno</label>' +
-            '<input type="number" id="gar-f-rca-cost" min="0" step="1" placeholder="450"></div>' +
+        '<div class="gar-costi">' +
+          '<div class="gar-costi-h">🧾 Bollo</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Scadenza bollo</label>' +
+              '<input type="date" id="gar-f-bollo"></div>' +
+            '<div class="gar-field"><label>€ bollo / anno</label>' +
+              '<input type="number" id="gar-f-bollo-cost" min="0" step="1" placeholder="vuoto = stima" oninput="_garCostiUpdate()"></div>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Regione di residenza</label>' +
+              '<select id="gar-f-regione" onchange="_garCostiUpdate()"><option value="">— scegli —</option>' +
+                window.hubCosti.REGIONI.map(function(r) { return '<option>' + r + '</option>'; }).join('') +
+              '</select></div>' +
+            '<label class="gar-check" id="gar-domic-wrap" style="display:none"><input type="checkbox" id="gar-f-domic" onchange="_garCostiUpdate()"> Domiciliazione bancaria</label>' +
+          '</div>' +
+          '<div class="gar-est" id="gar-bollo-est"></div>' +
+        '</div>' +
+        '<div class="gar-costi">' +
+          '<div class="gar-costi-h">🛡 Assicurazione</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Scadenza RCA</label>' +
+              '<input type="date" id="gar-f-rca"></div>' +
+            '<div class="gar-field"><label>€ assicurazione / anno</label>' +
+              '<input type="number" id="gar-f-rca-cost" min="0" step="1" placeholder="vuoto = stima" oninput="_garCostiUpdate()"></div>' +
+          '</div>' +
+          '<div class="gar-sublbl">Garanzie incluse oltre alla RC obbligatoria</div>' +
+          '<div class="gar-chips" id="gar-garanzie">' +
+            window.hubCosti.GARANZIE.map(function(g) {
+              return '<label class="gar-chip"><input type="checkbox" value="' + g.id + '" onchange="_garCostiUpdate()"><span>' + g.nome + '</span></label>';
+            }).join('') +
+          '</div>' +
+          '<div class="gar-est" id="gar-rca-est"></div>' +
         '</div>' +
         '<div class="gar-row2">' +
           '<div class="gar-field"><label>Scadenza revisione</label>' +
@@ -692,16 +726,19 @@
         '</details>' +
 
         '<details class="gar-section"><summary>🛞 Gomme</summary>' +
-          '<div class="gar-field"><label>Misura (es. 225/45 R17)</label>' +
-            '<input type="text" id="gar-f-gomme-misura" placeholder="225/45 R17" maxlength="20"></div>' +
+          '<div class="gar-field"><label>Misura</label>' +
+            '<input type="text" id="gar-f-gomme-misura" placeholder="225/45 R17" maxlength="40" oninput="_garGommeUpdate()"></div>' +
+          '<div id="gar-gomme-misure" class="gar-gomme-misure"></div>' +
           '<div class="gar-row2">' +
             '<div class="gar-field"><label>Marca</label>' +
-              '<input type="text" id="gar-f-gomme-marca" placeholder="Michelin" maxlength="30"></div>' +
+              '<input type="text" id="gar-f-gomme-marca" list="gar-dl-gmarca" placeholder="scegli o scrivi" maxlength="30" autocomplete="off" oninput="_garGommeModelli()" onchange="_garGommeModelli()">' +
+              '<datalist id="gar-dl-gmarca"></datalist></div>' +
             '<div class="gar-field"><label>Modello</label>' +
-              '<input type="text" id="gar-f-gomme-modello" placeholder="Pilot Sport 4" maxlength="40"></div>' +
+              '<input type="text" id="gar-f-gomme-modello" list="gar-dl-gmodello" placeholder="scegli o scrivi" maxlength="40" autocomplete="off">' +
+              '<datalist id="gar-dl-gmodello"></datalist></div>' +
           '</div>' +
           '<div class="gar-field"><label>Tipo</label>' +
-            '<select id="gar-f-gomme-tipo">' +
+            '<select id="gar-f-gomme-tipo" onchange="_garGommeModelli()">' +
               '<option value="">—</option>' +
               '<option value="estive">Estive</option>' +
               '<option value="invernali">Invernali</option>' +
@@ -811,6 +848,13 @@
     document.getElementById('gar-f-bollo-cost').value = v ? (v.costoBollo || '') : '';
     document.getElementById('gar-f-rca-cost').value   = v ? (v.costoRca || '') : '';
     document.getElementById('gar-f-rev-cost').value   = v ? (v.costoRev || '') : '';
+    document.getElementById('gar-f-alim').value    = v ? (v.alim || '') : '';
+    document.getElementById('gar-f-euro').value    = v && v.euro != null ? String(v.euro) : '';
+    document.getElementById('gar-f-regione').value = (v && v.regione) || garPrefs().regione || '';
+    document.getElementById('gar-f-domic').checked = !!(v && v.domiciliazione);
+    var gar = (v && v.garanzie) || [];
+    document.querySelectorAll('#gar-garanzie input').forEach(function(c) { c.checked = gar.indexOf(c.value) >= 0; });
+    _co2 = v && v.co2 || null;
     // Specs tecniche
     var specs = (v && v.specs) || {};
     document.getElementById('gar-f-cv').value      = specs.cv || '';
@@ -840,6 +884,19 @@
     document.getElementById('gar-f-note').value    = v ? (v.note || '') : '';
     _garSetType(v ? (v.type || 'auto') : 'auto', true);
     initPick(v);
+    fillEuro();
+    _garGommePrepara();
+    _garCostiUpdate();
+    // Veicoli salvati prima di questi campi: alimentazione e CO₂ dalla scheda tecnica
+    if (_pick.motore && !document.getElementById('gar-f-alim').value) {
+      loadVDB(_pick.marca).then(function() {
+        var sp = dbSpec(); if (!sp) return;
+        setSpec('gar-f-alim', window.hubCosti.alimDaDb(sp.alimentazione));
+        _co2 = _co2 || window.hubCosti.co2DaDb(sp.co2_gkm);
+        if (!document.getElementById('gar-f-cv').value) setSpec('gar-f-cv', sp.potenza_cv);
+        _garCostiUpdate();
+      }, function() {});
+    }
 
     // Load existing photo into preview
     var prev = document.getElementById('gar-photo-preview');
@@ -872,6 +929,7 @@
       _pick = { marca: '', modello: '', gen: '', anno: '', motore: '' };
       syncFields();
       renderPick();
+      if (window._garCostiUpdate) { _garGommePrepara(); _garCostiUpdate(); }
     }
   };
 
@@ -961,6 +1019,8 @@
       if (setSpec('gar-f-cambio', mapCambio(sp.trasmissione))) filled.push('cambio');
       if (setSpec('gar-f-traz', mapTraz(sp.trazione))) filled.push('trazione');
       if (setSpec('gar-f-tank', sp.serbatoio_l)) filled.push('serbatoio');
+      if (setSpec('gar-f-alim', window.hubCosti.alimDaDb(sp.alimentazione))) filled.push('alimentazione');
+      _co2 = window.hubCosti.co2DaDb(sp.co2_gkm) || _co2;
     } else {
       // Senza db.json: potenza e cilindrata dal nome del motore, il resto dal database interno
       if (setSpec('gar-f-cv', cvFromName(_pick.motore))) filled.push('CV');
@@ -976,6 +1036,120 @@
     }
     return filled;
   }
+  /* ── Bollo, assicurazione, gomme: stime e suggerimenti (18-garage-costi.js) ── */
+  var _co2 = null, _stime = { bollo: null, rca: null };
+  var GPREF = 'hub_garage_prefs_v1';
+  function garPrefs() { try { return JSON.parse(localStorage.getItem(GPREF) || '{}'); } catch (e) { return {}; } }
+  function setGarPrefs(p) { try { localStorage.setItem(GPREF, JSON.stringify(Object.assign(garPrefs(), p))); } catch (e) {} }
+  function garanzieScelte() {
+    return Array.prototype.map.call(document.querySelectorAll('#gar-garanzie input:checked'), function(c) { return c.value; });
+  }
+  function annoForm() {
+    var a = parseInt(window._garPickAnnoImm(), 10);
+    if (!a) a = (genYears(document.getElementById('gar-f-anno').value) || [])[0];
+    return a || null;
+  }
+  // Classe Euro dall'anno (solo se l'utente non l'ha già scelta)
+  function fillEuro() {
+    var el = document.getElementById('gar-f-euro'), a = annoForm();
+    if (!el || !a || (el.value !== '' && !_autoFilled['gar-f-euro'])) return;
+    el.value = String(window.hubCosti.euroDaAnno(a, _editingType)); _autoFilled['gar-f-euro'] = true;
+  }
+  function eur(n) { return Math.round(n).toLocaleString('it-IT') + ' €'; }
+  function estBox(id, title, res, userVal, useFn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (res.errore) { el.innerHTML = '<p class="gar-est-miss">Per la stima: ' + escSafe(res.errore) + '.</p>'; return; }
+    var head = userVal
+      ? '<div class="gar-est-top"><span>Hai inserito <b>' + eur(userVal) + '</b> · ' + title + ' stimata ' + eur(res.importo) + '</span></div>'
+      : '<div class="gar-est-top"><span>' + title + ' stimata <b>' + eur(res.importo) + '/anno</b></span>' +
+        '<button type="button" class="gar-pick-link" onclick="' + useFn + '">Usa la stima</button></div>';
+    el.innerHTML = head + '<ul>' + res.righe.map(function(r) { return '<li>' + escSafe(r) + '</li>'; }).join('') + '</ul>' +
+      (res.note && res.note.length ? '<p>' + res.note.map(escSafe).join(' ') + '</p>' : '');
+  }
+  window._garCostiUpdate = function() {
+    var H = window.hubCosti; if (!H) return;
+    var reg = document.getElementById('gar-f-regione').value;
+    document.getElementById('gar-domic-wrap').style.display = H.DOMICILIAZIONE[reg] ? '' : 'none';
+    var cv = parseFloat(document.getElementById('gar-f-cv').value) || 0;
+    var b = H.bollo({ tipo: _editingType, kw: cv ? Math.round(cv * 0.7355) : 0, euro: document.getElementById('gar-f-euro').value,
+      alim: document.getElementById('gar-f-alim').value, regione: reg, annoImm: annoForm(), co2: _co2,
+      domic: document.getElementById('gar-f-domic').checked });
+    _stime.bollo = b.errore ? null : b.importo;
+    estBox('gar-bollo-est', 'Spesa', b, parseFloat(document.getElementById('gar-f-bollo-cost').value) || 0, '_garUsaStima(\'bollo\')');
+    var bEl = document.getElementById('gar-bollo-est');
+    if (bEl) bEl.insertAdjacentHTML('beforeend', '<a class="gar-est-link" href="https://online.aci.it/acinet/calcolobollo/" target="_blank" rel="noopener">Verifica l\'importo esatto sul calcolatore ACI ↗</a>');
+    var r = H.rca({ tipo: _editingType, garanzie: garanzieScelte() });
+    _stime.rca = r.importo;
+    estBox('gar-rca-est', 'Spesa', r, parseFloat(document.getElementById('gar-f-rca-cost').value) || 0, '_garUsaStima(\'rca\')');
+  };
+  window._garUsaStima = function(k) {
+    if (_stime[k] == null) return;
+    document.getElementById(k === 'bollo' ? 'gar-f-bollo-cost' : 'gar-f-rca-cost').value = Math.round(_stime[k]);
+    _garCostiUpdate();
+  };
+  document.addEventListener('input', function(e) { if (e.target && e.target.id === 'gar-f-cv') window._garCostiUpdate && _garCostiUpdate(); });
+
+  // Gomme: misure del modello scelto + marche/modelli più diffusi
+  function _garGommePrepara() {
+    var H = window.hubCosti; if (!H) return;
+    var dl = document.getElementById('gar-dl-gmarca');
+    if (dl) dl.innerHTML = H.gomme.marche(_editingType).map(function(m) { return '<option value="' + escSafe(m) + '">'; }).join('');
+    _garGommeModelli();
+    var box = document.getElementById('gar-gomme-misure');
+    var marca = document.getElementById('gar-f-marca').value, modello = document.getElementById('gar-f-modello').value;
+    if (!box) return;
+    if (!marca || !modello) { box.innerHTML = '<p class="gar-est-miss">Scegli il veicolo per vedere le misure previste.</p>'; return; }
+    H.gomme.carica().then(function() { renderMisure(); }, function() { box.innerHTML = '<p class="gar-est-miss">Misure non disponibili offline: scrivi la misura dal fianco della gomma.</p>'; });
+  }
+  window._garGommePrepara = _garGommePrepara;
+  function misuraParti(m) { return String(m || '').split(/\s*\+\s*/).filter(Boolean); }
+  function renderMisure() {
+    var H = window.hubCosti, box = document.getElementById('gar-gomme-misure');
+    var r = H.gomme.misure(document.getElementById('gar-f-marca').value, document.getElementById('gar-f-modello').value,
+      document.getElementById('gar-f-anno').value, annoForm());
+    if (!r || !r.misure.length) { box.innerHTML = '<p class="gar-est-miss">Nessuna misura in archivio per questo modello: scrivila dal fianco della gomma (es. 205/55 R16).</p>'; return; }
+    var cur = misuraParti(document.getElementById('gar-f-gomme-misura').value), moto = _editingType === 'moto';
+    var chip = function(x) {
+      return '<button type="button" class="gar-chip-btn' + (cur.indexOf(x.misura) >= 0 ? ' on' : '') + '" data-m="' + escSafe(x.misura) + '" onclick="_garGommeScegli(this.dataset.m)">' + escSafe(x.misura) +
+        (moto ? '' : '<small>' + x.ant.toFixed(1) + ' / ' + x.post.toFixed(1) + ' bar</small>') + '</button>';
+    };
+    var html = '<div class="gar-sublbl">Misure previste per ' + escSafe(r.serie) + ' · tocca per scegliere</div>';
+    if (moto) {
+      var ant = r.misure.filter(function(x) { return parseInt(x.misura, 10) <= 130; }), post = r.misure.filter(function(x) { return parseInt(x.misura, 10) > 130; });
+      html += (ant.length ? '<div class="gar-chips-lbl">Anteriore</div><div class="gar-chips">' + ant.map(chip).join('') + '</div>' : '') +
+        (post.length ? '<div class="gar-chips-lbl">Posteriore</div><div class="gar-chips">' + post.map(chip).join('') + '</div>' : '');
+      if (r.standard) html += '<p>Pressioni indicative: ' + r.standard[0].toFixed(1) + ' ant / ' + r.standard[1].toFixed(1) + ' post bar (pilota solo).</p>';
+    } else html += '<div class="gar-chips">' + r.misure.map(chip).join('') + '</div><p>Pressioni indicative ant / post a carico normale. Fa fede l\'etichetta sul montante della porta o nello sportellino carburante.</p>';
+    box.innerHTML = html;
+  }
+  window._garGommeScegli = function(m) {
+    var el = document.getElementById('gar-f-gomme-misura'), moto = _editingType === 'moto';
+    if (moto) {
+      var parts = misuraParti(el.value), front = parseInt(m, 10) <= 130;
+      var a = parts.filter(function(x) { return parseInt(x, 10) <= 130; })[0] || '', p = parts.filter(function(x) { return parseInt(x, 10) > 130; })[0] || '';
+      if (front) a = m; else p = m;
+      el.value = [a, p].filter(Boolean).join(' + ');
+    } else el.value = m;
+    // pressioni consigliate nelle note tecniche, se vuote
+    var r = window.hubCosti.gomme.misure(document.getElementById('gar-f-marca').value, document.getElementById('gar-f-modello').value, document.getElementById('gar-f-anno').value, annoForm());
+    var press = document.getElementById('gar-f-press');
+    if (r && press && (!press.value || _autoFilled['gar-f-press'])) {
+      var x = moto ? null : r.misure.filter(function(y) { return y.misura === m; })[0], pr = x ? [x.ant, x.post] : r.standard;
+      if (pr) { press.value = pr[0].toFixed(1) + ' ant / ' + pr[1].toFixed(1) + ' post bar'; _autoFilled['gar-f-press'] = true; }
+    }
+    var km = document.getElementById('gar-f-gomme-km'), kmTot = document.getElementById('gar-f-km').value;
+    if (km && !km.value && kmTot) km.placeholder = kmTot;
+    renderMisure();
+  };
+  window._garGommeUpdate = function() { if (document.getElementById('gar-gomme-misure').querySelector('.gar-chips')) renderMisure(); };
+  window._garGommeModelli = function() {
+    var H = window.hubCosti, dl = document.getElementById('gar-dl-gmodello'); if (!H || !dl) return;
+    var marca = document.getElementById('gar-f-gomme-marca').value.trim(), tipo = document.getElementById('gar-f-gomme-tipo').value;
+    var k = H.gomme.marche(_editingType).filter(function(m) { return m.toLowerCase() === marca.toLowerCase(); })[0];
+    dl.innerHTML = (k ? H.gomme.modelli(k, _editingType, tipo) : []).map(function(m) { return '<option value="' + escSafe(m) + '">'; }).join('');
+  };
+
   function syncFields() {
     document.getElementById('gar-f-marca').value = _pick.marca;
     document.getElementById('gar-f-modello').value = _pick.modello;
@@ -1083,8 +1257,10 @@
       _vdbState = 'loading';
       loadVDB(value).then(function() { _vdbState = 'ok'; renderPick(); }, function() { _vdbState = 'err'; renderPick(); });
     }
+    if ((field === 'anno' || field === 'gen' || field === 'modello') && value) { fillEuro(); _garGommePrepara(); }
     if (field === 'motore' && value) {
       var filled = fillFromPick();
+      fillEuro(); _garGommePrepara(); _garCostiUpdate();
       var nameEl = document.getElementById('gar-f-name');
       if (nameEl && !nameEl.value) nameEl.placeholder = 'Es. ' + (window.hubModelloBase || String)(_pick.modello) + ' di tutti i giorni';
       if (filled.length) {
@@ -1216,6 +1392,14 @@
       costoBollo: parseFloat(document.getElementById('gar-f-bollo-cost').value) || 0,
       costoRca:   parseFloat(document.getElementById('gar-f-rca-cost').value)   || 0,
       costoRev:   parseFloat(document.getElementById('gar-f-rev-cost').value)   || 0,
+      alim:       document.getElementById('gar-f-alim').value || '',
+      euro:       document.getElementById('gar-f-euro').value === '' ? null : parseInt(document.getElementById('gar-f-euro').value, 10),
+      regione:    document.getElementById('gar-f-regione').value || '',
+      domiciliazione: document.getElementById('gar-f-domic').checked,
+      garanzie:   garanzieScelte(),
+      co2:        _co2 || null,
+      costoBolloStima: _stime.bollo,
+      costoRcaStima:   _stime.rca,
       specs: {
         cv:       parseFloat(document.getElementById('gar-f-cv').value)       || null,
         nm:       parseFloat(document.getElementById('gar-f-nm').value)       || null,
@@ -1244,6 +1428,7 @@
       },
       note: document.getElementById('gar-f-note').value.trim()
     };
+    if (patch.regione) setGarPrefs({ regione: patch.regione });
     var g = loadGarage();
     var savedId;
     if (_editingId) {

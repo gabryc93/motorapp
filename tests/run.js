@@ -111,6 +111,34 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     expect(/BEGIN:VEVENT[\s\S]*DTSTART;VALUE=DATE:20990131/.test(txt), 'evento bollo mancante');
   }, page);
 
+  await test('Garage: stima bollo per regione e assicurazione con garanzie', async p => {
+    const r = await p.evaluate(() => {
+      const B = hubCosti.bollo;
+      return [B({ tipo: 'auto', kw: 51, euro: 6, alim: 'benzina', regione: 'Lombardia', annoImm: 2019 }).importo,
+        B({ tipo: 'auto', kw: 250, euro: 6, alim: 'benzina', regione: 'Lombardia', annoImm: 2018 }).importo,
+        B({ tipo: 'moto', kw: 80, euro: 4, regione: 'Lazio', annoImm: 2018 }).importo,
+        B({ tipo: 'auto', kw: 100, euro: 6, alim: 'elettrica', regione: 'Lazio', annoImm: 2024 }).importo,
+        hubCosti.rca({ tipo: 'auto', garanzie: ['furto', 'kasko', 'minikasko'] }).importo];
+    });
+    expect(r[0] === 131.58, 'bollo 51 kW Euro 6: ' + r[0]);
+    expect(r[1] === 1618.5, 'bollo con superbollo: ' + r[1]);
+    expect(r[2] === 79.83, 'bollo moto 80 kW: ' + r[2]);
+    expect(r[3] === 0, 'elettrica nei primi 5 anni deve essere esente');
+    expect(r[4] === 422 + 103 + 400, 'kasko e mini-kasko non vanno sommati: ' + r[4]);
+  }, page);
+
+  await test('Diario: import viaggi CSV (MyPeugeot) aggiorna consumi e km', async p => {
+    const csv = 'Data partenza;Ora arrivo;Distanza (km);Consumo medio (l/100km);Kilometraggio iniziale;Kilometraggio finale\n12/11/2026 08:10;08:45;21,4;5,6;99000;99021\n13/11/2026 18:00;19:10;22,0;6,1;99021;99043\n';
+    await p.evaluate(() => { hubGo('garage'); openRideLog(); openViaggiImport(); });
+    await p.setInputFiles('#vi-file', { name: 'viaggi.csv', mimeType: 'text/csv', buffer: Buffer.from(csv) });
+    await p.waitForSelector('.vi-btn:not([disabled])');
+    await p.click('.vi-btn'); await p.waitForTimeout(200);
+    const r = await p.evaluate(() => { const v = hubGarage.active(); const t = hubTripStats(v.id); closeViaggiImport(); closeRideLog(); return [t.viaggi, Math.round(t.consumo * 10) / 10, v.kmTot]; });
+    expect(r[0] === 2, 'viaggi importati: ' + r[0]);
+    expect(r[1] === 5.9, 'consumo medio pesato: ' + r[1]);
+    expect(r[2] === 99043, 'contachilometri non aggiornato: ' + r[2]);
+  }, page);
+
   await test('Diagnosi: database caricato solo per la marca richiesta', async p => {
     const req = [];
     p.on('request', r => { if (/\/db\//.test(r.url())) req.push(r.url().split('/db/')[1]); });

@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-11-16-1447">
+<meta name="autohub-build" content="2026-11-16-1527">
 <meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -1981,6 +1981,38 @@ body[data-hub="fuel"]::before { display: none !important; }
   background-repeat: no-repeat; background-position: right 12px center;
 }
 
+/* ── Bollo, assicurazione, gomme ─────────────────────────────── */
+.gar-costi { background: var(--surf2); border: 1px solid var(--brd); border-radius: 9px; padding: 10px 12px 4px; margin-bottom: 12px; }
+.gar-costi-h { font: 500 .62rem 'DM Mono', monospace; color: var(--t2); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 9px; }
+.gar-costi .gar-field input, .gar-costi .gar-field select { background: var(--surf); }
+.gar-check { display: flex; align-items: center; gap: 8px; align-self: end; margin-bottom: 12px; min-height: 38px;
+  font: 400 .7rem 'DM Mono', monospace; color: var(--t2); cursor: pointer; }
+.gar-check input { width: 18px; height: 18px; accent-color: var(--ac); }
+.gar-sublbl { font: 400 .58rem 'DM Mono', monospace; color: var(--t3); text-transform: uppercase; letter-spacing: .1em; margin: 2px 0 7px; }
+.gar-chips-lbl { font: 400 .6rem 'DM Mono', monospace; color: var(--t3); margin: 6px 0 5px; }
+.gar-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.gar-chip { position: relative; cursor: pointer; }
+.gar-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.gar-chip span, .gar-chip-btn {
+  display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  padding: 7px 10px; min-height: 34px; border-radius: 999px; border: 1px solid var(--brd);
+  background: var(--surf); color: var(--t2); font: 400 .68rem 'DM Mono', monospace; cursor: pointer;
+}
+.gar-chip-btn { border-radius: 9px; appearance: none; -webkit-appearance: none; }
+.gar-chip-btn small { font-size: .56rem; color: var(--t3); }
+.gar-chip input:checked + span, .gar-chip-btn.on { border-color: #b392f0; color: var(--t1); background: rgba(179,146,240,.14); }
+.gar-chip input:focus-visible + span { outline: 2px solid #b392f0; outline-offset: 2px; }
+.gar-est { font-size: .68rem; color: var(--t2); line-height: 1.45; margin-bottom: 8px; }
+.gar-est:empty { display: none; }
+.gar-est-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; color: var(--t1); font-family: 'DM Mono', monospace; font-size: .72rem; }
+.gar-est-top b { color: #b392f0; font-weight: 600; }
+.gar-est ul { margin: 6px 0 0 16px; padding: 0; font-family: 'DM Mono', monospace; font-size: .64rem; color: var(--t3); }
+.gar-est p { margin-top: 6px; font-size: .64rem; color: var(--t3); }
+.gar-est-miss { color: var(--t3); font-size: .66rem; }
+.gar-est-link { display: inline-block; margin-top: 6px; color: #b392f0; font: 400 .64rem 'DM Mono', monospace; }
+.gar-gomme-misure { padding: 0 13px; }
+.gar-gomme-misure p { font-size: .64rem; color: var(--t3); line-height: 1.45; margin-bottom: 10px; }
+
 /* ═══════════════════════════════════════════════════════════════════
    FUEL LOG — record refuels per active vehicle, compute L/100km, €/km
    ═══════════════════════════════════════════════════════════════════ */
@@ -2214,6 +2246,10 @@ body[data-hub="fuel"]::before { display: none !important; }
 #hub-diag .nav-btn[data-view="diario"] { display: none !important; }
 #hub-diag #view-promemoria,
 #hub-diag #view-diario { display: none !important; }
+
+/* Consumo dai viaggi importati */
+.fl-trips { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surf); border: 1px solid rgba(91,155,213,.35); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+.fl-trips-btn { appearance: none; -webkit-appearance: none; background: none; border: 1px solid var(--brd); color: var(--t2); border-radius: 8px; padding: 8px 10px; min-height: 36px; font: 500 .66rem 'DM Mono', monospace; cursor: pointer; flex-shrink: 0; }
 
 /* ═══════════════════════════════════════════════════════════════════
    GARAGE SECTION — top-level tab containing the 3 vehicle modules
@@ -3073,7 +3109,7 @@ body[data-hub="fuel"]::before { display: none !important; }
 }
 .rdl-stats-summary {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   gap: 8px;
   margin-bottom: 14px;
 }
@@ -3874,6 +3910,61 @@ a.ms-card { text-decoration: none; color: inherit; }
 .ms-myfav b { font: 600 .8rem 'DM Sans', sans-serif; color: var(--t1); }
 .ms-myfav small { display: block; font: 400 .58rem 'DM Mono', monospace; color: var(--t3); margin-top: 2px; }
 .ms-ics { width: 100%; margin-top: 10px; background: rgba(232,80,80,.1); border: 1px solid rgba(232,80,80,.4); color: #ffb4b4; border-radius: 10px; padding: 11px; font: 500 .72rem 'DM Mono', monospace; cursor: pointer; }
+
+/* ── Diario uscite: importazione viaggi ───────────────────────── */
+.rdl-hdr-act { display: flex; gap: 8px; align-items: center; }
+.rdl-hdr-act .rdl-import, .rdl-hdr-act .gar-close { white-space: nowrap; }
+.rdl-import {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  background: rgba(91,155,213,.14); color: var(--t1); border: 1px solid rgba(91,155,213,.5);
+  border-radius: 8px; padding: 8px 12px; min-height: 36px; font: 500 .68rem 'DM Mono', monospace;
+  white-space: nowrap;
+}
+.rdl-empty .rdl-import { margin-top: 14px; }
+.rdl-summary-val small { font-size: .55em; color: var(--t3); }
+.vi-sheet { position: fixed; inset: 0; z-index: 90; display: none; align-items: flex-end; justify-content: center; background: rgba(0,0,0,.55); }
+.vi-sheet.visible { display: flex; }
+@media (min-width: 600px) { .vi-sheet { align-items: center; } }
+.vi-card { background: var(--surf); border: 1px solid var(--brd); border-radius: 14px 14px 0 0; width: 100%; max-width: 560px; max-height: 92vh; display: flex; flex-direction: column; }
+@media (min-width: 600px) { .vi-card { border-radius: 14px; } }
+.vi-hdr { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--brd); }
+.vi-hdr h3 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 1.2rem; color: var(--t1); letter-spacing: .02em; }
+.vi-body { padding: 14px 16px 18px; overflow-y: auto; font-size: .74rem; color: var(--t2); line-height: 1.5; }
+.vi-lbl { display: block; font: 400 .58rem 'DM Mono', monospace; color: var(--t3); text-transform: uppercase; letter-spacing: .1em; margin: 0 0 5px; }
+.vi-in { width: 100%; background: var(--surf2); border: 1px solid var(--brd); border-radius: 7px; color: var(--t1); padding: 9px 11px; font: 400 .74rem 'DM Mono', monospace; margin-bottom: 12px; }
+.vi-in:focus { outline: none; border-color: #5b9bd5; }
+.vi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.vi-drop { position: relative; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; padding: 22px 14px; margin-bottom: 10px;
+  border: 1.5px dashed rgba(91,155,213,.55); border-radius: 12px; background: rgba(91,155,213,.07); cursor: pointer; }
+.vi-drop b { color: var(--t1); font-size: .82rem; }
+.vi-drop span { font-size: .66rem; color: var(--t3); }
+.vi-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.vi-drop:focus-within { outline: 2px solid #5b9bd5; outline-offset: 2px; }
+.vi-help, .vi-map { background: var(--surf2); border: 1px solid var(--brd); border-radius: 9px; padding: 9px 12px; margin-top: 8px; }
+.vi-help summary, .vi-map summary { cursor: pointer; color: var(--t1); font: 500 .68rem 'DM Mono', monospace; }
+.vi-help p { margin-top: 7px; font-size: .68rem; }
+.vi-maprow { display: grid; grid-template-columns: 1fr 1.2fr; gap: 8px; align-items: center; margin-top: 8px; }
+.vi-maprow label { font-size: .66rem; color: var(--t2); }
+.vi-maprow .vi-in { margin: 0; padding: 7px 9px; font-size: .66rem; }
+.vi-kind { color: var(--t1); font-weight: 600; margin-bottom: 10px; word-break: break-all; }
+.vi-sum { margin: 12px 0 8px; color: var(--t2); }
+.vi-sum b { color: var(--t1); }
+.vi-note { font-size: .66rem; color: var(--t3); margin: 4px 0 8px; }
+.vi-warn { color: #f0b35a; font-size: .7rem; margin: 6px 0; }
+.vi-err { color: #ff8a82; font-size: .7rem; min-height: 1em; }
+.vi-err:empty { display: none; }
+.vi-wait { color: var(--t3); font-size: .7rem; }
+.vi-done { color: #6dd9a3; font-size: .82rem; margin-bottom: 6px; }
+.vi-prev { overflow-x: auto; }
+.vi-prev table { width: 100%; border-collapse: collapse; font: 400 .66rem 'DM Mono', monospace; }
+.vi-prev th { text-align: left; color: var(--t3); font-weight: 400; padding: 4px 6px; border-bottom: 1px solid var(--brd); }
+.vi-prev td { padding: 5px 6px; color: var(--t1); border-bottom: 1px solid var(--brd); white-space: nowrap; }
+.vi-prev small { display: block; margin-top: 4px; color: var(--t3); font-size: .62rem; }
+.vi-act { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+.vi-btn, .vi-btn2 { appearance: none; -webkit-appearance: none; cursor: pointer; border-radius: 9px; padding: 10px 14px; min-height: 40px; font: 600 .72rem 'DM Mono', monospace; }
+.vi-btn { background: #5b9bd5; color: #08131c; border: 1px solid #5b9bd5; }
+.vi-btn[disabled] { opacity: .45; cursor: not-allowed; }
+.vi-btn2 { background: transparent; color: var(--t2); border: 1px solid var(--brd); }
 
 /* ═══════════════════════════════════════════════════════════════════
    PASSI ALPINI / APPENNINICI — curated database for motorcyclists
@@ -15120,14 +15211,15 @@ function scheduleWeatherUpdate(lat, lng) {
 }
 
 /* ── Sfondo della mappa ────────────────────────────────────────────
-   1. OpenFreeMap "dark" (vettoriale, gratis, senza chiave né registrazione).
+   1. OpenFreeMap "fiord" (vettoriale, scuro, gratis, senza chiave né registrazione).
       Serve MapLibre: viene scaricato solo la prima volta che apri la mappa.
    2. Se MapLibre non parte (niente WebGL o CDN irraggiungibile): OpenStreetMap
       scurito via CSS. Nota: OSM blocca le pagine aperte da file:// (manca il Referer).
    CARTO dal 25/09/2026 vuole una chiave: se ne hai una, mettila in CARTO_KEY
    e viene usata al posto di tutto il resto. */
 const CARTO_KEY = '';
-const OFM_STYLE = 'https://tiles.openfreemap.org/styles/dark';
+// "dark" è quasi nero (strade grigio 18-27 su fondo 12): illeggibile. "fiord" è scuro ma con contrasto.
+const OFM_STYLE = 'https://tiles.openfreemap.org/styles/fiord';
 const MAPLIBRE_JS  = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js';
 const MAPLIBRE_CSS = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css';
 const MAPLIBRE_LEAFLET_JS = 'https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js';
@@ -15169,11 +15261,8 @@ async function addBasemap(map) {
     await Promise.all([loadAsset(MAPLIBRE_CSS, true), loadAsset(MAPLIBRE_JS)]);
     await loadAsset(MAPLIBRE_LEAFLET_JS);
     if (!L.maplibreGL) throw new Error('plugin MapLibre-Leaflet assente');
+    // L'attribuzione (OpenFreeMap, OpenMapTiles, OpenStreetMap) arriva dallo stile stesso
     L.maplibreGL({ style: OFM_STYLE }).addTo(map);
-    // Attribuzione obbligatoria per OpenFreeMap: il plugin non la passa a Leaflet, la aggiungiamo noi
-    if (map.attributionControl) {
-      map.attributionControl.addAttribution('<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> ' + OSM_ATTR);
-    }
   } catch (e) {
     console.warn('[mappa] OpenFreeMap non disponibile, uso OSM:', e.message);
     addOsmFallback(map);
@@ -16429,6 +16518,249 @@ async function runCmp() {
 </script>
 
 <!-- HUB GARAGE ADDON: multi-vehicle profile (must run AFTER diag JS) -->
+<script>/* ═══════════════════════════════════════════════════════════════════
+   GARAGE — stime di bollo e assicurazione, dati gomme
+   window.hubCosti = { REGIONI, GARANZIE, bollo(), rca(), euroDaAnno(),
+                       alimDaDb(), gomme: { marche(), modelli(), misure() } }
+   Tutte le cifre sono STIME: l'importo vero si verifica sul calcolatore
+   ACI (bollo) e con un preventivo per targa (assicurazione).
+   Fonti (novembre 2026):
+   · tariffe bollo nazionali e regionali 2026: ACI, UNRAE
+   · bollo moto 2026: Segugio (Euro 3+: 19,11 € fino a 11 kW + 0,88 €/kW oltre)
+   · premio medio RCA auto: IVASS, II trimestre 2026 = 422 €
+   · premio medio RC moto: Segugio, marzo 2026 = 389 €
+   · garanzie accessorie (media): Segugio
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  'use strict';
+
+  var ANNO = new Date().getFullYear();
+
+  var REGIONI = ['Abruzzo', 'Basilicata', 'Bolzano (Alto Adige)', 'Calabria', 'Campania', 'Emilia-Romagna',
+    'Friuli-Venezia Giulia', 'Lazio', 'Liguria', 'Lombardia', 'Marche', 'Molise', 'Piemonte', 'Puglia',
+    'Sardegna', 'Sicilia', 'Toscana', 'Trento (Trentino)', 'Umbria', "Valle d'Aosta", 'Veneto'];
+
+  // €/kW fino a 100 kW e per ogni kW oltre 100, per classe Euro (tariffa nazionale)
+  var NAZ = { 0: [3.00, 4.50], 1: [2.90, 4.35], 2: [2.80, 4.20], 3: [2.70, 4.05], 4: [2.58, 3.87], 5: [2.58, 3.87], 6: [2.58, 3.87] };
+  // Maggiorazioni regionali sulla tariffa nazionale
+  var FATTORE = { 'Abruzzo': 1.21, 'Campania': 1.21, 'Emilia-Romagna': 1.10, 'Lazio': 1.10, 'Liguria': 1.10, 'Calabria': 1.10, 'Veneto': 1.10 };
+  var TOSCANA_SOTTO = { 0: 1.157, 1: 1.13, 2: 1.10, 3: 1.075, 4: 1.05, 5: 1.05, 6: 1.05 };
+  var BOLZANO_SOTTO = { 0: 2.70, 1: 2.61, 2: 2.52, 3: 2.43, 4: 2.32, 5: 2.09, 6: 1.96 };
+  var DOMICILIAZIONE = { 'Lombardia': 0.15, 'Lazio': 0.10, 'Campania': 0.10 };
+  // Moto: quota fissa fino a 11 kW + €/kW oltre gli 11
+  var MOTO = { 0: [26, 1.70], 1: [23, 1.30], 2: [21, 1.00], 3: [19.11, 0.88], 4: [19.11, 0.88], 5: [19.11, 0.88] };
+
+  function r2(n) { return Math.round(n * 100) / 100; }
+
+  function euroDaAnno(anno, tipo) {
+    anno = parseInt(anno, 10);
+    if (!anno) return '';
+    if (tipo === 'moto') return anno >= 2021 ? 5 : anno >= 2017 ? 4 : anno >= 2007 ? 3 : anno >= 2004 ? 2 : anno >= 2000 ? 1 : 0;
+    return anno >= 2016 ? 6 : anno >= 2011 ? 5 : anno >= 2006 ? 4 : anno >= 2001 ? 3 : anno >= 1997 ? 2 : anno >= 1993 ? 1 : 0;
+  }
+  // "Benzina mild hybrid", "Plug-in Hybrid (benzina)" … → codice del modulo
+  function alimDaDb(s) {
+    s = String(s || '').toLowerCase();
+    if (!s) return '';
+    if (/plug/.test(s)) return 'plugin';
+    if (/elettr|bev/.test(s) && !/ibrid|hybrid/.test(s)) return 'elettrica';
+    if (/diesel/.test(s)) return /ibrid|hybrid/.test(s) ? 'diesel-ibrida' : 'diesel';
+    if (/ibrid|hybrid/.test(s)) return 'ibrida';
+    if (/gpl/.test(s)) return 'gpl';
+    if (/metano|cng/.test(s)) return 'metano';
+    return 'benzina';
+  }
+  function co2DaDb(s) { var m = /(\d{1,3})\s*g/.exec(String(s || '')); return m ? parseInt(m[1], 10) : null; }
+
+  /* ── BOLLO ─────────────────────────────────────────────────────
+     p = { tipo, kw, euro, alim, regione, annoImm, co2, domic }
+     → { importo, base, righe:[testo], note:[testo], esente } oppure { errore } */
+  function bollo(p) {
+    var kw = Number(p.kw) || 0, euro = p.euro === '' || p.euro == null ? null : Number(p.euro);
+    if (!p.regione) return { errore: 'Scegli la regione di residenza' };
+    if (!kw) return { errore: 'Serve la potenza (CV nelle specifiche o scegli il motore)' };
+    if (euro == null) return { errore: 'Scegli la classe Euro' };
+    var eta = p.annoImm ? ANNO - p.annoImm : null;
+    var righe = [], note = [], base;
+
+    if (p.tipo === 'moto') {
+      var t = MOTO[Math.min(euro, 5)];
+      base = t[0] + Math.max(0, kw - 11) * t[1];
+      righe.push(t[0].toFixed(2).replace('.', ',') + ' € fino a 11 kW' + (kw > 11 ? ' + ' + Math.round(kw - 11) + ' kW × ' + t[1].toFixed(2).replace('.', ',') + ' €' : ''));
+      note.push('Moto: tariffa nazionale, alcune regioni hanno importi leggermente diversi.');
+    } else {
+      var t2 = NAZ[Math.min(euro, 6)].slice(), f = FATTORE[p.regione] || 1, sotto = t2[0] * f, sopra = t2[1] * f;
+      if (p.regione === 'Toscana') { sotto = t2[0] * TOSCANA_SOTTO[Math.min(euro, 6)]; sopra = t2[1] * 1.10; }
+      if (p.regione === 'Bolzano (Alto Adige)') { sotto = BOLZANO_SOTTO[Math.min(euro, 6)]; sopra = sotto * 1.5; note.push('Bolzano applica tariffe proprie anche in base alla CO₂: stima approssimata.'); }
+      sotto = r2(sotto); sopra = r2(sopra);
+      base = Math.min(kw, 100) * sotto + Math.max(0, kw - 100) * sopra;
+      righe.push(Math.round(Math.min(kw, 100)) + ' kW × ' + sotto.toFixed(2).replace('.', ',') + ' €' + (kw > 100 ? ' + ' + Math.round(kw - 100) + ' kW × ' + sopra.toFixed(2).replace('.', ',') + ' €' : ''));
+      // Superbollo
+      if (kw > 185) {
+        var sb = (kw - 185) * 20, rid = eta == null ? 1 : eta > 20 ? 0 : eta > 15 ? 0.15 : eta > 10 ? 0.30 : eta > 5 ? 0.60 : 1;
+        if (rid > 0) { base += sb * rid; righe.push('Superbollo: ' + Math.round(kw - 185) + ' kW × 20 €' + (rid < 1 ? ' × ' + Math.round(rid * 100) + '% (età)' : '') + ' = ' + Math.round(sb * rid) + ' €'); }
+        else righe.push('Superbollo: non dovuto (oltre 20 anni)');
+      }
+    }
+    var importo = base, esente = false;
+
+    // Veicoli storici
+    if (eta != null && eta >= 30) {
+      return { importo: 0, base: r2(base), esente: true, righe: righe,
+        note: ['Oltre 30 anni: esente dal bollo. Se circola paga solo la tassa di circolazione forfettaria (circa 26 € auto, 10 € moto).'] };
+    }
+    if (eta != null && eta >= 20) note.push('Tra 20 e 29 anni con certificato di rilevanza storica (CRS) il bollo è ridotto del 50%.');
+
+    // Elettriche
+    var a = p.alim || '';
+    if (a === 'elettrica') {
+      var anniEsenzione = p.regione === "Valle d'Aosta" ? 8 : 5;
+      if (p.regione === 'Lombardia' || p.regione === 'Piemonte') { importo = 0; esente = true; note.push('Elettrica: in ' + p.regione + ' esente dal bollo.'); }
+      else if (eta != null && eta < anniEsenzione) { importo = 0; esente = true; note.push('Elettrica: esente per i primi ' + anniEsenzione + ' anni, poi paga il 25%.'); }
+      else { importo = base * 0.25; note.push('Elettrica: dopo il periodo di esenzione paga il 25% della tariffa.'); }
+    }
+    // Ibride benzina-elettrico: agevolazioni regionali
+    if (a === 'ibrida' || a === 'plugin') {
+      var reg = p.regione, co2 = p.co2 || (a === 'plugin' ? 50 : 100);
+      var esenteAnni = { 'Campania': 3, 'Liguria': 3, 'Sicilia': 3, 'Veneto': 3, 'Molise': 2 }[reg];
+      if (reg === 'Lazio' && p.annoImm && p.annoImm <= 2022) esenteAnni = 3;
+      if (reg === 'Marche' && kw <= 66 && p.annoImm >= 2023 && p.annoImm <= 2026) esenteAnni = 6;
+      if (reg === 'Piemonte' && kw <= 100) {
+        if (p.annoImm && p.annoImm < 2025) esenteAnni = 5;
+        else if (eta != null && eta < 5) { importo = base * 0.5; note.push('Ibrida in Piemonte (dal 2025, fino a 100 kW): 50% per 5 anni.'); }
+      }
+      if (reg === 'Puglia') {
+        if (eta != null && eta < 5) esenteAnni = 5;
+        else { importo = base * 0.25; note.push('Ibrida in Puglia: dopo 5 anni di esenzione paga il 25%.'); }
+      }
+      if (reg === 'Lombardia' && kw <= 100 && p.annoImm >= 2026 && co2 <= 120) {
+        var mesi = co2 <= 60 ? 5 : 2;
+        if (eta != null && eta < mesi) { importo = base * 0.5; note.push('Ibrida in Lombardia (dal 2026, fino a 100 kW): 50% per ' + (mesi * 12) + ' mesi.'); }
+      }
+      if (esenteAnni && eta != null && eta < esenteAnni) { importo = 0; esente = true; note.push('Ibrida in ' + reg + ': esente per i primi ' + esenteAnni + ' anni.'); }
+      else if (esenteAnni) note.push('Ibrida in ' + reg + ': il periodo di esenzione (' + esenteAnni + ' anni) è finito.');
+      if (reg === 'Bolzano (Alto Adige)' || reg === 'Trento (Trentino)') note.push('Ibride: a ' + reg.split(' ')[0] + ' le riduzioni dipendono dalla CO₂, verifica su ACI.');
+    }
+    if (a === 'gpl' || a === 'metano') note.push('GPL/metano: alcune regioni riducono il bollo per le auto a gas dalla fabbrica. Verifica sul calcolatore ACI.');
+
+    if (p.domic && DOMICILIAZIONE[p.regione] && importo > 0) {
+      var sc = DOMICILIAZIONE[p.regione];
+      importo = importo * (1 - sc);
+      righe.push('Sconto domiciliazione bancaria −' + Math.round(sc * 100) + '%');
+    }
+    if (eta != null && eta >= 0 && eta < 1) note.push('Primo anno: si paga in proporzione ai mesi dall\'immatricolazione.');
+    return { importo: r2(importo), base: r2(base), esente: esente, righe: righe, note: note };
+  }
+
+  /* ── ASSICURAZIONE ─────────────────────────────────────────────── */
+  var GARANZIE = [
+    { id: 'furto',      nome: 'Furto e incendio',      eur: 103 },
+    { id: 'cristalli',  nome: 'Cristalli',             eur: 53 },
+    { id: 'assistenza', nome: 'Assistenza stradale',   eur: 23 },
+    { id: 'infortuni',  nome: 'Infortuni conducente',  eur: 28 },
+    { id: 'legale',     nome: 'Tutela legale',         eur: 15 },
+    { id: 'naturali',   nome: 'Eventi naturali',       eur: 208 },
+    { id: 'vandalici',  nome: 'Atti vandalici',        eur: 121 },
+    { id: 'minikasko',  nome: 'Collisione (mini-kasko)', eur: 118 },
+    { id: 'kasko',      nome: 'Kasko',                 eur: 400 }
+  ];
+  var RCA_MEDIA = { auto: 422, moto: 389 };
+
+  function rca(p) {
+    var tipo = p.tipo === 'moto' ? 'moto' : 'auto', base = RCA_MEDIA[tipo], righe = [];
+    righe.push((tipo === 'moto' ? 'RC moto, media nazionale (Segugio, mar 2026)' : 'RCA, media nazionale (IVASS, II trim. 2026)') + ': ' + base + ' €');
+    var g = p.garanzie || [], extra = 0;
+    // Kasko e mini-kasko non si sommano: la kasko comprende la collisione
+    var hasKasko = g.indexOf('kasko') >= 0;
+    GARANZIE.forEach(function(x) {
+      if (g.indexOf(x.id) < 0 || (hasKasko && x.id === 'minikasko')) return;
+      extra += x.eur; righe.push(x.nome + ': ~' + x.eur + ' €');
+    });
+    return { importo: base + extra, base: base, extra: extra, righe: righe,
+      note: ['Media nazionale: il prezzo vero dipende da età, classe di merito, provincia e veicolo. Fai un preventivo con la targa.'] };
+  }
+
+  /* ── GOMME ───────────────────────────────────────────────────────
+     Marche e linee di prodotto più diffuse in Italia (suggerimenti, si può
+     scrivere qualsiasi altro nome). Tipo: e = estive, i = invernali,
+     a = 4 stagioni, s = sportive/track, m = moto.  */
+  var GOMME = {
+    'Michelin':    { e: ['Primacy 4+', 'Primacy 5', 'e.Primacy', 'Pilot Sport 5', 'Pilot Sport 4 SUV'], s: ['Pilot Sport 4 S', 'Pilot Sport Cup 2'], a: ['CrossClimate 2', 'CrossClimate 2 SUV'], i: ['Alpin 7', 'Pilot Alpin 5'], m: ['Road 6', 'Power 6', 'Power GP2', 'Pilot Street 2', 'Anakee Adventure', 'Anakee Road', 'City Grip 2'] },
+    'Pirelli':     { e: ['Cinturato P7 (C2)', 'Powergy', 'P Zero (PZ4)', 'Scorpion'], s: ['P Zero Corsa', 'P Zero Trofeo RS'], a: ['Cinturato All Season SF3', 'Scorpion All Season SF2'], i: ['Winter Sottozero 3', 'Scorpion Winter 2'], m: ['Diablo Rosso IV', 'Diablo Rosso IV Corsa', 'Angel GT II', 'Scorpion Trail II', 'Diablo Supercorsa SP V4', 'Angel Scooter'] },
+    'Continental': { e: ['PremiumContact 7', 'EcoContact 6', 'UltraContact'], s: ['SportContact 7'], a: ['AllSeasonContact 2'], i: ['WinterContact TS 870', 'WinterContact TS 870 P'], m: ['ContiRoadAttack 4', 'ContiSportAttack 4', 'TKC 70', 'ContiRoad'] },
+    'Bridgestone': { e: ['Turanza 6', 'Turanza T005', 'Potenza Sport'], s: ['Potenza Race'], a: ['Turanza All Season 6', 'Weather Control A005 Evo'], i: ['Blizzak 6', 'Blizzak LM005'], m: ['Battlax S23', 'Battlax T32', 'Battlax Hypersport S22', 'Battlax Adventure A41'] },
+    'Goodyear':    { e: ['EfficientGrip Performance 2', 'Eagle F1 Asymmetric 6'], s: ['Eagle F1 SuperSport'], a: ['Vector 4Seasons Gen-3'], i: ['UltraGrip Performance 3'] },
+    'Dunlop':      { e: ['Sport BluResponse', 'Sport Maxx RT2'], s: ['Sport Maxx Race 2'], a: ['Sport All Season'], i: ['Winter Sport 5'], m: ['Sportmax RoadSport 2', 'SportSmart TT', 'Sportmax Mutant', 'Trailmax Meridian', 'RoadSmart IV'] },
+    'Hankook':     { e: ['Ventus Prime 4', 'Ventus S1 evo3', 'Kinergy Eco 2'], a: ['Kinergy 4S2'], i: ['Winter i*cept RS3'] },
+    'Yokohama':    { e: ['BluEarth-GT AE51', 'Advan Sport V107'], a: ['BluEarth-4S AW21'], i: ['BluEarth-Winter V906'] },
+    'Nokian':      { e: ['Powerproof 1', 'Wetproof 1'], a: ['Seasonproof 1'], i: ['Snowproof 2'] },
+    'Vredestein':  { e: ['Ultrac', 'Ultrac Pro'], a: ['Quatrac', 'Quatrac Pro+'], i: ['Wintrac', 'Wintrac Pro+'] },
+    'Falken':      { e: ['Ziex ZE310 Ecorun', 'Azenis FK520'], a: ['Euroall Season AS210'], i: ['Eurowinter HS02'] },
+    'Kumho':       { e: ['Ecsta PS71', 'Ecowing ES31'], a: ['Solus 4S HA32'], i: ['WinterCraft WP52'] },
+    'Toyo':        { e: ['Proxes Sport 2', 'Proxes Comfort'], a: ['Celsius AS2'], i: ['Observe S944'] },
+    'Firestone':   { e: ['Roadhawk 2'], a: ['Multiseason 2'], i: ['Winterhawk 4'] },
+    'BFGoodrich':  { e: ['Advantage', 'g-Force Phenom'], a: ['Advantage All-Season'], i: ['g-Force Winter 2'] },
+    'Nexen':       { e: ["N'Fera Sport", "N'blue HD Plus"], a: ["N'blue 4Season 2"], i: ["Winguard Sport 2"] },
+    'Uniroyal':    { e: ['RainSport 5', 'RainExpert 5'], a: ['AllSeasonExpert 2'], i: ['WinterExpert'] },
+    'Kleber':      { e: ['Dynaxer HP4'], a: ['Quadraxer 3'], i: ['Krisalp HP3'] },
+    'Metzeler':    { m: ['Roadtec 02', 'Sportec M9 RR', 'Racetec RR', 'Tourance Next 2', 'Karoo 4', 'Feelfree Wintec'] },
+    'Avon':        { m: ['Spirit ST', 'Storm 3D X-M', 'Trailrider'] },
+    'Mitas':       { m: ['Terra Force-R', 'Sport Force+', 'E-07'] },
+    'Maxxis':      { e: ['Premitra HP5'], a: ['Premitra All Season AP3'], m: ['Supermaxx ST'] },
+    'Heidenau':    { m: ['K60 Scout', 'K73'] }
+  };
+  var TIPO_MAP = { estive: ['e', 's'], invernali: ['i'], 'all-season': ['a'], track: ['s'] };
+
+  function marcheGomme(tipoVeicolo) {
+    return Object.keys(GOMME).filter(function(m) {
+      var g = GOMME[m];
+      return tipoVeicolo === 'moto' ? !!g.m : !!(g.e || g.a || g.i || g.s);
+    });
+  }
+  function modelliGomme(marca, tipoVeicolo, tipoGomma) {
+    var g = GOMME[marca];
+    if (!g) return [];
+    if (tipoVeicolo === 'moto') return (g.m || []).slice();
+    var keys = TIPO_MAP[tipoGomma] || ['e', 's', 'a', 'i'], out = [];
+    keys.forEach(function(k) { (g[k] || []).forEach(function(x) { out.push(x); }); });
+    return out;
+  }
+
+  // db/tyres.json: { "Marca||Modello": { "2012–2024": { "175/65 R14": [ant, post], default: [..] } } }
+  var _tyres = null, _tyresP = null;
+  function caricaMisure() {
+    if (_tyres) return Promise.resolve(_tyres);
+    if (_tyresP) return _tyresP;
+    _tyresP = fetch('db/tyres.json').then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(j) { _tyres = j; return j; })
+      .catch(function(e) { _tyresP = null; throw e; });
+    return _tyresP;
+  }
+  function anni(s) { var m = /(\d{4})\D+(\d{4})/.exec(s || ''); if (m) return [+m[1], +m[2]]; m = /(\d{4})/.exec(s || ''); return m ? [+m[1], ANNO] : null; }
+  // Misure per marca/modello/serie, scegliendo la serie del file che si sovrappone di più agli anni scelti
+  function misure(marca, modello, gen, annoImm) {
+    if (!_tyres || !marca || !modello) return null;
+    var base = String(modello).replace(/\s*\([^)]*\)/, '').replace(/\s+(?:(?:I|II|III|IV|V|VI|VII|VIII)\/)*(?:II|III|IV|VI|VII|VIII)$/, '').trim();
+    var e = _tyres[marca + '||' + modello] || _tyres[marca + '||' + base];
+    if (!e) return null;
+    var gens = Object.keys(e), want = annoImm ? [annoImm, annoImm] : anni(gen), best = gens[0], bestOv = -1;
+    if (want) gens.forEach(function(g) {
+      var y = anni(g); if (!y) return;
+      var ov = Math.min(y[1], want[1]) - Math.max(y[0], want[0]);
+      if (ov > bestOv) { bestOv = ov; best = g; }
+    });
+    var row = e[best], out = [];
+    Object.keys(row).forEach(function(k) { if (k !== 'default') out.push({ misura: k, ant: row[k][0], post: row[k][1] }); });
+    return { serie: best, misure: out, standard: row['default'] || null };
+  }
+
+  window.hubCosti = {
+    REGIONI: REGIONI, GARANZIE: GARANZIE, DOMICILIAZIONE: DOMICILIAZIONE,
+    bollo: bollo, rca: rca, euroDaAnno: euroDaAnno, alimDaDb: alimDaDb, co2DaDb: co2DaDb,
+    gomme: { marche: marcheGomme, modelli: modelliGomme, carica: caricaMisure, misure: misure }
+  };
+})();
+</script>
 <script>
 
 /* ════════════════════════════════════════════════════════════════
@@ -17054,16 +17386,50 @@ async function runCmp() {
             '<input type="number" id="gar-f-km" placeholder="0" min="0"></div>' +
         '</div>' +
         '<div class="gar-row2">' +
-          '<div class="gar-field"><label>Scadenza bollo</label>' +
-            '<input type="date" id="gar-f-bollo"></div>' +
-          '<div class="gar-field"><label>€ bollo / anno</label>' +
-            '<input type="number" id="gar-f-bollo-cost" min="0" step="1" placeholder="180"></div>' +
+          '<div class="gar-field"><label>Alimentazione</label>' +
+            '<select id="gar-f-alim" onchange="_garCostiUpdate()">' +
+              '<option value="">—</option><option value="benzina">Benzina</option><option value="diesel">Diesel</option>' +
+              '<option value="gpl">GPL</option><option value="metano">Metano</option><option value="ibrida">Ibrida benzina</option>' +
+              '<option value="diesel-ibrida">Ibrida diesel</option><option value="plugin">Plug-in</option><option value="elettrica">Elettrica</option>' +
+            '</select></div>' +
+          '<div class="gar-field"><label>Classe Euro</label>' +
+            '<select id="gar-f-euro" onchange="_garCostiUpdate()">' +
+              '<option value="">—</option><option value="6">Euro 6</option><option value="5">Euro 5</option><option value="4">Euro 4</option>' +
+              '<option value="3">Euro 3</option><option value="2">Euro 2</option><option value="1">Euro 1</option><option value="0">Euro 0</option>' +
+            '</select></div>' +
         '</div>' +
-        '<div class="gar-row2">' +
-          '<div class="gar-field"><label>Scadenza RCA</label>' +
-            '<input type="date" id="gar-f-rca"></div>' +
-          '<div class="gar-field"><label>€ RCA / anno</label>' +
-            '<input type="number" id="gar-f-rca-cost" min="0" step="1" placeholder="450"></div>' +
+        '<div class="gar-costi">' +
+          '<div class="gar-costi-h">🧾 Bollo</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Scadenza bollo</label>' +
+              '<input type="date" id="gar-f-bollo"></div>' +
+            '<div class="gar-field"><label>€ bollo / anno</label>' +
+              '<input type="number" id="gar-f-bollo-cost" min="0" step="1" placeholder="vuoto = stima" oninput="_garCostiUpdate()"></div>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Regione di residenza</label>' +
+              '<select id="gar-f-regione" onchange="_garCostiUpdate()"><option value="">— scegli —</option>' +
+                window.hubCosti.REGIONI.map(function(r) { return '<option>' + r + '</option>'; }).join('') +
+              '</select></div>' +
+            '<label class="gar-check" id="gar-domic-wrap" style="display:none"><input type="checkbox" id="gar-f-domic" onchange="_garCostiUpdate()"> Domiciliazione bancaria</label>' +
+          '</div>' +
+          '<div class="gar-est" id="gar-bollo-est"></div>' +
+        '</div>' +
+        '<div class="gar-costi">' +
+          '<div class="gar-costi-h">🛡 Assicurazione</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Scadenza RCA</label>' +
+              '<input type="date" id="gar-f-rca"></div>' +
+            '<div class="gar-field"><label>€ assicurazione / anno</label>' +
+              '<input type="number" id="gar-f-rca-cost" min="0" step="1" placeholder="vuoto = stima" oninput="_garCostiUpdate()"></div>' +
+          '</div>' +
+          '<div class="gar-sublbl">Garanzie incluse oltre alla RC obbligatoria</div>' +
+          '<div class="gar-chips" id="gar-garanzie">' +
+            window.hubCosti.GARANZIE.map(function(g) {
+              return '<label class="gar-chip"><input type="checkbox" value="' + g.id + '" onchange="_garCostiUpdate()"><span>' + g.nome + '</span></label>';
+            }).join('') +
+          '</div>' +
+          '<div class="gar-est" id="gar-rca-est"></div>' +
         '</div>' +
         '<div class="gar-row2">' +
           '<div class="gar-field"><label>Scadenza revisione</label>' +
@@ -17123,16 +17489,19 @@ async function runCmp() {
         '</details>' +
 
         '<details class="gar-section"><summary>🛞 Gomme</summary>' +
-          '<div class="gar-field"><label>Misura (es. 225/45 R17)</label>' +
-            '<input type="text" id="gar-f-gomme-misura" placeholder="225/45 R17" maxlength="20"></div>' +
+          '<div class="gar-field"><label>Misura</label>' +
+            '<input type="text" id="gar-f-gomme-misura" placeholder="225/45 R17" maxlength="40" oninput="_garGommeUpdate()"></div>' +
+          '<div id="gar-gomme-misure" class="gar-gomme-misure"></div>' +
           '<div class="gar-row2">' +
             '<div class="gar-field"><label>Marca</label>' +
-              '<input type="text" id="gar-f-gomme-marca" placeholder="Michelin" maxlength="30"></div>' +
+              '<input type="text" id="gar-f-gomme-marca" list="gar-dl-gmarca" placeholder="scegli o scrivi" maxlength="30" autocomplete="off" oninput="_garGommeModelli()" onchange="_garGommeModelli()">' +
+              '<datalist id="gar-dl-gmarca"></datalist></div>' +
             '<div class="gar-field"><label>Modello</label>' +
-              '<input type="text" id="gar-f-gomme-modello" placeholder="Pilot Sport 4" maxlength="40"></div>' +
+              '<input type="text" id="gar-f-gomme-modello" list="gar-dl-gmodello" placeholder="scegli o scrivi" maxlength="40" autocomplete="off">' +
+              '<datalist id="gar-dl-gmodello"></datalist></div>' +
           '</div>' +
           '<div class="gar-field"><label>Tipo</label>' +
-            '<select id="gar-f-gomme-tipo">' +
+            '<select id="gar-f-gomme-tipo" onchange="_garGommeModelli()">' +
               '<option value="">—</option>' +
               '<option value="estive">Estive</option>' +
               '<option value="invernali">Invernali</option>' +
@@ -17242,6 +17611,13 @@ async function runCmp() {
     document.getElementById('gar-f-bollo-cost').value = v ? (v.costoBollo || '') : '';
     document.getElementById('gar-f-rca-cost').value   = v ? (v.costoRca || '') : '';
     document.getElementById('gar-f-rev-cost').value   = v ? (v.costoRev || '') : '';
+    document.getElementById('gar-f-alim').value    = v ? (v.alim || '') : '';
+    document.getElementById('gar-f-euro').value    = v && v.euro != null ? String(v.euro) : '';
+    document.getElementById('gar-f-regione').value = (v && v.regione) || garPrefs().regione || '';
+    document.getElementById('gar-f-domic').checked = !!(v && v.domiciliazione);
+    var gar = (v && v.garanzie) || [];
+    document.querySelectorAll('#gar-garanzie input').forEach(function(c) { c.checked = gar.indexOf(c.value) >= 0; });
+    _co2 = v && v.co2 || null;
     // Specs tecniche
     var specs = (v && v.specs) || {};
     document.getElementById('gar-f-cv').value      = specs.cv || '';
@@ -17271,6 +17647,19 @@ async function runCmp() {
     document.getElementById('gar-f-note').value    = v ? (v.note || '') : '';
     _garSetType(v ? (v.type || 'auto') : 'auto', true);
     initPick(v);
+    fillEuro();
+    _garGommePrepara();
+    _garCostiUpdate();
+    // Veicoli salvati prima di questi campi: alimentazione e CO₂ dalla scheda tecnica
+    if (_pick.motore && !document.getElementById('gar-f-alim').value) {
+      loadVDB(_pick.marca).then(function() {
+        var sp = dbSpec(); if (!sp) return;
+        setSpec('gar-f-alim', window.hubCosti.alimDaDb(sp.alimentazione));
+        _co2 = _co2 || window.hubCosti.co2DaDb(sp.co2_gkm);
+        if (!document.getElementById('gar-f-cv').value) setSpec('gar-f-cv', sp.potenza_cv);
+        _garCostiUpdate();
+      }, function() {});
+    }
 
     // Load existing photo into preview
     var prev = document.getElementById('gar-photo-preview');
@@ -17303,6 +17692,7 @@ async function runCmp() {
       _pick = { marca: '', modello: '', gen: '', anno: '', motore: '' };
       syncFields();
       renderPick();
+      if (window._garCostiUpdate) { _garGommePrepara(); _garCostiUpdate(); }
     }
   };
 
@@ -17392,6 +17782,8 @@ async function runCmp() {
       if (setSpec('gar-f-cambio', mapCambio(sp.trasmissione))) filled.push('cambio');
       if (setSpec('gar-f-traz', mapTraz(sp.trazione))) filled.push('trazione');
       if (setSpec('gar-f-tank', sp.serbatoio_l)) filled.push('serbatoio');
+      if (setSpec('gar-f-alim', window.hubCosti.alimDaDb(sp.alimentazione))) filled.push('alimentazione');
+      _co2 = window.hubCosti.co2DaDb(sp.co2_gkm) || _co2;
     } else {
       // Senza db.json: potenza e cilindrata dal nome del motore, il resto dal database interno
       if (setSpec('gar-f-cv', cvFromName(_pick.motore))) filled.push('CV');
@@ -17407,6 +17799,120 @@ async function runCmp() {
     }
     return filled;
   }
+  /* ── Bollo, assicurazione, gomme: stime e suggerimenti (18-garage-costi.js) ── */
+  var _co2 = null, _stime = { bollo: null, rca: null };
+  var GPREF = 'hub_garage_prefs_v1';
+  function garPrefs() { try { return JSON.parse(localStorage.getItem(GPREF) || '{}'); } catch (e) { return {}; } }
+  function setGarPrefs(p) { try { localStorage.setItem(GPREF, JSON.stringify(Object.assign(garPrefs(), p))); } catch (e) {} }
+  function garanzieScelte() {
+    return Array.prototype.map.call(document.querySelectorAll('#gar-garanzie input:checked'), function(c) { return c.value; });
+  }
+  function annoForm() {
+    var a = parseInt(window._garPickAnnoImm(), 10);
+    if (!a) a = (genYears(document.getElementById('gar-f-anno').value) || [])[0];
+    return a || null;
+  }
+  // Classe Euro dall'anno (solo se l'utente non l'ha già scelta)
+  function fillEuro() {
+    var el = document.getElementById('gar-f-euro'), a = annoForm();
+    if (!el || !a || (el.value !== '' && !_autoFilled['gar-f-euro'])) return;
+    el.value = String(window.hubCosti.euroDaAnno(a, _editingType)); _autoFilled['gar-f-euro'] = true;
+  }
+  function eur(n) { return Math.round(n).toLocaleString('it-IT') + ' €'; }
+  function estBox(id, title, res, userVal, useFn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (res.errore) { el.innerHTML = '<p class="gar-est-miss">Per la stima: ' + escSafe(res.errore) + '.</p>'; return; }
+    var head = userVal
+      ? '<div class="gar-est-top"><span>Hai inserito <b>' + eur(userVal) + '</b> · ' + title + ' stimata ' + eur(res.importo) + '</span></div>'
+      : '<div class="gar-est-top"><span>' + title + ' stimata <b>' + eur(res.importo) + '/anno</b></span>' +
+        '<button type="button" class="gar-pick-link" onclick="' + useFn + '">Usa la stima</button></div>';
+    el.innerHTML = head + '<ul>' + res.righe.map(function(r) { return '<li>' + escSafe(r) + '</li>'; }).join('') + '</ul>' +
+      (res.note && res.note.length ? '<p>' + res.note.map(escSafe).join(' ') + '</p>' : '');
+  }
+  window._garCostiUpdate = function() {
+    var H = window.hubCosti; if (!H) return;
+    var reg = document.getElementById('gar-f-regione').value;
+    document.getElementById('gar-domic-wrap').style.display = H.DOMICILIAZIONE[reg] ? '' : 'none';
+    var cv = parseFloat(document.getElementById('gar-f-cv').value) || 0;
+    var b = H.bollo({ tipo: _editingType, kw: cv ? Math.round(cv * 0.7355) : 0, euro: document.getElementById('gar-f-euro').value,
+      alim: document.getElementById('gar-f-alim').value, regione: reg, annoImm: annoForm(), co2: _co2,
+      domic: document.getElementById('gar-f-domic').checked });
+    _stime.bollo = b.errore ? null : b.importo;
+    estBox('gar-bollo-est', 'Spesa', b, parseFloat(document.getElementById('gar-f-bollo-cost').value) || 0, '_garUsaStima(\'bollo\')');
+    var bEl = document.getElementById('gar-bollo-est');
+    if (bEl) bEl.insertAdjacentHTML('beforeend', '<a class="gar-est-link" href="https://online.aci.it/acinet/calcolobollo/" target="_blank" rel="noopener">Verifica l\'importo esatto sul calcolatore ACI ↗</a>');
+    var r = H.rca({ tipo: _editingType, garanzie: garanzieScelte() });
+    _stime.rca = r.importo;
+    estBox('gar-rca-est', 'Spesa', r, parseFloat(document.getElementById('gar-f-rca-cost').value) || 0, '_garUsaStima(\'rca\')');
+  };
+  window._garUsaStima = function(k) {
+    if (_stime[k] == null) return;
+    document.getElementById(k === 'bollo' ? 'gar-f-bollo-cost' : 'gar-f-rca-cost').value = Math.round(_stime[k]);
+    _garCostiUpdate();
+  };
+  document.addEventListener('input', function(e) { if (e.target && e.target.id === 'gar-f-cv') window._garCostiUpdate && _garCostiUpdate(); });
+
+  // Gomme: misure del modello scelto + marche/modelli più diffusi
+  function _garGommePrepara() {
+    var H = window.hubCosti; if (!H) return;
+    var dl = document.getElementById('gar-dl-gmarca');
+    if (dl) dl.innerHTML = H.gomme.marche(_editingType).map(function(m) { return '<option value="' + escSafe(m) + '">'; }).join('');
+    _garGommeModelli();
+    var box = document.getElementById('gar-gomme-misure');
+    var marca = document.getElementById('gar-f-marca').value, modello = document.getElementById('gar-f-modello').value;
+    if (!box) return;
+    if (!marca || !modello) { box.innerHTML = '<p class="gar-est-miss">Scegli il veicolo per vedere le misure previste.</p>'; return; }
+    H.gomme.carica().then(function() { renderMisure(); }, function() { box.innerHTML = '<p class="gar-est-miss">Misure non disponibili offline: scrivi la misura dal fianco della gomma.</p>'; });
+  }
+  window._garGommePrepara = _garGommePrepara;
+  function misuraParti(m) { return String(m || '').split(/\s*\+\s*/).filter(Boolean); }
+  function renderMisure() {
+    var H = window.hubCosti, box = document.getElementById('gar-gomme-misure');
+    var r = H.gomme.misure(document.getElementById('gar-f-marca').value, document.getElementById('gar-f-modello').value,
+      document.getElementById('gar-f-anno').value, annoForm());
+    if (!r || !r.misure.length) { box.innerHTML = '<p class="gar-est-miss">Nessuna misura in archivio per questo modello: scrivila dal fianco della gomma (es. 205/55 R16).</p>'; return; }
+    var cur = misuraParti(document.getElementById('gar-f-gomme-misura').value), moto = _editingType === 'moto';
+    var chip = function(x) {
+      return '<button type="button" class="gar-chip-btn' + (cur.indexOf(x.misura) >= 0 ? ' on' : '') + '" data-m="' + escSafe(x.misura) + '" onclick="_garGommeScegli(this.dataset.m)">' + escSafe(x.misura) +
+        (moto ? '' : '<small>' + x.ant.toFixed(1) + ' / ' + x.post.toFixed(1) + ' bar</small>') + '</button>';
+    };
+    var html = '<div class="gar-sublbl">Misure previste per ' + escSafe(r.serie) + ' · tocca per scegliere</div>';
+    if (moto) {
+      var ant = r.misure.filter(function(x) { return parseInt(x.misura, 10) <= 130; }), post = r.misure.filter(function(x) { return parseInt(x.misura, 10) > 130; });
+      html += (ant.length ? '<div class="gar-chips-lbl">Anteriore</div><div class="gar-chips">' + ant.map(chip).join('') + '</div>' : '') +
+        (post.length ? '<div class="gar-chips-lbl">Posteriore</div><div class="gar-chips">' + post.map(chip).join('') + '</div>' : '');
+      if (r.standard) html += '<p>Pressioni indicative: ' + r.standard[0].toFixed(1) + ' ant / ' + r.standard[1].toFixed(1) + ' post bar (pilota solo).</p>';
+    } else html += '<div class="gar-chips">' + r.misure.map(chip).join('') + '</div><p>Pressioni indicative ant / post a carico normale. Fa fede l\'etichetta sul montante della porta o nello sportellino carburante.</p>';
+    box.innerHTML = html;
+  }
+  window._garGommeScegli = function(m) {
+    var el = document.getElementById('gar-f-gomme-misura'), moto = _editingType === 'moto';
+    if (moto) {
+      var parts = misuraParti(el.value), front = parseInt(m, 10) <= 130;
+      var a = parts.filter(function(x) { return parseInt(x, 10) <= 130; })[0] || '', p = parts.filter(function(x) { return parseInt(x, 10) > 130; })[0] || '';
+      if (front) a = m; else p = m;
+      el.value = [a, p].filter(Boolean).join(' + ');
+    } else el.value = m;
+    // pressioni consigliate nelle note tecniche, se vuote
+    var r = window.hubCosti.gomme.misure(document.getElementById('gar-f-marca').value, document.getElementById('gar-f-modello').value, document.getElementById('gar-f-anno').value, annoForm());
+    var press = document.getElementById('gar-f-press');
+    if (r && press && (!press.value || _autoFilled['gar-f-press'])) {
+      var x = moto ? null : r.misure.filter(function(y) { return y.misura === m; })[0], pr = x ? [x.ant, x.post] : r.standard;
+      if (pr) { press.value = pr[0].toFixed(1) + ' ant / ' + pr[1].toFixed(1) + ' post bar'; _autoFilled['gar-f-press'] = true; }
+    }
+    var km = document.getElementById('gar-f-gomme-km'), kmTot = document.getElementById('gar-f-km').value;
+    if (km && !km.value && kmTot) km.placeholder = kmTot;
+    renderMisure();
+  };
+  window._garGommeUpdate = function() { if (document.getElementById('gar-gomme-misure').querySelector('.gar-chips')) renderMisure(); };
+  window._garGommeModelli = function() {
+    var H = window.hubCosti, dl = document.getElementById('gar-dl-gmodello'); if (!H || !dl) return;
+    var marca = document.getElementById('gar-f-gomme-marca').value.trim(), tipo = document.getElementById('gar-f-gomme-tipo').value;
+    var k = H.gomme.marche(_editingType).filter(function(m) { return m.toLowerCase() === marca.toLowerCase(); })[0];
+    dl.innerHTML = (k ? H.gomme.modelli(k, _editingType, tipo) : []).map(function(m) { return '<option value="' + escSafe(m) + '">'; }).join('');
+  };
+
   function syncFields() {
     document.getElementById('gar-f-marca').value = _pick.marca;
     document.getElementById('gar-f-modello').value = _pick.modello;
@@ -17514,8 +18020,10 @@ async function runCmp() {
       _vdbState = 'loading';
       loadVDB(value).then(function() { _vdbState = 'ok'; renderPick(); }, function() { _vdbState = 'err'; renderPick(); });
     }
+    if ((field === 'anno' || field === 'gen' || field === 'modello') && value) { fillEuro(); _garGommePrepara(); }
     if (field === 'motore' && value) {
       var filled = fillFromPick();
+      fillEuro(); _garGommePrepara(); _garCostiUpdate();
       var nameEl = document.getElementById('gar-f-name');
       if (nameEl && !nameEl.value) nameEl.placeholder = 'Es. ' + (window.hubModelloBase || String)(_pick.modello) + ' di tutti i giorni';
       if (filled.length) {
@@ -17647,6 +18155,14 @@ async function runCmp() {
       costoBollo: parseFloat(document.getElementById('gar-f-bollo-cost').value) || 0,
       costoRca:   parseFloat(document.getElementById('gar-f-rca-cost').value)   || 0,
       costoRev:   parseFloat(document.getElementById('gar-f-rev-cost').value)   || 0,
+      alim:       document.getElementById('gar-f-alim').value || '',
+      euro:       document.getElementById('gar-f-euro').value === '' ? null : parseInt(document.getElementById('gar-f-euro').value, 10),
+      regione:    document.getElementById('gar-f-regione').value || '',
+      domiciliazione: document.getElementById('gar-f-domic').checked,
+      garanzie:   garanzieScelte(),
+      co2:        _co2 || null,
+      costoBolloStima: _stime.bollo,
+      costoRcaStima:   _stime.rca,
       specs: {
         cv:       parseFloat(document.getElementById('gar-f-cv').value)       || null,
         nm:       parseFloat(document.getElementById('gar-f-nm').value)       || null,
@@ -17675,6 +18191,7 @@ async function runCmp() {
       },
       note: document.getElementById('gar-f-note').value.trim()
     };
+    if (patch.regione) setGarPrefs({ regione: patch.regione });
     var g = loadGarage();
     var savedId;
     if (_editingId) {
@@ -18348,6 +18865,17 @@ async function runCmp() {
       '</div>';
     html += '</div>';
 
+    // Consumo dai viaggi importati (MyPeugeot & co.) nel Diario uscite
+    var ts = window.hubTripStats ? window.hubTripStats(v.id) : null;
+    if (ts && ts.consumo != null) {
+      var diff = stats.avgConsumption != null ? (ts.consumo - stats.avgConsumption) / stats.avgConsumption * 100 : null;
+      html += '<div class="fl-trips"><div><div class="fl-stat-lbl">Consumo dai viaggi importati</div>' +
+        '<div class="fl-stat-val">' + ts.consumo.toFixed(1) + '<span style="font-size:.6rem;color:var(--t2);margin-left:4px">L/100km</span></div>' +
+        '<div class="fl-stat-sub">' + ts.viaggi + ' viaggi · ' + Math.round(ts.km).toLocaleString('it-IT') + ' km · ' + ts.litri.toFixed(1) + ' L stimati' +
+        (diff != null && Math.abs(diff) >= 3 ? ' · ' + (diff > 0 ? '+' : '') + diff.toFixed(0) + '% rispetto ai rifornimenti' : '') + '</div></div>' +
+        '<button type="button" class="fl-trips-btn" onclick="openRideLog()">Diario ›</button></div>';
+    }
+
     // Add button
     html += '<button class="fl-add-btn" onclick="openFuelLogEdit(null)">+ Nuovo rifornimento</button>';
 
@@ -18403,6 +18931,8 @@ async function runCmp() {
     var stats = computeStats(loadForVehicle(v.id));
     if (stats.avgConsumption != null) {
       b.textContent = stats.avgConsumption.toFixed(1) + ' L/100km';
+    } else if (window.hubTripStats && window.hubTripStats(v.id).consumo != null) {
+      b.textContent = window.hubTripStats(v.id).consumo.toFixed(1) + ' L/100km';
     } else if (stats.count > 0) {
       b.textContent = stats.count + ' rif.';
     } else {
@@ -20505,8 +21035,9 @@ async function runCmp() {
     ov.id = 'rdl-overlay';
     ov.innerHTML =
       '<div class="rdl-hdr">' +
-        '<h2>DIARIO USCITE<small>Ride completate · auto-salvate</small></h2>' +
-        '<button class="gar-close" onclick="closeRideLog()">✕ Chiudi</button>' +
+        '<h2>DIARIO USCITE<small>Ride registrate e viaggi importati</small></h2>' +
+        '<div class="rdl-hdr-act"><button class="rdl-import" type="button" onclick="openViaggiImport()" aria-label="Importa viaggi">⬆ Importa</button>' +
+        '<button class="gar-close" onclick="closeRideLog()">✕ Chiudi</button></div>' +
       '</div>' +
       '<div class="rdl-body" id="rdl-body"></div>';
     document.body.appendChild(ov);
@@ -20539,34 +21070,39 @@ async function runCmp() {
     if (!body) return;
     var all = loadAll();
     if (all.length === 0) {
-      body.innerHTML = '<div class="rdl-empty">Nessuna uscita registrata.<br>Avvia una Ride dalla tab 🏁 per registrare la prossima.</div>';
+      body.innerHTML = '<div class="rdl-empty">Nessuna uscita registrata.<br>Avvia una Ride per registrare la prossima, oppure importa i viaggi da Google Maps o dall\'app della tua auto (MyPeugeot e simili).' +
+        '<br><button class="rdl-import" type="button" onclick="openViaggiImport()">⬆ Importa viaggi</button></div>';
       return;
     }
 
     // Summary stats
     var totalKm = all.reduce(function(s, r) { return s + (r.distanceKm || 0); }, 0);
     var totalH = all.reduce(function(s, r) { return s + (r.elapsedMs || 0); }, 0) / 3600000;
-    var maxKmh = all.reduce(function(s, r) { return Math.max(s, r.maxKmh || 0); }, 0);
+    var cKm = 0, cL = 0;
+    all.forEach(function(r) { if (r.consumo != null && r.distanceKm) { cKm += r.distanceKm; cL += r.litri != null ? r.litri : r.consumo * r.distanceKm / 100; } });
 
     var html = '<div class="rdl-stats-summary">' +
       '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Uscite</div><div class="rdl-summary-val">' + all.length + '</div></div>' +
       '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Km totali</div><div class="rdl-summary-val">' + Math.round(totalKm).toLocaleString('it-IT') + '</div></div>' +
       '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Tempo</div><div class="rdl-summary-val">' + Math.round(totalH * 10) / 10 + 'h</div></div>' +
+      (cKm ? '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Consumo</div><div class="rdl-summary-val">' + (cL / cKm * 100).toFixed(1) + '<small> l/100</small></div></div>' : '') +
     '</div>';
 
     var sorted = all.slice().sort(function(a, b) { return (b.startTs || 0) - (a.startTs || 0); });
     html += sorted.map(function(r) {
-      var title = r.title || ('Ride ' + fmtDate(r.startTs));
+      var title = r.title || ((r.source ? 'Viaggio ' : 'Ride ') + fmtDate(r.startTs));
       var color = r.vehicleType === 'moto' ? '#ff5a28' : '#5b9bd5';
+      var third = r.consumo != null ? '<span class="rdl-card-stat-lbl">CONS</span>' + r.consumo.toFixed(1) + ' l/100' :
+        r.maxKmh ? '<span class="rdl-card-stat-lbl">MAX</span>' + Math.round(r.maxKmh) + ' km/h' : '';
       return '<div class="rdl-card" data-id="' + r.id + '">' +
         '<div class="rdl-card-map">' + trackSVG(r.points, 70, 70, color) + '</div>' +
         '<div class="rdl-card-info">' +
           '<div class="rdl-card-title">' + escSafe(title) + '</div>' +
-          '<div class="rdl-card-veh">' + escSafe(r.vehicleName || '—') + ' · ' + fmtDate(r.startTs) + '</div>' +
+          '<div class="rdl-card-veh">' + escSafe(r.vehicleName || '—') + ' · ' + fmtDate(r.startTs) + (r.source === 'timeline' ? ' · Google Maps' : r.source === 'import' ? ' · importato' : '') + '</div>' +
           '<div class="rdl-card-stats">' +
             '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DIST</span>' + (r.distanceKm || 0).toFixed(1) + ' km</span>' +
-            '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DUR</span>' + fmtDuration(r.elapsedMs || 0) + '</span>' +
-            '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">MAX</span>' + Math.round(r.maxKmh || 0) + ' km/h</span>' +
+            (r.elapsedMs ? '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DUR</span>' + fmtDuration(r.elapsedMs) + '</span>' : '') +
+            (third ? '<span class="rdl-card-stat">' + third + '</span>' : '') +
           '</div>' +
         '</div>' +
       '</div>';
@@ -20597,7 +21133,10 @@ async function runCmp() {
           '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Distanza</div><div class="rdl-detail-cell-val">' + (r.distanceKm || 0).toFixed(2) + ' km</div></div>' +
           '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Durata</div><div class="rdl-detail-cell-val">' + fmtDuration(r.elapsedMs || 0) + '</div></div>' +
           '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità media</div><div class="rdl-detail-cell-val">' + (r.avgKmh || 0).toFixed(1) + ' km/h</div></div>' +
-          '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità max</div><div class="rdl-detail-cell-val">' + Math.round(r.maxKmh || 0) + ' km/h</div></div>' +
+          (r.consumo != null
+            ? '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Consumo</div><div class="rdl-detail-cell-val">' + r.consumo.toFixed(1) + ' l/100 km' + (r.litri ? ' · ' + r.litri.toFixed(2) + ' l' : '') + '</div></div>'
+            : '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità max</div><div class="rdl-detail-cell-val">' + (r.maxKmh ? Math.round(r.maxKmh) + ' km/h' : '—') + '</div></div>') +
+          (r.from || r.to ? '<div class="rdl-detail-cell" style="grid-column:1/-1"><div class="rdl-detail-cell-lbl">Percorso</div><div class="rdl-detail-cell-val">' + escSafe((r.from || '?') + ' → ' + (r.to || '?')) + '</div></div>' : '') +
         '</div>' +
       '</div>' +
       '<div class="rdl-detail-actions">' +
@@ -20664,6 +21203,7 @@ async function runCmp() {
     b.textContent = n === 0 ? 'Vuoto' : n + (n === 1 ? ' uscita' : ' uscite');
   }
   window._hubRefreshRideLogBadge = refreshRideLogBadge;
+  window._hubRideLogRender = renderRideLog;
 
   document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
@@ -20679,6 +21219,461 @@ async function runCmp() {
   });
 })();
 
+</script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   DIARIO USCITE — importazione viaggi
+   · Cronologia di Google Maps (Timeline.json esportato dal telefono):
+     prende gli spostamenti in auto/moto con data, distanza e percorso.
+   · Resoconto viaggi delle app delle auto (MyPeugeot, MyCitroën, MyOpel,
+     Kia/Hyundai, FordPass…) in CSV, Excel o JSON: riconosce da solo le
+     colonne (data, distanza, durata, consumo, litri, contachilometri),
+     che si possono comunque correggere prima di importare.
+   I viaggi finiscono in hub_rides_v1 (source: 'timeline' | 'import') e i
+   consumi alimentano il riquadro Consumi (window.hubTripStats).
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  'use strict';
+  var RIDES = 'hub_rides_v1';
+  var XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+
+  function h(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function load() { try { return JSON.parse(localStorage.getItem(RIDES) || '[]'); } catch (e) { return []; } }
+  function save(a) { localStorage.setItem(RIDES, JSON.stringify(a)); }
+  function uid() { return 'rd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function garage() { return window.hubGarage ? window.hubGarage.list() : []; }
+  function vName(v) { return v ? (v.customName || [v.marca, v.modello].filter(Boolean).join(' ')) : 'Sconosciuto'; }
+
+  /* ── Numeri, date e durate scritti in tanti modi ──────────────── */
+  function num(x) {
+    if (typeof x === 'number') return isFinite(x) ? x : null;
+    var s = String(x == null ? '' : x).replace(/[^\d,.\-]/g, '');
+    if (!s || s === '-' ) return null;
+    if (s.indexOf(',') >= 0 && s.indexOf('.') >= 0) s = s.lastIndexOf(',') > s.lastIndexOf('.') ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+    else if (s.indexOf(',') >= 0) s = s.replace(',', '.');
+    else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+    var n = parseFloat(s);
+    return isFinite(n) ? n : null;
+  }
+  function date(x) {
+    if (x instanceof Date) return isNaN(x) ? null : x.getTime();
+    if (typeof x === 'number') {
+      if (x > 1e11) return x;                    // millisecondi
+      if (x > 1e9) return x * 1000;              // secondi
+      if (x > 20000 && x < 80000) return Math.round((x - 25569) * 86400000);   // data seriale Excel
+      return null;
+    }
+    var s = String(x || '').trim();
+    if (!s) return null;
+    var m = /^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})(?:[ T,]+(\d{1,2})[:.](\d{2})(?:[:.](\d{2}))?)?/.exec(s);
+    if (m) {
+      var y = +m[3]; if (y < 100) y += 2000;
+      return new Date(y, +m[2] - 1, +m[1], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0)).getTime();
+    }
+    var t = Date.parse(s);
+    return isNaN(t) ? null : t;
+  }
+  function durMin(x) {
+    if (typeof x === 'number') return x > 0 && x < 1 ? x * 1440 : x;   // Excel salva le ore come frazione di giorno
+    var s = String(x || '').trim();
+    var m = /^(\d+):(\d{2})(?::(\d{2}))?$/.exec(s);
+    if (m) return +m[1] * 60 + +m[2] + (+(m[3] || 0)) / 60;
+    var hh = /(\d+)\s*h/.exec(s), mm = /(\d+)\s*(?:m|min)\b/.exec(s);
+    if (hh || mm) return (hh ? +hh[1] * 60 : 0) + (mm ? +mm[1] : 0);
+    return num(s);
+  }
+  function latLng(s) {
+    if (!s) return null;
+    if (typeof s === 'object' && s.latitudeE7 != null) return { lat: s.latitudeE7 / 1e7, lng: s.longitudeE7 / 1e7 };
+    if (typeof s === 'object' && s.latE7 != null) return { lat: s.latE7 / 1e7, lng: s.lngE7 / 1e7 };
+    var m = /(-?\d+(?:\.\d+)?)°?\s*,\s*(-?\d+(?:\.\d+)?)/.exec(String(s));
+    return m ? { lat: +m[1], lng: +m[2] } : null;
+  }
+  function thin(points, max) {
+    if (points.length <= max) return points;
+    var out = [], step = (points.length - 1) / (max - 1);
+    for (var i = 0; i < max; i++) out.push(points[Math.round(i * step)]);
+    return out;
+  }
+  function distKm(pts) {
+    var d = 0;
+    for (var i = 1; i < pts.length; i++) {
+      var a = pts[i - 1], b = pts[i], R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
+      var q = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      d += 2 * R * Math.asin(Math.sqrt(q));
+    }
+    return d;
+  }
+
+  /* ── Google Maps: cronologia ──────────────────────────────────── */
+  var DRIVE = /in_passenger_vehicle|in_vehicle|driving|in_car|motorcycling|in_taxi/;
+  function timeline(j, opts) {
+    var out = [], since = opts.since || 0;
+    var keep = function(type) { return DRIVE.test(String(type || '').toLowerCase().replace(/\s+/g, '_')); };
+    // Formato attuale (telefono, 2024+): semanticSegments, oppure array su iPhone
+    var segs = Array.isArray(j) ? j : j.semanticSegments;
+    if (Array.isArray(segs)) {
+      var paths = [];
+      segs.forEach(function(s) {
+        var st = date(s.startTime), en = date(s.endTime);
+        if (Array.isArray(s.timelinePath)) {
+          s.timelinePath.forEach(function(p) {
+            var ll = latLng(p.point), t = p.time ? date(p.time) : st + (num(p.durationMinutesOffsetFromStartTime) || 0) * 60000;
+            if (ll && t) paths.push({ lat: ll.lat, lng: ll.lng, ts: t });
+          });
+        }
+        var a = s.activity;
+        if (!a || !st || st < since) return;
+        var tc = a.topCandidate || {};
+        if (!keep(tc.type)) return;
+        out.push({ startTs: st, endTs: en || st, distanceKm: (num(a.distanceMeters) || 0) / 1000,
+          a: latLng(a.start && (a.start.latLng || a.start)), b: latLng(a.end && (a.end.latLng || a.end)) });
+      });
+      paths.sort(function(x, y) { return x.ts - y.ts; });
+      out.forEach(function(r) {
+        var pts = paths.filter(function(p) { return p.ts >= r.startTs && p.ts <= r.endTs; });
+        if (r.a) pts.unshift({ lat: r.a.lat, lng: r.a.lng, ts: r.startTs });
+        if (r.b) pts.push({ lat: r.b.lat, lng: r.b.lng, ts: r.endTs });
+        r.points = thin(pts, 120);
+        if (!r.distanceKm && pts.length > 1) r.distanceKm = distKm(pts);
+      });
+      return out;
+    }
+    // Formato vecchio (Takeout, file mensili): timelineObjects[].activitySegment
+    var objs = j.timelineObjects || [];
+    objs.forEach(function(o) {
+      var s = o.activitySegment;
+      if (!s || !keep(s.activityType)) return;
+      var d = s.duration || {}, st = date(d.startTimestamp || d.startTimestampMs && +d.startTimestampMs), en = date(d.endTimestamp || d.endTimestampMs && +d.endTimestampMs);
+      if (!st || st < since) return;
+      var raw = (s.simplifiedRawPath && s.simplifiedRawPath.points) || (s.waypointPath && s.waypointPath.waypoints) || [];
+      var pts = raw.map(function(p) { var ll = latLng(p); return ll ? { lat: ll.lat, lng: ll.lng, ts: date(p.timestamp) || st } : null; }).filter(Boolean);
+      var a = latLng(s.startLocation), b = latLng(s.endLocation);
+      if (a) pts.unshift({ lat: a.lat, lng: a.lng, ts: st });
+      if (b) pts.push({ lat: b.lat, lng: b.lng, ts: en || st });
+      out.push({ startTs: st, endTs: en || st, distanceKm: (num(s.distance) || 0) / 1000 || distKm(pts), points: thin(pts, 120) });
+    });
+    return out;
+  }
+  function isTimeline(j) {
+    if (j && (Array.isArray(j.semanticSegments) || Array.isArray(j.timelineObjects))) return true;
+    return Array.isArray(j) && j.length > 0 && j[0] && (j[0].startTime !== undefined) && (j[0].activity || j[0].visit || j[0].timelinePath);
+  }
+
+  /* ── Tabelle (CSV / Excel / JSON delle app) ───────────────────── */
+  function csv(text) {
+    text = text.replace(/^﻿/, '');
+    var first = text.split(/\r?\n/)[0] || '';
+    var sep = [';', '\t', ',', '|'].map(function(c) { return [c, first.split(c).length]; }).sort(function(a, b) { return b[1] - a[1]; })[0][0];
+    var rows = [], row = [], cell = '', q = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+      else if (c === '"') q = true;
+      else if (c === sep) { row.push(cell); cell = ''; }
+      else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+      else cell += c;
+    }
+    if (cell || row.length) { row.push(cell); rows.push(row); }
+    return rows.filter(function(r) { return r.some(function(x) { return String(x).trim(); }); });
+  }
+  // La riga di intestazione è la prima con almeno 3 celle di testo (alcune app mettono titolo e VIN sopra)
+  function toTable(rows) {
+    var hi = 0;
+    for (var i = 0; i < Math.min(rows.length, 15); i++) {
+      var txt = rows[i].filter(function(c) { return typeof c === 'string' && /[a-zà-ü]/i.test(c); }).length;
+      if (txt >= 3) { hi = i; break; }
+    }
+    var head = rows[hi].map(function(c, k) { return String(c || '').trim() || 'Colonna ' + (k + 1); });
+    var body = rows.slice(hi + 1).map(function(r) { var o = {}; head.forEach(function(k, j) { o[k] = r[j]; }); return o; });
+    return { head: head, rows: body };
+  }
+  function flatten(o, pre, out) {
+    out = out || {};
+    Object.keys(o || {}).forEach(function(k) {
+      var v = o[k], key = pre ? pre + '.' + k : k;
+      if (v && typeof v === 'object' && !Array.isArray(v)) flatten(v, key, out);
+      else if (!Array.isArray(v)) out[key] = v;
+    });
+    return out;
+  }
+  // JSON generico: l'array di oggetti più lungo (es. .myp di MyPeugeot, export di altre app)
+  function jsonTable(j) {
+    var best = null;
+    (function walk(x, depth) {
+      if (depth > 5 || !x || typeof x !== 'object') return;
+      if (Array.isArray(x)) {
+        if (x.length && typeof x[0] === 'object' && !Array.isArray(x[0]) && (!best || x.length > best.length)) best = x;
+        x.slice(0, 3).forEach(function(y) { walk(y, depth + 1); });
+      } else Object.keys(x).forEach(function(k) { walk(x[k], depth + 1); });
+    })(j, 0);
+    if (!best) return null;
+    var rows = best.map(function(o) { return flatten(o); }), head = [];
+    rows.slice(0, 50).forEach(function(r) { Object.keys(r).forEach(function(k) { if (head.indexOf(k) < 0) head.push(k); }); });
+    return { head: head, rows: rows };
+  }
+
+  var DT = /data|date|ora\b|orario|time|heure|datum|zeit/i;
+  var ODO = /odomet|contachilom|[ck]ilometraggio|mileage|kilom[ée]trage|km.?stand/i, INI = /inizi|start|d[ée]but|begin|partenza|initial/i;
+  // Campi riconosciuti e parole chiave delle intestazioni (IT / EN / FR / DE)
+  var FIELDS = [
+    { k: 'start',   nome: 'Data / ora inizio',          re: /^(data|date|datum)$|inizio|partenza.*(data|ora)|start.*(date|time)?|d[ée]part|d[ée]but|begin|^giorno|^day/i },
+    { k: 'end',     nome: 'Data / ora fine',            re: /fine|arrivo.*(data|ora)|(data|ora).*arrivo|end.*(date|time)|arriv[ée]e.*(date|heure)|^fin\b|ende/i },
+    { k: 'km',      nome: 'Distanza (km)',              re: /dist|percors|tragitto|trip.?km|strecke|^km$|kilom[eè]tres? parcour/i },
+    { k: 'odoStart',nome: 'Contachilometri inizio',     re: { test: function(c) { return ODO.test(c) && INI.test(c); } } },
+    { k: 'odoEnd',  nome: 'Contachilometri fine',       re: { test: function(c) { return ODO.test(c) && !INI.test(c); } } },
+    { k: 'dur',     nome: 'Durata',                     re: /durat|duration|dur[ée]e|dauer|tempo/i },
+    { k: 'cons',    nome: 'Consumo medio (l o kWh/100 km)', re: /consum|conso|verbrauch|l\/100|kwh\/100|fuel.?econ|efficien/i },
+    { k: 'litri',   nome: 'Carburante usato (litri)',   re: /litri|litres?|liters?|carburante.*(usat|consumat)|fuel.?used|carburant.*consomm|kraftstoff/i },
+    { k: 'vel',     nome: 'Velocità media',             re: /veloc|speed|vitesse|geschwind/i },
+    { k: 'from',    nome: 'Partenza (luogo)',           re: { test: function(c) { return /partenza|origine|^from|start.*(addr|luogo|posiz|place|location)|adresse.*d[ée]part|^d[ée]part$/i.test(c) && !DT.test(c); } } },
+    { k: 'to',      nome: 'Arrivo (luogo)',             re: { test: function(c) { return /arrivo|destinaz|^to$|end.*(addr|luogo|posiz|place|location)|adresse.*arriv|^arriv[ée]e$/i.test(c) && !DT.test(c); } } }
+  ];
+  function guess(head, rows) {
+    var map = {}, used = {};
+    // prima i campi più specifici, così "contachilometri" non finisce in "distanza"
+    ['odoStart', 'odoEnd', 'litri', 'cons', 'vel', 'dur', 'from', 'to', 'end', 'start', 'km'].forEach(function(k) {
+      var f = FIELDS.filter(function(x) { return x.k === k; })[0];
+      var col = head.filter(function(c) { return !used[c] && f.re.test(c); })[0];
+      if (col) { map[k] = col; used[col] = 1; }
+    });
+    // distanza non trovata ma c'è "km" in qualche intestazione libera
+    if (!map.km) { var c = head.filter(function(x) { return !used[x] && /\bkm\b/i.test(x) && !/\/h|h\b/i.test(x); })[0]; if (c) map.km = c; }
+    // data: una colonna i cui valori sembrano date
+    if (!map.start) { var d = head.filter(function(x) { return !used[x] && rows.slice(0, 5).every(function(r) { return r[x] == null || r[x] === '' || date(r[x]); }) && rows.some(function(r) { return typeof r[x] !== 'number' && date(r[x]); }); })[0]; if (d) map.start = d; }
+    return map;
+  }
+  function rowsToTrips(tab, map) {
+    var out = [];
+    tab.rows.forEach(function(r) {
+      var st = map.start ? date(r[map.start]) : null;
+      var km = map.km ? num(r[map.km]) : null;
+      var o1 = map.odoStart ? num(r[map.odoStart]) : null, o2 = map.odoEnd ? num(r[map.odoEnd]) : null;
+      if ((km == null || km <= 0) && o1 != null && o2 != null && o2 > o1) km = o2 - o1;
+      if (!st || !km || km <= 0 || km > 5000) return;
+      var en = map.end ? date(r[map.end]) : null;
+      var dm = map.dur ? durMin(r[map.dur]) : null;
+      if (!en && dm) en = st + dm * 60000;
+      // l'ora di fine a volte è solo "hh:mm": la si attacca alla data di inizio
+      if (!en && map.end && /^\d{1,2}:\d{2}/.test(String(r[map.end]))) { var p = String(r[map.end]).split(':'); var d0 = new Date(st); d0.setHours(+p[0], +p[1], 0, 0); en = d0.getTime(); if (en < st) en += 86400000; }
+      var cons = map.cons ? num(r[map.cons]) : null, litri = map.litri ? num(r[map.litri]) : null;
+      if (cons != null && (cons <= 0 || cons > 60)) cons = null;
+      if (cons == null && litri && km) cons = litri / km * 100;
+      if (litri == null && cons && km) litri = cons * km / 100;
+      var ms = en && en > st ? en - st : 0, vel = map.vel ? num(r[map.vel]) : null;
+      out.push({ startTs: st, endTs: en || st, elapsedMs: ms, distanceKm: km,
+        avgKmh: vel || (ms ? km / (ms / 3600000) : 0), consumo: cons, litri: litri, odoEnd: o2,
+        from: map.from ? String(r[map.from] || '').trim() : '', to: map.to ? String(r[map.to] || '').trim() : '' });
+    });
+    return out;
+  }
+
+  /* ── Lettura file ─────────────────────────────────────────────── */
+  function loadXLSX() {
+    if (window.XLSX) return Promise.resolve(window.XLSX);
+    return new Promise(function(ok, ko) {
+      var s = document.createElement('script'); s.src = XLSX_URL; s.async = true;
+      s.onload = function() { ok(window.XLSX); }; s.onerror = function() { ko(new Error('Lettore Excel non raggiungibile (serve la connessione)')); };
+      document.head.appendChild(s);
+    });
+  }
+  function readFile(file) {
+    var name = file.name.toLowerCase();
+    if (/\.(xlsx|xls|ods)$/.test(name)) {
+      return Promise.all([loadXLSX(), file.arrayBuffer()]).then(function(r) {
+        var wb = r[0].read(r[1], { type: 'array', cellDates: true });
+        var best = null;
+        wb.SheetNames.forEach(function(n) {
+          var rows = r[0].utils.sheet_to_json(wb.Sheets[n], { header: 1, raw: true, defval: '' });
+          if (!best || rows.length > best.length) best = rows;
+        });
+        return { kind: 'table', tab: toTable(best || [[]]) };
+      });
+    }
+    return file.text().then(function(t) {
+      var s = t.trim();
+      if (s[0] === '{' || s[0] === '[') {
+        var j; try { j = JSON.parse(s); } catch (e) { throw new Error('Il file sembra JSON ma non si riesce a leggere'); }
+        if (isTimeline(j)) return { kind: 'timeline', json: j };
+        var tab = jsonTable(j);
+        if (!tab) throw new Error('Nel file non ci sono elenchi di viaggi riconoscibili');
+        return { kind: 'table', tab: tab };
+      }
+      return { kind: 'table', tab: toTable(csv(t)) };
+    });
+  }
+
+  /* ── Salvataggio ──────────────────────────────────────────────── */
+  function importTrips(trips, vehicleId, source) {
+    var v = garage().filter(function(x) { return x.id === vehicleId; })[0];
+    var all = load(), seen = {}, added = 0, dup = 0, maxOdo = 0;
+    all.forEach(function(r) { seen[r.vehicleId + '|' + Math.round((r.startTs || 0) / 60000) + '|' + Math.round((r.distanceKm || 0) * 10)] = 1; });
+    trips.forEach(function(t) {
+      var key = vehicleId + '|' + Math.round(t.startTs / 60000) + '|' + Math.round(t.distanceKm * 10);
+      if (seen[key]) { dup++; return; }
+      seen[key] = 1; added++;
+      if (t.odoEnd > maxOdo) maxOdo = t.odoEnd;
+      var ms = t.elapsedMs || Math.max(0, (t.endTs || t.startTs) - t.startTs);
+      all.push({
+        id: uid(), source: source, vehicleId: vehicleId, vehicleName: vName(v), vehicleType: v ? v.type : null,
+        startTs: t.startTs, endTs: t.endTs || t.startTs, elapsedMs: ms, distanceKm: Math.round(t.distanceKm * 100) / 100,
+        avgKmh: t.avgKmh || (ms ? t.distanceKm / (ms / 3600000) : 0), maxKmh: 0,
+        consumo: t.consumo != null ? Math.round(t.consumo * 100) / 100 : null,
+        litri: t.litri != null ? Math.round(t.litri * 100) / 100 : null,
+        odoEnd: t.odoEnd || null, from: t.from || '', to: t.to || '',
+        points: t.points || [], title: t.from && t.to ? t.from + ' → ' + t.to : ''
+      });
+    });
+    save(all);
+    // contachilometri del veicolo aggiornato se il resoconto ne riporta uno più alto
+    var kmAgg = false;
+    if (v && maxOdo > (v.kmTot || 0) && window.hubGarage.update) { window.hubGarage.update(v.id, { kmTot: Math.round(maxOdo) }); kmAgg = true; }
+    return { added: added, dup: dup, km: kmAgg ? Math.round(maxOdo) : null };
+  }
+
+  // Consumo dai viaggi importati, media pesata sui km (usata da Consumi)
+  window.hubTripStats = function(vehicleId) {
+    var km = 0, l = 0, n = 0, tot = 0, last = 0;
+    load().forEach(function(r) {
+      if (r.vehicleId !== vehicleId) return;
+      tot += r.distanceKm || 0;
+      if (r.consumo == null || !r.distanceKm) return;
+      km += r.distanceKm; l += r.litri != null ? r.litri : r.consumo * r.distanceKm / 100; n++;
+      last = Math.max(last, r.startTs || 0);
+    });
+    return { viaggi: n, km: km, kmTotali: tot, litri: l, consumo: km > 0 ? l / km * 100 : null, ultimo: last || null };
+  };
+
+  /* ── Interfaccia ──────────────────────────────────────────────── */
+  var S = { file: null, data: null, map: {}, trips: [] };
+
+  function sheet() {
+    var el = document.getElementById('vi-sheet');
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = 'vi-sheet'; el.className = 'vi-sheet';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'vi-title');
+    el.addEventListener('click', function(e) { if (e.target === el) window.closeViaggiImport(); });
+    el.innerHTML = '<div class="vi-card"><div class="vi-hdr"><h3 id="vi-title">Importa viaggi</h3>' +
+      '<button class="gar-close" onclick="closeViaggiImport()">✕</button></div><div class="vi-body" id="vi-body"></div></div>';
+    document.body.appendChild(el);
+    return el;
+  }
+  function vehicleSelect() {
+    var g = garage(), act = window.hubGarage && window.hubGarage.activeId && window.hubGarage.activeId();
+    if (!g.length) return '<p class="vi-warn">Prima aggiungi un veicolo nel Garage.</p>';
+    return '<label class="vi-lbl" for="vi-veh">Veicolo</label><select id="vi-veh" class="vi-in">' +
+      g.map(function(v) { return '<option value="' + h(v.id) + '"' + (v.id === act ? ' selected' : '') + '>' + h(vName(v)) + '</option>'; }).join('') + '</select>';
+  }
+  function step1() {
+    S = { file: null, data: null, map: {}, trips: [] };
+    document.getElementById('vi-body').innerHTML =
+      vehicleSelect() +
+      '<label class="vi-drop" for="vi-file"><b>Scegli il file</b><span>Excel, CSV o JSON delle app auto · Timeline.json di Google Maps</span>' +
+        '<input type="file" id="vi-file" accept=".json,.csv,.txt,.xlsx,.xls,.ods,.myp" onchange="_viFile(this.files[0])"></label>' +
+      '<p class="vi-err" id="vi-err" role="alert"></p>' +
+      '<details class="vi-help"><summary>Come esportare da Google Maps</summary>' +
+        '<p>La cronologia ora resta sul telefono, quindi si esporta da lì: app <b>Google Maps</b> → foto del profilo → <b>Cronologia</b> → ⋮ → <b>Impostazioni e privacy</b> → <b>Esporta dati della cronologia</b>. Ottieni un file <i>Timeline.json</i>: caricalo qui.</p>' +
+        '<p>Vengono presi solo gli spostamenti che Google ha classificato <i>in auto</i> o <i>in moto</i>. Google non sa con quale veicolo eri, quindi scegli il veicolo e il periodo.</p>' +
+        '<p>Non è possibile leggere in diretta i percorsi impostati su Google Maps o Android Auto/CarPlay: Google non li rende disponibili ad altre app. Per registrare un giro mentre guidi usa <b>Ride</b>.</p></details>' +
+      '<details class="vi-help"><summary>Come esportare da MyPeugeot e app simili</summary>' +
+        '<p>Nell\'app <b>MyPeugeot</b> (e MyCitroën, MyOpel, MyDS): sezione <b>Viaggi</b> → seleziona i viaggi → <b>Esporta</b>. Carica qui il file ottenuto (Excel, CSV o il file .myp).</p>' +
+        '<p>Va bene anche l\'export di altre app (FordPass, Kia/Hyundai, Toyota, BMW, Tesla e app OBD come Car Scanner o Torque): le colonne vengono riconosciute da sole e puoi correggerle prima di importare.</p></details>';
+  }
+  window._viFile = function(file) {
+    if (!file) return;
+    var err = document.getElementById('vi-err'); err.textContent = '';
+    S.file = file;
+    S.vehicle = (document.getElementById('vi-veh') || {}).value;
+    document.getElementById('vi-body').insertAdjacentHTML('beforeend', '<p class="vi-wait" id="vi-wait">Leggo ' + h(file.name) + '…</p>');
+    readFile(file).then(function(d) {
+      S.data = d;
+      if (d.kind === 'timeline') stepTimeline(); else { S.map = guess(d.tab.head, d.tab.rows); stepTable(); }
+    }).catch(function(e) {
+      var w = document.getElementById('vi-wait'); if (w) w.remove();
+      document.getElementById('vi-err').textContent = e.message || String(e);
+    });
+  };
+  function fmtD(ts) { var d = new Date(ts); return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+  function preview(trips) {
+    if (!trips.length) return '<p class="vi-warn">Nessun viaggio valido con questi criteri.</p>';
+    var km = trips.reduce(function(s, t) { return s + t.distanceKm; }, 0), wc = trips.filter(function(t) { return t.consumo != null; });
+    return '<p class="vi-sum"><b>' + trips.length + '</b> ' + (trips.length === 1 ? 'viaggio' : 'viaggi') + ' · <b>' + Math.round(km).toLocaleString('it-IT') + '</b> km' +
+      (wc.length ? ' · consumo su ' + wc.length + ' viaggi' : '') + '</p>' +
+      '<div class="vi-prev"><table><thead><tr><th>Inizio</th><th>Km</th><th>Durata</th><th>Consumo</th></tr></thead><tbody>' +
+      trips.slice(0, 6).map(function(t) {
+        var m = t.elapsedMs ? Math.round(t.elapsedMs / 60000) : 0;
+        return '<tr><td>' + fmtD(t.startTs) + '</td><td>' + t.distanceKm.toFixed(1) + '</td><td>' + (m ? (m >= 60 ? Math.floor(m / 60) + 'h ' : '') + (m % 60) + 'm' : '—') + '</td><td>' + (t.consumo != null ? t.consumo.toFixed(1) : '—') + '</td></tr>';
+      }).join('') + '</tbody></table>' + (trips.length > 6 ? '<small>… e altri ' + (trips.length - 6) + '</small>' : '') + '</div>';
+  }
+  function actions(n) {
+    return '<div class="vi-act"><button type="button" class="vi-btn2" onclick="_viRestart()">Altro file</button>' +
+      '<button type="button" class="vi-btn"' + (n ? '' : ' disabled') + ' onclick="_viSave()">' + (n ? 'Importa ' + n + (n === 1 ? ' viaggio' : ' viaggi') : 'Importa') + '</button></div>';
+  }
+  function stepTimeline() {
+    var since = new Date(); since.setFullYear(since.getFullYear() - 1);
+    var v = garage().filter(function(x) { return x.id === S.vehicle; })[0];
+    if (v && v.specs && v.specs.acqDate) since = new Date(v.specs.acqDate);
+    S.since = since.toISOString().slice(0, 10);
+    renderTimeline();
+  }
+  function renderTimeline() {
+    S.trips = timeline(S.data.json, { since: date(S.since + 'T00:00') }).filter(function(t) { return t.distanceKm >= (S.minKm || 1); });
+    S.source = 'timeline';
+    document.getElementById('vi-body').innerHTML =
+      '<p class="vi-kind">📍 Cronologia di Google Maps</p>' +
+      '<div class="vi-row"><div><label class="vi-lbl" for="vi-since">Dal giorno</label><input class="vi-in" type="date" id="vi-since" value="' + S.since + '" onchange="_viSince(this.value)"></div>' +
+      '<div><label class="vi-lbl" for="vi-min">Scarta sotto i km</label><input class="vi-in" type="number" id="vi-min" min="0" step="0.5" value="' + (S.minKm || 1) + '" onchange="_viMin(this.value)"></div></div>' +
+      '<p class="vi-note">Spostamenti in auto o moto secondo Google, senza consumi: quelli li calcola il riquadro Consumi dai rifornimenti. Controlla le date: se in quei giorni hai usato un altro mezzo, alzane la data di inizio.</p>' +
+      preview(S.trips) + actions(S.trips.length);
+  }
+  window._viSince = function(v) { S.since = v; renderTimeline(); };
+  window._viMin = function(v) { S.minKm = num(v) || 0; renderTimeline(); };
+  function stepTable() {
+    var tab = S.data.tab;
+    S.trips = rowsToTrips(tab, S.map);
+    S.source = 'import';
+    var opts = function(k) {
+      return '<option value="">— nessuna —</option>' + tab.head.map(function(c) { return '<option' + (S.map[k] === c ? ' selected' : '') + '>' + h(c) + '</option>'; }).join('');
+    };
+    var ok = S.map.start && (S.map.km || (S.map.odoStart && S.map.odoEnd));
+    document.getElementById('vi-body').innerHTML =
+      '<p class="vi-kind">📄 ' + h(S.file.name) + ' · ' + tab.rows.length + ' righe</p>' +
+      (ok ? '' : '<p class="vi-warn">Servono almeno la data e la distanza (o i due contachilometri): indicale qui sotto.</p>') +
+      '<details class="vi-map"' + (ok ? '' : ' open') + '><summary>Colonne riconosciute</summary>' +
+        FIELDS.map(function(f) {
+          return '<div class="vi-maprow"><label for="vi-m-' + f.k + '">' + f.nome + '</label><select id="vi-m-' + f.k + '" class="vi-in" onchange="_viMap(\'' + f.k + '\', this.value)">' + opts(f.k) + '</select></div>';
+        }).join('') + '</details>' +
+      preview(S.trips) +
+      (S.trips.some(function(t) { return t.odoEnd; }) ? '<p class="vi-note">Il contachilometri del veicolo verrà aggiornato se il file ne riporta uno più alto.</p>' : '') +
+      actions(S.trips.length);
+  }
+  window._viMap = function(k, col) { if (col) S.map[k] = col; else delete S.map[k]; stepTable(); };
+  window._viRestart = function() { step1(); };
+  window._viSave = function() {
+    if (!S.trips.length || !S.vehicle) return;
+    var r = importTrips(S.trips, S.vehicle, S.source);
+    var ts = window.hubTripStats(S.vehicle);
+    document.getElementById('vi-body').innerHTML =
+      '<p class="vi-done">✓ ' + (r.added === 1 ? 'Importato <b>1</b> viaggio' : 'Importati <b>' + r.added + '</b> viaggi') + (r.dup ? ' · ' + r.dup + ' già presenti, saltati' : '') + '.</p>' +
+      (ts.consumo != null ? '<p class="vi-sum">Consumo medio dai viaggi: <b>' + ts.consumo.toFixed(1) + '</b> su ' + Math.round(ts.km).toLocaleString('it-IT') + ' km. Lo trovi anche in Consumi.</p>' : '') +
+      (r.km ? '<p class="vi-sum">Contachilometri aggiornato a <b>' + r.km.toLocaleString('it-IT') + ' km</b>.</p>' : '') +
+      '<div class="vi-act"><button type="button" class="vi-btn2" onclick="_viRestart()">Importa un altro file</button><button type="button" class="vi-btn" onclick="closeViaggiImport()">Fatto</button></div>';
+    if (window._hubRideLogRender) window._hubRideLogRender();
+    if (window._hubRefreshRideLogBadge) window._hubRefreshRideLogBadge();
+    if (window._hubRefreshFuelLogBadge) window._hubRefreshFuelLogBadge();
+  };
+
+  window.openViaggiImport = function() {
+    var el = sheet(); step1(); el.classList.add('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeViaggiImport = function() {
+    var el = document.getElementById('vi-sheet'); if (el) el.classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  // per i test
+  window._viInternals = { csv: csv, toTable: toTable, guess: guess, rowsToTrips: rowsToTrips, timeline: timeline, jsonTable: jsonTable, num: num, date: date, durMin: durMin };
+})();
 </script>
 
 <!-- HUB WEATHER: meteo lungo il percorso (geocoding+OSRM+Open-Meteo) -->
@@ -21107,7 +22102,7 @@ async function runCmp() {
   // Bollo for moto: typically 0 < 11kW, ~50€ for 15kW, ~100€ for 25kW+
   // For auto: depends on kW + Euro class. We use rough averages.
   var ESTIMATED_ANNUAL_BOLLO = { auto: 250, moto: 60 };
-  var ESTIMATED_ANNUAL_RCA   = { auto: 600, moto: 350 };
+  var ESTIMATED_ANNUAL_RCA   = { auto: 422, moto: 389 };   // medie nazionali 2026 (IVASS / Segugio)
   var ESTIMATED_REVISIONE    = 80;  // every 2 years for cars; every 4y for moto over 4y old
 
   /* ── State ──────────────────────────────────────────────────── */
@@ -21178,16 +22173,17 @@ async function runCmp() {
     var months = period === '6m' ? 6 : period === '12m' ? 12 :
                  (firstTs ? Math.max(1, (Date.now() - firstTs) / (30 * 86400000)) : 12);
     var boType = vehicle.type === 'moto' ? 'moto' : 'auto';
-    var bolloAnnuale = ESTIMATED_ANNUAL_BOLLO[boType];
+    // Ordine: importo inserito → stima calcolata nel Garage (regione, kW, Euro) → media generica
+    var bolloAnnuale = vehicle.costoBollo || (typeof vehicle.costoBolloStima === 'number' ? vehicle.costoBolloStima : ESTIMATED_ANNUAL_BOLLO[boType]);
     var bolloCost = bolloAnnuale * (months / 12);
 
     // RCA stimato
-    var rcaAnnuale = ESTIMATED_ANNUAL_RCA[boType];
+    var rcaAnnuale = vehicle.costoRca || vehicle.costoRcaStima || ESTIMATED_ANNUAL_RCA[boType];
     var rcaCost = rcaAnnuale * (months / 12);
 
     // Revisione: ogni 2 anni → costo ammortizzato 80/24 €/mese
     var revPerMese = ESTIMATED_REVISIONE / 24;
-    var revCost = revPerMese * months;
+    var revCost = (vehicle.costoRev ? vehicle.costoRev / 24 : revPerMese) * months;
 
     var total = fuelCost + maintCost + bolloCost + rcaCost + revCost;
     var costPerKm = kmInPeriod > 0 ? total / kmInPeriod : 0;
@@ -21199,6 +22195,8 @@ async function runCmp() {
       maint: maintCost,
       bollo: bolloCost,
       rca: rcaCost,
+      bolloSrc: vehicle.costoBollo ? 'tuo' : typeof vehicle.costoBolloStima === 'number' ? 'stima' : 'media',
+      rcaSrc: vehicle.costoRca ? 'tuo' : vehicle.costoRcaStima ? 'stima' : 'media',
       revisione: revCost,
       kmInPeriod: kmInPeriod,
       costPerKm: costPerKm,
@@ -21345,8 +22343,8 @@ async function runCmp() {
     var rows = [
       { lbl: 'Carburante',   val: tco.fuel,      color: '#5b9bd5' },
       { lbl: 'Manutenzione', val: tco.maint,     color: '#4caf7d' },
-      { lbl: 'Bollo (stima)',val: tco.bollo,     color: '#e8a030' },
-      { lbl: 'RCA (stima)',  val: tco.rca,       color: '#c97fd4' },
+      { lbl: 'Bollo' + (tco.bolloSrc === 'tuo' ? '' : ' (stima)'),val: tco.bollo,     color: '#e8a030' },
+      { lbl: 'Assicurazione' + (tco.rcaSrc === 'tuo' ? '' : ' (stima)'),  val: tco.rca,       color: '#c97fd4' },
       { lbl: 'Revisione',    val: tco.revisione, color: '#ff8a82' }
     ];
     var total = tco.total || 1;
@@ -21401,11 +22399,11 @@ async function runCmp() {
         txt: 'Costo €/km eccellente (<strong>' + fmtEur2(tco.costPerKm) + ' €/km</strong>). Sei sotto la media nazionale auto (~0.30 €/km).'
       });
     }
-    insights.push({
+    var srcTxt = { tuo: 'importo inserito da te', stima: 'stima calcolata nel Garage', media: 'media generica' };
+    if (tco.bolloSrc !== 'tuo' || tco.rcaSrc !== 'tuo') insights.push({
       icon: 'ℹ',
-      txt: 'Bollo e RCA sono <strong>stime</strong> (' + ESTIMATED_ANNUAL_BOLLO[v.type === 'moto' ? 'moto' : 'auto'] + '€ + ' +
-           ESTIMATED_ANNUAL_RCA[v.type === 'moto' ? 'moto' : 'auto'] + '€/anno per ' + (v.type === 'moto' ? 'moto' : 'auto') +
-           '). Il TCO reale dipende dal tuo veicolo e profilo assicurativo.'
+      txt: 'Bollo: <strong>' + srcTxt[tco.bolloSrc] + '</strong> · Assicurazione: <strong>' + srcTxt[tco.rcaSrc] + '</strong>. ' +
+           'Inserisci gli importi veri in Garage → Modifica per un TCO preciso.'
     });
     insights.forEach(function(ins) {
       html += '<div class="tco-insight">' +
@@ -22876,7 +23874,7 @@ async function runCmp() {
   'use strict';
 
   // Dati dell'utente (le cache rigenerabili sono escluse apposta)
-  var KEYS = ['hub_garage_v1', 'hub_active_vehicle_v1', 'hub_refuels_v1', 'hub_maint_v1', 'hub_rides_v1',
+  var KEYS = ['hub_garage_v1', 'hub_garage_prefs_v1', 'hub_active_vehicle_v1', 'hub_refuels_v1', 'hub_maint_v1', 'hub_rides_v1',
               'hub_perf_best_v1', 'hub_usato_v1', 'hub_ms_prefs_v1', 'hub_price_alerts_v1',
               'opf_favs', 'opf_hidden_cards', 'opf_cmp_liters', 'ad_rem', 'autodiagnosi_diary', 'ad_theme'];
   var STORES = ['photos', 'maintdocs'];

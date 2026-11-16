@@ -82,8 +82,9 @@
     ov.id = 'rdl-overlay';
     ov.innerHTML =
       '<div class="rdl-hdr">' +
-        '<h2>DIARIO USCITE<small>Ride completate · auto-salvate</small></h2>' +
-        '<button class="gar-close" onclick="closeRideLog()">✕ Chiudi</button>' +
+        '<h2>DIARIO USCITE<small>Ride registrate e viaggi importati</small></h2>' +
+        '<div class="rdl-hdr-act"><button class="rdl-import" type="button" onclick="openViaggiImport()" aria-label="Importa viaggi">⬆ Importa</button>' +
+        '<button class="gar-close" onclick="closeRideLog()">✕ Chiudi</button></div>' +
       '</div>' +
       '<div class="rdl-body" id="rdl-body"></div>';
     document.body.appendChild(ov);
@@ -116,34 +117,39 @@
     if (!body) return;
     var all = loadAll();
     if (all.length === 0) {
-      body.innerHTML = '<div class="rdl-empty">Nessuna uscita registrata.<br>Avvia una Ride dalla tab 🏁 per registrare la prossima.</div>';
+      body.innerHTML = '<div class="rdl-empty">Nessuna uscita registrata.<br>Avvia una Ride per registrare la prossima, oppure importa i viaggi da Google Maps o dall\'app della tua auto (MyPeugeot e simili).' +
+        '<br><button class="rdl-import" type="button" onclick="openViaggiImport()">⬆ Importa viaggi</button></div>';
       return;
     }
 
     // Summary stats
     var totalKm = all.reduce(function(s, r) { return s + (r.distanceKm || 0); }, 0);
     var totalH = all.reduce(function(s, r) { return s + (r.elapsedMs || 0); }, 0) / 3600000;
-    var maxKmh = all.reduce(function(s, r) { return Math.max(s, r.maxKmh || 0); }, 0);
+    var cKm = 0, cL = 0;
+    all.forEach(function(r) { if (r.consumo != null && r.distanceKm) { cKm += r.distanceKm; cL += r.litri != null ? r.litri : r.consumo * r.distanceKm / 100; } });
 
     var html = '<div class="rdl-stats-summary">' +
       '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Uscite</div><div class="rdl-summary-val">' + all.length + '</div></div>' +
       '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Km totali</div><div class="rdl-summary-val">' + Math.round(totalKm).toLocaleString('it-IT') + '</div></div>' +
       '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Tempo</div><div class="rdl-summary-val">' + Math.round(totalH * 10) / 10 + 'h</div></div>' +
+      (cKm ? '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Consumo</div><div class="rdl-summary-val">' + (cL / cKm * 100).toFixed(1) + '<small> l/100</small></div></div>' : '') +
     '</div>';
 
     var sorted = all.slice().sort(function(a, b) { return (b.startTs || 0) - (a.startTs || 0); });
     html += sorted.map(function(r) {
-      var title = r.title || ('Ride ' + fmtDate(r.startTs));
+      var title = r.title || ((r.source ? 'Viaggio ' : 'Ride ') + fmtDate(r.startTs));
       var color = r.vehicleType === 'moto' ? '#ff5a28' : '#5b9bd5';
+      var third = r.consumo != null ? '<span class="rdl-card-stat-lbl">CONS</span>' + r.consumo.toFixed(1) + ' l/100' :
+        r.maxKmh ? '<span class="rdl-card-stat-lbl">MAX</span>' + Math.round(r.maxKmh) + ' km/h' : '';
       return '<div class="rdl-card" data-id="' + r.id + '">' +
         '<div class="rdl-card-map">' + trackSVG(r.points, 70, 70, color) + '</div>' +
         '<div class="rdl-card-info">' +
           '<div class="rdl-card-title">' + escSafe(title) + '</div>' +
-          '<div class="rdl-card-veh">' + escSafe(r.vehicleName || '—') + ' · ' + fmtDate(r.startTs) + '</div>' +
+          '<div class="rdl-card-veh">' + escSafe(r.vehicleName || '—') + ' · ' + fmtDate(r.startTs) + (r.source === 'timeline' ? ' · Google Maps' : r.source === 'import' ? ' · importato' : '') + '</div>' +
           '<div class="rdl-card-stats">' +
             '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DIST</span>' + (r.distanceKm || 0).toFixed(1) + ' km</span>' +
-            '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DUR</span>' + fmtDuration(r.elapsedMs || 0) + '</span>' +
-            '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">MAX</span>' + Math.round(r.maxKmh || 0) + ' km/h</span>' +
+            (r.elapsedMs ? '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DUR</span>' + fmtDuration(r.elapsedMs) + '</span>' : '') +
+            (third ? '<span class="rdl-card-stat">' + third + '</span>' : '') +
           '</div>' +
         '</div>' +
       '</div>';
@@ -174,7 +180,10 @@
           '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Distanza</div><div class="rdl-detail-cell-val">' + (r.distanceKm || 0).toFixed(2) + ' km</div></div>' +
           '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Durata</div><div class="rdl-detail-cell-val">' + fmtDuration(r.elapsedMs || 0) + '</div></div>' +
           '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità media</div><div class="rdl-detail-cell-val">' + (r.avgKmh || 0).toFixed(1) + ' km/h</div></div>' +
-          '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità max</div><div class="rdl-detail-cell-val">' + Math.round(r.maxKmh || 0) + ' km/h</div></div>' +
+          (r.consumo != null
+            ? '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Consumo</div><div class="rdl-detail-cell-val">' + r.consumo.toFixed(1) + ' l/100 km' + (r.litri ? ' · ' + r.litri.toFixed(2) + ' l' : '') + '</div></div>'
+            : '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità max</div><div class="rdl-detail-cell-val">' + (r.maxKmh ? Math.round(r.maxKmh) + ' km/h' : '—') + '</div></div>') +
+          (r.from || r.to ? '<div class="rdl-detail-cell" style="grid-column:1/-1"><div class="rdl-detail-cell-lbl">Percorso</div><div class="rdl-detail-cell-val">' + escSafe((r.from || '?') + ' → ' + (r.to || '?')) + '</div></div>' : '') +
         '</div>' +
       '</div>' +
       '<div class="rdl-detail-actions">' +
@@ -241,6 +250,7 @@
     b.textContent = n === 0 ? 'Vuoto' : n + (n === 1 ? ' uscita' : ' uscite');
   }
   window._hubRefreshRideLogBadge = refreshRideLogBadge;
+  window._hubRideLogRender = renderRideLog;
 
   document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {

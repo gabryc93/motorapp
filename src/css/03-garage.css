@@ -1058,3 +1058,35 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23b392f0' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 12px center;
 }
+
+/* ── Bollo, assicurazione, gomme ─────────────────────────────── */
+.gar-costi { background: var(--surf2); border: 1px solid var(--brd); border-radius: 9px; padding: 10px 12px 4px; margin-bottom: 12px; }
+.gar-costi-h { font: 500 .62rem 'DM Mono', monospace; color: var(--t2); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 9px; }
+.gar-costi .gar-field input, .gar-costi .gar-field select { background: var(--surf); }
+.gar-check { display: flex; align-items: center; gap: 8px; align-self: end; margin-bottom: 12px; min-height: 38px;
+  font: 400 .7rem 'DM Mono', monospace; color: var(--t2); cursor: pointer; }
+.gar-check input { width: 18px; height: 18px; accent-color: var(--ac); }
+.gar-sublbl { font: 400 .58rem 'DM Mono', monospace; color: var(--t3); text-transform: uppercase; letter-spacing: .1em; margin: 2px 0 7px; }
+.gar-chips-lbl { font: 400 .6rem 'DM Mono', monospace; color: var(--t3); margin: 6px 0 5px; }
+.gar-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.gar-chip { position: relative; cursor: pointer; }
+.gar-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.gar-chip span, .gar-chip-btn {
+  display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  padding: 7px 10px; min-height: 34px; border-radius: 999px; border: 1px solid var(--brd);
+  background: var(--surf); color: var(--t2); font: 400 .68rem 'DM Mono', monospace; cursor: pointer;
+}
+.gar-chip-btn { border-radius: 9px; appearance: none; -webkit-appearance: none; }
+.gar-chip-btn small { font-size: .56rem; color: var(--t3); }
+.gar-chip input:checked + span, .gar-chip-btn.on { border-color: #b392f0; color: var(--t1); background: rgba(179,146,240,.14); }
+.gar-chip input:focus-visible + span { outline: 2px solid #b392f0; outline-offset: 2px; }
+.gar-est { font-size: .68rem; color: var(--t2); line-height: 1.45; margin-bottom: 8px; }
+.gar-est:empty { display: none; }
+.gar-est-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; color: var(--t1); font-family: 'DM Mono', monospace; font-size: .72rem; }
+.gar-est-top b { color: #b392f0; font-weight: 600; }
+.gar-est ul { margin: 6px 0 0 16px; padding: 0; font-family: 'DM Mono', monospace; font-size: .64rem; color: var(--t3); }
+.gar-est p { margin-top: 6px; font-size: .64rem; color: var(--t3); }
+.gar-est-miss { color: var(--t3); font-size: .66rem; }
+.gar-est-link { display: inline-block; margin-top: 6px; color: #b392f0; font: 400 .64rem 'DM Mono', monospace; }
+.gar-gomme-misure { padding: 0 13px; }
+.gar-gomme-misure p { font-size: .64rem; color: var(--t3); line-height: 1.45; margin-bottom: 10px; }

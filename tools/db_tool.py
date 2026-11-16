@@ -128,6 +128,9 @@ def main():
         brands[marca] = {"file": name, "motori": len(data["specs"]), "kb": (out / name).stat().st_size // 1024}
     meta = dict(db.get("_meta") or {})
     meta.update({"total_vehicles": len(S), "cleaned": dict(cnt), "split": True})
+    # Misure gomme e pressioni per modello/serie (usate dal Garage)
+    if db.get("tyre_pressures"):
+        (out / "tyres.json").write_text(json.dumps(db["tyre_pressures"], ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     (out / "index.json").write_text(json.dumps({"_meta": meta, "brands": brands}, ensure_ascii=False, indent=1), encoding="utf-8")
     big = max(brands.values(), key=lambda b: b["kb"])
     print(f"\nScritti {len(brands)} file in db/ (il più grande {big['kb']} KB) + db/index.json")

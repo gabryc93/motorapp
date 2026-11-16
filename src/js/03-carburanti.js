@@ -516,14 +516,15 @@ function scheduleWeatherUpdate(lat, lng) {
 }
 
 /* ── Sfondo della mappa ────────────────────────────────────────────
-   1. OpenFreeMap "dark" (vettoriale, gratis, senza chiave né registrazione).
+   1. OpenFreeMap "fiord" (vettoriale, scuro, gratis, senza chiave né registrazione).
       Serve MapLibre: viene scaricato solo la prima volta che apri la mappa.
    2. Se MapLibre non parte (niente WebGL o CDN irraggiungibile): OpenStreetMap
       scurito via CSS. Nota: OSM blocca le pagine aperte da file:// (manca il Referer).
    CARTO dal 25/09/2026 vuole una chiave: se ne hai una, mettila in CARTO_KEY
    e viene usata al posto di tutto il resto. */
 const CARTO_KEY = '';
-const OFM_STYLE = 'https://tiles.openfreemap.org/styles/dark';
+// "dark" è quasi nero (strade grigio 18-27 su fondo 12): illeggibile. "fiord" è scuro ma con contrasto.
+const OFM_STYLE = 'https://tiles.openfreemap.org/styles/fiord';
 const MAPLIBRE_JS  = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js';
 const MAPLIBRE_CSS = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css';
 const MAPLIBRE_LEAFLET_JS = 'https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js';
@@ -565,11 +566,8 @@ async function addBasemap(map) {
     await Promise.all([loadAsset(MAPLIBRE_CSS, true), loadAsset(MAPLIBRE_JS)]);
     await loadAsset(MAPLIBRE_LEAFLET_JS);
     if (!L.maplibreGL) throw new Error('plugin MapLibre-Leaflet assente');
+    // L'attribuzione (OpenFreeMap, OpenMapTiles, OpenStreetMap) arriva dallo stile stesso
     L.maplibreGL({ style: OFM_STYLE }).addTo(map);
-    // Attribuzione obbligatoria per OpenFreeMap: il plugin non la passa a Leaflet, la aggiungiamo noi
-    if (map.attributionControl) {
-      map.attributionControl.addAttribution('<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> ' + OSM_ATTR);
-    }
   } catch (e) {
     console.warn('[mappa] OpenFreeMap non disponibile, uso OSM:', e.message);
     addOsmFallback(map);

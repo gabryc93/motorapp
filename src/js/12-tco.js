@@ -23,7 +23,7 @@
   // Bollo for moto: typically 0 < 11kW, ~50€ for 15kW, ~100€ for 25kW+
   // For auto: depends on kW + Euro class. We use rough averages.
   var ESTIMATED_ANNUAL_BOLLO = { auto: 250, moto: 60 };
-  var ESTIMATED_ANNUAL_RCA   = { auto: 600, moto: 350 };
+  var ESTIMATED_ANNUAL_RCA   = { auto: 422, moto: 389 };   // medie nazionali 2026 (IVASS / Segugio)
   var ESTIMATED_REVISIONE    = 80;  // every 2 years for cars; every 4y for moto over 4y old
 
   /* ── State ──────────────────────────────────────────────────── */
@@ -94,16 +94,17 @@
     var months = period === '6m' ? 6 : period === '12m' ? 12 :
                  (firstTs ? Math.max(1, (Date.now() - firstTs) / (30 * 86400000)) : 12);
     var boType = vehicle.type === 'moto' ? 'moto' : 'auto';
-    var bolloAnnuale = ESTIMATED_ANNUAL_BOLLO[boType];
+    // Ordine: importo inserito → stima calcolata nel Garage (regione, kW, Euro) → media generica
+    var bolloAnnuale = vehicle.costoBollo || (typeof vehicle.costoBolloStima === 'number' ? vehicle.costoBolloStima : ESTIMATED_ANNUAL_BOLLO[boType]);
     var bolloCost = bolloAnnuale * (months / 12);
 
     // RCA stimato
-    var rcaAnnuale = ESTIMATED_ANNUAL_RCA[boType];
+    var rcaAnnuale = vehicle.costoRca || vehicle.costoRcaStima || ESTIMATED_ANNUAL_RCA[boType];
     var rcaCost = rcaAnnuale * (months / 12);
 
     // Revisione: ogni 2 anni → costo ammortizzato 80/24 €/mese
     var revPerMese = ESTIMATED_REVISIONE / 24;
-    var revCost = revPerMese * months;
+    var revCost = (vehicle.costoRev ? vehicle.costoRev / 24 : revPerMese) * months;
 
     var total = fuelCost + maintCost + bolloCost + rcaCost + revCost;
     var costPerKm = kmInPeriod > 0 ? total / kmInPeriod : 0;
@@ -115,6 +116,8 @@
       maint: maintCost,
       bollo: bolloCost,
       rca: rcaCost,
+      bolloSrc: vehicle.costoBollo ? 'tuo' : typeof vehicle.costoBolloStima === 'number' ? 'stima' : 'media',
+      rcaSrc: vehicle.costoRca ? 'tuo' : vehicle.costoRcaStima ? 'stima' : 'media',
       revisione: revCost,
       kmInPeriod: kmInPeriod,
       costPerKm: costPerKm,
@@ -261,8 +264,8 @@
     var rows = [
       { lbl: 'Carburante',   val: tco.fuel,      color: '#5b9bd5' },
       { lbl: 'Manutenzione', val: tco.maint,     color: '#4caf7d' },
-      { lbl: 'Bollo (stima)',val: tco.bollo,     color: '#e8a030' },
-      { lbl: 'RCA (stima)',  val: tco.rca,       color: '#c97fd4' },
+      { lbl: 'Bollo' + (tco.bolloSrc === 'tuo' ? '' : ' (stima)'),val: tco.bollo,     color: '#e8a030' },
+      { lbl: 'Assicurazione' + (tco.rcaSrc === 'tuo' ? '' : ' (stima)'),  val: tco.rca,       color: '#c97fd4' },
       { lbl: 'Revisione',    val: tco.revisione, color: '#ff8a82' }
     ];
     var total = tco.total || 1;
@@ -317,11 +320,11 @@
         txt: 'Costo €/km eccellente (<strong>' + fmtEur2(tco.costPerKm) + ' €/km</strong>). Sei sotto la media nazionale auto (~0.30 €/km).'
       });
     }
-    insights.push({
+    var srcTxt = { tuo: 'importo inserito da te', stima: 'stima calcolata nel Garage', media: 'media generica' };
+    if (tco.bolloSrc !== 'tuo' || tco.rcaSrc !== 'tuo') insights.push({
       icon: 'ℹ',
-      txt: 'Bollo e RCA sono <strong>stime</strong> (' + ESTIMATED_ANNUAL_BOLLO[v.type === 'moto' ? 'moto' : 'auto'] + '€ + ' +
-           ESTIMATED_ANNUAL_RCA[v.type === 'moto' ? 'moto' : 'auto'] + '€/anno per ' + (v.type === 'moto' ? 'moto' : 'auto') +
-           '). Il TCO reale dipende dal tuo veicolo e profilo assicurativo.'
+      txt: 'Bollo: <strong>' + srcTxt[tco.bolloSrc] + '</strong> · Assicurazione: <strong>' + srcTxt[tco.rcaSrc] + '</strong>. ' +
+           'Inserisci gli importi veri in Garage → Modifica per un TCO preciso.'
     });
     insights.forEach(function(ins) {
       html += '<div class="tco-insight">' +

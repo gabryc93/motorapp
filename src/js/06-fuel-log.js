@@ -353,6 +353,17 @@
       '</div>';
     html += '</div>';
 
+    // Consumo dai viaggi importati (MyPeugeot & co.) nel Diario uscite
+    var ts = window.hubTripStats ? window.hubTripStats(v.id) : null;
+    if (ts && ts.consumo != null) {
+      var diff = stats.avgConsumption != null ? (ts.consumo - stats.avgConsumption) / stats.avgConsumption * 100 : null;
+      html += '<div class="fl-trips"><div><div class="fl-stat-lbl">Consumo dai viaggi importati</div>' +
+        '<div class="fl-stat-val">' + ts.consumo.toFixed(1) + '<span style="font-size:.6rem;color:var(--t2);margin-left:4px">L/100km</span></div>' +
+        '<div class="fl-stat-sub">' + ts.viaggi + ' viaggi · ' + Math.round(ts.km).toLocaleString('it-IT') + ' km · ' + ts.litri.toFixed(1) + ' L stimati' +
+        (diff != null && Math.abs(diff) >= 3 ? ' · ' + (diff > 0 ? '+' : '') + diff.toFixed(0) + '% rispetto ai rifornimenti' : '') + '</div></div>' +
+        '<button type="button" class="fl-trips-btn" onclick="openRideLog()">Diario ›</button></div>';
+    }
+
     // Add button
     html += '<button class="fl-add-btn" onclick="openFuelLogEdit(null)">+ Nuovo rifornimento</button>';
 
@@ -408,6 +419,8 @@
     var stats = computeStats(loadForVehicle(v.id));
     if (stats.avgConsumption != null) {
       b.textContent = stats.avgConsumption.toFixed(1) + ' L/100km';
+    } else if (window.hubTripStats && window.hubTripStats(v.id).consumo != null) {
+      b.textContent = window.hubTripStats(v.id).consumo.toFixed(1) + ' L/100km';
     } else if (stats.count > 0) {
       b.textContent = stats.count + ' rif.';
     } else {
