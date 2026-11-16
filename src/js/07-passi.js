@@ -309,6 +309,7 @@
       '<div class="ps-detail-actions">' +
         '<a class="ps-detail-maps" href="https://www.google.com/maps/dir/?api=1&destination=' + p.lat + ',' + p.lng + '&travelmode=driving" target="_blank" rel="noopener">📍 Portami lì</a>' +
         '<button class="ps-detail-alt" data-act="strade-qui" data-id="' + p.id + '">〰 Strade intorno</button>' +
+        '<button class="ps-detail-alt" onclick="closePassoDetail();closePassi();hubMeteoVerso(' + h(JSON.stringify(p.name)) + ',' + p.lat + ',' + p.lng + ')">🌦 Meteo per arrivarci</button>' +
         '<a class="ps-detail-alt" href="https://www.google.com/search?q=' + encodeURIComponent(p.name + ' aperto chiuso oggi') + '" target="_blank" rel="noopener">Verifica apertura ↗</a>' +
         '<button class="ps-detail-close" onclick="closePassoDetail()">Chiudi</button>' +
       '</div>';

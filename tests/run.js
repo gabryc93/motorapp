@@ -292,6 +292,46 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     expect(/GIRO/.test(r.lapTxt), 'pannello giri');
   }, page);
 
+  await test('Meteo percorso: punti e orari, passo chiuso, orario migliore, ritorno', async p => {
+    const A = { lat: 45.4642, lng: 9.19 }, B = { lat: 46.5286, lng: 10.4532 }, N = 200;
+    const base = Math.floor(Date.now() / 3600000) * 3600 - 7200;
+    await p.route('**/photon.komoot.io/**', r => {
+      const q = new URL(r.request().url()).searchParams.get('q'), c = /bormio|stelvio/i.test(q) ? B : A;
+      r.fulfill({ json: { features: [{ geometry: { coordinates: [c.lng, c.lat] }, properties: { name: /bormio|stelvio/i.test(q) ? 'Passo dello Stelvio' : 'Milano', state: 'Lombardia', country: 'Italia' } }] }, headers: { 'access-control-allow-origin': '*' } });
+    });
+    await p.route('**/router.project-osrm.org/**', r => {
+      const coords = []; for (let i = 0; i < N; i++) coords.push([A.lng + (B.lng - A.lng) * i / (N - 1), A.lat + (B.lat - A.lat) * i / (N - 1)]);
+      r.fulfill({ json: { code: 'Ok', routes: [{ distance: 200000, duration: 10800, geometry: { coordinates: coords }, legs: [{ annotation: { duration: Array(N - 1).fill(10800 / (N - 1)) } }] }] }, headers: { 'access-control-allow-origin': '*' } });
+    });
+    await p.route('**/api.open-meteo.com/**', r => {
+      const n = new URL(r.request().url()).searchParams.get('latitude').split(',').length, H = 16 * 24;
+      const time = [], pr = []; for (let k = 0; k < H; k++) { time.push(base + k * 3600); pr.push(k < 10 ? 2 : 0); }   // piove per le prime 8 ore da adesso
+      const one = { elevation: 500, hourly: { time, temperature_2m: Array(H).fill(5), precipitation: pr, precipitation_probability: pr.map(x => x ? 90 : 5), weather_code: pr.map(x => x ? 63 : 1),
+        wind_speed_10m: Array(H).fill(8), wind_gusts_10m: Array(H).fill(15), visibility: Array(H).fill(20000), is_day: time.map(t => { const h = new Date(t * 1000).getHours(); return h >= 7 && h < 18 ? 1 : 0; }), snowfall: Array(H).fill(0) } };
+      r.fulfill({ json: Array(n).fill(one), headers: { 'access-control-allow-origin': '*' } });
+    });
+    await p.evaluate(() => { localStorage.removeItem('hub_meteo_last_v1'); hubGo('meteo'); });
+    await p.fill('#wp-from', 'Milano'); await p.waitForSelector('#wp-from-sug.on'); await p.click('#wp-from-sug .wp-sug-i');
+    await p.fill('#wp-to', 'Bormio');
+    await p.click('.wp-vbtn[data-v="moto"]');
+    const ret = await p.$eval('#wp-when', e => { const d = new Date(e.value); d.setDate(d.getDate() + 1); const z = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + 'T' + z(d.getHours()) + ':00'; });
+    await p.fill('#wp-ret', ret);
+    await p.click('.wp-go');
+    await p.waitForSelector('.wp-steps');
+    const r = await p.evaluate(() => ({ txt: document.getElementById('wp-result').textContent, steps: document.querySelectorAll('.wp-steps').length, rows: document.querySelector('.wp-steps').children.length,
+      best: !!document.querySelector('.wp-hr.best'), first: document.querySelector('.wp-steps .wp-step-hh').textContent, when: document.getElementById('wp-when').value }));
+    expect(r.rows === 11, 'punti lungo 200 km: ' + r.rows);
+    expect(/Stelvio/.test(r.txt) && /chiuso/.test(r.txt), 'passo chiuso non segnalato');
+    expect(/Conviene partire alle/.test(r.txt) && r.best, 'orario migliore assente');
+    expect(r.steps === 2 && /Ritorno/.test(r.txt), 'ritorno assente');
+    expect(/percepisci/.test(r.txt), 'freddo percepito in moto assente');
+    await p.click('.wp-hr.best');
+    const r2 = await p.evaluate(() => ({ when: document.getElementById('wp-when').value, wet: document.querySelectorAll('.wp-steps')[0].querySelectorAll('.wp-precip').length }));
+    expect(r2.when !== r.when && r2.wet === 0, 'partenza migliore non applicata o ancora pioggia: ' + JSON.stringify(r2));
+    await p.evaluate(() => closeWeather());
+    await p.unroute('**/photon.komoot.io/**'); await p.unroute('**/router.project-osrm.org/**'); await p.unroute('**/api.open-meteo.com/**');
+  }, page);
+
   await test('Motorsport: risultati F1 e classifica', async p => {
     await p.evaluate(() => { localStorage.removeItem('hub_ms_cache_v1'); hubGo('ms'); });
     await p.waitForTimeout(800);

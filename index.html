@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-11-16-1916">
+<meta name="autohub-build" content="2026-11-16-1928">
 <meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -4009,6 +4009,58 @@ a.ms-card { text-decoration: none; color: inherit; }
 .rdl-laps .best { color: #c97fd4; font-weight: 600; }
 .rdl-laps i { font-style: normal; color: var(--t3, #999); font-size: .6rem; }
 .rdl-note { font-size: .7rem; color: var(--t3, #999); line-height: 1.5; margin: 0 0 8px; }
+
+/* ── Meteo percorso v2 ────────────────────────────────────────── */
+.wp-veh { display: flex; gap: 6px; margin-bottom: 12px; }
+.wp-vbtn { flex: 1; appearance: none; background: var(--surf2); border: 1px solid var(--brd); color: var(--t2); border-radius: 8px; padding: 8px;
+  font-family: 'DM Mono', monospace; font-size: .72rem; cursor: pointer; }
+.wp-vbtn.on { background: rgba(91,155,213,.18); border-color: rgba(91,155,213,.55); color: var(--t1); }
+.wp-field input[type="text"] { padding-right: 44px; }
+.wp-swaprow, .wp-quick { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: -4px 0 10px; }
+.wp-link { appearance: none; background: none; border: 0; padding: 2px 0; color: #8fbde6; font-family: 'DM Mono', monospace; font-size: .66rem; cursor: pointer; }
+.wp-link:hover { text-decoration: underline; }
+.wp-check { display: flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: .66rem; color: var(--t2); margin-left: auto; cursor: pointer; }
+.wp-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wp-row2 > * { min-width: 0; }
+.wp-row2 .wp-field input { font-size: .7rem; padding: 9px 6px; min-width: 0; max-width: 100%; }
+.wp-opt { text-transform: none; letter-spacing: 0; }
+.wp-chips { display: flex; gap: 6px; overflow-x: auto; margin: -2px 0 10px; scrollbar-width: none; }
+.wp-chips:empty { display: none; }
+.wp-chip { flex-shrink: 0; appearance: none; background: var(--surf2); border: 1px solid var(--brd); color: var(--t2); border-radius: 999px; padding: 5px 10px;
+  font-family: 'DM Mono', monospace; font-size: .62rem; cursor: pointer; }
+.wp-sug { display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 5; margin-top: 2px; background: var(--card, #1b1e24); border: 1px solid var(--brd2, var(--brd));
+  border-radius: 8px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+.wp-sug.on { display: block; }
+.wp-sug-i { padding: 9px 11px; font-size: .78rem; color: var(--t1); cursor: pointer; border-bottom: 1px solid var(--brd); }
+.wp-sug-i:last-child { border-bottom: 0; }
+.wp-sug-i small { display: block; font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--t3); margin-top: 2px; }
+.wp-sug-i:hover, .wp-sug-i.sel { background: rgba(91,155,213,.15); }
+.wp-err { color: #ff8a82; font-family: 'DM Mono', monospace; font-size: .68rem; margin: 0 0 6px; min-height: 0; }
+.wp-err:empty { display: none; }
+.wp-route-meta a { color: #8fbde6; }
+.wp-map { height: 230px; border-radius: 10px; border: 1px solid var(--brd); overflow: hidden; margin-bottom: 10px; background: var(--surf2); }
+.wp-alerts { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.wp-al { border-radius: 8px; padding: 8px 11px; font-size: .74rem; line-height: 1.4; border: 1px solid; }
+.wp-al-bad { background: rgba(229,72,77,.1); border-color: rgba(229,72,77,.35); color: #ffb3b0; }
+.wp-al-warn { background: rgba(232,160,48,.1); border-color: rgba(232,160,48,.35); color: #ffd699; }
+.wp-al-info { background: var(--surf); border-color: var(--brd); color: var(--t2); }
+.wp-ok { background: rgba(63,191,127,.1); border: 1px solid rgba(63,191,127,.35); color: #9be6bf; border-radius: 8px; padding: 9px 12px; font-size: .74rem; margin-bottom: 10px; }
+.wp-when { background: var(--surf); border: 1px solid var(--brd); border-radius: 10px; padding: 10px 12px; margin: 10px 0; }
+.wp-when-h { font-family: 'DM Mono', monospace; font-size: .58rem; text-transform: uppercase; letter-spacing: .1em; color: var(--t3); margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px; }
+.wp-when-h span { text-transform: none; letter-spacing: 0; color: var(--t2); font-size: .66rem; }
+.wp-when-h b { color: #9be6bf; }
+.wp-when-strip { display: flex; gap: 3px; overflow-x: auto; padding-bottom: 2px; }
+.wp-hr { flex: 1 0 26px; appearance: none; border: 1px solid transparent; border-radius: 5px; padding: 7px 0; font-family: 'DM Mono', monospace; font-size: .62rem; cursor: pointer; color: #0b0f14; }
+.wp-hr-ok { background: #3fbf7f; } .wp-hr-warn { background: #e8c547; } .wp-hr-bad { background: #e5484d; color: #fff; }
+.wp-hr.best { outline: 2px solid #fff; outline-offset: 1px; font-weight: 700; }
+.wp-hr.sel { box-shadow: inset 0 -3px 0 rgba(0,0,0,.55); }
+.wp-sec { font-family: 'DM Mono', monospace; font-size: .6rem; text-transform: uppercase; letter-spacing: .12em; color: var(--t3); margin: 14px 0 6px; }
+.wp-step { border-left: 3px solid transparent; }
+.wp-lv-ok { border-left-color: #3fbf7f; } .wp-lv-warn { border-left-color: #e8c547; } .wp-lv-bad { border-left-color: #e5484d; }
+.wp-step-temp small { font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--t3); font-weight: 400; }
+.wp-step-temp .wp-pass { color: #c97fd4; }
+.wp-why { font-family: 'DM Mono', monospace; font-size: .6rem; color: #ffd699; margin-top: 3px; }
+.wp-fine { font-size: .66rem; color: var(--t3); line-height: 1.5; margin: 12px 0 4px; }
 
 /* ═══════════════════════════════════════════════════════════════════
    PASSI ALPINI / APPENNINICI — curated database for motorcyclists
@@ -20120,6 +20172,7 @@ async function runCmp() {
       '<div class="ps-detail-actions">' +
         '<a class="ps-detail-maps" href="https://www.google.com/maps/dir/?api=1&destination=' + p.lat + ',' + p.lng + '&travelmode=driving" target="_blank" rel="noopener">📍 Portami lì</a>' +
         '<button class="ps-detail-alt" data-act="strade-qui" data-id="' + p.id + '">〰 Strade intorno</button>' +
+        '<button class="ps-detail-alt" onclick="closePassoDetail();closePassi();hubMeteoVerso(' + h(JSON.stringify(p.name)) + ',' + p.lat + ',' + p.lng + ')">🌦 Meteo per arrivarci</button>' +
         '<a class="ps-detail-alt" href="https://www.google.com/search?q=' + encodeURIComponent(p.name + ' aperto chiuso oggi') + '" target="_blank" rel="noopener">Verifica apertura ↗</a>' +
         '<button class="ps-detail-close" onclick="closePassoDetail()">Chiudi</button>' +
       '</div>';
@@ -22549,403 +22602,475 @@ async function runCmp() {
 </script>
 
 <!-- HUB WEATHER: meteo lungo il percorso (geocoding+OSRM+Open-Meteo) -->
-<script>
-
-/* ═══════════════════════════════════════════════════════════════════
-   HUB WEATHER — meteo lungo un percorso (geocoding + OSRM + Open-Meteo)
-   Pill-tab "azione": apre overlay direttamente
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB METEO PERCORSO — meteo nel punto e nell'ora in cui ci passi
+   Indirizzi: Photon (suggerimenti) → Nominatim · Percorso: OSRM (con
+   tempi per tratto, tappa intermedia, "evita autostrade") · Meteo: una
+   sola chiamata Open-Meteo per tutti i punti, 16 giorni, ora per ora.
+   In più: orario migliore per partire, ritorno, passi chiusi sul
+   percorso, buio, ghiaccio, raffiche, freddo percepito in moto, mappa.
    ═══════════════════════════════════════════════════════════════════ */
 (function() {
-  function escSafe(s) {
-    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function $(id) { return document.getElementById(id); }
+  function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function hhmm(ms) { var d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function giorno(ms) { var d = new Date(ms), oggi = new Date(); oggi.setHours(0, 0, 0, 0); var g = Math.round((new Date(d).setHours(0, 0, 0, 0) - oggi) / 86400000);
+    return g === 0 ? 'oggi' : g === 1 ? 'domani' : ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'][d.getDay()] + ' ' + d.getDate(); }
+  function localInput(ms) { var d = new Date(ms); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function dist(a, b) {
+    var R = Math.PI / 180, dLat = (b.lat - a.lat) * R, dLng = (b.lng - a.lng) * R;
+    var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(a.lat * R) * Math.cos(b.lat * R);
+    return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(x)));
   }
 
-  function injectWeatherUI() {
-    if (document.getElementById('wp-overlay')) return;
+  var LAST = 'hub_meteo_last_v1', RECENT = 'hub_meteo_recenti_v1';
+  var S = { data: null, map: null };   // ultimo calcolo: percorso + previsioni, per ricalcolare senza rete
+
+  /* ── Interfaccia ─────────────────────────────────────────────── */
+  function inject() {
+    if ($('wp-overlay')) return;
     var ov = document.createElement('div');
     ov.id = 'wp-overlay';
+    ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-labelledby', 'wp-title');
     ov.innerHTML =
-      '<div class="wp-hdr">' +
-        '<h2>METEO LUNGO IL PERCORSO<small>OpenStreetMap · Open-Meteo</small></h2>' +
-        '<button class="gar-close" onclick="closeWeather()">✕ Chiudi</button>' +
-      '</div>' +
+      '<div class="wp-hdr"><h2 id="wp-title">METEO PERCORSO<small>OpenStreetMap · OSRM · Open-Meteo</small></h2>' +
+        '<button class="gar-close" onclick="closeWeather()">✕ Chiudi</button></div>' +
       '<div class="wp-body">' +
-        '<div class="wp-form">' +
-          '<div class="wp-field"><label>Partenza</label>' +
-            '<input type="text" id="wp-from" placeholder="Es. Milano" autocomplete="off">' +
-            '<button class="wp-locate" onclick="wpUseLocation()" title="Usa la mia posizione">📍</button>' +
+        '<form class="wp-form" onsubmit="event.preventDefault();wpCompute()" autocomplete="off">' +
+          '<div class="wp-veh" role="radiogroup" aria-label="Con cosa viaggi">' +
+            '<button type="button" class="wp-vbtn" data-v="moto" onclick="wpVeicolo(\'moto\')">🏍 Moto</button>' +
+            '<button type="button" class="wp-vbtn" data-v="auto" onclick="wpVeicolo(\'auto\')">🚗 Auto</button></div>' +
+          campo('from', 'Partenza', 'Es. Milano', '<button type="button" class="wp-locate" onclick="wpUseLocation()" title="Usa la mia posizione" aria-label="Usa la mia posizione">📍</button>') +
+          '<div class="wp-swaprow"><button type="button" class="wp-link" onclick="wpSwap()">⇅ Inverti</button><button type="button" class="wp-link" id="wp-via-add" onclick="wpVia(true)">+ Tappa intermedia</button></div>' +
+          '<div id="wp-via-wrap" hidden>' + campo('via', 'Passando da', 'Es. Passo del Tonale', '<button type="button" class="wp-locate" onclick="wpVia(false)" aria-label="Togli la tappa">✕</button>') + '</div>' +
+          campo('to', 'Destinazione', 'Es. Bormio') +
+          '<div class="wp-chips" id="wp-chips"></div>' +
+          '<div class="wp-row2">' +
+            '<div class="wp-field"><label for="wp-when">Partenza</label><input type="datetime-local" id="wp-when"></div>' +
+            '<div class="wp-field"><label for="wp-ret">Ritorno <span class="wp-opt">(facoltativo)</span></label><input type="datetime-local" id="wp-ret"></div>' +
           '</div>' +
-          '<div class="wp-field"><label>Destinazione</label>' +
-            '<input type="text" id="wp-to" placeholder="Es. Stelvio" autocomplete="off">' +
-          '</div>' +
-          '<div class="wp-field"><label>Partenza prevista</label>' +
-            '<input type="datetime-local" id="wp-when">' +
-          '</div>' +
-          '<button class="wp-go" onclick="wpCompute()">Calcola meteo →</button>' +
-        '</div>' +
-        '<div class="wp-result" id="wp-result"></div>' +
+          '<div class="wp-quick"><button type="button" class="wp-link" onclick="wpOra(0)">Adesso</button><button type="button" class="wp-link" onclick="wpOra(1)">Domani 9:00</button><button type="button" class="wp-link" onclick="wpOra(2)">Sabato 9:00</button>' +
+            '<label class="wp-check"><input type="checkbox" id="wp-nomw"> Evita autostrade</label></div>' +
+          '<p class="wp-err" id="wp-err" role="alert"></p>' +
+          '<button class="wp-go" type="submit">Calcola meteo →</button>' +
+        '</form>' +
+        '<div class="wp-result" id="wp-result" aria-live="polite"></div>' +
       '</div>';
     document.body.appendChild(ov);
+    ['from', 'via', 'to'].forEach(function(k) { suggest($('wp-' + k)); });
+    restore();
+  }
+  function campo(k, lbl, ph, extra) {
+    return '<div class="wp-field"><label for="wp-' + k + '">' + lbl + '</label><input type="text" id="wp-' + k + '" placeholder="' + ph + '" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">' +
+      (extra || '') + '<div class="wp-sug" id="wp-' + k + '-sug" role="listbox"></div></div>';
+  }
+  function restore() {
+    var L = jget(LAST, null), v = window.hubGarage && window.hubGarage.active && window.hubGarage.active();
+    S.veh = (L && L.veh) || (v && v.type === 'moto' ? 'moto' : v ? 'auto' : 'moto');
+    if (L) {
+      ['from', 'via', 'to'].forEach(function(k) { if (L[k]) setPlace($('wp-' + k), L[k]); });
+      if (L.via) wpVia(true);
+      $('wp-nomw').checked = !!L.nomw;
+    }
+    var now = new Date(); now.setMinutes(0, 0, 0); if (Date.now() - now > 15 * 60000) now.setHours(now.getHours() + 1);
+    $('wp-when').value = localInput(now.getTime());
+    wpVeicolo(S.veh); chips();
+  }
+  function setPlace(inp, p) {
+    inp.value = p.name; inp.dataset.lat = p.lat; inp.dataset.lng = p.lng;
+  }
+  function getPlace(inp) {
+    var v = inp.value.trim();
+    if (!v) return null;
+    if (inp.dataset.lat) return { name: v, lat: +inp.dataset.lat, lng: +inp.dataset.lng };
+    return { name: v };
+  }
+  // scorciatoie: passi preferiti e ultime destinazioni
+  function chips() {
+    var el = $('wp-chips'); if (!el) return;
+    var P = (window._psInternals && window._psInternals.PASSES) || [], fav = jget('hub_passi_fav_v1', []);
+    var list = jget(RECENT, []).slice(0, 4).map(function(r) { return { name: r.name, lat: r.lat, lng: r.lng, ico: '🕘' }; });
+    P.filter(function(p) { return fav.indexOf(p.id) >= 0; }).slice(0, 6).forEach(function(p) {
+      if (!list.some(function(x) { return x.name === p.name; })) list.push({ name: p.name, lat: p.lat, lng: p.lng, ico: '⛰' });
+    });
+    S.chips = list;
+    el.innerHTML = list.map(function(c, i) { return '<button type="button" class="wp-chip" onclick="wpChip(' + i + ')">' + c.ico + ' ' + esc(c.name) + '</button>'; }).join('');
+  }
+  window.wpChip = function(i) { var c = S.chips[i]; if (c) setPlace($('wp-to'), c); };
+  window.wpVeicolo = function(v) {
+    S.veh = v;
+    document.querySelectorAll('.wp-vbtn').forEach(function(b) { b.classList.toggle('on', b.dataset.v === v); b.setAttribute('aria-checked', b.dataset.v === v); });
+    if (S.data) render();
+  };
+  window.wpVia = function(on) {
+    $('wp-via-wrap').hidden = !on; $('wp-via-add').hidden = on;
+    if (!on) { var i = $('wp-via'); i.value = ''; delete i.dataset.lat; delete i.dataset.lng; }
+    else setTimeout(function() { $('wp-via').focus(); }, 0);
+  };
+  window.wpSwap = function() {
+    var a = $('wp-from'), b = $('wp-to'), pa = getPlace(a), pb = getPlace(b);
+    [a, b].forEach(function(i) { i.value = ''; delete i.dataset.lat; delete i.dataset.lng; });
+    if (pb) (pb.lat != null ? setPlace(a, pb) : (a.value = pb.name));
+    if (pa) (pa.lat != null ? setPlace(b, pa) : (b.value = pa.name));
+  };
+  window.wpOra = function(k) {
+    var d = new Date();
+    if (k === 0) d.setSeconds(0, 0);
+    else { if (k === 1) d.setDate(d.getDate() + 1); else d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7)); d.setHours(9, 0, 0, 0); }
+    $('wp-when').value = localInput(d.getTime());
+  };
 
-    // Default datetime: now rounded
-    var now = new Date();
-    now.setMinutes(0, 0, 0);
-    var pad = function(n) { return n < 10 ? '0' + n : n; };
-    var local = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) +
-                'T' + pad(now.getHours()) + ':00';
-    document.getElementById('wp-when').value = local;
+  // Suggerimenti mentre scrivi (Photon, pensato per l'autocompletamento)
+  function suggest(inp) {
+    var box = $(inp.id + '-sug'), timer = null, items = [], sel = -1;
+    var close = function() { box.innerHTML = ''; box.classList.remove('on'); inp.setAttribute('aria-expanded', 'false'); sel = -1; };
+    var pick = function(i) { var it = items[i]; if (!it) return; setPlace(inp, it); close(); };
+    inp.addEventListener('input', function() {
+      delete inp.dataset.lat; delete inp.dataset.lng;
+      clearTimeout(timer);
+      var q = inp.value.trim();
+      if (q.length < 3 || /^-?\d+\.\d+\s*,/.test(q)) return close();
+      timer = setTimeout(function() {
+        cerca(q, 5).then(function(r) {
+          if (inp.value.trim() !== q) return;
+          items = r; sel = -1;
+          if (!r.length) return close();
+          box.innerHTML = r.map(function(it, i) { return '<div class="wp-sug-i" role="option" data-i="' + i + '">' + esc(it.name) + (it.sub ? '<small>' + esc(it.sub) + '</small>' : '') + '</div>'; }).join('');
+          box.classList.add('on'); inp.setAttribute('aria-expanded', 'true');
+        }).catch(close);
+      }, 300);
+    });
+    box.addEventListener('mousedown', function(e) { var o = e.target.closest('.wp-sug-i'); if (o) { e.preventDefault(); pick(+o.dataset.i); } });
+    inp.addEventListener('keydown', function(e) {
+      if (!box.classList.contains('on')) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+        box.querySelectorAll('.wp-sug-i').forEach(function(o, i) { o.classList.toggle('sel', i === sel); }); }
+      else if (e.key === 'Enter' && sel >= 0) { e.preventDefault(); pick(sel); }
+      else if (e.key === 'Escape') close();
+    });
+    inp.addEventListener('blur', function() { setTimeout(close, 150); });
+  }
+  function cerca(q, n) {
+    return fetch('https://photon.komoot.io/api/?limit=' + n + '&lat=45.6&lon=10&q=' + encodeURIComponent(q)).then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status); return r.json();
+    }).then(function(d) {
+      return (d.features || []).map(function(f) {
+        var p = f.properties || {}, c = f.geometry.coordinates;
+        var sub = [p.city !== p.name ? p.city : null, p.county, p.state, p.country !== 'Italia' && p.country !== 'Italy' ? p.country : null].filter(Boolean).filter(function(x, i, a) { return a.indexOf(x) === i; }).slice(0, 2).join(', ');
+        return { name: p.name || p.city || q, sub: sub, lat: c[1], lng: c[0] };
+      });
+    });
+  }
+  // Coordinate di un luogo scritto a mano: Photon, poi Nominatim
+  function geocode(p) {
+    if (p.lat != null) return Promise.resolve(p);
+    var m = p.name.match(/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/);
+    if (m) return Promise.resolve({ name: p.name, lat: +m[1], lng: +m[2] });
+    return cerca(p.name, 1).then(function(r) { if (r[0]) return { name: p.name, lat: r[0].lat, lng: r[0].lng }; throw new Error('vuoto'); }).catch(function() {
+      return fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(p.name), { headers: { Accept: 'application/json' } })
+        .then(function(r) { return r.ok ? r.json() : []; }).then(function(d) {
+          if (!d || !d.length) throw new Error('Località non trovata: ' + p.name);
+          return { name: p.name, lat: +d[0].lat, lng: +d[0].lon };
+        });
+    });
   }
 
+  window.wpUseLocation = function() {
+    var inp = $('wp-from');
+    if (!navigator.geolocation) { errore('GPS non disponibile.'); return; }
+    inp.value = 'Cerco la posizione…';
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      setPlace(inp, { name: 'La mia posizione', lat: +pos.coords.latitude.toFixed(5), lng: +pos.coords.longitude.toFixed(5) });
+    }, function(err) { inp.value = ''; errore('Posizione non disponibile: ' + (err.message || err.code)); }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+  };
+  function errore(t) { var e = $('wp-err'); if (e) e.textContent = t || ''; }
+
   window.openWeather = function() {
-    injectWeatherUI();
-    document.getElementById('wp-overlay').classList.add('visible');
+    inject(); chips();
+    $('wp-overlay').classList.add('visible');
     if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
   };
   window.closeWeather = function() {
-    var ov = document.getElementById('wp-overlay');
-    if (ov) ov.classList.remove('visible');
+    var ov = $('wp-overlay'); if (ov) ov.classList.remove('visible');
     if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
   };
-
-  window.wpUseLocation = function() {
-    if (!navigator.geolocation) { alert('GPS non disponibile.'); return; }
-    var input = document.getElementById('wp-from');
-    input.value = '⌖ Acquisizione GPS...';
-    navigator.geolocation.getCurrentPosition(function(pos) {
-      input.value = pos.coords.latitude.toFixed(4) + ',' + pos.coords.longitude.toFixed(4);
-      input.dataset.lat = pos.coords.latitude;
-      input.dataset.lng = pos.coords.longitude;
-    }, function(err) {
-      input.value = '';
-      alert('GPS errore: ' + (err.message || err.code));
-    }, { enableHighAccuracy: true, timeout: 10000 });
+  // da altre sezioni (es. Passi): apre con la destinazione già scelta
+  window.hubMeteoVerso = function(name, lat, lng) {
+    openWeather(); setPlace($('wp-to'), { name: name, lat: lat, lng: lng });
+    if (!$('wp-from').value) wpUseLocation();
   };
 
-  // Geocode using Nominatim (OSM)
-  async function geocode(query) {
-    // If query is "lat,lng" use it directly
-    var m = query.trim().match(/^(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)$/);
-    if (m) return { lat: +m[1], lng: +m[2], display: query };
-    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=it,fr,ch,at,si&q=' +
-              encodeURIComponent(query);
-    var r = await fetch(url, { headers: { 'Accept': 'application/json' } });
-    if (!r.ok) throw new Error('Geocoding HTTP ' + r.status);
-    var data = await r.json();
-    if (!data || !data.length) throw new Error('Località non trovata: ' + query);
-    return { lat: +data[0].lat, lng: +data[0].lon, display: data[0].display_name };
+  /* ── Percorso ─────────────────────────────────────────────────── */
+  function route(pts, nomw) {
+    var url = 'https://router.project-osrm.org/route/v1/driving/' + pts.map(function(p) { return p.lng.toFixed(5) + ',' + p.lat.toFixed(5); }).join(';') +
+      '?overview=full&geometries=geojson&annotations=duration' + (nomw ? '&exclude=motorway' : '');
+    return fetch(url).then(function(r) {
+      if (!r.ok) { if (nomw) return route(pts, false).then(function(x) { x.nomwFail = true; return x; }); throw new Error('Percorso non disponibile (HTTP ' + r.status + ')'); }
+      return r.json().then(function(d) {
+        if (!d.routes || !d.routes.length) throw new Error('Nessun percorso stradale tra questi punti');
+        var rt = d.routes[0], c = rt.geometry.coordinates.map(function(x) { return { lat: x[1], lng: x[0] }; });
+        // tempo cumulato in ogni punto: dai tempi per tratto di OSRM, se combaciano con la geometria
+        var cumD = [0]; for (var i = 1; i < c.length; i++) cumD.push(cumD[i - 1] + dist(c[i - 1], c[i]));
+        var segs = []; (rt.legs || []).forEach(function(l, li) { var a = (l.annotation && l.annotation.duration) || []; segs = segs.concat(a); });
+        var cumT;
+        if (segs.length === c.length - 1) { cumT = [0]; segs.forEach(function(s, i) { cumT.push(cumT[i] + s); }); var k = rt.duration / (cumT[cumT.length - 1] || 1); cumT = cumT.map(function(t) { return t * k; }); }
+        else { var D = cumD[cumD.length - 1] || 1; cumT = cumD.map(function(d) { return d / D * rt.duration; }); }
+        return { coords: c, cumD: cumD, cumT: cumT, km: rt.distance / 1000, durS: rt.duration, nomw: nomw };
+      });
+    });
   }
-
-  // Get route from OSRM (public demo server)
-  async function getRoute(from, to) {
-    var url = 'https://router.project-osrm.org/route/v1/driving/' +
-              from.lng + ',' + from.lat + ';' + to.lng + ',' + to.lat +
-              '?overview=full&geometries=geojson';
-    var r = await fetch(url);
-    if (!r.ok) throw new Error('Routing HTTP ' + r.status);
-    var data = await r.json();
-    if (!data.routes || !data.routes.length) throw new Error('Nessun percorso trovato');
-    var route = data.routes[0];
-    return {
-      coords: route.geometry.coordinates, // [[lng,lat], ...]
-      distanceKm: route.distance / 1000,
-      durationS: route.duration
-    };
-  }
-
-  // Sample N points along the route at fractional positions
-  function sampleRoute(coords, n) {
-    var out = [];
-    for (var i = 0; i < n; i++) {
-      var idx = Math.round(i / (n - 1) * (coords.length - 1));
-      var c = coords[idx];
-      out.push({ lat: c[1], lng: c[0], frac: i / (n - 1) });
+  // punti a distanza regolare (ogni ~15-25 km, max 24) con il loro tempo dalla partenza
+  function campiona(rt) {
+    var n = Math.max(3, Math.min(24, Math.round(rt.km / 20) + 1)), out = [], j = 0, L = rt.cumD[rt.cumD.length - 1];
+    for (var k = 0; k < n; k++) {
+      var d = L * k / (n - 1);
+      while (j < rt.cumD.length - 2 && rt.cumD[j + 1] < d) j++;
+      var seg = rt.cumD[j + 1] - rt.cumD[j], u = seg > 0 ? Math.max(0, Math.min(1, (d - rt.cumD[j]) / seg)) : 0;
+      var a = rt.coords[j], b = rt.coords[j + 1] || a;
+      out.push({ lat: a.lat + (b.lat - a.lat) * u, lng: a.lng + (b.lng - a.lng) * u, km: d, t: rt.cumT[j] + (rt.cumT[j + 1] - rt.cumT[j] || 0) * u });
     }
     return out;
   }
-
-  function weatherIcon(code) {
-    if (code === 0) return '☀️';
-    if (code <= 3) return '⛅';
-    if (code <= 48) return '🌫';
-    if (code <= 67) return '🌧';
-    if (code <= 77) return '🌨';
-    if (code <= 82) return '🌧';
-    if (code <= 86) return '🌨';
-    return '⛈';
+  function previsioni(samples) {
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + samples.map(function(s) { return s.lat.toFixed(4); }).join(',') +
+      '&longitude=' + samples.map(function(s) { return s.lng.toFixed(4); }).join(',') +
+      '&hourly=temperature_2m,precipitation,precipitation_probability,weather_code,wind_speed_10m,wind_gusts_10m,visibility,is_day,snowfall' +
+      '&forecast_days=16&timeformat=unixtime&timezone=auto';
+    return fetch(url).then(function(r) { if (!r.ok) throw new Error('Meteo non disponibile (HTTP ' + r.status + ')'); return r.json(); })
+      .then(function(d) { return Array.isArray(d) ? d : [d]; });
   }
-  function weatherDesc(code) {
-    if (code === 0) return 'Sereno';
-    if (code <= 3) return 'Nuvoloso';
-    if (code <= 48) return 'Nebbia';
-    if (code <= 67) return 'Pioggia';
-    if (code <= 77) return 'Neve';
-    if (code <= 82) return 'Rovesci';
-    if (code <= 86) return 'Rovesci di neve';
-    return 'Temporale';
-  }
-
-  async function fetchWeatherAt(lat, lng, isoHour) {
-    // Open-Meteo hourly forecast — pick the nearest hour
-    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(4) +
-              '&longitude=' + lng.toFixed(4) +
-              '&hourly=temperature_2m,precipitation,weathercode,wind_speed_10m' +
-              '&forecast_days=3&timezone=auto';
-    var r = await fetch(url);
-    if (!r.ok) throw new Error('Meteo HTTP ' + r.status);
-    var data = await r.json();
-    var times = data.hourly.time;
-    var idx = times.findIndex(function(t) { return t >= isoHour; });
-    if (idx < 0) idx = 0;
-    return {
-      temperature: data.hourly.temperature_2m[idx],
-      precipitation: data.hourly.precipitation[idx],
-      code: data.hourly.weathercode[idx],
-      wind: data.hourly.wind_speed_10m[idx],
-      time: times[idx]
-    };
+  // passi alpini a meno di 1 km dal percorso
+  function passiSulPercorso(rt) {
+    var P = (window._psInternals && window._psInternals.PASSES) || [], step = Math.max(1, Math.floor(rt.coords.length / 1500));
+    return P.filter(function(p) {
+      for (var i = 0; i < rt.coords.length; i += step) if (dist(p, rt.coords[i]) < 1) return true;
+      return false;
+    }).map(function(p) {
+      var near = 0, best = 1e9;
+      for (var i = 0; i < rt.coords.length; i += step) { var d = dist(p, rt.coords[i]); if (d < best) { best = d; near = i; } }
+      return { p: p, t: rt.cumT[near] };
+    });
   }
 
-  window.wpCompute = async function() {
-    var fromInput = document.getElementById('wp-from');
-    var toInput = document.getElementById('wp-to');
-    var whenInput = document.getElementById('wp-when');
-    var result = document.getElementById('wp-result');
-
-    var fromQ = fromInput.value.trim();
-    var toQ   = toInput.value.trim();
-    if (!fromQ || !toQ) { alert('Inserisci partenza e destinazione.'); return; }
-    var whenStr = whenInput.value;
-    if (!whenStr) { alert('Imposta orario partenza.'); return; }
-    var whenDate = new Date(whenStr);
-
-    result.innerHTML = '<div class="wp-loading">Acquisizione percorso e meteo…</div>';
-
-    try {
-      // 1. Geocode
-      var from, to;
-      if (fromInput.dataset.lat) from = { lat: +fromInput.dataset.lat, lng: +fromInput.dataset.lng, display: fromQ };
-      else from = await geocode(fromQ);
-      to = await geocode(toQ);
-
-      // 2. Route
-      var route = await getRoute(from, to);
-
-      // 3. Sample 5 points
-      var samples = sampleRoute(route.coords, 5);
-
-      // 4. For each sample, compute estimated arrival time and fetch weather
-      var promises = samples.map(function(s, i) {
-        var passTimeMs = whenDate.getTime() + (route.durationS * 1000) * s.frac;
-        var d = new Date(passTimeMs);
-        var pad = function(n) { return n < 10 ? '0' + n : n; };
-        var iso = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' +
-                  pad(d.getHours()) + ':00';
-        return fetchWeatherAt(s.lat, s.lng, iso).then(function(w) {
-          return Object.assign({}, s, { weather: w, when: d });
+  window.wpCompute = function() {
+    errore('');
+    var from = getPlace($('wp-from')), to = getPlace($('wp-to')), via = $('wp-via-wrap').hidden ? null : getPlace($('wp-via'));
+    if (!from || !to) { errore('Inserisci partenza e destinazione.'); return; }
+    var dep = new Date($('wp-when').value).getTime();
+    if (!dep) { errore('Imposta data e ora di partenza.'); return; }
+    var ret = $('wp-ret').value ? new Date($('wp-ret').value).getTime() : null;
+    var nomw = $('wp-nomw').checked;
+    var res = $('wp-result');
+    res.innerHTML = '<div class="wp-loading">Calcolo percorso e meteo…</div>';
+    var luoghi = [from].concat(via ? [via] : []).concat([to]);
+    Promise.all(luoghi.map(geocode)).then(function(pl) {
+      return route(pl, nomw).then(function(rt) {
+        var smp = campiona(rt);
+        return previsioni(smp).then(function(fc) {
+          S.data = { pl: pl, rt: rt, smp: smp, fc: fc, dep: dep, ret: ret, passi: passiSulPercorso(rt) };
+          jset(LAST, { from: pl[0], via: via ? pl[1] : null, to: pl[pl.length - 1], veh: S.veh, nomw: nomw });
+          var rec = jget(RECENT, []).filter(function(r) { return r.name !== pl[pl.length - 1].name; });
+          rec.unshift(pl[pl.length - 1]); jset(RECENT, rec.slice(0, 8)); chips();
+          render();
         });
       });
-      var weatherSamples = await Promise.all(promises);
-
-      // 5. Render
-      renderWeather(from, to, route, weatherSamples);
-    } catch (e) {
-      result.innerHTML = '<div class="wp-error">Errore: ' + escSafe(e.message || String(e)) + '</div>';
-    }
+    }).catch(function(e) { res.innerHTML = '<div class="wp-error">' + esc(e.message || String(e)) + '</div>'; });
   };
 
-  function renderWeather(from, to, route, samples) {
-    var totalH = route.durationS / 3600;
-    var headHtml = '<div class="wp-route-info">' +
-      '<div class="wp-route-row"><strong>' + escSafe(from.display.split(',')[0]) + '</strong> → <strong>' + escSafe(to.display.split(',')[0]) + '</strong></div>' +
-      '<div class="wp-route-meta">' + route.distanceKm.toFixed(0) + ' km · ' +
-        Math.floor(totalH) + 'h ' + Math.round((totalH % 1) * 60) + 'm</div>' +
-    '</div>';
-
-    // Decision card: auto vs moto
-    var decisionHtml = buildDecisionCard(samples, route);
-
-    // Find any rain/snow alert
-    var hasRain = samples.some(function(s) { return s.weather.precipitation > 0.5; });
-    var alertHtml = hasRain ? '<div class="wp-alert">⚠ Precipitazioni previste lungo il tragitto</div>' : '';
-
-    var rowsHtml = samples.map(function(s, i) {
-      var w = s.weather;
-      var pad = function(n) { return n < 10 ? '0' + n : n; };
-      var hh = pad(s.when.getHours()) + ':' + pad(s.when.getMinutes());
-      var posLbl = i === 0 ? 'Partenza' : i === samples.length - 1 ? 'Arrivo' : Math.round(s.frac * 100) + '%';
-      var precipBadge = w.precipitation > 0.5
-        ? '<span class="wp-precip">💧 ' + w.precipitation.toFixed(1) + ' mm</span>'
-        : '';
-      return '<div class="wp-step">' +
-        '<div class="wp-step-time">' +
-          '<div class="wp-step-frac">' + posLbl + '</div>' +
-          '<div class="wp-step-hh">' + hh + '</div>' +
-        '</div>' +
-        '<div class="wp-step-icon">' + weatherIcon(w.code) + '</div>' +
-        '<div class="wp-step-info">' +
-          '<div class="wp-step-temp">' + Math.round(w.temperature) + '°C</div>' +
-          '<div class="wp-step-desc">' + weatherDesc(w.code) + ' · vento ' + Math.round(w.wind) + ' km/h</div>' +
-          precipBadge +
-        '</div>' +
-      '</div>';
-    }).join('');
-
-    document.getElementById('wp-result').innerHTML =
-      headHtml + decisionHtml + alertHtml +
-      '<div class="wp-steps">' + rowsHtml + '</div>';
+  /* ── Valutazione ──────────────────────────────────────────────── */
+  // dato meteo del punto i all'istante ms (ora più vicina)
+  function meteo(i, ms) {
+    var f = S.data.fc[i], h = f && f.hourly; if (!h) return null;
+    var k = Math.round((ms / 1000 - h.time[0]) / 3600);
+    if (k < 0 || k >= h.time.length) return null;
+    return { t: h.temperature_2m[k], mm: h.precipitation[k] || 0, prob: h.precipitation_probability ? h.precipitation_probability[k] : null, code: h.weather_code[k],
+      wind: h.wind_speed_10m[k] || 0, gust: h.wind_gusts_10m ? h.wind_gusts_10m[k] || 0 : 0, vis: h.visibility ? h.visibility[k] : null,
+      day: h.is_day ? h.is_day[k] : 1, snow: h.snowfall ? h.snowfall[k] || 0 : 0, alt: f.elevation };
+  }
+  // freddo percepito in sella (wind chill a 90 km/h, valido sotto i 10 °C)
+  function percepita(t, v) { if (t > 10) return t; var V = Math.pow(v, .16); return 13.12 + .6215 * t - 11.37 * V + .3965 * t * V; }
+  function livello(w, moto) {
+    var neve = w.snow > 0 || (w.code >= 71 && w.code <= 77) || w.code === 85 || w.code === 86;
+    var why = [];
+    if (w.code >= 95) why.push(['bad', 'temporale']);
+    if (neve) why.push(['bad', 'neve']);
+    if (w.mm >= 1) why.push(['bad', 'pioggia ' + w.mm.toFixed(1).replace('.', ',') + ' mm']);
+    else if (w.mm >= .2) why.push(['warn', 'pioviggine']);
+    else if (w.prob != null && w.prob >= 50) why.push(['warn', 'pioggia ' + w.prob + '%']);
+    if (w.t <= 2 && (w.mm > 0 || neve)) why.push(['bad', 'rischio ghiaccio']);
+    else if (w.t <= 1) why.push([moto ? 'bad' : 'warn', 'gelo']);
+    else if (moto && w.t <= 7) why.push(['warn', 'freddo']);
+    if (w.t >= 34) why.push(['warn', 'caldo']);
+    if (w.gust >= 60) why.push(['bad', 'raffiche ' + Math.round(w.gust)]);
+    else if (w.gust >= (moto ? 40 : 55)) why.push(['warn', 'raffiche ' + Math.round(w.gust)]);
+    if (w.vis != null && w.vis < 1000) why.push([w.vis < 300 ? 'bad' : 'warn', 'nebbia']);
+    if (moto && !w.day) why.push(['warn', 'buio']);
+    var lv = why.some(function(x) { return x[0] === 'bad'; }) ? 'bad' : why.length ? 'warn' : 'ok';
+    return { lv: lv, why: why.map(function(x) { return x[1]; }) };
+  }
+  // tutto il viaggio partendo a "dep" (rev = ritorno: punti al contrario)
+  function viaggio(dep, rev) {
+    var D = S.data, T = D.rt.durS * 1000, moto = S.veh === 'moto', rows = [], fuori = false;
+    D.smp.forEach(function(s, i) {
+      var idx = rev ? D.smp.length - 1 - i : i, sp = D.smp[idx], ms = dep + (rev ? T - sp.t * 1000 : sp.t * 1000);
+      var w = meteo(idx, ms); if (!w) { fuori = true; return; }
+      rows.push({ i: idx, s: sp, ms: ms, w: w, L: livello(w, moto), km: rev ? D.rt.km - sp.km : sp.km });
+    });
+    var score = rows.reduce(function(a, r) { return a + (r.L.lv === 'bad' ? 3 : r.L.lv === 'warn' ? 1 : 0) + Math.min(3, r.w.mm); }, 0);
+    return { rows: rows, fuori: fuori, score: score / Math.max(1, rows.length) };
   }
 
-  /* ── Auto vs Moto decision engine ────────────────────────────── */
-  function buildDecisionCard(samples, route) {
-    var motoScore = 0, autoScore = 0;
-    var pros = [];
-
-    var precips = samples.map(function(s) { return s.weather.precipitation || 0; });
-    var temps   = samples.map(function(s) { return s.weather.temperature; });
-    var winds   = samples.map(function(s) { return s.weather.wind || 0; });
-    var maxRain = Math.max.apply(null, precips);
-    var totalRain = precips.reduce(function(a, b) { return a + b; }, 0);
-    var rainPointsLight = precips.filter(function(p) { return p > 0.1; }).length;
-    var rainPointsHeavy = precips.filter(function(p) { return p > 0.5; }).length;
-    var minTemp = Math.min.apply(null, temps);
-    var maxTemp = Math.max.apply(null, temps);
-    var maxWind = Math.max.apply(null, winds);
-    var avgWind = winds.reduce(function(a, b) { return a + b; }, 0) / winds.length;
-    var km = route.distanceKm;
-
-    // ── Blocker: pioggia diffusa (≥2 punti) o forte (max>0.3mm), freddo, vento ──
-    var hasBlocker = (rainPointsLight >= 2) || (maxRain > 0.3) || (minTemp < 5) || (maxWind > 30);
-
-    // ── Pioggia (most important factor) ──
-    if (maxRain > 3 || totalRain > 5) {
-      autoScore += 9;
-      pros.push({ side:'auto', icn:'🌧', txt:'Pioggia intensa prevista (max ' + maxRain.toFixed(1) + ' mm)' });
-    } else if (rainPointsHeavy >= 1 || rainPointsLight >= 2) {
-      autoScore += 7;
-      pros.push({ side:'auto', icn:'💧', txt:'Pioggia in ' + rainPointsLight + '/' + samples.length + ' punti del tragitto' });
-    } else if (maxRain > 0.1) {
-      autoScore += 4;
-      pros.push({ side:'auto', icn:'💧', txt:'Possibili gocce di pioggia' });
-    } else {
-      motoScore += 3;
-      pros.push({ side:'moto', icn:'☀', txt:'Niente pioggia su tutto il tragitto' });
-    }
-
-    // ── Temperatura ──
-    if (minTemp < 3) {
-      autoScore += 6;
-      pros.push({ side:'auto', icn:'🥶', txt:'Freddo intenso (min ' + Math.round(minTemp) + '°C)' });
-    } else if (minTemp < 8) {
-      autoScore += 4;
-      pros.push({ side:'auto', icn:'❄', txt:'Freddo (min ' + Math.round(minTemp) + '°C), abbigliamento pesante' });
-    } else if (maxTemp > 34) {
-      autoScore += 3;
-      pros.push({ side:'auto', icn:'🥵', txt:'Caldo estremo (' + Math.round(maxTemp) + '°C), casco pesante' });
-    } else if (minTemp >= 14 && maxTemp <= 28 && !hasBlocker) {
-      motoScore += 3;
-      pros.push({ side:'moto', icn:'🌡', txt:'Temperatura ideale (' + Math.round(minTemp) + '-' + Math.round(maxTemp) + '°C)' });
-    } else if (minTemp >= 10 && maxTemp <= 32 && !hasBlocker) {
-      motoScore += 1;
-      pros.push({ side:'moto', icn:'🌡', txt:'Temperatura accettabile' });
-    }
-
-    // ── Vento ──
-    if (maxWind > 40) {
-      autoScore += 7;
-      pros.push({ side:'auto', icn:'💨', txt:'Vento forte (raffiche ' + Math.round(maxWind) + ' km/h)' });
-    } else if (maxWind > 25) {
-      autoScore += 4;
-      pros.push({ side:'auto', icn:'🌬', txt:'Vento moderato-forte (' + Math.round(maxWind) + ' km/h)' });
-    } else if (avgWind < 12 && !hasBlocker) {
-      motoScore += 1;
-      pros.push({ side:'moto', icn:'🍃', txt:'Aria calma' });
-    }
-
-    // ── Distanza (don't reward moto if blockers present) ──
-    if (km > 400) {
-      autoScore += 3;
-      pros.push({ side:'auto', icn:'🛣', txt:'Tragitto molto lungo (' + Math.round(km) + ' km)' });
-    } else if (km > 250) {
-      autoScore += 1;
-      pros.push({ side:'auto', icn:'🛣', txt:'Tragitto lungo (' + Math.round(km) + ' km)' });
-    } else if (km >= 50 && km <= 200 && !hasBlocker) {
-      motoScore += 2;
-      pros.push({ side:'moto', icn:'🛤', txt:'Distanza ideale per la moto' });
-    }
-
-    // ── Verdict ──
-    var diff = motoScore - autoScore;
-    var verdict, color, sub;
-    if (diff >= 4) {
-      verdict = '🏍 PRENDI LA MOTO';
-      color = 'moto';
-      sub = 'Condizioni ottime per uscire in due ruote';
-    } else if (diff >= 2) {
-      verdict = '🏍 LEGGERMENTE PRO MOTO';
-      color = 'moto';
-      sub = 'Condizioni favorevoli ma non perfette';
-    } else if (diff <= -4) {
-      verdict = '🚗 MEGLIO L\'AUTO';
-      color = 'auto';
-      sub = 'Le condizioni non aiutano la moto oggi';
-    } else if (diff <= -2) {
-      verdict = '🚗 LEGGERMENTE PRO AUTO';
-      color = 'auto';
-      sub = 'Qualche fattore consiglia di stare in abitacolo';
-    } else {
-      verdict = '⚖ DECIDI TU';
-      color = 'mixed';
-      sub = 'Condizioni miste, scelta personale';
-    }
-
-    // ── Garage check ──
-    var note = '';
-    try {
-      var g = (window.hubGarage && window.hubGarage.list) ? window.hubGarage.list() : [];
-      var hasAuto = g.some(function(v) { return v.type === 'auto'; });
-      var hasMoto = g.some(function(v) { return v.type === 'moto'; });
-      if (g.length === 0) {
-        note = 'Nessun veicolo in garage. Aggiungili per consigli più personalizzati.';
-      } else if (color === 'moto' && !hasMoto) {
-        note = 'Hai solo auto in garage — qui ti diciamo quale veicolo sarebbe meglio in queste condizioni.';
-      } else if (color === 'auto' && !hasAuto) {
-        note = 'Hai solo moto in garage — fai attenzione: le condizioni non sono ideali.';
-      }
-    } catch(_) {}
-
-    var prosHtml = pros.map(function(p) {
-      return '<div class="wp-decision-pro">' +
-        '<span class="wp-decision-pro-icn">' + p.icn + '</span>' +
-        '<span class="wp-decision-pro-side side-' + p.side + '">' + p.side + '</span>' +
-        '<span>' + escSafe(p.txt) + '</span>' +
-      '</div>';
-    }).join('');
-
-    var motoBarCls = motoScore > autoScore ? ' high-moto' : '';
-    var autoBarCls = autoScore > motoScore ? ' high-auto' : '';
-
-    return '<div class="wp-decision dec-' + color + '">' +
-      '<div class="wp-decision-verdict">' + verdict + '</div>' +
-      '<div class="wp-decision-sub">' + sub + '</div>' +
-      '<div class="wp-decision-score">' +
-        '<div class="wp-decision-bar' + motoBarCls + '">' +
-          '<span class="wp-decision-bar-icn">🏍</span>' +
-          '<span>Moto</span>' +
-          '<span class="wp-decision-bar-val">+' + motoScore + '</span>' +
-        '</div>' +
-        '<div class="wp-decision-bar' + autoBarCls + '">' +
-          '<span class="wp-decision-bar-icn">🚗</span>' +
-          '<span>Auto</span>' +
-          '<span class="wp-decision-bar-val">+' + autoScore + '</span>' +
-        '</div>' +
-      '</div>' +
-      (pros.length ? '<div class="wp-decision-pros">' + prosHtml + '</div>' : '') +
-      (note ? '<div class="wp-decision-note">ℹ ' + escSafe(note) + '</div>' : '') +
-    '</div>';
+  /* ── Risultato ───────────────────────────────────────────────── */
+  var ICO = function(c, day) { return c === 0 ? (day ? '☀️' : '🌙') : c <= 2 ? (day ? '🌤' : '☁️') : c === 3 ? '☁️' : c <= 48 ? '🌫' : c <= 57 ? '🌦' : c <= 67 ? '🌧' : c <= 77 ? '🌨' : c <= 82 ? '🌧' : c <= 86 ? '🌨' : '⛈'; };
+  var DESC = function(c) { return c === 0 ? 'Sereno' : c <= 2 ? 'Poco nuvoloso' : c === 3 ? 'Coperto' : c <= 48 ? 'Nebbia' : c <= 57 ? 'Pioviggine' : c <= 67 ? 'Pioggia' : c <= 77 ? 'Neve' : c <= 82 ? 'Rovesci' : c <= 86 ? 'Rovesci di neve' : 'Temporale'; };
+  function render() {
+    var D = S.data, rt = D.rt, moto = S.veh === 'moto', res = $('wp-result');
+    var A = viaggio(D.dep, false), R = D.ret ? viaggio(D.ret, true) : null;
+    var last = D.fc[0] && D.fc[0].hourly ? D.fc[0].hourly.time[D.fc[0].hourly.time.length - 1] * 1000 : 0;
+    if (!A.rows.length) { res.innerHTML = '<div class="wp-error">Previsioni disponibili fino a ' + giorno(last) + ' ' + hhmm(last) + ': scegli una partenza più vicina.</div>'; return; }
+    var h = Math.floor(rt.durS / 3600), m = Math.round(rt.durS % 3600 / 60), pl = D.pl;
+    var gmaps = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + pl[0].lat + ',' + pl[0].lng + '&destination=' + pl[pl.length - 1].lat + ',' + pl[pl.length - 1].lng +
+      (pl.length > 2 ? '&waypoints=' + pl[1].lat + ',' + pl[1].lng : '');
+    var html = '<div class="wp-route-info"><div class="wp-route-row">' + pl.map(function(p) { return '<strong>' + esc(p.name.split(',')[0]) + '</strong>'; }).join(' → ') + '</div>' +
+      '<div class="wp-route-meta">' + Math.round(rt.km) + ' km · ' + (h ? h + 'h ' : '') + m + 'm' + (rt.nomwFail ? ' · autostrade non escludibili su questo percorso' : rt.nomw ? ' · senza autostrade' : '') +
+      ' · arrivo ' + hhmm(D.dep + rt.durS * 1000) + ' · <a href="' + gmaps + '" target="_blank" rel="noopener">Apri in Google Maps ↗</a></div></div>' +
+      '<div class="wp-map" id="wp-map" aria-label="Mappa del percorso con il meteo"></div>';
+    html += avvisi(A, R);
+    html += decisione(A.rows, rt);
+    html += quando();
+    html += tappe('Andata · ' + giorno(D.dep) + ' ' + hhmm(D.dep), A, moto);
+    if (R) html += R.rows.length ? tappe('Ritorno · ' + giorno(D.ret) + ' ' + hhmm(D.ret), R, moto) : '<div class="wp-alert">Ritorno oltre le previsioni disponibili.</div>';
+    if (A.fuori) html += '<p class="wp-fine">Parte del viaggio è oltre le previsioni disponibili (fino a ' + giorno(last) + ').</p>';
+    html += '<p class="wp-fine">Previsioni Open-Meteo per il punto e l\'ora in cui ci passi, alla quota del modello. Tempi di percorrenza da OSRM, senza traffico né soste.</p>';
+    res.innerHTML = html;
+    var bst = res.querySelector('.wp-hr.best'); if (bst) bst.parentNode.scrollLeft = bst.offsetLeft - bst.parentNode.offsetLeft - 60;
+    mappa(A.rows);
   }
+  function avvisi(A, R) {
+    var D = S.data, moto = S.veh === 'moto', out = [];
+    // passi chiusi nel mese del viaggio
+    D.passi.forEach(function(x) {
+      var mese = new Date(D.dep + x.t * 1000).getMonth() + 1;
+      if (x.p.closed && x.p.closed.indexOf(mese) >= 0) out.push(['bad', '⛔ ' + esc(x.p.name) + ': ' + esc(window._psInternals.chiusoTxt(x.p).toLowerCase()) + '. Verifica l\'apertura prima di partire.']);
+      else out.push(['info', '⛰ Passi sul percorso: ' + esc(x.p.name) + ' (' + x.p.alt + ' m)']);
+    });
+    var all = A.rows.concat(R ? R.rows : []);
+    var trova = function(re) { return all.filter(function(r) { return r.L.why.some(function(w) { return re.test(w); }); }); };
+    var ice = trova(/ghiaccio/); if (ice.length) out.push(['bad', '🧊 Rischio ghiaccio verso km ' + Math.round(ice[0].km) + ' (' + Math.round(ice[0].w.t) + '° con precipitazioni)']);
+    var neve = trova(/neve/); if (neve.length) out.push(['bad', '🌨 Neve prevista verso km ' + Math.round(neve[0].km) + (neve[0].w.alt ? ' (' + Math.round(neve[0].w.alt) + ' m)' : '')]);
+    var tst = trova(/temporale/); if (tst.length) out.push(['bad', '⛈ Temporali verso km ' + Math.round(tst[0].km) + ' alle ' + hhmm(tst[0].ms)]);
+    var pioggia = all.filter(function(r) { return r.w.mm >= .2; });
+    if (pioggia.length) out.push(['warn', '🌧 Pioggia in ' + pioggia.length + ' punti su ' + all.length + ' (max ' + Math.max.apply(null, pioggia.map(function(r) { return r.w.mm; })).toFixed(1).replace('.', ',') + ' mm/h)']);
+    var fog = trova(/nebbia/); if (fog.length) out.push(['warn', '🌫 Nebbia verso km ' + Math.round(fog[0].km) + ' (visibilità ' + Math.round(fog[0].w.vis) + ' m)']);
+    var gust = all.filter(function(r) { return r.w.gust >= 40; }).sort(function(a, b) { return b.w.gust - a.w.gust; });
+    if (gust.length) out.push([gust[0].w.gust >= 60 ? 'bad' : 'warn', '💨 Raffiche fino a ' + Math.round(gust[0].w.gust) + ' km/h verso km ' + Math.round(gust[0].km)]);
+    var buio = all.filter(function(r) { return !r.w.day; });
+    if (buio.length) out.push([moto ? 'warn' : 'info', '🌙 ' + (buio.length === all.length ? 'Viaggio tutto col buio' : 'Parte del viaggio col buio (dalle ' + hhmm(buio[0].ms) + ')')]);
+    if (moto) {
+      var tMin = all.reduce(function(a, r) { return Math.min(a, r.w.t); }, 99), fr = all.filter(function(r) { return r.w.t === tMin; })[0];
+      if (fr && tMin <= 10) out.push([tMin <= 4 ? 'warn' : 'info', '🥶 In sella a 90 km/h percepisci circa ' + Math.round(percepita(tMin, 90)) + '° (aria ' + Math.round(tMin) + '° verso km ' + Math.round(fr.km) + '): guanti invernali e sottocasco']);
+    }
+    if (!out.length) return '<div class="wp-ok">✓ Nessun avviso: viaggio asciutto e tranquillo</div>';
+    return '<div class="wp-alerts">' + out.map(function(a) { return '<div class="wp-al wp-al-' + a[0] + '">' + a[1] + '</div>'; }).join('') + '</div>';
+  }
+  // striscia degli orari di partenza: colore = condizioni, il migliore evidenziato
+  function quando() {
+    var D = S.data, now = Date.now(), base = new Date(D.dep); base.setMinutes(0, 0, 0);
+    var c = [];
+    for (var k = -6; k <= 12; k++) {
+      var t = base.getTime() + k * 3600000; if (t < now - 3600000) continue;
+      var v = viaggio(t, false); if (v.fuori || !v.rows.length) continue;
+      c.push({ t: t, s: v.score, sel: k === 0 && new Date(D.dep).getMinutes() === 0 });
+    }
+    if (c.length < 3) return '';
+    var best = c.slice().sort(function(a, b) { return a.s - b.s || Math.abs(a.t - D.dep) - Math.abs(b.t - D.dep); })[0];
+    var cur = viaggio(D.dep, false).score;
+    var msg = best.s + .05 < cur ? 'Conviene partire alle <b>' + hhmm(best.t) + '</b>' + (giorno(best.t) !== giorno(D.dep) ? ' di ' + giorno(best.t) : '') : 'L\'orario scelto è già tra i migliori';
+    return '<div class="wp-when"><div class="wp-when-h">Quando partire <span>' + msg + '</span></div><div class="wp-when-strip" role="group" aria-label="Orari di partenza">' +
+      c.map(function(x) {
+        var cl = x.s < .4 ? 'ok' : x.s < 1.5 ? 'warn' : 'bad';
+        return '<button type="button" class="wp-hr wp-hr-' + cl + (x.t === best.t ? ' best' : '') + (x.sel ? ' sel' : '') + '" onclick="wpPartenza(' + x.t + ')" title="' + giorno(x.t) + ' ' + hhmm(x.t) + '">' + new Date(x.t).getHours() + '</button>';
+      }).join('') + '</div></div>';
+  }
+  window.wpPartenza = function(t) { S.data.dep = t; $('wp-when').value = localInput(t); render(); };
+  function tappe(titolo, V, moto) {
+    var D = S.data;
+    return '<div class="wp-sec">' + titolo + '</div><div class="wp-steps">' + V.rows.map(function(r, i) {
+      var w = r.w, pass = D.passi.filter(function(x) { return dist(x.p, r.s) < 6; })[0];
+      var lbl = i === 0 ? 'Partenza' : i === V.rows.length - 1 ? 'Arrivo' : 'km ' + Math.round(r.km);
+      var feel = moto && w.t <= 10 ? ' · percepiti ' + Math.round(percepita(w.t, 90)) + '°' : '';
+      return '<div class="wp-step wp-lv-' + r.L.lv + '">' +
+        '<div class="wp-step-time"><div class="wp-step-frac">' + lbl + '</div><div class="wp-step-hh">' + hhmm(r.ms) + '</div></div>' +
+        '<div class="wp-step-icon" aria-hidden="true">' + ICO(w.code, w.day) + '</div>' +
+        '<div class="wp-step-info"><div class="wp-step-temp">' + Math.round(w.t) + '°C' + (w.alt != null ? '<small> · ' + Math.round(w.alt) + ' m</small>' : '') + (pass ? '<small class="wp-pass"> · ⛰ ' + esc(pass.p.name) + '</small>' : '') + '</div>' +
+          '<div class="wp-step-desc">' + DESC(w.code) + feel + ' · vento ' + Math.round(w.wind) + (w.gust >= w.wind + 10 ? ' (raffiche ' + Math.round(w.gust) + ')' : '') + ' km/h</div>' +
+          (w.mm >= .1 || (w.prob != null && w.prob >= 30) ? '<span class="wp-precip">💧 ' + (w.mm >= .1 ? w.mm.toFixed(1).replace('.', ',') + ' mm' : '') + (w.prob != null ? (w.mm >= .1 ? ' · ' : '') + w.prob + '%' : '') + '</span>' : '') +
+          (r.L.why.filter(function(x) { return !/^pio/.test(x); }).length ? '<div class="wp-why">' + r.L.why.filter(function(x) { return !/^pio/.test(x); }).map(esc).join(' · ') + '</div>' : '') +
+        '</div></div>';
+    }).join('') + '</div>';
+  }
+  function mappa(rows) {
+    if (S.map) { try { S.map.remove(); } catch (e) {} S.map = null; }
+    var el = $('wp-map');
+    if (typeof L === 'undefined' || !el) { if (el) el.remove(); return; }
+    var c = S.data.rt.coords, m = L.map(el, { zoomControl: false, attributionControl: true });
+    if (typeof addBasemap === 'function') addBasemap(m); else L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(m);
+    var line = L.polyline(c.map(function(p) { return [p.lat, p.lng]; }), { color: '#5b9bd5', weight: 4, opacity: .9 }).addTo(m);
+    var col = { ok: '#3fbf7f', warn: '#e8c547', bad: '#e5484d' };
+    rows.forEach(function(r) {
+      L.circleMarker([r.s.lat, r.s.lng], { radius: 7, color: '#111', weight: 2, fillColor: col[r.L.lv], fillOpacity: 1 })
+        .bindTooltip(hhmm(r.ms) + ' · ' + Math.round(r.w.t) + '° ' + DESC(r.w.code) + (r.L.why.length ? ' · ' + r.L.why.join(', ') : '')).addTo(m);
+    });
+    m.fitBounds(line.getBounds(), { padding: [16, 16] });
+    S.map = m;
+  }
+
+  /* ── Moto o auto? ────────────────────────────────────────────── */
+  function decisione(rows, rt) {
+    var mm = rows.map(function(r) { return r.w.mm; }), t = rows.map(function(r) { return r.w.t; }), g = rows.map(function(r) { return r.w.gust; });
+    var maxMm = Math.max.apply(null, mm), totMm = mm.reduce(function(a, b) { return a + b; }, 0), wet = mm.filter(function(x) { return x >= .2; }).length;
+    var prob = rows.map(function(r) { return r.w.prob || 0; }), maxProb = Math.max.apply(null, prob);
+    var tMin = Math.min.apply(null, t), tMax = Math.max.apply(null, t), gMax = Math.max.apply(null, g), km = rt.km;
+    var buio = rows.filter(function(r) { return !r.w.day; }).length;
+    var moto = 0, auto = 0, pros = [];
+    var add = function(side, n, icn, txt) { if (side === 'moto') moto += n; else auto += n; pros.push({ side: side, icn: icn, txt: txt }); };
+    var blocco = wet >= 1 || maxProb >= 60 || tMin < 5 || gMax > 45;
+    if (maxMm >= 3) add('auto', 9, '🌧', 'Pioggia intensa (fino a ' + maxMm.toFixed(1).replace('.', ',') + ' mm/h)');
+    else if (totMm >= 5) add('auto', 8, '🌧', 'Pioggia su gran parte del tragitto (' + wet + ' punti su ' + rows.length + ')');
+    else if (wet >= 2) add('auto', 7, '💧', 'Pioggia in ' + wet + ' punti su ' + rows.length);
+    else if (wet === 1 || maxProb >= 60) add('auto', 4, '💧', wet ? 'Pioggia in un tratto' : 'Probabilità di pioggia fino al ' + maxProb + '%');
+    else if (maxProb >= 30) add('auto', 1, '🌥', 'Qualche possibilità di pioggia (' + maxProb + '%)');
+    else add('moto', 3, '☀', 'Asciutto su tutto il tragitto');
+    if (tMin < 3) add('auto', 6, '🥶', 'Freddo intenso (min ' + Math.round(tMin) + '°, in sella ' + Math.round(percepita(tMin, 90)) + '°)');
+    else if (tMin < 8) add('auto', 4, '❄', 'Freddo (min ' + Math.round(tMin) + '°): abbigliamento invernale');
+    else if (tMax > 34) add('auto', 3, '🥵', 'Caldo forte (' + Math.round(tMax) + '°)');
+    else if (tMin >= 14 && tMax <= 28 && !blocco) add('moto', 3, '🌡', 'Temperatura ideale (' + Math.round(tMin) + '–' + Math.round(tMax) + '°)');
+    else if (tMin >= 10 && tMax <= 32 && !blocco) add('moto', 1, '🌡', 'Temperatura accettabile');
+    if (gMax > 60) add('auto', 7, '💨', 'Raffiche forti (' + Math.round(gMax) + ' km/h)');
+    else if (gMax > 40) add('auto', 4, '🌬', 'Raffiche fino a ' + Math.round(gMax) + ' km/h');
+    else if (gMax < 25 && !blocco) add('moto', 1, '🍃', 'Vento debole');
+    if (buio > rows.length / 2) add('auto', 2, '🌙', 'Gran parte del viaggio col buio');
+    if (km > 400) add('auto', 3, '🛣', 'Tragitto molto lungo (' + Math.round(km) + ' km)');
+    else if (km > 250) add('auto', 1, '🛣', 'Tragitto lungo (' + Math.round(km) + ' km)');
+    else if (km >= 40 && km <= 220 && !blocco) add('moto', 2, '🛤', 'Distanza ideale per la moto');
+    if (S.data.passi.length && !blocco) add('moto', 1, '⛰', 'Passi sul percorso');
+    var d = moto - auto, v, c, sub;
+    if (d >= 4) { v = '🏍 PRENDI LA MOTO'; c = 'moto'; sub = 'Condizioni ottime per le due ruote'; }
+    else if (d >= 2) { v = '🏍 LEGGERMENTE PRO MOTO'; c = 'moto'; sub = 'Favorevole, ma non perfetto'; }
+    else if (d <= -4) { v = '🚗 MEGLIO L\'AUTO'; c = 'auto'; sub = 'Le condizioni non aiutano la moto'; }
+    else if (d <= -2) { v = '🚗 LEGGERMENTE PRO AUTO'; c = 'auto'; sub = 'Qualche fattore consiglia l\'abitacolo'; }
+    else { v = '⚖ DECIDI TU'; c = 'mixed'; sub = 'Condizioni miste'; }
+    return '<div class="wp-decision dec-' + c + '"><div class="wp-decision-verdict">' + v + '</div><div class="wp-decision-sub">' + sub + '</div>' +
+      '<div class="wp-decision-score"><div class="wp-decision-bar' + (moto > auto ? ' high-moto' : '') + '"><span class="wp-decision-bar-icn">🏍</span><span>Moto</span><span class="wp-decision-bar-val">+' + moto + '</span></div>' +
+      '<div class="wp-decision-bar' + (auto > moto ? ' high-auto' : '') + '"><span class="wp-decision-bar-icn">🚗</span><span>Auto</span><span class="wp-decision-bar-val">+' + auto + '</span></div></div>' +
+      '<div class="wp-decision-pros">' + pros.map(function(p) { return '<div class="wp-decision-pro"><span class="wp-decision-pro-icn">' + p.icn + '</span><span class="wp-decision-pro-side side-' + p.side + '">' + p.side + '</span><span>' + esc(p.txt) + '</span></div>'; }).join('') + '</div></div>';
+  }
+
+  window._wpInternals = { campiona: campiona, livello: livello, percepita: percepita, state: function() { return S; } };
 })();
-
 </script>
 
 <!-- HUB TCO: total cost of ownership per vehicle -->
