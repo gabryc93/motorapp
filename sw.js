@@ -4,7 +4,7 @@
    · Dati veicoli db/*.json: dalla cache, aggiornati in background.
    · Librerie (Leaflet, MapLibre, font): dalla cache.
    · Prezzi, meteo, gare, mappe: sempre dalla rete, mai salvati. */
-const BUILD = '2026-11-16-1734';
+const BUILD = '2026-11-16-1829';
 const CACHE = 'autohub-' + BUILD;
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 const LIBS = /^https:\/\/(cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.gstatic\.com)\//;

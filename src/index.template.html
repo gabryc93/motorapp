@@ -74,7 +74,7 @@
   </div>
   <div>
     <h1>AutoDiagnosi</h1>
-    <p>Diagnosi · VIN · Confronto · Promemoria</p>
+    <p>Problemi noti · VIN · Confronto · OBD</p>
   </div>
 </header>
 
@@ -96,6 +96,16 @@
     <div class="type-toggle">
       <button class="type-btn active" id="type-auto" onclick="setVehicleMode('auto')">🚗 Automobile</button>
       <button class="type-btn" id="type-moto" onclick="setVehicleMode('moto')">🏍 Motocicletta</button>
+    </div>
+    <div class="dq" id="dq-wrap">
+      <label for="dq-input" class="dq-lbl">Ricerca rapida</label>
+      <div class="sw">
+        <span class="si">⌕</span>
+        <input class="si-input" id="dq-input" type="search" placeholder="es. Panda 1.3 Multijet, 320d, MT-07…" autocomplete="off"
+          oninput="diagQuickSearch()" onfocus="diagQuickSearch()" onkeydown="diagQuickKey(event)" onblur="setTimeout(function(){document.getElementById('dq-drop').classList.remove('open')},200)">
+        <div class="sd" id="dq-drop" role="listbox"></div>
+      </div>
+      <div class="dq-garage" id="dq-garage"></div>
     </div>
     <div class="moto-hint" id="moto-hint">
       ℹ Stai analizzando una motocicletta — la manutenzione include catena, valvole e check specifici moto
@@ -368,7 +378,7 @@
 
 
 
-<div class="disc"><strong>NOTA:</strong> Informazioni generate da AI a scopo informativo. Consultare sempre un meccanico qualificato per diagnosi e riparazioni. I costi sono stime indicative.</div>
+<div class="disc"><strong>NOTA:</strong> I "problemi documentati" riguardano difetti noti di quel motore o cambio (richiami, estensioni di garanzia, casi diffusi). Gli altri sono controlli generali per tipo di motore, non specifici del modello. Costi e intervalli sono indicativi: fanno fede libretto, costruttore e un meccanico di fiducia.</div>
 
 </div><!-- /wrap -->
 </section>
@@ -778,6 +788,8 @@
 
 <!-- AutoDiagnosi JS (untouched) -->
 <script>/*@JS:02a-diagnosi-data@*/</script>
+<script>/*@JS:02a2-veicoli-extra@*/</script>
+<script>/*@JS:02c-motori-noti@*/</script>
 <script>/*@JS:02b-diagnosi@*/</script>
 
 <!-- OsservaPrezzi JS (toggleCard→fuelToggleCard, results→fuel-results, lazy init) -->

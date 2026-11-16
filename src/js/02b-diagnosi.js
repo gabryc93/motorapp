@@ -122,6 +122,10 @@ function updateAnni(init) {
     var o = document.createElement('option'); o.value = a; o.textContent = a; sel.appendChild(o);
   });
   if (init) { sel.value = Object.keys(src[marca][modello])[0]; updateMotori(true); }
+  else if (window._vinAnno && marca === window._vinMarca) {
+    var g = Object.keys(src[marca][modello]).filter(function(k) { var y = /(\d{4})\D+(\d{4})/.exec(k); return y && window._vinAnno >= +y[1] && window._vinAnno <= +y[2]; })[0];
+    if (g) { sel.value = g; updateMotori(); }
+  }
 }
 
 function updateMotori(init) {
@@ -142,10 +146,96 @@ function updateMotori(init) {
 function populateMarca() {
   _vehicleMode = 'auto';
   buildMarcaList();
-  selectOption('marca','Alfa Romeo');
-  selectOption('modello','Giulia');
-  updateAnni(true);
+  // riparte dall'ultimo veicolo analizzato (se c'è), altrimenti campi vuoti
+  var last = null;
+  try { last = JSON.parse(localStorage.getItem('ad_last_vehicle') || 'null'); } catch (e) {}
+  if (last && last.marca) diagFill(last, false);
+  diagGarageChips();
 }
+
+/* ── Compilazione rapida: ricerca libera, veicoli del Garage, VIN ── */
+// Imposta tutti e quattro i campi; run = avvia subito l'analisi
+function diagFill(v, run) {
+  var src = (v.tipo === 'moto') ? MOTORCYCLES : VEHICLES;
+  if (!src[v.marca] || !src[v.marca][v.modello]) return false;
+  if ((v.tipo === 'moto') !== (_vehicleMode === 'moto')) setVehicleMode(v.tipo === 'moto' ? 'moto' : 'auto');
+  selectOption('marca', v.marca);
+  selectOption('modello', v.modello);
+  var gens = Object.keys(src[v.marca][v.modello]);
+  var gen = gens.indexOf(v.gen) >= 0 ? v.gen : (v.anno ? gens.filter(function(g) { var y = /(\d{4})\D+(\d{4})/.exec(g); return y && v.anno >= +y[1] && v.anno <= +y[2]; })[0] : '') || '';
+  var sa = document.getElementById('sel-anno');
+  if (gen) { sa.value = gen; updateMotori(); }
+  var mot = gen ? src[v.marca][v.modello][gen] : [];
+  if (v.motore && mot.indexOf(v.motore) >= 0) document.getElementById('sel-motore').value = v.motore;
+  else if (gen && mot.length === 1) document.getElementById('sel-motore').value = mot[0];
+  if (run && gen && document.getElementById('sel-motore').value) avviaDiagnosi();
+  else if (!gen) sa.focus();
+  return true;
+}
+function _esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function _norm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9.]+/g, ' ').trim(); }
+var _dqIndex = null;
+function diagQuickSearch() {
+  var inp = document.getElementById('dq-input'), drop = document.getElementById('dq-drop');
+  var q = _norm(inp.value);
+  if (q.length < 2) { drop.classList.remove('open'); return; }
+  if (!_dqIndex) {
+    _dqIndex = [];
+    [['auto', VEHICLES], ['moto', MOTORCYCLES]].forEach(function(c) {
+      Object.keys(c[1]).forEach(function(b) { Object.keys(c[1][b]).forEach(function(m) { Object.keys(c[1][b][m]).forEach(function(g) {
+        c[1][b][m][g].forEach(function(e) { _dqIndex.push({ tipo: c[0], marca: b, modello: m, gen: g, motore: e, t: _norm(b + ' ' + m + ' ' + g + ' ' + e) }); });
+      }); }); });
+    });
+  }
+  var words = q.split(' ');
+  var hits = _dqIndex.filter(function(x) { return words.every(function(w) { return x.t.indexOf(w) >= 0; }); });
+  // prima chi contiene le parole intere (es. "golf v" → Golf V, non Golf VI; "nx500" → Honda NX500 prima di Lexus NX500h)
+  var whole = function(x) { var tt = ' ' + x.t + ' '; return words.reduce(function(n, w) { return n + (tt.indexOf(' ' + w + ' ') >= 0 ? 1 : 0); }, 0); };
+  hits.forEach(function(x) { x._s = whole(x); });
+  hits.sort(function(a, b) { return b._s - a._s; });
+  // un modello trovato solo per nome: una riga per serie, non per ogni motore
+  if (hits.length > 40) {
+    var seen = {};
+    hits = hits.filter(function(x) { var k = x.marca + x.modello + x.gen; if (seen[k]) return false; seen[k] = 1; return true; }).map(function(x) { return Object.assign({}, x, { motore: '' }); });
+  }
+  hits = hits.slice(0, 30);
+  drop.innerHTML = hits.length ? hits.map(function(x, i) {
+    return '<div class="sdo dq-o" role="option" data-i="' + i + '"><b>' + _esc(x.marca + ' ' + x.modello) + '</b><small>' + _esc(x.gen + (x.motore ? ' · ' + x.motore : ' · scegli il motore')) + (x.tipo === 'moto' ? ' · moto' : '') + '</small></div>';
+  }).join('') : '<div class="sdo" style="color:var(--t3)">Nessun veicolo trovato: prova solo il modello (es. "golf")</div>';
+  drop.querySelectorAll('.dq-o').forEach(function(el) {
+    el.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      var x = hits[+this.dataset.i];
+      inp.value = ''; drop.classList.remove('open');
+      diagFill(x, !!x.motore);
+    });
+  });
+  drop.classList.add('open');
+}
+// Invio sceglie il primo risultato, Esc chiude l'elenco
+function diagQuickKey(e) {
+  var drop = document.getElementById('dq-drop');
+  if (e.key === 'Escape') { drop.classList.remove('open'); return; }
+  if (e.key === 'Enter') { var o = drop.querySelector('.dq-o'); if (o) { e.preventDefault(); o.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })); } }
+}
+function diagGarageChips() {
+  var el = document.getElementById('dq-garage');
+  if (!el) return;
+  var g = [];
+  try { g = (window.hubGarage && window.hubGarage.list()) || JSON.parse(localStorage.getItem('hub_garage_v1') || '[]'); } catch (e) {}
+  g = g.filter(function(v) { var src = v.type === 'moto' ? MOTORCYCLES : VEHICLES; return src[v.marca] && src[v.marca][v.modello]; });
+  if (!g.length) { el.innerHTML = ''; return; }
+  el.innerHTML = '<span class="dq-glbl">Dal Garage:</span>' + g.map(function(v) {
+    return '<button type="button" class="dq-chip" data-id="' + _esc(v.id) + '">' + (v.type === 'moto' ? '🏍 ' : '🚗 ') + _esc(v.customName || (v.marca + ' ' + v.modello)) + '</button>';
+  }).join('');
+  el.querySelectorAll('.dq-chip').forEach(function(b) {
+    b.addEventListener('click', function() {
+      var v = g.filter(function(x) { return x.id === b.dataset.id; })[0];
+      if (v) diagFill({ tipo: v.type === 'moto' ? 'moto' : 'auto', marca: v.marca, modello: v.modello, gen: v.anno, motore: v.motore, anno: parseInt(v.annoImm, 10) || null }, true);
+    });
+  });
+}
+window.diagGarageChips = diagGarageChips;
 
 // ═══════════════════════════════════════════════════════════════════
 // DIAGNOSI
@@ -186,6 +276,7 @@ async function avviaDiagnosi() {
     bar.appendChild(badge);
 
     renderResults(entry, marca, modello, anno, motore);
+    try { localStorage.setItem('ad_last_vehicle', JSON.stringify({ tipo: _vehicleMode, marca: marca, modello: modello, gen: anno, motore: motore })); } catch (e) {}
   } catch(err) {
     showError('Errore durante l\'analisi: ' + err.message);
   } finally {
@@ -238,17 +329,41 @@ function renderResults(data, marca, modello, anno, motore) {
   var dbKey = marca + '||' + modello + '||' + anno + '||' + motore;
   var maint = db.maintenance && db.maintenance[dbKey];
 
-  // ── affidabilità ──────────────────────────────────────────────────
-  var affClass = { alta:'aff-alta', media:'aff-media', bassa:'aff-bassa' }[data.affidabilita] || 'aff-media';
-  var affIcon  = { alta:'▲ Alta affidabilità', media:'◆ Affidabilità media', bassa:'▼ Bassa affidabilità' }[data.affidabilita] || '';
+  var spec0 = db.specs && db.specs[dbKey];
+  var noti = window.hubMotoriNoti ? window.hubMotoriNoti(marca, modello, anno, motore, spec0) : { famiglie: [] };
+  var docProbs = [];
+  noti.famiglie.forEach(function(f) { f.problemi.forEach(function(p) { docProbs.push(Object.assign({ _fam: f.nome }, p)); }); });
+  // i controlli generali non devono contraddire il motore (es. "cinghia" su un motore a catena)
+  var distN = String(noti.distribuzione || '');
+  var genProbs = (data.problemi || []).filter(function(p) {
+    var t = String(p.titolo || '').toLowerCase();
+    if (/catena|nessuna/i.test(distN) && /cinghia/.test(t)) return false;
+    if (/cinghia/i.test(distN) && /catena di distribuzione/.test(t)) return false;
+    if (/nessuna/i.test(distN) && /candele|distribuzione|olio/.test(t)) return false;
+    return true;
+  }).map(function(p) { return Object.assign({ _gen: true }, p); });
+  var allProbs = docProbs.concat(genProbs);
+
+  // ── affidabilità: dal motore se ha difetti documentati, altrimenti la stima generica del db ──
+  var affVal = noti.affidabilita || data.affidabilita;
+  var affClass = { alta:'aff-alta', media:'aff-media', bassa:'aff-bassa' }[affVal] || 'aff-media';
+  var affIcon  = !affVal ? 'Affidabilità non valutata' : ({ alta:'▲ Alta affidabilità', media:'◆ Affidabilità media', bassa:'▼ Bassa affidabilità' }[affVal] || '') +
+    (noti.affidabilita ? ' · motore ' + noti.famiglie.map(function(f) { return f.nome; }).join(' + ') : ' · stima generica');
+  var sommario = noti.famiglie.length
+    ? (docProbs.some(function(p) { return p.severita === 'alta'; })
+        ? 'Questo motore ha difetti noti e documentati: prima di comprare verifica i punti qui sotto (fatture, richiami, rumori a freddo).'
+        : 'Per questo motore ci sono indicazioni specifiche qui sotto; per il resto valgono i controlli generali.')
+    : 'Nessun difetto specifico documentato in archivio per questo motore: sotto trovi i controlli generali per il tipo di motore, non specifici del modello.';
 
   // ── TAB: problemi ─────────────────────────────────────────────────
   var tProblemi = '<div class="rh"><div class="rt">Problemi Noti</div>'
-    + '<div class="rc">' + (data.problemi||[]).length + ' problemi identificati</div></div>'
+    + '<div class="rc">' + docProbs.length + ' documentati · ' + genProbs.length + ' generali</div></div>'
     + '<div class="summary-box ' + affClass + '"><div class="aff-label">' + affIcon + '</div>'
-    + '<div class="summary-text">' + (data.sommario||'') + '</div></div>';
+    + '<div class="summary-text">' + sommario + '</div></div>';
 
-  (data.problemi||[]).forEach(function(p, i) {
+  allProbs.forEach(function(p, i) {
+    if (i === 0 && docProbs.length) tProblemi += '<div class="shd pgroup">// Documentati per questo motore</div>';
+    if (i === docProbs.length) tProblemi += '<div class="shd pgroup">// Controlli generali per il tipo di motore</div>';
     var sev = p.severita || 'media';
     var cost = (p.costo_min && p.costo_max)
       ? '€' + Number(p.costo_min).toLocaleString() + '–' + Number(p.costo_max).toLocaleString()
@@ -256,7 +371,7 @@ function renderResults(data, marca, modello, anno, motore) {
     tProblemi += '<div class="problem-card" id="pc-' + i + '" data-sev="' + sev + '">'
       + '<div class="pch" onclick="toggleCard(' + i + ')">'
       + '<span class="sdot s' + sev[0] + '"></span>'
-      + '<span class="ptitle">' + p.titolo + '</span>'
+      + '<span class="ptitle">' + p.titolo + (p._fam ? '<span class="pdoc">Documentato</span>' : '') + '</span>'
       + '<span class="slbl l' + sev[0] + '">' + sev + '</span>'
       + '<span class="chev">▼</span></div>'
       + '<div class="pcb">'
@@ -264,24 +379,25 @@ function renderResults(data, marca, modello, anno, motore) {
       + (p.sintomi&&p.sintomi.length ? '<div class="psec"><div class="pst">// Sintomi</div><ul>'
         + p.sintomi.map(function(s){ return '<li>'+s+'</li>'; }).join('') + '</ul></div>' : '')
       + (p.soluzione ? '<div class="psec"><div class="pst">// Soluzione</div><p>' + p.soluzione + '</p></div>' : '')
-      + (cost ? '<div class="cbadge">💶 ' + cost + '</div>' : '')
+      + (cost && p.costo_max ? '<div class="cbadge">💶 ' + cost + '</div>' : '')
+      + (p._fam ? '<div class="pfam">Motore/cambio: ' + p._fam + '</div>' : '')
       + '</div></div>';
   });
 
   // ── TAB: stats ───────────────────────────────────────────────────
+  var dMin = docProbs.reduce(function(t, p) { return t + (p.costo_min || 0); }, 0), dMax = docProbs.reduce(function(t, p) { return t + (p.costo_max || 0); }, 0);
+  var nd = function(v) { return !v || /^n\/?d$/i.test(String(v).trim()); };
+  var moto = _vehicleMode === 'moto';
   var tStats = '<div class="sg">'
-    + '<div class="sc sr"><div class="slb">Budget manutenzione</div>'
-    + '<div class="sv" style="color:var(--err)">€' + Number(data.costo_totale_min||0).toLocaleString() + '–' + Number(data.costo_totale_max||0).toLocaleString() + '</div>'
-    + '<div class="ss">stima totale problemi noti</div></div>'
-    + '<div class="sc so"><div class="slb">RC Auto indicativa</div>'
-    + '<div class="sv" style="color:var(--gold)">' + (data.assicurazione_fascia||'N/D') + '</div>'
-    + '<div class="ss">fascia mercato Italia</div></div>'
-    + '<div class="sc sg2"><div class="slb">Consumi dichiarati</div>'
-    + '<div class="sv" style="color:var(--grn);font-size:1.1rem">' + (data.consumo_dichiarato||'N/D') + '</div>'
-    + '<div class="ss">dato ufficiale WLTP</div></div>'
-    + '<div class="sc sb2"><div class="slb">Consumi reali stimati</div>'
-    + '<div class="sv" style="color:var(--blue);font-size:1.1rem">' + (data.consumo_reale||'N/D') + '</div>'
-    + '<div class="ss">uso misto reale</div></div>'
+    + '<div class="sc sr"><div class="slb">Difetti documentati</div>'
+    + '<div class="sv" style="color:var(--err)">' + (docProbs.length ? '€' + dMin.toLocaleString('it-IT') + '–' + dMax.toLocaleString('it-IT') : 'nessuno') + '</div>'
+    + '<div class="ss">' + (docProbs.length ? 'se servissero tutti gli interventi' : 'in archivio per questo motore') + '</div></div>'
+    + '<div class="sc so"><div class="slb">' + (moto ? 'RC moto' : 'RC auto') + ' media</div>'
+    + '<div class="sv" style="color:var(--gold)">' + (moto ? '389' : '422') + ' €/anno</div>'
+    + '<div class="ss">media nazionale ' + (moto ? '(Segugio, 2026)' : '(IVASS, 2026)') + ' · la tua stima nel Garage</div></div>'
+    + '<div class="sc sb2"><div class="slb">Consumo reale</div>'
+    + '<div class="sv" style="color:var(--blue);font-size:1.05rem">dai tuoi rifornimenti</div>'
+    + '<div class="ss">Garage → Consumi: i valori per modello in archivio non sono affidabili</div></div>'
     + '</div>';
   tStats += '<div class="shd">// Red flag per chilometraggio</div><ul class="rfl">';
   (data.km_red_flags||[]).forEach(function(f){
@@ -295,8 +411,14 @@ function renderResults(data, marca, modello, anno, motore) {
   if (maint) {
     var o=maint.olio||{}, d=maint.distribuzione, c=maint.candele,
         r=maint.refrigerante||{}, fr=maint.liquido_freni||{},
-        fi=maint.filtri||{}, lm=maint.lampadine||{}, sc=maint.schedule||[];
-    var distBadge = d ? (d.tipo==='Catena'
+        fi=maint.filtri||{}, sc=maint.schedule||[];
+    if (noti.distribuzione && d && noti.distribuzione !== d.tipo) {
+      d = Object.assign({}, d, { tipo: noti.distribuzione, note: noti.distribuzione.indexOf('bagno') >= 0
+        ? 'Cinghia che lavora immersa nell\'olio: dura solo con l\'olio della specifica giusta cambiato nei tempi. Sostituzione secondo il piano del costruttore (verifica gli intervalli aggiornati).'
+        : (noti.distribuzione === 'Catena' ? 'A catena — non ha sostituzione programmata, ma va ascoltata a freddo: vedi i difetti documentati.' : d.note) });
+      if (noti.distribuzione !== 'Cinghia') d.intervallo_km = d.tipo === 'Catena' ? null : d.intervallo_km;
+    }
+    var distBadge = d ? (/bagno/.test(d.tipo) ? '<span class="bcat bc-red">⚠ Cinghia a bagno d\'olio — controlli e olio giusto</span>' : /nessuna/i.test(d.tipo) ? '' : d.tipo==='Catena'
       ? '<span class="bcat bc-grn">⛓ Catena — no sostituzione programmata</span>'
       : '<span class="bcat bc-red">⚠ Cinghia — sostituzione obbligatoria</span>') : '';
     var distSub = d ? (d.tipo==='Catena' ? d.note
@@ -330,17 +452,9 @@ function renderResults(data, marca, modello, anno, motore) {
       + (fi.dsg_km?'<br>Olio DSG: ogni <strong>'+Number(fi.dsg_km).toLocaleString()+' km</strong>':'')
       + '</div></div></div></div>';
 
-    tMaint += '<div class="ms"><div class="shd">// Lampadine</div>'
-      + '<table class="btb"><thead><tr><th>Funzione</th><th>Tipo</th></tr></thead><tbody>'
-      + ['anabbaglianti','abbaglianti','indicatori','luci_posizione','luci_stop','retromarcia','plafoniera'].map(function(k){
-          var labels={'anabbaglianti':'Anabbaglianti','abbaglianti':'Abbaglianti','indicatori':'Indicatori',
-            'luci_posizione':'Luci posizione','luci_stop':'Luci stop','retromarcia':'Retromarcia','plafoniera':'Plafoniera'};
-          return '<tr><td>'+labels[k]+'</td><td>'+(lm[k]||'—')+'</td></tr>';
-        }).join('')
-      + '</tbody></table>'
-      + (lm.note?'<div style="margin-top:9px;font-size:.72rem;color:var(--t3);font-family:var(--mono);line-height:1.5">⚠ '+lm.note+'</div>':'')
-      + '</div>';
+    tMaint += '<p class="mnote">Intervalli indicativi per il tipo di motore: fanno fede il libretto e il piano del costruttore (cambiano con anno e allestimento). Lampadine: verifica il tipo sul libretto o sul faro, i dati per modello non sono affidabili.</p>';
 
+    if (/catena|nessuna/i.test(distN)) sc = sc.filter(function(x) { return !/cinghia/i.test(x.operazione); });
     tMaint += '<div class="ms"><div class="shd">// Calendario manutenzione</div>'
       + '<div style="display:flex;gap:14px;margin-bottom:10px;font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">'
       + '<span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--err);margin-right:4px;vertical-align:middle"></span>Alta</span>'
@@ -356,7 +470,10 @@ function renderResults(data, marca, modello, anno, motore) {
   }
 
   // ── TAB: checklist ───────────────────────────────────────────────
-  var checks = data.checklist_ispezione||[];
+  // prima i controlli legati ai difetti documentati del motore, poi quelli generali
+  var checks = docProbs.filter(function(p) { return p.sintomi && p.sintomi.length; }).map(function(p) {
+    return '<b>' + p.titolo + '</b>: ' + p.sintomi.join(' · ');
+  }).concat(data.checklist_ispezione||[]);
   var tCheck = '<div class="cprog"><span id="chk-cnt">0/'+checks.length+' completati</span>'
     + '<div class="cpb"><div class="cpf" id="chk-fill" style="width:0%"></div></div>'
     + '<button class="btn-outline" onclick="resetChecklist()">Reset</button>'
@@ -369,8 +486,11 @@ function renderResults(data, marca, modello, anno, motore) {
     + '</ul>';
 
   // ── TAB: domande ─────────────────────────────────────────────────
-  var domande = data.domande_venditore||[];
-  var tDomande = '<p style="font-family:var(--mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:14px">Domande basate sui problemi noti di questo veicolo</p>'
+  var domSpec = docProbs.filter(function(p) { return p.severita !== 'bassa' && p.costo_max; }).map(function(p) {
+    return '<b>' + p.titolo + '</b>: è già stato fatto o controllato? C\'è la fattura?';
+  });
+  var domande = domSpec.concat(data.domande_venditore||[]);
+  var tDomande = '<p style="font-family:var(--mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:14px">' + (domSpec.length ? 'Prima quelle sui difetti noti del motore, poi le domande generali' : 'Domande generali da fare al venditore') + '</p>'
     + domande.map(function(d,i){
         return '<div class="qi"><span class="qn">'+(i+1)+'</span><span>'+d+'</span></div>';
       }).join('');
@@ -429,8 +549,7 @@ function renderResults(data, marca, modello, anno, motore) {
       + '<table class="spec-row-table">'
       + (spec.acc_0_100_s ? '<tr><td>0–100 km/h</td><td>'+spec.acc_0_100_s+' s</td></tr>' : '')
       + (spec.vel_max_kmh ? '<tr><td>Velocità massima</td><td>'+spec.vel_max_kmh+' km/h</td></tr>' : '')
-      + (spec.consumo_dichiarato ? '<tr><td>Consumi dichiarati</td><td>'+spec.consumo_dichiarato+'</td></tr>' : '')
-      + (spec.consumo_reale ? '<tr><td>Consumi reali stimati</td><td>'+spec.consumo_reale+'</td></tr>' : '')
+
       + (spec.co2_gkm ? '<tr><td>Emissioni CO₂</td><td>'+spec.co2_gkm+'</td></tr>' : '')
       + '</table></div>'
 
@@ -592,13 +711,20 @@ function decodeVIN() {
     return '<div><div class="vf-lb">'+f.lb+'</div><div class="vf-v">'+f.v+'</div></div>';
   }).join('');
   document.getElementById('vin-chars').innerHTML = chars;
-  document.getElementById('vin-grid').innerHTML = grid;
+  document.getElementById('vin-grid').innerHTML = grid + '<div class="vin-note">Nel VIN europeo l\'anno modello non è obbligatorio: se manca o non torna, fa fede la data di immatricolazione sul libretto.</div>';
   window._vinMarca = marca;
+  window._vinAnno = /^\d{4}$/.test(String(anno)) ? +anno : null;
   resEl.className = 'vin-res on';
 }
 function gotoAnalisiFromVIN() {
   switchView('analisi');
-  if (window._vinMarca && VEHICLES[window._vinMarca]) selectOption('marca', window._vinMarca);
+  if (_vehicleMode !== 'auto') setVehicleMode('auto');
+  if (window._vinMarca && VEHICLES[window._vinMarca]) {
+    selectOption('marca', window._vinMarca);
+    // resta da scegliere il modello: si apre l'elenco; l'anno del VIN sceglierà la serie
+    var sm = document.getElementById('search-modello');
+    sm.focus(); openDropdown('modello');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -667,49 +793,49 @@ async function avviaConfronto() {
   function row(lb, vA, vB, lowerBetter) {
     var wA=false, wB=false;
     var nA=parseFloat(String(vA).replace(/[^0-9.]/g,'')), nB=parseFloat(String(vB).replace(/[^0-9.]/g,''));
-    if (!isNaN(nA)&&!isNaN(nB)&&vA!==vB){ wA=lowerBetter?nA<nB:nA>nB; wB=lowerBetter?nB<nA:nB>nA; }
+    if (!isNaN(nA)&&!isNaN(nB)&&vA!==vB&&!/–/.test(String(vA)+String(vB))){ wA=lowerBetter?nA<nB:nA>nB; wB=lowerBetter?nB<nA:nB>nA; }
     return '<div class="cr">'
       +'<div class="crl">'+lb+'</div>'
-      +'<div class="cc lc'+(wA?' win':'')+'">'+( vA||'—')+'</div>'
-      +'<div class="cc'+(wB?' win':'')+'">'+( vB||'—')+'</div>'
+      +'<div class="cc lc'+(wA?' win':'')+'">'+(vA===0?'0':(vA||'—'))+'</div>'
+      +'<div class="cc'+(wB?' win':'')+'">'+(vB===0?'0':(vB||'—'))+'</div>'
       +'</div>';
   }
   function sec(lb){ return '<div class="cr"><div class="csh">'+lb+'</div></div>'; }
   var affM={alta:3,media:2,bassa:1};
-  var sA=affM[dA&&dA.affidabilita]||0, sB=affM[dB&&dB.affidabilita]||0;
+  var nota = function(k) { var p = k.split('||'); return window.hubMotoriNoti ? window.hubMotoriNoti(p[0], p[1], p[2], p[3], db.specs && db.specs[k]) : { famiglie: [] }; };
+  var nA = nota(kA), nB = nota(kB);
+  var docs = function(n) { var out = []; n.famiglie.forEach(function(f) { f.problemi.forEach(function(p) { out.push(p); }); }); return out; };
+  var pA = docs(nA), pB = docs(nB);
+  var aff = function(n, d) { return n.affidabilita || (d && d.affidabilita) || ''; };
+  var affLbl = function(n, d) { var v = aff(n, d); return v ? v + (n.affidabilita ? '' : ' <small>(stima generica)</small>') : '—'; };
+  var cnt = function(arr, s) { return arr.filter(function(p) { return p.severita === s; }).length; };
+  var cost = function(arr) { return arr.length ? '€' + arr.reduce(function(t, p) { return t + (p.costo_min || 0); }, 0).toLocaleString('it-IT') + '–' + arr.reduce(function(t, p) { return t + (p.costo_max || 0); }, 0).toLocaleString('it-IT') : 'nessuno'; };
+  var dist = function(m, n) { var t = n.distribuzione || (m && m.distribuzione && m.distribuzione.tipo) || '—'; return t + (t === 'Cinghia' && m && m.distribuzione && m.distribuzione.intervallo_km ? ' · ' + Number(m.distribuzione.intervallo_km).toLocaleString('it-IT') + ' km' : ''); };
 
   var html='<div style="display:grid;grid-template-columns:138px 1fr 1fr;margin-bottom:7px">'
     +'<div></div>'
-    +'<div style="padding:8px 13px;font-family:var(--mono);font-size:.6rem;text-transform:uppercase;color:var(--red)">'+lblA+'</div>'
-    +'<div style="padding:8px 13px;font-family:var(--mono);font-size:.6rem;text-transform:uppercase;color:var(--blue)">'+lblB+'</div>'
+    +'<div style="padding:8px 13px;font-family:var(--mono);font-size:.6rem;text-transform:uppercase;color:var(--red)">'+_esc(lblA)+'<br><span style="color:var(--t3)">'+_esc(kA.split('||')[3])+'</span></div>'
+    +'<div style="padding:8px 13px;font-family:var(--mono);font-size:.6rem;text-transform:uppercase;color:var(--blue)">'+_esc(lblB)+'<br><span style="color:var(--t3)">'+_esc(kB.split('||')[3])+'</span></div>'
     +'</div>';
   html += sec('🔍 Affidabilità');
-  html += row('Affidabilità', dA?dA.affidabilita:'—', dB?dB.affidabilita:'—', false);
-  html += sec('💰 Costi');
-  html += row('Budget manutenzione',
-    dA?'€'+Number(dA.costo_totale_min||0).toLocaleString()+'–'+Number(dA.costo_totale_max||0).toLocaleString():'—',
-    dB?'€'+Number(dB.costo_totale_min||0).toLocaleString()+'–'+Number(dB.costo_totale_max||0).toLocaleString():'—', true);
-  html += row('RC Auto', dA?dA.assicurazione_fascia:'—', dB?dB.assicurazione_fascia:'—', false);
-  html += sec('⛽ Consumi');
-  html += row('Dichiarati', dA?dA.consumo_dichiarato:'—', dB?dB.consumo_dichiarato:'—', false);
-  html += row('Reali stimati', dA?dA.consumo_reale:'—', dB?dB.consumo_reale:'—', false);
+  html += row('Affidabilità', affLbl(nA, dA), affLbl(nB, dB), false);
+  html += row('Motore', nA.famiglie.map(function(f){return f.nome;}).join(' + ') || 'nessun difetto documentato', nB.famiglie.map(function(f){return f.nome;}).join(' + ') || 'nessun difetto documentato', false);
+  html += sec('⚠ Difetti documentati');
+  html += row('Gravi', cnt(pA,'alta'), cnt(pB,'alta'), true);
+  html += row('Medi', cnt(pA,'media'), cnt(pB,'media'), true);
+  html += row('Se servissero tutti', cost(pA), cost(pB), true);
   html += sec('🔧 Manutenzione');
-  html += row('Olio motore', mA?mA.olio.viscosita:'—', mB?mB.olio.viscosita:'—', false);
+  html += row('Distribuzione', dist(mA, nA), dist(mB, nB), false);
   html += row('Intervallo olio',
-    mA?(Number(mA.olio.intervallo_km||0).toLocaleString()+' km'):'—',
-    mB?(Number(mB.olio.intervallo_km||0).toLocaleString()+' km'):'—', true);
-  var distA=mA&&mA.distribuzione?mA.distribuzione.tipo+(mA.distribuzione.intervallo_km?' · '+Number(mA.distribuzione.intervallo_km).toLocaleString()+' km':' (no scadenza)'):'—';
-  var distB=mB&&mB.distribuzione?mB.distribuzione.tipo+(mB.distribuzione.intervallo_km?' · '+Number(mB.distribuzione.intervallo_km).toLocaleString()+' km':' (no scadenza)'):'—';
-  html += row('Distribuzione', distA, distB, false);
-  html += sec('⚠ Problemi noti');
-  var sc = function(d,s){ return d?(d.problemi||[]).filter(function(p){return p.severita===s;}).length:0; };
-  html += row('Alta severità', sc(dA,'alta'), sc(dB,'alta'), true);
-  html += row('Media severità', sc(dA,'media'), sc(dB,'media'), true);
-  var score = function(d,m){ return (affM[d&&d.affidabilita]||0)*3 - sc(d,'alta')*2 - sc(d,'media'); };
-  var vS=score(dA,mA), vSB=score(dB,mB);
-  var verdict = vS>vSB ? '✅ <strong>'+lblA+'</strong> risulta complessivamente più affidabile e conveniente.'
-    : vSB>vS ? '✅ <strong>'+lblB+'</strong> risulta complessivamente più affidabile e conveniente.'
-    : '🤝 I due veicoli sono sostanzialmente equivalenti su questo profilo.';
+    mA&&mA.olio&&mA.olio.intervallo_km?(Number(mA.olio.intervallo_km).toLocaleString('it-IT')+' km'):'—',
+    mB&&mB.olio&&mB.olio.intervallo_km?(Number(mB.olio.intervallo_km).toLocaleString('it-IT')+' km'):'—', false);
+  var score = function(n, d, p){ return (affM[aff(n, d)]||2)*3 - cnt(p,'alta')*3 - cnt(p,'media'); };
+  var vS=score(nA,dA,pA), vSB=score(nB,dB,pB);
+  var verdict = !pA.length && !pB.length && aff(nA,dA) === aff(nB,dB)
+    ? '🤝 Nessuna differenza documentata tra i due motori: a decidere saranno stato, storico e prezzo del singolo esemplare.'
+    : vS>vSB ? '✅ <strong>'+_esc(lblA)+'</strong> ha meno difetti noti documentati per il motore scelto.'
+    : vSB>vS ? '✅ <strong>'+_esc(lblB)+'</strong> ha meno difetti noti documentati per il motore scelto.'
+    : '🤝 I due motori si equivalgono sui difetti documentati.';
   html += '<div class="verdict">'+verdict+'</div>';
 
   var res = document.getElementById('compare-results');

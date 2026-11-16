@@ -201,3 +201,9 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
 }
 .us-bar-sm { align-items: center; margin: 0 0 10px; }
 .us-saved { font-size: .74rem; color: var(--us-t3); }
+.us-filt { margin: 0 0 10px; }
+.us-flbl { font: 400 .6rem 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--us-t3); margin: 4px 0 6px; }
+.us-chips-wrap { flex-wrap: wrap; overflow: visible; }
+.us-pair-eq { grid-template-columns: 1fr 1fr; }
+.us-fcount { font: 400 .72rem 'DM Mono', monospace; color: var(--us-t2); margin: 0 0 8px; }
+.us-link { background: none; border: 0; padding: 0; color: var(--us); font: inherit; text-decoration: underline; cursor: pointer; }

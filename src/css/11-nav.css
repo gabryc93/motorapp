@@ -117,3 +117,19 @@
   background: #24252d; border: 1px solid rgba(232,160,48,.45); color: #eeedf6; font: 500 .8rem 'DM Sans', sans-serif; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
 .hub-update span { flex: 1; }
 .hub-update button { background: #e8a030; color: #111; border: 0; border-radius: 8px; padding: 8px 12px; font: 600 .74rem 'DM Mono', monospace; cursor: pointer; }
+
+/* Torna su */
+.hub-top {
+  position: fixed; right: max(14px, calc(50vw - 220px)); bottom: calc(var(--nav-h) + 22px + env(safe-area-inset-bottom, 0px));
+  z-index: 190; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+  background: rgba(17, 18, 21, 0.9); color: #eeedf6;
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.14); box-shadow: 0 6px 20px rgba(0,0,0,.45);
+  opacity: 0; transform: translateY(10px); pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.hub-top.on { opacity: 1; transform: none; pointer-events: auto; }
+.hub-top:focus-visible { outline: 2px solid #e8a030; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .hub-top { transition: none; } }
+html[data-theme="light"] .hub-top, body.light .hub-top { background: rgba(255,255,255,.92); color: #1b1a22; border-color: rgba(0,0,0,.12); }

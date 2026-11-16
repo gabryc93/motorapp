@@ -11,7 +11,7 @@
   'use strict';
 
   // Dati dell'utente (le cache rigenerabili sono escluse apposta)
-  var KEYS = ['hub_garage_v1', 'hub_garage_prefs_v1', 'hub_active_vehicle_v1', 'hub_refuels_v1', 'hub_maint_v1', 'hub_rides_v1',
+  var KEYS = ['hub_garage_v1', 'hub_garage_prefs_v1', 'hub_passi_fav_v1', 'hub_active_vehicle_v1', 'hub_refuels_v1', 'hub_maint_v1', 'hub_rides_v1',
               'hub_perf_best_v1', 'hub_usato_v1', 'hub_ms_prefs_v1', 'hub_price_alerts_v1',
               'opf_favs', 'opf_hidden_cards', 'opf_cmp_liters', 'ad_rem', 'autodiagnosi_diary', 'ad_theme'];
   var STORES = ['photos', 'maintdocs'];

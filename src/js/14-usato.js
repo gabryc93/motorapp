@@ -268,6 +268,18 @@
    'toscana:AR FI GR LI LU MS PI PO PT SI|trentino-alto-adige:BZ TN|umbria:PG TR|valle-d-aosta:AO|veneto:BL PD RO TV VE VI VR').split('|').forEach(function(r) {
     var p = r.split(':'); p[1].split(' ').forEach(function(s) { PROV[s] = p[0]; });
   });
+  // Regione dalle prime due cifre del CAP (AutoScout24 dà il CAP, non sempre la provincia)
+  var CAPREG = {};
+  ('lazio:00-04|umbria:05-06|sardegna:07-09|piemonte:10,12-15,28|valle-d-aosta:11|liguria:16-19|lombardia:20-27,46|emilia-romagna:29,40-44,47,48|' +
+   'veneto:30-32,35-37,45|friuli-venezia-giulia:33,34|trentino-alto-adige:38,39|toscana:50-59|marche:60-63|abruzzo:64-67|puglia:70-74,76|' +
+   'basilicata:75,85|campania:80-84|molise:86|calabria:87-89|sicilia:90-98').split('|').forEach(function(r) {
+    var p = r.split(':');
+    p[1].split(',').forEach(function(x) { var ab = x.split('-'), a = +ab[0], b = +(ab[1] || ab[0]); for (var i = a; i <= b; i++) CAPREG[('0' + i).slice(-2)] = p[0]; });
+  });
+  var CAPOLUOGO = { 'abruzzo': ['65121', 100], 'basilicata': ['85100', 100], 'calabria': ['88100', 150], 'campania': ['80121', 120], 'emilia-romagna': ['40121', 150],
+    'friuli-venezia-giulia': ['33100', 100], 'lazio': ['00118', 130], 'liguria': ['16121', 150], 'lombardia': ['20121', 150], 'marche': ['60121', 120], 'molise': ['86100', 70],
+    'piemonte': ['10121', 150], 'puglia': ['70121', 200], 'sardegna': ['09170', 200], 'sicilia': ['93100', 200], 'toscana': ['50121', 150], 'trentino-alto-adige': ['38121', 120],
+    'umbria': ['06121', 80], 'valle-d-aosta': ['11100', 50], 'veneto': ['35121', 130] };
   function regSlug(r) { return slug(String(r || '').replace(/\s*\(.*$/, '').replace(/^(Bolzano|Trento)$/, 'Trentino-Alto Adige').replace("'", ' ')); }
   function provDi(citta) {
     var m = /\(([A-Z]{2})\)|(?:^|[\s-])([A-Z]{2})\s*$/.exec(String(citta || '').toUpperCase().trim());
@@ -297,13 +309,15 @@
       cambio: /auto/i.test(x.cambio || '') ? 'Automatico' : x.cambio ? 'Manuale' : '', kw: x.kw || '',
       venditore: x.venditore === 'concessionario' ? 'conc' : 'privato', venditoreNome: x.venditoreNome || '',
       citta: x.citta || '', link: safeUrl(x.link), foto: safeUrl(x.foto), portale: x.portale, data: x.data || '',
-      altri: [], fonte: 'portale'
+      altri: [], fonte: 'portale',
+      // dati che non tornano (es. immatricolata 2023 ma "Euro 4"): da chiarire col libretto
+      incoerente: x.euro != null && x.anno && q.tipo !== 'moto' && window.hubCosti && Math.abs(window.hubCosti.euroDaAnno(x.anno, 'auto') - x.euro) >= 2
     };
   }
   function dupKey(a) { return [a.immatr, Math.round((a.km || 0) / 100), slug(String(a.citta).split(/[\s(,-]/)[0])].join('|'); }
 
   function cerca(q, fromId) {
-    R = { q: q, fromId: fromId || null, st: {}, items: [], sort: R && R.sort || 'conv', solo: R && R.solo || 'tutti', nuovi: {}, ribassi: {}, t: Date.now() };
+    R = { q: q, fromId: fromId || null, st: {}, items: [], sort: R && R.sort || 'conv', solo: R && R.solo || 'tutti', f: {}, nuovi: {}, ribassi: {}, t: Date.now() };
     view = 'cerca';
     PORTALI.forEach(function(p) {
       if (p[0] === 'automobile' && q.tipo === 'moto') { R.st[p[0]] = { stato: 'na', nome: p[1] }; return; }
@@ -323,6 +337,8 @@
     if (/^\d{5}$/.test(q.zip || '')) { p.set('cap', q.zip); p.set('raggio', String(num(q.raggio) || 50)); }
     var rg = q.regione || '';
     if (rg && portale === 'subito') p.set('regione', rg);
+    // AutoScout24 non filtra per regione: si cerca attorno al capoluogo, poi si tolgono gli annunci fuori regione
+    if (rg && portale === 'autoscout24' && !/^\d{5}$/.test(q.zip || '') && CAPOLUOGO[rg]) { p.set('cap', CAPOLUOGO[rg][0]); p.set('raggio', String(CAPOLUOGO[rg][1])); }
     return p;
   }
   function carica(portale, pagina) {
@@ -357,7 +373,10 @@
       if (num(q.annoMax) && a.immatr && a.immatr > num(q.annoMax)) return;
       if (q.cambio && a.cambio && a.cambio !== q.cambio) return;
       // zona: Subito filtra già per regione; per gli altri si usa la provincia, se si legge
-      if (rg && !/^\d{5}$/.test(q.zip || '')) { var pv = provDi(a.citta); if (pv && PROV[pv] && PROV[pv] !== rg) return; }
+      if (rg && !/^\d{5}$/.test(q.zip || '')) {
+        var pv = provDi(a.citta), reg = pv && PROV[pv] ? PROV[pv] : /^\d{5}$/.test(x.cap || '') ? CAPREG[x.cap.slice(0, 2)] : '';
+        if (reg && reg !== rg) return;
+      }
       var k = dupKey(a), dup = a.immatr && a.km ? R.items.filter(function(b) { return dupKey(b) === k && b.portale !== a.portale; })[0] : null;
       if (dup) { if (!dup.altri.some(function(o) { return o.link === a.link; })) dup.altri.push({ portale: a.portale, prezzo: a.prezzo, link: a.link }); return; }
       if (R.items.some(function(b) { return b.id === a.id; })) return;
@@ -403,8 +422,9 @@
   }
   function ordina(list) {
     var f = {
-      conv: function(a) { return a.sospetto ? 1e9 : (giudizio(a).st === 'scarta' ? 1e6 : 0) + (a.delta == null ? 0 : a.delta); },
+      conv: function(a) { var g = giudizio(a).st; return a.sospetto ? 1e9 : (g === 'scarta' ? 1e6 : 0) + (g === 'riserva' || a.incoerente ? 15 : 0) + (a.delta == null ? 0 : a.delta); },
       costo: function(a) { return costoVero(a) || 1e12; },
+      prezzo: function(a) { return num(a.prezzo) == null ? 1e12 : num(a.prezzo); },
       km: function(a) { return a.km == null ? 1e12 : a.km; },
       anno: function(a) { return -(a.immatr || 0); }
     }[R.sort] || function() { return 0; };
@@ -436,17 +456,20 @@
       : '<button class="us-btn" data-act="q-save">☆ Salva ricerca</button><span class="us-saved">per ritrovare i nuovi annunci e i ribassi</span>') + '</div>';
     if (nN || nR) html += '<p class="us-news">' + (nN ? '<b>' + nN + ' nuovi</b> dall\'ultima ricerca' : '') + (nN && nR ? ' · ' : '') + (nR ? '<b>' + nR + ' ribassati</b>' : '') + '</p>';
     html += '<div class="us-rbar"><label class="us-f us-f-inl"><span>Ordina</span><select data-rs="sort">' +
-      [['conv', 'Più convenienti'], ['costo', 'Costo vero'], ['km', 'Meno km'], ['anno', 'Più recenti']].map(function(o) { return '<option value="' + o[0] + '"' + (R.sort === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>' +
+      [['conv', 'Più convenienti'], ['prezzo', 'Prezzo più basso'], ['costo', 'Costo vero'], ['km', 'Meno km'], ['anno', 'Più recenti']].map(function(o) { return '<option value="' + o[0] + '"' + (R.sort === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>' +
       '<div class="us-chips">' + [['tutti', 'Tutti'], ['privato', 'Privati'], ['conc', 'Concessionari'], ['ok', 'Solo da vedere']].concat(nN ? [['nuovi', 'Nuovi']] : []).map(function(c) {
         return '<button class="' + (R.solo === c[0] ? 'on' : '') + '" data-act="r-solo" data-v="' + c[0] + '">' + c[1] + '</button>';
       }).join('') + '</div></div>';
+    html += renderFiltri();
     var list = ordina(R.items.filter(function(a) {
+      if (!passaFiltri(a)) return false;
       if (R.solo === 'privato' || R.solo === 'conc') return a.venditore === R.solo;
-      if (R.solo === 'ok') return !a.sospetto && giudizio(a).st !== 'scarta';
+      if (R.solo === 'ok') return !a.sospetto && !a.incoerente && giudizio(a).st === 'ok';
       if (R.solo === 'nuovi') return !!R.nuovi[a.id];
       return true;
     }));
-    html += list.map(cardRisultato).join('');
+    if (list.length < R.items.length) html += '<p class="us-fcount">' + list.length + ' di ' + R.items.length + ' annunci · <button class="us-link" data-act="rf-reset">mostra tutti</button></p>';
+    html += list.length ? list.map(cardRisultato).join('') : '<div class="us-empty">Nessun annuncio con questi filtri.</div>';
     var more = PORTALI.some(function(p) { var st = R.st[p[0]]; return st && st.stato === 'ok' && st.pagina < Math.min(3, st.pagine); });
     if (busy) html += '<div class="us-empty us-loading">Carico altri risultati…</div>';
     else if (more) html += '<div class="us-bar"><button class="us-btn" data-act="r-more">Carica altri annunci</button></div>';
@@ -461,6 +484,7 @@
     if (R.nuovi[a.id]) tags.push('<span class="us-t us-t-new">Nuovo</span>');
     if (R.ribassi[a.id]) tags.push('<span class="us-t us-t-ok">Ribassato da ' + eur(R.ribassi[a.id]) + '</span>');
     if (a.sospetto) tags.push('<span class="us-t us-t-no">Prezzo sospetto: troppo basso</span>');
+    if (a.incoerente) tags.push('<span class="us-t us-t-warn">Anno e classe Euro non tornano</span>');
     else if (a.delta != null) tags.push('<span class="us-t us-t-' + (a.delta <= -10 ? 'ok' : a.delta >= 10 ? 'no' : 'nd') + '">' + (a.delta > 0 ? '+' : '') + Math.round(a.delta) + '% vs ' + (a.cmp.simili ? 'simili' : 'media ricerca') + '</span>');
     if (ab) tags.push('<span class="us-t us-t-' + ab.st + '">Area B ' + { ok: 'sì', no: 'no', warn: 'a termine', nd: 'da verificare' }[ab.st] + '</span>');
     tags.push('<span class="us-t">' + (a.venditore === 'conc' ? 'Concessionario' : 'Privato') + '</span>');
@@ -477,6 +501,53 @@
       '<a class="us-btn" href="' + h(a.link) + '" target="_blank" rel="noopener noreferrer">Apri ↗</a>' +
       (saved ? '<span class="us-btn us-done">Salvato ✓</span>' : '<button class="us-btn us-pri" data-act="r-save" data-id="' + h(a.id) + '">Salva</button>') +
       '</div></div></article>';
+  }
+  /* Filtri sui risultati (solo in pagina: non rifanno la ricerca) */
+  function passaFiltri(a) {
+    var f = R.f, p = num(a.prezzo), t;
+    if (num(f.pmin) != null && p < num(f.pmin)) return false;
+    if (num(f.pmax) != null && p > num(f.pmax)) return false;
+    if (num(f.kmmax) != null && a.km != null && a.km > num(f.kmmax)) return false;
+    if (num(f.anno) != null && a.immatr && a.immatr < num(f.anno)) return false;
+    if (f.alim && f.alim.length && f.alim.indexOf(a.alim || '?') < 0) return false;
+    if (f.cambio && a.cambio !== f.cambio) return false;
+    if (f.portale && f.portale.length && !f.portale.some(function(x) { return a.portale === x || a.altri.some(function(o) { return o.portale === x; }); })) return false;
+    if (f.areaB) { t = areaB(a); if (!t || (f.areaB === 'ok' ? t.st !== 'ok' : t.st !== 'ok' && t.st !== 'warn')) return false; }
+    if (f.pulito && (a.sospetto || a.incoerente)) return false;
+    if (f.foto && !a.foto) return false;
+    if (f.testo) {
+      var hay = slug(a.titolo + ' ' + a.citta + ' ' + a.venditoreNome);
+      if (!slug(f.testo).split('-').filter(Boolean).every(function(w) { return hay.indexOf(w) >= 0; })) return false;
+    }
+    return true;
+  }
+  function nFiltri() {
+    var f = R.f; return ['pmin', 'pmax', 'kmmax', 'anno', 'cambio', 'areaB', 'pulito', 'foto', 'testo'].filter(function(k) { return f[k]; }).length +
+      (f.alim && f.alim.length ? 1 : 0) + (f.portale && f.portale.length ? 1 : 0);
+  }
+  function renderFiltri() {
+    var f = R.f, alims = uniq(R.items.map(function(a) { return a.alim || '?'; })), port = uniq(R.items.map(function(a) { return a.portale; })), n = nFiltri();
+    var chip = function(k, v, label) {
+      var on = (f[k] || []).indexOf(v) >= 0;
+      return '<button class="' + (on ? 'on' : '') + '" data-act="rf-tog" data-k="' + k + '" data-v="' + h(v) + '" aria-pressed="' + on + '">' + h(label || v) + '</button>';
+    };
+    var inp = function(k, ph, mode) { return '<input data-rf="' + k + '" ' + (mode === 'text' ? 'type="search"' : 'inputmode="numeric"') + ' placeholder="' + ph + '" value="' + h(f[k] || '') + '">'; };
+    return '<details class="us-set us-filt"' + (R.filtriAperti ? ' open' : '') + '><summary>Filtri' + (n ? ' <i>' + n + ' attivi</i>' : ' <i>prezzo, km, alimentazione…</i>') + '</summary>' +
+      '<div class="us-grid">' +
+      fld('Prezzo (€)', '<span class="us-pair us-pair-eq">' + inp('pmin', 'da') + inp('pmax', 'a') + '</span>') +
+      fld('Km massimi', inp('kmmax', 'es. 150000')) +
+      fld('Anno dal', inp('anno', 'es. 2015')) +
+      fld('Cambio', '<select data-rf="cambio">' + opts(['Manuale', 'Automatico'], f.cambio, 'Qualsiasi') + '</select>') +
+      '</div>' +
+      fld('Cerca nel titolo o città', inp('testo', 'es. 4x4, GPL, Monza', 'text')) +
+      (alims.length > 1 ? '<div class="us-flbl">Alimentazione</div><div class="us-chips us-chips-wrap">' + alims.map(function(x) { return chip('alim', x, x === '?' ? 'Non indicata' : x); }).join('') + '</div>' : '') +
+      (port.length > 1 ? '<div class="us-flbl">Portale</div><div class="us-chips us-chips-wrap">' + port.map(function(x) { return chip('portale', x); }).join('') + '</div>' : '') +
+      (R.q.tipo !== 'moto' && S.settings.areaB ? '<div class="us-flbl">Area B</div><div class="us-chips us-chips-wrap">' +
+        [['', 'Qualsiasi'], ['entra', 'Entra oggi'], ['ok', 'Senza scadenza']].map(function(o) { return '<button class="' + ((f.areaB || '') === o[0] ? 'on' : '') + '" data-act="rf-set" data-k="areaB" data-v="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>' : '') +
+      '<label class="us-chk"><input type="checkbox" data-rf="pulito"' + (f.pulito ? ' checked' : '') + '> Nascondi prezzi sospetti e dati incoerenti</label>' +
+      '<label class="us-chk"><input type="checkbox" data-rf="foto"' + (f.foto ? ' checked' : '') + '> Solo con foto</label>' +
+      (n ? '<div class="us-bar"><button class="us-btn" data-act="rf-reset">Azzera filtri</button></div>' : '') +
+      '</details>';
   }
   function renderValore() {
     var v = R.valore, sim = R.items.filter(function(a) { return !a.sospetto && a.immatr && Math.abs(a.immatr - v.anno) <= 1 && (!v.km || !a.km || Math.abs(a.km - v.km) <= Math.max(20000, v.km * 0.3)); });
@@ -884,6 +955,9 @@
         toast('Ricerca salvata: rilanciala da Ricerche per vedere i nuovi annunci'); render(); break;
       case 'run-search': cerca(Object.assign({}, S.searches.filter(function(q) { return q.id === id; })[0]), id); break;
       case 'r-solo': R.solo = v; render(); break;
+      case 'rf-tog': var arr = R.f[t.dataset.k] = R.f[t.dataset.k] || [], ix = arr.indexOf(v); if (ix >= 0) arr.splice(ix, 1); else arr.push(v); R.filtriAperti = true; render(); break;
+      case 'rf-set': R.f[t.dataset.k] = v; R.filtriAperti = true; render(); break;
+      case 'rf-reset': R.f = {}; R.solo = 'tutti'; render(); break;
       case 'r-more': altriRisultati(); break;
       case 'r-save': salvaRisultato(id); break;
       case 'filtro': filtroStato = v; render(); break;
@@ -951,6 +1025,7 @@
   function onChange(e) {
     var t = e.target;
     if (t.dataset.rs) { R[t.dataset.rs] = t.value; render(); return; }
+    if (t.dataset.rf) { R.f[t.dataset.rf] = t.type === 'checkbox' ? t.checked : t.value.trim(); R.filtriAperti = true; render(); return; }
     if (t.dataset.q === 'marca' || t.dataset.q === 'modello') {
       var d = readQuick(); if (t.dataset.q === 'marca') d.modello = '';
       quick = d; if (R) R.q = Object.assign({}, R.q, { marca: d.marca, modello: d.modello }); render();
@@ -996,6 +1071,7 @@
         var el = $(id);
         if (el) { el.addEventListener('click', onClick); el.addEventListener('change', onChange); }
       });
+      $('hub-usato').addEventListener('toggle', function(e) { if (R && e.target.classList && e.target.classList.contains('us-filt')) R.filtriAperti = e.target.open; }, true);
       $('hub-usato').addEventListener('keydown', function(e) {
         if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.us-card[data-act]')) { e.preventDefault(); e.target.click(); }
       });

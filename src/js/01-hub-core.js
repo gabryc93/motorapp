@@ -193,6 +193,7 @@
       }
       if (name === 'fuel') { setTimeout(_hubAutoSelectFuel, 80); }
       if (name === 'usato' && typeof window.usatoInit === 'function') window.usatoInit();
+      if (name === 'diag' && typeof window.diagGarageChips === 'function') window.diagGarageChips();
       window.scrollTo(0, 0);
     } else if (isAction) {
       // Open the corresponding overlay; section stays as it was
@@ -208,6 +209,29 @@
     }
   }
   window.hubGo = hubGo;
+
+  /* ── Torna su: compare dopo un po' di scorrimento, in tutte le sezioni ── */
+  (function() {
+    var btn = null, ticking = false;
+    function ensure() {
+      if (btn) return btn;
+      btn = document.createElement('button');
+      btn.id = 'hub-top'; btn.type = 'button'; btn.className = 'hub-top';
+      btn.setAttribute('aria-label', 'Torna all\'inizio');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+      btn.addEventListener('click', function() {
+        var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      });
+      document.body.appendChild(btn);
+      return btn;
+    }
+    function update() {
+      ticking = false;
+      ensure().classList.toggle('on', window.scrollY > 700);
+    }
+    window.addEventListener('scroll', function() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  })();
 
   /* ── Foglio "Altro": strumenti, tema, backup ─────────────────── */
   function hubMore(open) {
