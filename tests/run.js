@@ -137,6 +137,32 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     expect(r[0] === 2, 'viaggi importati: ' + r[0]);
     expect(r[1] === 5.9, 'consumo medio pesato: ' + r[1]);
     expect(r[2] === 99043, 'contachilometri non aggiornato: ' + r[2]);
+    // stesso file ma consumo in km/l senza unità nell'intestazione: riconosciuto e corregge i viaggi già salvati
+    const csv2 = 'Data partenza;Ora arrivo;Distanza (km);Consumo medio;Kilometraggio iniziale;Kilometraggio finale\n12/11/2026 08:10;08:45;21,4;20,0;99000;99021\n13/11/2026 18:00;19:10;22,0;12,5;99021;99043\n';
+    await p.evaluate(() => { openRideLog(); openViaggiImport(); });
+    await p.setInputFiles('#vi-file', { name: 'viaggi2.csv', mimeType: 'text/csv', buffer: Buffer.from(csv2) });
+    await p.waitForSelector('#vi-unit');
+    const u = await p.$eval('#vi-unit', e => e.value);
+    expect(u === 'kml', 'unità non riconosciuta: ' + u);
+    await p.click('.vi-btn'); await p.waitForTimeout(200);
+    const r2 = await p.evaluate(() => { const v = hubGarage.active(); const t = hubTripStats(v.id); closeViaggiImport(); closeRideLog(); return [t.viaggi, Math.round(t.consumo * 10) / 10]; });
+    expect(r2[0] === 2, 'viaggi duplicati: ' + r2[0]);
+    expect(r2[1] === 6.5, 'consumo km/l non convertito: ' + r2[1]);
+  }, page);
+
+  await test('Costo di possesso: carburante stimato dai viaggi importati', async p => {
+    const r = await p.evaluate(() => {
+      const g = JSON.parse(localStorage.getItem('hub_garage_v1')); g.push({ id: 'tco1', type: 'auto', marca: 'Peugeot', modello: '308', alim: 'benzina', costoBolloStima: 200, costoRcaStima: 500 });
+      localStorage.setItem('hub_garage_v1', JSON.stringify(g));
+      const now = Date.now(), rides = JSON.parse(localStorage.getItem('hub_rides_v1') || '[]');
+      rides.push({ id: 't1', vehicleId: 'tco1', startTs: now - 86400000, distanceKm: 100, consumo: 6, litri: 6 }, { id: 't2', vehicleId: 'tco1', startTs: now - 2 * 86400000, distanceKm: 100 });
+      localStorage.setItem('hub_rides_v1', JSON.stringify(rides));
+      window.hubMedie = { Benzina: { self: 1.8 } };
+      hubGo('garage'); openTCO(); _tcoSetVehicle('tco1');
+      const t = document.getElementById('tco-body').innerText; closeTCO(); return t;
+    });
+    expect(/stima dai viaggi/.test(r), 'carburante non stimato dai viaggi');
+    expect(/200 km/.test(r) && /12 l/.test(r), 'litri stimati errati: ' + r.slice(0, 300));
   }, page);
 
   await test('Diagnosi: database caricato solo per la marca richiesta', async p => {
@@ -152,13 +178,74 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     expect(/Problemi/i.test(await p.$eval('#results', e => e.innerText)), 'risultati diagnosi assenti');
   }, page);
 
+  await test('Diagnosi: ricerca rapida e difetti documentati del motore', async p => {
+    await p.evaluate(() => hubGo('diag'));
+    await p.fill('#dq-input', '108 puretech'); await p.evaluate(() => diagQuickSearch());
+    await p.press('#dq-input', 'Enter'); await p.waitForSelector('#tab-problemi');
+    const r = await p.evaluate(() => ({ sel: ['sel-marca', 'sel-modello', 'sel-motore'].map(i => document.getElementById(i).value).join('|'), txt: document.getElementById('tab-problemi').innerText, dist: (switchTab('manutenzione'), document.getElementById('tab-manutenzione').innerText) }));
+    expect(r.sel === 'Peugeot|108|1.2 PureTech 82cv', 'ricerca rapida: ' + r.sel);
+    expect(/bagno d'olio/i.test(r.txt) && /Documentato/i.test(r.txt), 'difetto PureTech non mostrato');
+    expect(/bagno d'olio/i.test(r.dist), 'distribuzione non corretta in manutenzione');
+    const chain = await p.evaluate(() => { const n = hubMotoriNoti('Fiat', 'Panda III', '2012–2017', '1.3 MultiJet 75cv', {}); return n.distribuzione; });
+    expect(chain === 'Catena', '1.3 MultiJet deve risultare a catena');
+    const cat = await p.evaluate(() => !!(VEHICLES.Lancia && VEHICLES.Lancia['Ypsilon (846)'] && MOTORCYCLES.Kymco));
+    expect(cat, 'modelli aggiunti mancanti nel catalogo');
+  }, page);
+
   await test('Usato: import da Claude, costo vero e Area B', async p => {
     await p.evaluate(() => hubGo('usato'));
+    await p.click('[data-act="view"][data-v="annunci"]');
     await p.click('[data-act="import"]');
     await p.fill('#us-import-text', '[{"titolo":"Ford Fiesta 1.4 TDCi","marca":"Ford","modello":"Fiesta","anno_immatricolazione":2009,"prezzo":2900,"km":190000,"alimentazione":"Diesel","euro":4,"venditore":"privato","link":"javascript:alert(1)"}]');
     await p.click('[data-act="do-import"]'); await p.waitForTimeout(300);
     const r = await p.evaluate(() => { const a = hubUsato.data().ads[0]; return [Math.round(hubUsato._calc.costoVero(a)), hubUsato._calc.areaB(a).st, a.link]; });
     expect(r[0] > 2900, 'costo vero non calcolato'); expect(r[1] === 'no', 'diesel Euro 4 deve risultare fuori Area B'); expect(r[2] === '', 'link javascript: non filtrato');
+  }, page);
+
+  await test('Usato: ricerca sui portali, doppioni, prezzo sospetto e ricerca salvata', async p => {
+    const mk = (i, o) => Object.assign({ id: 'as24:' + i, portale: 'AutoScout24', titolo: 'Fiat Panda 1.2', marca: 'Fiat', modello: 'Panda', prezzo: 4000 + i * 100, anno: 2014, km: 90000 + i * 5000, alim: 'Benzina', cambio: 'Manuale', citta: 'Milano', venditore: 'privato', link: 'https://www.autoscout24.it/annunci/' + i }, o);
+    let extra = [];
+    await p.route('**/api/usato**', r => {
+      const po = new URL(r.request().url()).searchParams.get('portale');
+      const body = po === 'autoscout24' ? { portale: po, totale: 7, pagine: 1, annunci: [0, 1, 2, 3, 4, 5].map(i => mk(i)).concat([mk(9, { prezzo: 200 })], extra) }
+        : po === 'automobile' ? { portale: po, totale: 2, pagine: 1, annunci: [mk(1, { id: 'aut:1', portale: 'Automobile.it', citta: 'Milano (MI)', prezzo: 4300 }), mk(7, { id: 'aut:2', portale: 'Automobile.it', citta: 'Roma (RM)' })] }
+        : null;
+      return body ? r.fulfill({ json: body, headers: { 'access-control-allow-origin': '*' } }) : r.fulfill({ status: 502, json: { portale: po, error: 'HTTP 403' }, headers: { 'access-control-allow-origin': '*' } });
+    });
+    await p.evaluate(() => { hubGo('usato'); hubUsato.data().settings.regione = 'lombardia'; });
+    await p.click('[data-act="view"][data-v="cerca"]');
+    await p.selectOption('#usato-root [data-q="marca"]', 'Fiat');
+    await p.selectOption('#usato-root [data-q="modello"]', 'Panda');
+    await p.selectOption('#usato-root [data-q="regione"]', 'lombardia');
+    await p.click('[data-act="q-go"]'); await p.waitForSelector('.us-sum');
+    const r = await p.evaluate(() => ({ n: document.querySelectorAll('.us-res').length, txt: document.getElementById('usato-root').innerText }));
+    expect(r.n === 7, 'risultati attesi 7 (doppione unito, Roma fuori regione): ' + r.n);
+    expect(/AutoScout24 · Automobile.it 4300/.test(r.txt), 'doppione tra portali non unito');
+    expect(/Prezzo sospetto/.test(r.txt), 'prezzo di 200 € non segnalato');
+    expect(/non raggiungibile/.test(r.txt), 'errore Subito non mostrato');
+    await p.click('[data-act="q-save"]');
+    extra = [mk(20, { prezzo: 3900 })];
+    await p.click('[data-act="view"][data-v="ricerche"]'); await p.click('[data-act="run-search"]');
+    await p.waitForSelector('.us-news');
+    expect(/1 nuovi/.test(await p.$eval('.us-news', e => e.innerText)), 'annuncio nuovo non segnalato');
+    await p.unroute('**/api/usato**');
+  }, page);
+
+  await test('Passi & strade: curvatura, tratti uniti e stagione', async p => {
+    const r = await p.evaluate(() => {
+      const I = window._psInternals, lat0 = 46.5, lng0 = 10.5, mLat = 1 / 111320, mLng = 1 / (111320 * Math.cos(lat0 * Math.PI / 180));
+      const tw = []; let x = 0, y = 0, dir = 0;
+      for (let i = 0; i < 600; i++) { dir += Math.sin(i / 6) * 0.35; x += Math.cos(dir) * 15; y += Math.sin(dir) * 15; tw.push({ lat: lat0 + y * mLat, lon: lng0 + x * mLng }); }
+      const st = []; for (let i = 0; i < 300; i++) st.push({ lat: lat0 - 0.02, lon: lng0 + i * 20 * mLng });
+      const tags = { highway: 'secondary', name: 'SS38' };
+      const res = I.analizza({ elements: [{ type: 'way', id: 1, tags, geometry: tw.slice(0, 201) }, { type: 'way', id: 2, tags, geometry: tw.slice(400).reverse() }, { type: 'way', id: 3, tags, geometry: tw.slice(200, 401) },
+        { type: 'way', id: 4, tags: { highway: 'primary', name: 'Dritta' }, geometry: st }] }, lat0, lng0);
+      return { n: res.roads.length, name: res.roads[0] && res.roads[0].name, len: res.roads[0] && res.roads[0].len, stelvio: I.chiusoTxt(I.PASSES.find(x => x.id === 'stelvio')), unique: new Set(I.PASSES.map(x => x.id)).size === I.PASSES.length };
+    });
+    expect(r.n === 1 && r.name === 'SS38', 'strada curva non trovata o rettilineo incluso: ' + JSON.stringify(r));
+    expect(r.len > 7, 'i 3 tratti OSM non sono stati uniti: ' + r.len);
+    expect(r.stelvio === 'Di solito chiuso nov–mag', 'stagione Stelvio: ' + r.stelvio);
+    expect(r.unique, 'id dei passi duplicati');
   }, page);
 
   await test('Motorsport: risultati F1 e classifica', async p => {

@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-11-16-1829">
+<meta name="autohub-build" content="2026-11-16-1839">
 <meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -22115,7 +22115,7 @@ async function runCmp() {
     { k: 'odoStart',nome: 'Contachilometri inizio',     re: { test: function(c) { return ODO.test(c) && INI.test(c); } } },
     { k: 'odoEnd',  nome: 'Contachilometri fine',       re: { test: function(c) { return ODO.test(c) && !INI.test(c); } } },
     { k: 'dur',     nome: 'Durata',                     re: /durat|duration|dur[ée]e|dauer|tempo/i },
-    { k: 'cons',    nome: 'Consumo medio (l o kWh/100 km)', re: /consum|conso|verbrauch|l\/100|kwh\/100|fuel.?econ|efficien/i },
+    { k: 'cons',    nome: 'Consumo medio', re: /consum|conso|verbrauch|l\/100|kwh\/100|km\s*\/\s*l\b|fuel.?econ|efficien/i },
     { k: 'litri',   nome: 'Carburante usato (litri)',   re: /litri|litres?|liters?|carburante.*(usat|consumat)|fuel.?used|carburant.*consomm|kraftstoff/i },
     { k: 'vel',     nome: 'Velocità media',             re: /veloc|speed|vitesse|geschwind/i },
     { k: 'from',    nome: 'Partenza (luogo)',           re: { test: function(c) { return /partenza|origine|^from|start.*(addr|luogo|posiz|place|location)|adresse.*d[ée]part|^d[ée]part$/i.test(c) && !DT.test(c); } } },
@@ -22135,7 +22135,27 @@ async function runCmp() {
     if (!map.start) { var d = head.filter(function(x) { return !used[x] && rows.slice(0, 5).every(function(r) { return r[x] == null || r[x] === '' || date(r[x]); }) && rows.some(function(r) { return typeof r[x] !== 'number' && date(r[x]); }); })[0]; if (d) map.start = d; }
     return map;
   }
-  function rowsToTrips(tab, map) {
+  // Unità del consumo: MyPeugeot & co. in Italia esportano km/l, altri l/100 km.
+  // Prima l'intestazione, poi i litri (se ci sono), poi i valori: in l/100 km
+  // un'auto sta quasi sempre sotto 11, in km/l quasi sempre sopra.
+  function consUnit(tab, map) {
+    if (!map.cons) return 'l100';
+    var hd = String(map.cons);
+    if (/km\s*\/\s*(l|kwh)\b|km per l|kml|mpg/i.test(hd)) return 'kml';
+    if (/(l|kwh)\s*\/\s*100/i.test(hd)) return 'l100';
+    var a = 0, b = 0, vals = [];
+    tab.rows.forEach(function(r) {
+      var c = num(r[map.cons]), k = map.km ? num(r[map.km]) : null, l = map.litri ? num(r[map.litri]) : null;
+      if (c == null || c <= 0) return;
+      vals.push(c);
+      if (k > 0 && l > 0) { var l100 = l / k * 100; if (Math.abs(c - l100) < Math.abs(c - k / l)) a++; else b++; }
+    });
+    if (a + b >= 3) return b > a ? 'kml' : 'l100';
+    if (!vals.length) return 'l100';
+    vals.sort(function(x, y) { return x - y; });
+    return vals[Math.floor(vals.length / 2)] > 11 ? 'kml' : 'l100';
+  }
+  function rowsToTrips(tab, map, unit) {
     var out = [];
     tab.rows.forEach(function(r) {
       var st = map.start ? date(r[map.start]) : null;
@@ -22149,6 +22169,7 @@ async function runCmp() {
       // l'ora di fine a volte è solo "hh:mm": la si attacca alla data di inizio
       if (!en && map.end && /^\d{1,2}:\d{2}/.test(String(r[map.end]))) { var p = String(r[map.end]).split(':'); var d0 = new Date(st); d0.setHours(+p[0], +p[1], 0, 0); en = d0.getTime(); if (en < st) en += 86400000; }
       var cons = map.cons ? num(r[map.cons]) : null, litri = map.litri ? num(r[map.litri]) : null;
+      if (cons != null && unit === 'kml') cons = cons > 0 ? 100 / cons : null;
       if (cons != null && (cons <= 0 || cons > 60)) cons = null;
       if (cons == null && litri && km) cons = litri / km * 100;
       if (litri == null && cons && km) litri = cons * km / 100;
@@ -22198,11 +22219,20 @@ async function runCmp() {
   /* ── Salvataggio ──────────────────────────────────────────────── */
   function importTrips(trips, vehicleId, source) {
     var v = garage().filter(function(x) { return x.id === vehicleId; })[0];
-    var all = load(), seen = {}, added = 0, dup = 0, maxOdo = 0;
-    all.forEach(function(r) { seen[r.vehicleId + '|' + Math.round((r.startTs || 0) / 60000) + '|' + Math.round((r.distanceKm || 0) * 10)] = 1; });
+    var all = load(), seen = {}, added = 0, dup = 0, fixed = 0, maxOdo = 0;
+    all.forEach(function(r) { seen[r.vehicleId + '|' + Math.round((r.startTs || 0) / 60000) + '|' + Math.round((r.distanceKm || 0) * 10)] = r; });
     trips.forEach(function(t) {
       var key = vehicleId + '|' + Math.round(t.startTs / 60000) + '|' + Math.round(t.distanceKm * 10);
-      if (seen[key]) { dup++; return; }
+      if (seen[key]) {
+        // reimportando lo stesso file si correggono i consumi già salvati
+        var old = typeof seen[key] === 'object' ? seen[key] : null;
+        if (old && t.consumo != null && Math.abs((old.consumo || 0) - t.consumo) > 0.05) {
+          old.consumo = Math.round(t.consumo * 100) / 100;
+          old.litri = t.litri != null ? Math.round(t.litri * 100) / 100 : old.litri;
+          fixed++;
+        } else dup++;
+        return;
+      }
       seen[key] = 1; added++;
       if (t.odoEnd > maxOdo) maxOdo = t.odoEnd;
       var ms = t.elapsedMs || Math.max(0, (t.endTs || t.startTs) - t.startTs);
@@ -22220,7 +22250,7 @@ async function runCmp() {
     // contachilometri del veicolo aggiornato se il resoconto ne riporta uno più alto
     var kmAgg = false;
     if (v && maxOdo > (v.kmTot || 0) && window.hubGarage.update) { window.hubGarage.update(v.id, { kmTot: Math.round(maxOdo) }); kmAgg = true; }
-    return { added: added, dup: dup, km: kmAgg ? Math.round(maxOdo) : null };
+    return { added: added, dup: dup, fixed: fixed, km: kmAgg ? Math.round(maxOdo) : null };
   }
 
   // Consumo dai viaggi importati, media pesata sui km (usata da Consumi)
@@ -22292,7 +22322,7 @@ async function runCmp() {
     var km = trips.reduce(function(s, t) { return s + t.distanceKm; }, 0), wc = trips.filter(function(t) { return t.consumo != null; });
     return '<p class="vi-sum"><b>' + trips.length + '</b> ' + (trips.length === 1 ? 'viaggio' : 'viaggi') + ' · <b>' + Math.round(km).toLocaleString('it-IT') + '</b> km' +
       (wc.length ? ' · consumo su ' + wc.length + ' viaggi' : '') + '</p>' +
-      '<div class="vi-prev"><table><thead><tr><th>Inizio</th><th>Km</th><th>Durata</th><th>Consumo</th></tr></thead><tbody>' +
+      '<div class="vi-prev"><table><thead><tr><th>Inizio</th><th>Km</th><th>Durata</th><th>l/100 km</th></tr></thead><tbody>' +
       trips.slice(0, 6).map(function(t) {
         var m = t.elapsedMs ? Math.round(t.elapsedMs / 60000) : 0;
         return '<tr><td>' + fmtD(t.startTs) + '</td><td>' + t.distanceKm.toFixed(1) + '</td><td>' + (m ? (m >= 60 ? Math.floor(m / 60) + 'h ' : '') + (m % 60) + 'm' : '—') + '</td><td>' + (t.consumo != null ? t.consumo.toFixed(1) : '—') + '</td></tr>';
@@ -22323,7 +22353,8 @@ async function runCmp() {
   window._viMin = function(v) { S.minKm = num(v) || 0; renderTimeline(); };
   function stepTable() {
     var tab = S.data.tab;
-    S.trips = rowsToTrips(tab, S.map);
+    if (!S.unit) S.unit = consUnit(tab, S.map);
+    S.trips = rowsToTrips(tab, S.map, S.unit);
     S.source = 'import';
     var opts = function(k) {
       return '<option value="">— nessuna —</option>' + tab.head.map(function(c) { return '<option' + (S.map[k] === c ? ' selected' : '') + '>' + h(c) + '</option>'; }).join('');
@@ -22336,18 +22367,22 @@ async function runCmp() {
         FIELDS.map(function(f) {
           return '<div class="vi-maprow"><label for="vi-m-' + f.k + '">' + f.nome + '</label><select id="vi-m-' + f.k + '" class="vi-in" onchange="_viMap(\'' + f.k + '\', this.value)">' + opts(f.k) + '</select></div>';
         }).join('') + '</details>' +
+      (S.map.cons ? '<div class="vi-maprow"><label for="vi-unit">Il consumo nel file è in</label><select id="vi-unit" class="vi-in" onchange="_viUnit(this.value)">' +
+        '<option value="kml"' + (S.unit === 'kml' ? ' selected' : '') + '>km/l (km con un litro)</option>' +
+        '<option value="l100"' + (S.unit === 'l100' ? ' selected' : '') + '>l/100 km</option></select></div>' : '') +
       preview(S.trips) +
       (S.trips.some(function(t) { return t.odoEnd; }) ? '<p class="vi-note">Il contachilometri del veicolo verrà aggiornato se il file ne riporta uno più alto.</p>' : '') +
       actions(S.trips.length);
   }
-  window._viMap = function(k, col) { if (col) S.map[k] = col; else delete S.map[k]; stepTable(); };
+  window._viMap = function(k, col) { if (col) S.map[k] = col; else delete S.map[k]; if (k === 'cons') S.unit = null; stepTable(); };
+  window._viUnit = function(u) { S.unit = u; stepTable(); };
   window._viRestart = function() { step1(); };
   window._viSave = function() {
     if (!S.trips.length || !S.vehicle) return;
     var r = importTrips(S.trips, S.vehicle, S.source);
     var ts = window.hubTripStats(S.vehicle);
     document.getElementById('vi-body').innerHTML =
-      '<p class="vi-done">✓ ' + (r.added === 1 ? 'Importato <b>1</b> viaggio' : 'Importati <b>' + r.added + '</b> viaggi') + (r.dup ? ' · ' + r.dup + ' già presenti, saltati' : '') + '.</p>' +
+      '<p class="vi-done">✓ ' + (r.added === 1 ? 'Importato <b>1</b> viaggio' : 'Importati <b>' + r.added + '</b> viaggi') + (r.fixed ? ' · consumo corretto su ' + r.fixed + ' già presenti' : '') + (r.dup ? ' · ' + r.dup + ' già presenti, saltati' : '') + '.</p>' +
       (ts.consumo != null ? '<p class="vi-sum">Consumo medio dai viaggi: <b>' + ts.consumo.toFixed(1) + '</b> su ' + Math.round(ts.km).toLocaleString('it-IT') + ' km. Lo trovi in Consumi e nel Costo di possesso.</p>' : '') +
       (r.km ? '<p class="vi-sum">Contachilometri aggiornato a <b>' + r.km.toLocaleString('it-IT') + ' km</b>.</p>' : '') +
       '<div class="vi-act"><button type="button" class="vi-btn2" onclick="_viRestart()">Importa un altro file</button><button type="button" class="vi-btn" onclick="closeViaggiImport()">Fatto</button></div>';
