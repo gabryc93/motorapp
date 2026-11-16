@@ -69,6 +69,18 @@
     return { eur: fb, src: 'prezzo indicativo ' + fuel.toLowerCase() };
   }
 
+  // Consumo medio (rifornimenti, poi viaggi importati) e prezzo al litro: usati per il costo di un'uscita
+  window.hubConsumoPrezzo = function(vehicle) {
+    if (!vehicle || vehicle.alim === 'elettrica') return null;
+    var refuels = [];
+    try { refuels = JSON.parse(localStorage.getItem('hub_refuels_v1') || '[]').filter(function(r) { return r.vehicleId === vehicle.id; }); } catch(_) {}
+    var cons = refuelAvgCons(refuels), src = 'rifornimenti';
+    if (!cons && window.hubTripStats) { var ts = window.hubTripStats(vehicle.id); if (ts && ts.consumo) { cons = ts.consumo; src = 'viaggi importati'; } }
+    if (!cons) return null;
+    var pr = fuelPrice(vehicle, refuels);
+    return pr ? { cons: cons, eur: pr.eur, src: 'consumo dai ' + src + ', ' + pr.src } : null;
+  };
+
   function computeTCO(vehicle, period) {
     var cutoff = periodCutoffMs(period);
     var firstTs = null;

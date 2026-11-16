@@ -128,7 +128,7 @@
 
 .rd-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1px;
   background: rgba(255,255,255,.06);
   margin: 0 12px 12px;
@@ -414,3 +414,45 @@
   border-color: rgba(255,255,255,.15);
   color: #fff;
 }
+
+/* ── Ride v2: barra prove, GPS, giri, HUD ─────────────────────── */
+.rd-hdr-act { display: flex; gap: 6px; }
+.rd-perfbar { display: flex; gap: 5px; padding: 8px 14px 0; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
+.rd-perfbar::-webkit-scrollbar { display: none; }
+.rd-chip { flex-shrink: 0; appearance: none; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.7);
+  padding: 6px 10px; border-radius: 999px; font-family: 'DM Mono', monospace; font-size: .62rem; cursor: pointer; }
+.rd-chip.on { background: #ff5a28; border-color: #ff5a28; color: #fff; }
+.rd-chip-ghost { border-style: dashed; }
+.rd-gps { align-self: center; font-family: 'DM Mono', monospace; font-size: .56rem; letter-spacing: .08em; padding: 2px 8px; border-radius: 999px;
+  color: rgba(255,255,255,.45); border: 1px solid rgba(255,255,255,.12); flex-shrink: 0; }
+.rd-gps.ok { color: #6dd9a3; border-color: rgba(109,217,163,.4); }
+.rd-gps.mid { color: #e8c547; border-color: rgba(232,197,71,.4); }
+.rd-gps.bad { color: #ff8a82; border-color: rgba(255,138,130,.4); }
+.rd-sub { margin-top: 10px; min-height: 1.1em; font-family: 'DM Mono', monospace; font-size: .78rem; color: rgba(255,255,255,.65); letter-spacing: .04em; text-align: center; }
+.rd-stat-sub span { white-space: nowrap; }
+@media (max-width: 360px) { .rd-stat-val { font-size: 1.1rem; } .rd-stat { padding: 10px 4px; } }
+.rd-error .rd-err-act { display: flex; gap: 8px; margin-top: 8px; }
+.rd-error .rd-err-act button { flex: 1; appearance: none; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px;
+  padding: 8px; font: inherit; cursor: pointer; }
+.rd-btn-line { background: rgba(232,197,71,.9); border-color: rgba(232,197,71,.6); color: #1a1500; }
+.rd-lap { margin: 6px 14px 0; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); text-align: center; flex-shrink: 0; }
+.rd-lap-n { font-family: 'DM Mono', monospace; font-size: .58rem; letter-spacing: .14em; color: rgba(255,255,255,.5); }
+.rd-lap-cur { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 2.6rem; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.rd-lap-row { display: flex; justify-content: space-around; gap: 8px; font-family: 'DM Mono', monospace; font-size: .66rem; color: rgba(255,255,255,.6); margin-top: 4px; }
+.rd-lap-row b { color: #fff; font-variant-numeric: tabular-nums; }
+.rd-lap-row b.best, .rd-lap-list .best { color: #c97fd4; }
+.rd-lap-row i { font-style: normal; } .rd-lap-row i.up { color: #6dd9a3; } .rd-lap-row i.dn { color: #ff8a82; }
+.rd-lap-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; margin-top: 6px; font-family: 'DM Mono', monospace; font-size: .6rem; color: rgba(255,255,255,.5); }
+.rd-perf-note { font-family: 'DM Mono', monospace; font-size: .6rem; line-height: 1.5; color: rgba(255,255,255,.5); margin: 10px 0 0; text-align: left; }
+.rd-perf-result-inner { max-height: 100%; overflow-y: auto; }
+.rd-hist { text-align: left; margin-top: 12px; }
+.rd-hist-h { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: .66rem; color: rgba(255,255,255,.75); border-bottom: 1px solid rgba(255,255,255,.1); padding-bottom: 4px; margin-bottom: 4px; }
+.rd-hist-h b { color: #c97fd4; }
+.rd-hist-r { display: grid; grid-template-columns: 50px 70px 1fr; gap: 8px; font-family: 'DM Mono', monospace; font-size: .64rem; color: rgba(255,255,255,.65); padding: 3px 0; }
+.rd-hist-r.best { color: #c97fd4; } .rd-hist-r.nv { color: rgba(255,255,255,.35); }
+/* HUD: solo la velocità, a specchio, da riflettere sul parabrezza di notte */
+#rd-overlay.rd-hud > *:not(.rd-speedbox) { display: none !important; }
+#rd-overlay.rd-hud .rd-speedbox { transform: scaleX(-1); cursor: pointer; }
+#rd-overlay.rd-hud .rd-gmeter, #rd-overlay.rd-hud .rd-sub { display: none !important; }
+#rd-overlay.rd-hud .rd-speed { font-size: min(48vw, 60vh); color: #7dffb0; }
+#rd-overlay.rd-hud .rd-speed-unit { color: #7dffb0; opacity: .7; }

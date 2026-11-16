@@ -248,6 +248,50 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     expect(r.unique, 'id dei passi duplicati');
   }, page);
 
+  await test('Ride: piega dalla traccia, 0-100 interpolato, giri in pista', async p => {
+    const r = await p.evaluate(() => {
+      const I = window._rdInternals; I.noGps(true);
+      const O = { lat: 45.5, lng: 9.2 }, k = 111320, ck = k * Math.cos(O.lat * Math.PI / 180);
+      let t = Date.now() - 3600000;
+      const fix = (x, y, v) => I.feed({ timestamp: t, coords: { latitude: O.lat + y / k, longitude: O.lng + x / ck, speed: v, accuracy: 5, altitude: 120, heading: null } });
+      openRide(); rideSetMode('giro'); rideStart();
+      // rettilineo verso est a 72 km/h, poi un giro a sinistra (raggio 60 m a 43 km/h), poi di nuovo dritto
+      let x = 0, y = 0;
+      for (let i = 0; i < 30; i++) { fix(x, y, 20); x += 20; t += 1000; }
+      const cx = x, cy = y + 60;
+      for (let a = 0; a < 2 * Math.PI; a += 12 / 60) { fix(cx + 60 * Math.sin(a), cy - 60 * Math.cos(a), 12); t += 1000; }
+      for (let i = 0; i < 30; i++) { fix(x, y, 20); x += 20; t += 1000; }
+      for (let i = 0; i < 40; i++) { fix(x, y, 0); t += 1000; }   // sosta: non conta nel tempo in movimento
+      rideStop(); closeRideLogDetail();
+      const rides = JSON.parse(localStorage.getItem('hub_rides_v1') || '[]'), e = rides[rides.length - 1];
+      // prestazioni: 0-100 con 4 m/s² costanti → 6,94 s
+      rideReset(); rideSetMode('perf'); rideSetPerf('p0-100'); rideStart();
+      for (let i = 0; i < 4; i++) { fix(0, 0, 0); t += 1000; }
+      let s = 0;
+      for (let tt = 0.5; tt < 9; tt += 1) { const v = 4 * tt; s = 2 * tt * tt; I.feed({ timestamp: t + tt * 1000, coords: { latitude: O.lat, longitude: O.lng + s / ck, speed: v, accuracy: 4, altitude: 120 } }); }
+      t += 10000;
+      ridePerfClose();
+      const runs = JSON.parse(localStorage.getItem('hub_perf_runs_v1') || '[]'), run = runs[runs.length - 1];
+      // pista: cerchio di 80 m a 72 km/h (giro da 25,1 s), traguardo segnato in corsa
+      rideReset(); rideSetMode('pista'); rideStart();
+      const R = 80, w = 20 / R; let ang = 0;
+      for (let i = 0; i < 12; i++) { fix(R * Math.sin(ang), -R * Math.cos(ang), 20); ang += w; t += 1000; }
+      rideLinea();
+      for (let i = 0; i < 90; i++) { fix(R * Math.sin(ang), -R * Math.cos(ang), 20); ang += w; t += 1000; }
+      const laps = I.state().R.laps.slice();
+      const lapTxt = document.getElementById('rd-lap').textContent;
+      rideStop(); closeRideLogDetail(); rideReset(); rideSetMode('giro'); closeRide();
+      return { lean: e.leanSx, dx: e.leanDx, km: e.distanceKm, mov: e.movingMs, salvato: !!e.points.length && e.points[0].v != null, run, laps, lapTxt };
+    });
+    expect(r.km > 1.3 && r.km < 1.6, 'distanza: ' + r.km);
+    expect(r.lean >= 11 && r.lean <= 17 && r.dx <= 3, 'piega: ' + r.lean + ' / ' + r.dx);
+    expect(r.mov > 80000 && r.mov < 100000, 'tempo in movimento con la sosta: ' + r.mov);
+    expect(r.salvato, 'traccia senza velocità');
+    expect(r.run && r.run.mode === 'p0-100' && Math.abs(r.run.time - 6.94) < 0.15, '0-100: ' + JSON.stringify(r.run));
+    expect(r.laps.length >= 2 && r.laps.every(l => Math.abs(l - 25133) < 400), 'giri: ' + r.laps.join(','));
+    expect(/GIRO/.test(r.lapTxt), 'pannello giri');
+  }, page);
+
   await test('Motorsport: risultati F1 e classifica', async p => {
     await p.evaluate(() => { localStorage.removeItem('hub_ms_cache_v1'); hubGo('ms'); });
     await p.waitForTimeout(800);

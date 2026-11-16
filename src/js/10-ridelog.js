@@ -112,45 +112,76 @@
     if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
   };
 
+  var _filtro = 'tutti', _dmap = null;
+  function rec(label, val, sub) { return '<div class="rdl-rec"><div class="rdl-summary-lbl">' + label + '</div><div class="rdl-rec-val">' + val + '</div>' + (sub ? '<div class="rdl-rec-sub">' + escSafe(sub) + '</div>' : '') + '</div>'; }
+  window.rideLogFiltro = function(v) { _filtro = v; renderRideLog(); };
+
   function renderRideLog() {
     var body = document.getElementById('rdl-body');
     if (!body) return;
-    var all = loadAll();
-    if (all.length === 0) {
+    var tutte = loadAll();
+    if (tutte.length === 0) {
       body.innerHTML = '<div class="rdl-empty">Nessuna uscita registrata.<br>Avvia una Ride per registrare la prossima, oppure importa i viaggi da Google Maps o dall\'app della tua auto (MyPeugeot e simili).' +
         '<br><button class="rdl-import" type="button" onclick="openViaggiImport()">⬆ Importa viaggi</button></div>';
       return;
     }
+    // filtro per veicolo
+    var veh = {};
+    tutte.forEach(function(r) { if (r.vehicleId) veh[r.vehicleId] = r.vehicleName || r.vehicleId; });
+    if (_filtro !== 'tutti' && !veh[_filtro]) _filtro = 'tutti';
+    var all = _filtro === 'tutti' ? tutte : tutte.filter(function(r) { return r.vehicleId === _filtro; });
+    var html = Object.keys(veh).length > 1 ? '<div class="rdl-filtri" role="group" aria-label="Filtra per veicolo">' +
+      '<button type="button" class="rdl-chip' + (_filtro === 'tutti' ? ' on' : '') + '" onclick="rideLogFiltro(\'tutti\')">Tutti</button>' +
+      Object.keys(veh).map(function(id) { return '<button type="button" class="rdl-chip' + (_filtro === id ? ' on' : '') + '" onclick="rideLogFiltro(\'' + escSafe(id) + '\')">' + escSafe(veh[id]) + '</button>'; }).join('') + '</div>' : '';
 
-    // Summary stats
+    // riepilogo
     var totalKm = all.reduce(function(s, r) { return s + (r.distanceKm || 0); }, 0);
-    var totalH = all.reduce(function(s, r) { return s + (r.elapsedMs || 0); }, 0) / 3600000;
+    var totalH = all.reduce(function(s, r) { return s + (r.movingMs || r.elapsedMs || 0); }, 0) / 3600000;
     var cKm = 0, cL = 0;
     all.forEach(function(r) { if (r.consumo != null && r.distanceKm) { cKm += r.distanceKm; cL += r.litri != null ? r.litri : r.consumo * r.distanceKm / 100; } });
-
-    var html = '<div class="rdl-stats-summary">' +
+    var m0 = new Date(); m0.setDate(1); m0.setHours(0, 0, 0, 0);
+    var meseKm = all.filter(function(r) { return (r.startTs || 0) >= m0.getTime(); }).reduce(function(s, r) { return s + (r.distanceKm || 0); }, 0);
+    html += '<div class="rdl-stats-summary">' +
       '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Uscite</div><div class="rdl-summary-val">' + all.length + '</div></div>' +
       '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Km totali</div><div class="rdl-summary-val">' + Math.round(totalKm).toLocaleString('it-IT') + '</div></div>' +
-      '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Tempo</div><div class="rdl-summary-val">' + Math.round(totalH * 10) / 10 + 'h</div></div>' +
-      (cKm ? '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Consumo</div><div class="rdl-summary-val">' + (cL / cKm * 100).toFixed(1) + '<small> l/100</small></div></div>' : '') +
+      '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Questo mese</div><div class="rdl-summary-val">' + Math.round(meseKm).toLocaleString('it-IT') + '<small> km</small></div></div>' +
+      (cKm ? '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Consumo</div><div class="rdl-summary-val">' + (cL / cKm * 100).toFixed(1) + '<small> l/100</small></div></div>'
+           : '<div class="rdl-summary-cell"><div class="rdl-summary-lbl">Tempo</div><div class="rdl-summary-val">' + Math.round(totalH * 10) / 10 + 'h</div></div>') +
     '</div>';
+
+    // record personali (solo uscite registrate con Ride)
+    var rides = all.filter(function(r) { return !r.source; });
+    var top = function(k) { return rides.filter(function(r) { return r[k] > 0; }).sort(function(a, b) { return b[k] - a[k]; })[0]; };
+    var lunga = top('distanceKm'), veloce = top('maxKmh'), salita = top('salita');
+    var piega = rides.filter(function(r) { return r.vehicleType === 'moto' && (r.leanSx || r.leanDx); }).sort(function(a, b) { return Math.max(b.leanSx || 0, b.leanDx || 0) - Math.max(a.leanSx || 0, a.leanDx || 0); })[0];
+    var glat = rides.filter(function(r) { return r.vehicleType !== 'moto' && r.gLat > 0; }).sort(function(a, b) { return b.gLat - a.gLat; })[0];
+    var passi = {}; rides.forEach(function(r) { (r.passi || []).forEach(function(n) { passi[n] = 1; }); });
+    var recs = (lunga ? rec('Uscita più lunga', lunga.distanceKm.toFixed(0) + ' km', fmtDate(lunga.startTs)) : '') +
+      (veloce ? rec('Velocità max', Math.round(veloce.maxKmh) + ' km/h', fmtDate(veloce.startTs)) : '') +
+      (piega ? rec('Piega max', Math.max(piega.leanSx || 0, piega.leanDx || 0) + '°', fmtDate(piega.startTs)) : '') +
+      (glat ? rec('G laterale max', glat.gLat.toFixed(2), fmtDate(glat.startTs)) : '') +
+      (salita ? rec('Più dislivello', salita.salita.toLocaleString('it-IT') + ' m', fmtDate(salita.startTs)) : '') +
+      (Object.keys(passi).length ? rec('Passi scalati', Object.keys(passi).length, Object.keys(passi).slice(0, 3).join(', ') + (Object.keys(passi).length > 3 ? '…' : '')) : '');
+    if (recs) html += '<details class="rdl-recs" open><summary>Record</summary><div class="rdl-recs-grid">' + recs + '</div></details>';
 
     var sorted = all.slice().sort(function(a, b) { return (b.startTs || 0) - (a.startTs || 0); });
     html += sorted.map(function(r) {
-      var title = r.title || ((r.source ? 'Viaggio ' : 'Ride ') + fmtDate(r.startTs));
+      var title = r.title || ((r.source ? 'Viaggio ' : r.laps ? 'Pista ' : 'Ride ') + fmtDate(r.startTs));
       var color = r.vehicleType === 'moto' ? '#ff5a28' : '#5b9bd5';
       var third = r.consumo != null ? '<span class="rdl-card-stat-lbl">CONS</span>' + r.consumo.toFixed(1) + ' l/100' :
+        r.laps ? '<span class="rdl-card-stat-lbl">BEST</span>' + window.hubRideAnalisi.fmtLap(Math.min.apply(null, r.laps)) :
         r.maxKmh ? '<span class="rdl-card-stat-lbl">MAX</span>' + Math.round(r.maxKmh) + ' km/h' : '';
-      return '<div class="rdl-card" data-id="' + r.id + '">' +
+      return '<div class="rdl-card" data-id="' + r.id + '" role="button" tabindex="0">' +
         '<div class="rdl-card-map">' + trackSVG(r.points, 70, 70, color) + '</div>' +
         '<div class="rdl-card-info">' +
           '<div class="rdl-card-title">' + escSafe(title) + '</div>' +
           '<div class="rdl-card-veh">' + escSafe(r.vehicleName || '—') + ' · ' + fmtDate(r.startTs) + (r.source === 'timeline' ? ' · Google Maps' : r.source === 'import' ? ' · importato' : '') + '</div>' +
           '<div class="rdl-card-stats">' +
             '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DIST</span>' + (r.distanceKm || 0).toFixed(1) + ' km</span>' +
-            (r.elapsedMs ? '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DUR</span>' + fmtDuration(r.elapsedMs) + '</span>' : '') +
+            ((r.movingMs || r.elapsedMs) ? '<span class="rdl-card-stat"><span class="rdl-card-stat-lbl">DUR</span>' + fmtDuration(r.movingMs || r.elapsedMs) + '</span>' : '') +
             (third ? '<span class="rdl-card-stat">' + third + '</span>' : '') +
           '</div>' +
+          (r.passi && r.passi.length ? '<div class="rdl-card-passi">⛰ ' + escSafe(r.passi.join(' · ')) + '</div>' : '') +
         '</div>' +
       '</div>';
     }).join('');
@@ -160,40 +191,63 @@
 
   /* ── Detail ──────────────────────────────────────────────────── */
   function openDetail(rideId) {
+    injectRideLogUI();
     var r = loadAll().find(function(x) { return x.id === rideId; });
     if (!r) return;
+    var RA = window.hubRideAnalisi;
     var card = document.getElementById('rdl-detail-card');
-    var title = r.title || ('Ride ' + fmtDate(r.startTs));
+    var title = r.title || ((r.source ? 'Viaggio ' : r.laps ? 'Pista ' : 'Ride ') + fmtDate(r.startTs));
     var color = r.vehicleType === 'moto' ? '#ff5a28' : '#5b9bd5';
+    var cellD = function(l, v, wide) { return '<div class="rdl-detail-cell"' + (wide ? ' style="grid-column:1/-1"' : '') + '><div class="rdl-detail-cell-lbl">' + l + '</div><div class="rdl-detail-cell-val">' + v + '</div></div>'; };
+    // per le uscite vecchie i dati mancanti si calcolano dalla traccia salvata
+    var pts = r.points || [], cv = (r.leanSx == null && r.gLat == null && pts.length > 2 && !r.source) ? RA.curve(pts) : { leanSx: r.leanSx, leanDx: r.leanDx, gLat: r.gLat };
+    var costo = r.consumo != null ? null : RA.costo(r.vehicleId, r.distanceKm);
+    var hasMap = pts.length >= 2 && typeof L !== 'undefined';
+    var bst = r.laps && r.laps.length ? Math.min.apply(null, r.laps) : null;
+    var prof = !r.source ? RA.profiloSVG(pts, 600, 90) : '';
+    var mov = r.movingMs || r.elapsedMs || 0;
     card.innerHTML =
       '<div class="rdl-detail-hdr">' +
         '<h3>' + escSafe(title) + '</h3>' +
         '<small>' + escSafe(r.vehicleName || '—') + ' · ' + fmtDate(r.startTs) + '</small>' +
       '</div>' +
       '<div class="rdl-detail-body">' +
-        '<div class="rdl-detail-map">' + trackSVG(r.points, 600, 200, color) + '</div>' +
+        (hasMap ? '<div class="rdl-detail-map rdl-detail-lmap" id="rdl-lmap"></div><div class="rda-legend"><span style="--c:#3fbf7f">&lt;50</span><span style="--c:#e8c547">50-90</span><span style="--c:#ff8a3d">90-130</span><span style="--c:#e5484d">130+ km/h</span></div>'
+                : '<div class="rdl-detail-map">' + trackSVG(pts, 600, 200, color) + '</div>') +
+        (prof ? '<div class="rda-prof-wrap">' + prof + '<div class="rda-prof-lbl"><span class="sp">— velocità</span>' + (r.salita != null ? '<span class="al">▲ quota</span>' : '') + '</div></div>' : '') +
         '<div class="rdl-rename-row">' +
-          '<input type="text" id="rdl-rename" maxlength="60" placeholder="Titolo (es. Stelvio con Marco)" value="' + escSafe(r.title || '') + '">' +
+          '<input type="text" id="rdl-rename" maxlength="60" placeholder="Titolo (es. Stelvio con Marco)" value="' + escSafe(r.title || '') + '" aria-label="Titolo dell\'uscita">' +
           '<button class="rdl-act-export" onclick="rideLogRename(\'' + r.id + '\')">Salva</button>' +
         '</div>' +
         '<div class="rdl-detail-grid">' +
-          '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Distanza</div><div class="rdl-detail-cell-val">' + (r.distanceKm || 0).toFixed(2) + ' km</div></div>' +
-          '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Durata</div><div class="rdl-detail-cell-val">' + fmtDuration(r.elapsedMs || 0) + '</div></div>' +
-          '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità media</div><div class="rdl-detail-cell-val">' + (r.avgKmh || 0).toFixed(1) + ' km/h</div></div>' +
-          (r.consumo != null
-            ? '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Consumo</div><div class="rdl-detail-cell-val">' + r.consumo.toFixed(1) + ' l/100 km' + (r.litri ? ' · ' + r.litri.toFixed(2) + ' l' : '') + '</div></div>'
-            : '<div class="rdl-detail-cell"><div class="rdl-detail-cell-lbl">Velocità max</div><div class="rdl-detail-cell-val">' + (r.maxKmh ? Math.round(r.maxKmh) + ' km/h' : '—') + '</div></div>') +
-          (r.from || r.to ? '<div class="rdl-detail-cell" style="grid-column:1/-1"><div class="rdl-detail-cell-lbl">Percorso</div><div class="rdl-detail-cell-val">' + escSafe((r.from || '?') + ' → ' + (r.to || '?')) + '</div></div>' : '') +
+          cellD('Distanza', (r.distanceKm || 0).toFixed(1) + ' km') +
+          cellD(r.movingMs ? 'In movimento' : 'Durata', fmtDuration(mov) + (r.movingMs && r.elapsedMs > r.movingMs + 60000 ? ' <small>/ ' + fmtDuration(r.elapsedMs) + ' tot</small>' : '')) +
+          cellD('Media', (r.avgKmh || 0).toFixed(1) + ' km/h') +
+          (r.consumo != null ? cellD('Consumo', r.consumo.toFixed(1) + ' l/100 km' + (r.litri ? ' · ' + r.litri.toFixed(1) + ' l' : '')) : cellD('Velocità max', r.maxKmh ? Math.round(r.maxKmh) + ' km/h' : '—')) +
+          (r.salita != null ? cellD('Dislivello', '▲ ' + r.salita.toLocaleString('it-IT') + ' m · ▼ ' + (r.discesa || 0).toLocaleString('it-IT') + ' m') : '') +
+          (r.altMax != null ? cellD('Quota max', r.altMax.toLocaleString('it-IT') + ' m') : '') +
+          (r.vehicleType === 'moto' && (cv.leanSx || cv.leanDx) ? cellD('Piega max', '◀ ' + (cv.leanSx || 0) + '° · ' + (cv.leanDx || 0) + '° ▶') : '') +
+          (r.vehicleType !== 'moto' && cv.gLat ? cellD('G laterale max', cv.gLat.toFixed(2) + ' g') : '') +
+          (costo ? cellD('Carburante', '≈ ' + costo.eur.toFixed(2).replace('.', ',') + ' € · ' + costo.litri.toFixed(1).replace('.', ',') + ' l') : '') +
+          (r.from || r.to ? cellD('Percorso', escSafe((r.from || '?') + ' → ' + (r.to || '?')), true) : '') +
+          (r.passi && r.passi.length ? cellD('Passi', escSafe(r.passi.join(' · ')), true) : '') +
         '</div>' +
+        (r.laps && r.laps.length ? '<div class="rdl-laps"><div class="rdl-detail-cell-lbl">Giri · migliore ' + RA.fmtLap(bst) + '</div>' +
+          r.laps.map(function(l, i) { return '<span class="' + (l === bst ? 'best' : '') + '">' + (i + 1) + '. ' + RA.fmtLap(l) + (l !== bst ? ' <i>+' + ((l - bst) / 1000).toFixed(2) + '</i>' : '') + '</span>'; }).join('') + '</div>' : '') +
+        ((cv.leanSx || cv.leanDx || cv.gLat) ? '<p class="rdl-note">' + (r.vehicleType === 'moto' ? 'Piega' : 'G laterale') + ' calcolata da velocità e raggio delle curve sulla traccia GPS: è un valore teorico, utile per confrontare le uscite tra loro.</p>' : '') +
+        (costo ? '<p class="rdl-note">Carburante stimato con ' + costo.cons.toFixed(1).replace('.', ',') + ' l/100 km a ' + costo.prezzo.toFixed(3).replace('.', ',') + ' €/l (' + escSafe(costo.src) + ').</p>' : '') +
       '</div>' +
       '<div class="rdl-detail-actions">' +
         '<button class="rdl-act-close" onclick="closeRideLogDetail()">Chiudi</button>' +
-        '<button class="rdl-act-export" onclick="rideLogExportGPX(\'' + r.id + '\')">⬇ GPX</button>' +
+        (pts.length ? '<button class="rdl-act-export" onclick="rideLogExportGPX(\'' + r.id + '\')">⬇ GPX</button>' : '') +
         '<button class="rdl-act-del" onclick="rideLogDelete(\'' + r.id + '\')">🗑 Elimina</button>' +
       '</div>';
     document.getElementById('rdl-detail').classList.add('visible');
+    if (_dmap) { try { _dmap.remove(); } catch (e) {} _dmap = null; }
+    if (hasMap) setTimeout(function() { _dmap = RA.mappa(document.getElementById('rdl-lmap'), pts); }, 30);
     if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
   }
+  window.hubRideLogOpen = openDetail;
 
   window.rideLogRename = function(id) {
     var input = document.getElementById('rdl-rename');
@@ -220,7 +274,7 @@
     if (!r || !r.points || r.points.length === 0) { alert('Nessun punto GPS.'); return; }
     var trkpts = r.points.map(function(p) {
       var t = new Date(p.ts).toISOString();
-      return '    <trkpt lat="' + p.lat + '" lon="' + p.lng + '"><time>' + t + '</time></trkpt>';
+      return '    <trkpt lat="' + p.lat + '" lon="' + p.lng + '">' + (p.a != null ? '<ele>' + p.a + '</ele>' : '') + '<time>' + t + '</time></trkpt>';
     }).join('\n');
     var name = r.title || ('Ride ' + fmtDate(r.startTs));
     var gpx = '<?xml version="1.0" encoding="UTF-8"?>\n' +
@@ -262,6 +316,10 @@
     document.addEventListener('click', function(ev) {
       var card = ev.target.closest('#rdl-body .rdl-card');
       if (card) openDetail(card.dataset.id);
+    });
+    document.addEventListener('keydown', function(ev) {
+      var card = ev.target.closest && ev.target.closest('#rdl-body .rdl-card');
+      if (card && (ev.key === 'Enter' || ev.key === ' ')) { ev.preventDefault(); openDetail(card.dataset.id); }
     });
   });
 })();
