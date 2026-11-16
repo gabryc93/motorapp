@@ -1,0 +1,271 @@
+{
+ "_meta": {
+  "version": 1,
+  "last_updated": "2026-04-30T07:51:08.340288Z",
+  "total_vehicles": 2975,
+  "description": "AutoDiagnosi — Database completo 1.544 veicoli. Generato offline, zero costi API.",
+  "extras": {
+   "obd_codes": 146,
+   "tyre_pressures": 266,
+   "oil_quantities": 36,
+   "maintenance": 1544,
+   "specs": 2188,
+   "moto": 334
+  },
+  "consistency_check": "Eseguito: dist corretta su 407 maint + 613 problemi",
+  "consistency_v2": "Fix v2 verificato online: 312 maint + 181 problemi",
+  "total_moto": 334,
+  "cleaned": {
+   "alimentazione corretta in Diesel": 177,
+   "elettriche con cambio manuale corrette": 45,
+   "Nissan e-Power corrette in Ibrido": 4,
+   "alimentazione corretta in Elettrico": 17,
+   "coppia rimossa (calcolata, non reale)": 2183,
+   "motori rimossi da serie sbagliate": 1,
+   "da verificare: ibrido in serie vecchia": 1
+  },
+  "split": true
+ },
+ "brands": {
+  "Alfa Romeo": {
+   "file": "alfa-romeo.json",
+   "motori": 88,
+   "kb": 677
+  },
+  "Aprilia": {
+   "file": "aprilia.json",
+   "motori": 18,
+   "kb": 126
+  },
+  "Audi": {
+   "file": "audi.json",
+   "motori": 170,
+   "kb": 1250
+  },
+  "BMW": {
+   "file": "bmw.json",
+   "motori": 250,
+   "kb": 1797
+  },
+  "BMW Motorrad": {
+   "file": "bmw-motorrad.json",
+   "motori": 36,
+   "kb": 261
+  },
+  "Benelli": {
+   "file": "benelli.json",
+   "motori": 10,
+   "kb": 71
+  },
+  "Citroën": {
+   "file": "citroen.json",
+   "motori": 84,
+   "kb": 583
+  },
+  "Cupra": {
+   "file": "cupra.json",
+   "motori": 14,
+   "kb": 80
+  },
+  "Dacia": {
+   "file": "dacia.json",
+   "motori": 49,
+   "kb": 318
+  },
+  "Ducati": {
+   "file": "ducati.json",
+   "motori": 39,
+   "kb": 301
+  },
+  "Fiat": {
+   "file": "fiat.json",
+   "motori": 94,
+   "kb": 688
+  },
+  "Ford": {
+   "file": "ford.json",
+   "motori": 116,
+   "kb": 808
+  },
+  "Harley-Davidson": {
+   "file": "harley-davidson.json",
+   "motori": 14,
+   "kb": 109
+  },
+  "Honda": {
+   "file": "honda.json",
+   "motori": 74,
+   "kb": 540
+  },
+  "Hyundai": {
+   "file": "hyundai.json",
+   "motori": 89,
+   "kb": 609
+  },
+  "Jeep": {
+   "file": "jeep.json",
+   "motori": 47,
+   "kb": 358
+  },
+  "KTM": {
+   "file": "ktm.json",
+   "motori": 19,
+   "kb": 142
+  },
+  "Kawasaki": {
+   "file": "kawasaki.json",
+   "motori": 24,
+   "kb": 171
+  },
+  "Kia": {
+   "file": "kia.json",
+   "motori": 82,
+   "kb": 562
+  },
+  "Land Rover": {
+   "file": "land-rover.json",
+   "motori": 39,
+   "kb": 338
+  },
+  "Lexus": {
+   "file": "lexus.json",
+   "motori": 27,
+   "kb": 158
+  },
+  "MV Agusta": {
+   "file": "mv-agusta.json",
+   "motori": 10,
+   "kb": 72
+  },
+  "Maserati": {
+   "file": "maserati.json",
+   "motori": 13,
+   "kb": 75
+  },
+  "Mazda": {
+   "file": "mazda.json",
+   "motori": 39,
+   "kb": 320
+  },
+  "Mercedes-Benz": {
+   "file": "mercedes-benz.json",
+   "motori": 173,
+   "kb": 1284
+  },
+  "Mini": {
+   "file": "mini.json",
+   "motori": 33,
+   "kb": 281
+  },
+  "Mitsubishi": {
+   "file": "mitsubishi.json",
+   "motori": 38,
+   "kb": 292
+  },
+  "Moto Guzzi": {
+   "file": "moto-guzzi.json",
+   "motori": 13,
+   "kb": 90
+  },
+  "Moto Morini": {
+   "file": "moto-morini.json",
+   "motori": 4,
+   "kb": 28
+  },
+  "Nissan": {
+   "file": "nissan.json",
+   "motori": 78,
+   "kb": 554
+  },
+  "Opel": {
+   "file": "opel.json",
+   "motori": 131,
+   "kb": 938
+  },
+  "Peugeot": {
+   "file": "peugeot.json",
+   "motori": 105,
+   "kb": 726
+  },
+  "Piaggio": {
+   "file": "piaggio.json",
+   "motori": 14,
+   "kb": 85
+  },
+  "Porsche": {
+   "file": "porsche.json",
+   "motori": 50,
+   "kb": 431
+  },
+  "Renault": {
+   "file": "renault.json",
+   "motori": 113,
+   "kb": 779
+  },
+  "Royal Enfield": {
+   "file": "royal-enfield.json",
+   "motori": 8,
+   "kb": 56
+  },
+  "SEAT": {
+   "file": "seat.json",
+   "motori": 70,
+   "kb": 521
+  },
+  "Skoda": {
+   "file": "skoda.json",
+   "motori": 134,
+   "kb": 924
+  },
+  "Subaru": {
+   "file": "subaru.json",
+   "motori": 49,
+   "kb": 388
+  },
+  "Suzuki": {
+   "file": "suzuki.json",
+   "motori": 38,
+   "kb": 299
+  },
+  "Tesla": {
+   "file": "tesla.json",
+   "motori": 23,
+   "kb": 134
+  },
+  "Toyota": {
+   "file": "toyota.json",
+   "motori": 104,
+   "kb": 735
+  },
+  "Triumph": {
+   "file": "triumph.json",
+   "motori": 27,
+   "kb": 193
+  },
+  "Vespa": {
+   "file": "vespa.json",
+   "motori": 7,
+   "kb": 49
+  },
+  "Voge": {
+   "file": "voge.json",
+   "motori": 4,
+   "kb": 28
+  },
+  "Volkswagen": {
+   "file": "volkswagen.json",
+   "motori": 186,
+   "kb": 1328
+  },
+  "Volvo": {
+   "file": "volvo.json",
+   "motori": 91,
+   "kb": 657
+  },
+  "Yamaha": {
+   "file": "yamaha.json",
+   "motori": 37,
+   "kb": 257
+  }
+ }
+}

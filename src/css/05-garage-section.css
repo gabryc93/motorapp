@@ -1601,3 +1601,60 @@
   position: relative;
   letter-spacing: .04em;
 }
+
+/* ── Motorsport: schede cliccabili, dettaglio gara, risultati ─── */
+button.ms-card { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; appearance: none; -webkit-appearance: none; }
+button.ms-card:hover { border-color: rgba(232,80,80,.45); }
+button.ms-card:focus-visible { outline: 2px solid #ff8a82; outline-offset: 2px; }
+.ms-card.past { opacity: .78; }
+.ms-card.past .ms-card-countdown-val { color: #5fc58f; }
+.ms-card-hint { font-family: 'DM Mono', monospace; font-size: .54rem; color: var(--t3); margin-left: auto; align-self: center; white-space: nowrap; }
+.ms-src { font-family: 'DM Mono', monospace; font-size: .58rem; color: var(--t3); margin: -4px 0 10px; line-height: 1.5; }
+.ms-detail { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 2; }
+.ms-detail.visible { display: flex; }
+.ms-detail .ms-hdr h2 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.ms-cls .ms-fbtn.on { color: #fff; border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.08); }
+.ms-res { width: 100%; border-collapse: collapse; font-family: 'DM Mono', monospace; font-size: .68rem; margin-top: 4px; }
+.ms-res th { text-align: left; font-weight: 400; font-size: .52rem; letter-spacing: .1em; text-transform: uppercase; color: var(--t3); padding: 6px 6px 8px; border-bottom: 1px solid var(--brd); }
+.ms-res td { padding: 9px 6px; border-bottom: 1px solid rgba(255,255,255,.05); vertical-align: middle; font-variant-numeric: tabular-nums; }
+.ms-res td.pos { width: 34px; color: var(--t2); font-weight: 600; }
+.ms-res td b { display: block; font: 600 .82rem 'DM Sans', sans-serif; color: var(--t1); }
+.ms-res td small { display: block; font-size: .58rem; color: var(--t3); margin-top: 2px; }
+.ms-res td.tm { text-align: right; color: var(--t2); white-space: nowrap; }
+.ms-res td.pt { text-align: right; width: 34px; color: var(--t1); font-weight: 600; }
+.ms-res th:nth-child(3), .ms-res th:nth-child(4) { text-align: right; }
+.ms-res tr.pod1 td.pos { color: #f2c94c; }
+.ms-res tr.pod2 td.pos { color: #c9d1d9; }
+.ms-res tr.pod3 td.pos { color: #d39a6a; }
+.ms-res tr.out td { opacity: .55; }
+.ms-fl { font-size: .7rem; }
+.ms-podium { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; align-items: end; margin: 2px 0 14px; }
+.ms-pod { background: var(--surf); border: 1px solid var(--brd); border-radius: 10px; padding: 10px 8px; text-align: center; min-width: 0; }
+.ms-pod span { display: block; font: 700 1.3rem 'Fraunces', Georgia, serif; line-height: 1; margin-bottom: 6px; }
+.ms-pod b { display: block; font: 600 .8rem 'DM Sans', sans-serif; color: var(--t1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-pod small { display: block; font: 400 .55rem 'DM Mono', monospace; color: var(--t3); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-pod.p1 { padding-top: 18px; border-color: rgba(242,201,76,.45); background: linear-gradient(180deg, rgba(242,201,76,.12), transparent); }
+.ms-pod.p1 span { color: #f2c94c; }
+.ms-pod.p2 span { color: #c9d1d9; }
+.ms-pod.p3 span { color: #d39a6a; }
+.ms-sched { background: var(--surf); border: 1px solid var(--brd); border-radius: 12px; overflow: hidden; }
+.ms-sess { display: flex; justify-content: space-between; gap: 10px; padding: 11px 14px; border-top: 1px solid var(--brd); font-family: 'DM Mono', monospace; font-size: .7rem; }
+.ms-sess:first-child { border-top: 0; }
+.ms-sess span { color: var(--t2); }
+.ms-sess b { color: var(--t1); font-weight: 500; text-align: right; }
+.ms-sess.race { background: rgba(232,80,80,.1); }
+.ms-sess.race span, .ms-sess.race b { color: #ffb4b4; }
+.ms-note { font-family: 'DM Mono', monospace; font-size: .58rem; color: var(--t3); margin: 10px 2px; line-height: 1.5; }
+.ms-link { color: #ff8a82; display: inline-block; margin-top: 8px; }
+#ms-overlay .gar-close { white-space: nowrap; flex-shrink: 0; }
+a.ms-card { text-decoration: none; color: inherit; }
+.ms-star { background: none; border: 0; color: var(--t3); font-size: .9rem; padding: 0 2px; cursor: pointer; vertical-align: baseline; }
+.ms-star.on { color: #f2c94c; }
+.ms-res tr.fav td { background: rgba(242,201,76,.07); }
+.ms-res tr.fav td b { color: #f2c94c; }
+.ms-myfav { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 12px; scrollbar-width: none; }
+.ms-myfav div { flex-shrink: 0; background: rgba(242,201,76,.08); border: 1px solid rgba(242,201,76,.35); border-radius: 10px; padding: 8px 12px; min-width: 96px; }
+.ms-myfav span { font: 700 1.1rem 'Fraunces', Georgia, serif; color: #f2c94c; margin-right: 6px; }
+.ms-myfav b { font: 600 .8rem 'DM Sans', sans-serif; color: var(--t1); }
+.ms-myfav small { display: block; font: 400 .58rem 'DM Mono', monospace; color: var(--t3); margin-top: 2px; }
+.ms-ics { width: 100%; margin-top: 10px; background: rgba(232,80,80,.1); border: 1px solid rgba(232,80,80,.4); color: #ffb4b4; border-radius: 10px; padding: 11px; font: 500 .72rem 'DM Mono', monospace; cursor: pointer; }

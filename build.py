@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """AutoHub build — assembla src/ in un unico index.html.
 
-Uso:  python build.py            (genera index.html)
+Uso:  python build.py            (genera index.html e sw.js)
       python build.py --check    (controlla soltanto, non scrive)
+      python build.py --test     (genera e lancia i test automatici in tests/)
 
 Cosa fa:
   1. unisce src/css/*.css (in ordine alfabetico) dentro <style>
@@ -72,7 +73,22 @@ def main():
         print("OK (solo controllo): %d CSS, %d JS" % (len(css_files), len(used)))
         return
     (ROOT / "index.html").write_text(html, encoding="utf-8", newline="")
+    # Service worker: stesso numero di build della pagina, così ogni pubblicazione aggiorna la cache
+    sw = SRC / "sw.js"
+    if sw.exists():
+        (ROOT / "sw.js").write_text(read(sw).replace("__BUILD__", stamp), encoding="utf-8", newline="")
     print("OK index.html  %d KB  build %s  (%d CSS, %d JS)" % (len(html.encode("utf-8")) // 1024, stamp, len(css_files), len(used)))
+
+def run_tests():
+    """python build.py --test : build + test automatici nel browser (serve Node e `npm install` in tests/)."""
+    tests = ROOT / "tests"
+    node = shutil.which("node")
+    if not node or not (tests / "node_modules").exists():
+        print("Test saltati: installa Node.js e poi, nella cartella tests, esegui  npm install  e  npx playwright install chromium")
+        return 0
+    return subprocess.run([node, str(tests / "run.js")], cwd=str(ROOT)).returncode
 
 if __name__ == "__main__":
     main()
+    if "--test" in sys.argv:
+        sys.exit(run_tests())

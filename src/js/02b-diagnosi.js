@@ -171,14 +171,9 @@ async function avviaDiagnosi() {
     + '<span class="vtag">' + anno + '</span>'
     + '<span class="vtag">' + motore + '</span>';
 
-  var DB_URL = './db.json';
   try {
-    if (!window._vdb) {
-      setLoadingMsg('Carico database…');
-      var dbRes = await fetch(DB_URL, { cache: 'default' });
-      if (!dbRes.ok) throw new Error('Database non raggiungibile (HTTP ' + dbRes.status + ')');
-      window._vdb = await dbRes.json();
-    }
+    if (!window.hubVDB.has(marca)) setLoadingMsg('Carico i dati ' + marca + '…');
+    await window.hubVDB.ensure([marca]);
     var dbKey = marca + '||' + modello + '||' + anno + '||' + motore;
     var entry = window._vdb && window._vdb.vehicles && window._vdb.vehicles[dbKey];
     if (!entry) { setLoading(false); showNotInDB(marca, modello, anno, motore); return; }
@@ -653,11 +648,14 @@ function cmpSelectMarca(side, marca) {
     });
   }
 }
-function avviaConfronto() {
+async function avviaConfronto() {
   var kA = document.getElementById('cmp-combo-a').value;
   var kB = document.getElementById('cmp-combo-b').value;
   if (!kA || !kB) { alert('Seleziona entrambi i veicoli.'); return; }
   if (kA === kB)  { alert('Seleziona due veicoli diversi.'); return; }
+  // Prima il confronto funzionava solo se il database era già stato caricato da un'analisi
+  try { await window.hubVDB.ensure([kA.split('||')[0], kB.split('||')[0]]); }
+  catch (e) { alert('Database veicoli non raggiungibile: ' + e.message); return; }
   var db = window._vdb || {};
   var dA = db.vehicles && db.vehicles[kA];
   var dB = db.vehicles && db.vehicles[kB];
@@ -754,11 +752,13 @@ function remSelectMarca(marca) {
     });
   }
 }
-function calcolaPromemoria() {
+async function calcolaPromemoria() {
   var key = document.getElementById('sel-rem-combo').value;
   var kmS = document.getElementById('km-input').value;
   if (!key)   { alert('Seleziona un veicolo.'); return; }
   if (!kmS || isNaN(parseInt(kmS))) { alert('Inserisci il chilometraggio attuale.'); return; }
+  try { await window.hubVDB.ensure([key.split('||')[0]]); }
+  catch (e) { alert('Database veicoli non raggiungibile: ' + e.message); return; }
   var km = parseInt(kmS);
   var db = window._vdb || {};
   var maint = db.maintenance && db.maintenance[key];

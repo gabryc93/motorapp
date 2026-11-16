@@ -6,6 +6,141 @@
    ═══════════════════════════════════════════════════════════════════ */
 (function() {
   // Data locale YYYY-MM-DD (toISOString() usa UTC: tra mezzanotte e le 2 restituiva ieri)
+  // db.json: circa 190 motori diesel (BMW 118d, Multijet, D-4D…) sono segnati "Benzina".
+  // Si corregge l'alimentazione al caricamento, guardando il nome del motore,
+  // così Diagnosi, Garage e Usato (Area B!) usano il dato giusto.
+  var DIESEL_RE = /multijet|\bmjet\b|\bmjt\b|\bjtdm?\b|\btdi\b|\bcdti?\b|\bhdi\b|bluehdi|\bdci\b|tdci|\bcrdi\b|d-?4d|\bdiesel\b|\b\d{3}d\b|\b\d\.\dd\b|\bsd4\b|\bd[345]\b|i-dtec|\bdtec\b|ecoblue|bluetec|\bxdi\b|skyactiv-d|\btdv[68]\b|\bsdv[68]\b/i;
+  window.hubIsDieselName = function(m) { return DIESEL_RE.test(String(m || '')); };
+  window.hubFixVDB = function(db) {
+    if (!db || !db.specs || db._alimFixed) return db;
+    var n = 0;
+    Object.keys(db.specs).forEach(function(k) {
+      var sp = db.specs[k], mot = k.split('||')[3] || '', a = String(sp.alimentazione || '');
+      if (DIESEL_RE.test(mot) && !/diesel/i.test(a)) {
+        sp.alimentazione = /ibrid|hev|mhev/i.test(a + ' ' + mot) ? 'Diesel mild hybrid' : 'Diesel';
+        n++;
+      }
+    });
+    db._alimFixed = n;
+    return db;
+  };
+
+  /* ── Database veicoli diviso per marca (db/index.json + db/<marca>.json) ──
+     hubVDB.ensure(['Fiat', …]) scarica solo le marche richieste e le unisce in
+     window._vdb = { _meta, vehicles, specs, maintenance }. Se db/ non c'è,
+     ripiega sul vecchio db.json intero. */
+  window.hubVDB = (function() {
+    var index = null, loaded = {}, inflight = {}, full = false;
+    function base() {
+      if (!window._vdb) window._vdb = { _meta: {}, vehicles: {}, specs: {}, maintenance: {} };
+      return window._vdb;
+    }
+    function merge(part) {
+      var db = base();
+      ['vehicles', 'specs', 'maintenance'].forEach(function(k) {
+        var src = part[k] || {};
+        for (var key in src) db[k][key] = src[key];
+      });
+      if (part._meta) db._meta = part._meta;
+      window.hubFixVDB(db);
+      db._alimFixed = false;   // le marche aggiunte dopo vanno ricontrollate
+    }
+    function getJSON(url) {
+      return fetch(url, { cache: 'default' }).then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status + ' su ' + url);
+        return r.json();
+      });
+    }
+    function loadIndex() {
+      if (index) return Promise.resolve(index);
+      if (inflight._index) return inflight._index;
+      inflight._index = getJSON('./db/index.json').then(function(j) {
+        index = j; base()._meta = j._meta || {}; return j;
+      }, function(e) { delete inflight._index; throw e; });
+      return inflight._index;
+    }
+    function loadFull() {
+      if (full) return Promise.resolve(base());
+      if (inflight._full) return inflight._full;
+      inflight._full = getJSON('./db.json').then(function(j) { merge(j); full = true; return base(); },
+        function(e) { delete inflight._full; throw e; });
+      return inflight._full;
+    }
+    function ensure(marche) {
+      marche = (marche || []).filter(function(m, i, a) { return m && a.indexOf(m) === i; });
+      if (full) return Promise.resolve(base());
+      return loadIndex().then(function(ix) {
+        return Promise.all(marche.map(function(m) {
+          var b = ix.brands && ix.brands[m];
+          if (!b || loaded[m]) return null;
+          if (!inflight[m]) inflight[m] = getJSON('./db/' + b.file).then(function(part) {
+            merge(part); loaded[m] = true; delete inflight[m];
+          }, function(e) { delete inflight[m]; throw e; });
+          return inflight[m];
+        }));
+      }, function() { return loadFull(); }).then(function() { return base(); });
+    }
+    return {
+      ensure: ensure,
+      has: function(m) { return full || !!loaded[m]; },
+      brands: function() { return index ? Object.keys(index.brands || {}) : null; }
+    };
+  })();
+
+  /* ── IndexedDB condiviso (foto veicoli + documenti manutenzione) ──
+     Prima Garage apriva la versione 1 e Manutenzione la 2: dopo il primo documento
+     il Garage andava in errore, e se il Garage era aperto la Manutenzione restava bloccata. */
+  var _idbP = null;
+  window.hubIDB = function() {
+    if (_idbP) return _idbP;
+    _idbP = new Promise(function(resolve, reject) {
+      if (!('indexedDB' in window)) { reject(new Error('IndexedDB non supportato')); return; }
+      var req = indexedDB.open('autohub_v1', 2);
+      req.onupgradeneeded = function(ev) {
+        var db = ev.target.result;
+        if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('maintdocs')) db.createObjectStore('maintdocs', { keyPath: 'id' });
+      };
+      req.onsuccess = function() {
+        var db = req.result;
+        db.onversionchange = function() { db.close(); _idbP = null; };
+        resolve(db);
+      };
+      req.onerror = function() { _idbP = null; reject(req.error); };
+      req.onblocked = function() { console.warn('[AutoHub] IndexedDB bloccato da un\'altra scheda aperta'); };
+    });
+    return _idbP;
+  };
+
+  /* ── Calendario (.ics): funziona con Calendario iPhone, Google, Outlook ──
+     ev: { uid, title, desc, date:'YYYY-MM-DD' (giornata intera) | start/end ISO, alarms:[minuti prima] } */
+  window.hubICS = function(events, filename) {
+    function esc(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/[,;]/g, function(c) { return '\\' + c; }); }
+    function utc(d) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+    function day(s) { return s.replace(/-/g, ''); }
+    function nextDay(s) { var d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() + 1); return window.hubToday(d).replace(/-/g, ''); }
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//AutoHub//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+    var stamp = utc(new Date());
+    events.forEach(function(e) {
+      L.push('BEGIN:VEVENT', 'UID:' + e.uid + '@autohub', 'DTSTAMP:' + stamp, 'SUMMARY:' + esc(e.title));
+      if (e.date) L.push('DTSTART;VALUE=DATE:' + day(e.date), 'DTEND;VALUE=DATE:' + nextDay(e.date));
+      else { L.push('DTSTART:' + utc(new Date(e.start)), 'DTEND:' + utc(new Date(e.end || new Date(new Date(e.start).getTime() + 3600000)))); }
+      if (e.desc) L.push('DESCRIPTION:' + esc(e.desc));
+      if (e.location) L.push('LOCATION:' + esc(e.location));
+      (e.alarms || []).forEach(function(m) { L.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + esc(e.title), 'TRIGGER:-PT' + m + 'M', 'END:VALARM'); });
+      L.push('END:VEVENT');
+    });
+    L.push('END:VCALENDAR');
+    // righe max 75 ottetti (RFC 5545): si spezzano le lunghe
+    var text = L.map(function(l) { var out = ''; while (l.length > 73) { out += l.slice(0, 73) + '\r\n '; l = l.slice(73); } return out + l; }).join('\r\n') + '\r\n';
+    var blob = new Blob([text], { type: 'text/calendar;charset=utf-8' });
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = filename || 'autohub.ics';
+    document.body.appendChild(a); a.click();
+    setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 200);
+    return text;
+  };
+
   window.hubToday = function(d) {
     d = d || new Date();
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -97,32 +232,7 @@
     hubMore(true);
   };
 
-  /* ── Ripristino backup (file prodotto da "Esporta backup") ────── */
-  var BACKUP_KEYS = ['hub_garage_v1','hub_active_vehicle_v1','hub_refuels_v1','hub_maint_v1','hub_rides_v1',
-                     'hub_perf_best_v1','hub_usato_v1','opf_favs','opf_hidden_cards','opf_cmp_liters',
-                     'ad_rem','autodiagnosi_diary'];
-  window.hubImportData = function(input) {
-    var file = input && input.files && input.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function() {
-      try {
-        var dump = JSON.parse(reader.result);
-        var keys = BACKUP_KEYS.filter(function(k) { return dump[k] !== undefined && dump[k] !== null && dump[k] !== '<corrupted>'; });
-        if (!keys.length) { alert('Questo file non contiene dati AutoHub.'); return; }
-        if (!confirm('Ripristino il backup del ' + String(dump._exportedAt || '').slice(0, 10) + '?\n\nI dati attuali di questo dispositivo verranno sostituiti (' + keys.length + ' archivi). Foto e documenti non sono inclusi nel backup.')) return;
-        keys.forEach(function(k) {
-          localStorage.setItem(k, typeof dump[k] === 'string' ? dump[k] : JSON.stringify(dump[k]));
-        });
-        location.reload();
-      } catch (e) {
-        alert('File non valido: ' + e.message);
-      } finally {
-        input.value = '';
-      }
-    };
-    reader.readAsText(file);
-  };
+  /* (backup e ripristino: vedi 15-backup.js) */
 
 
   /* ── Auto-select fuel from active garage vehicle ─────────── */
@@ -325,36 +435,7 @@
     };
   }
   /* ── Export full app data as downloadable JSON ──────────────── */
-  window.hubExportData = function() {
-    try {
-      var keys = BACKUP_KEYS;
-      var dump = {
-        _exportedAt: new Date().toISOString(),
-        _appBuild: (document.querySelector('meta[name="autohub-build"]') || {}).content || 'unknown',
-        _note: 'Backup AutoHub. Foto veicoli e documenti fattura NON sono inclusi (storage IndexedDB binario).'
-      };
-      keys.forEach(function(k) {
-        try {
-          var v = localStorage.getItem(k);
-          dump[k] = v ? JSON.parse(v) : null;
-        } catch(e) { dump[k] = localStorage.getItem(k); }   // valore non-JSON (es. id del veicolo attivo): si salva com'è
-      });
-      var blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      var dateStr = window.hubToday();
-      a.href = url;
-      a.download = 'autohub-export-' + dateStr + '.json';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(function() {
-        try { URL.revokeObjectURL(url); } catch(_) {}
-        a.remove();
-      }, 100);
-    } catch (e) {
-      alert('Esportazione fallita: ' + (e.message || e));
-    }
-  };
+
 
   document.addEventListener('DOMContentLoaded', _hubAutoLocalize);
 

@@ -515,6 +515,67 @@ function scheduleWeatherUpdate(lat, lng) {
   _weatherTimer = setTimeout(() => updateMapWeather(lat, lng), 600);
 }
 
+/* ── Sfondo della mappa ────────────────────────────────────────────
+   1. OpenFreeMap "dark" (vettoriale, gratis, senza chiave né registrazione).
+      Serve MapLibre: viene scaricato solo la prima volta che apri la mappa.
+   2. Se MapLibre non parte (niente WebGL o CDN irraggiungibile): OpenStreetMap
+      scurito via CSS. Nota: OSM blocca le pagine aperte da file:// (manca il Referer).
+   CARTO dal 25/09/2026 vuole una chiave: se ne hai una, mettila in CARTO_KEY
+   e viene usata al posto di tutto il resto. */
+const CARTO_KEY = '';
+const OFM_STYLE = 'https://tiles.openfreemap.org/styles/dark';
+const MAPLIBRE_JS  = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js';
+const MAPLIBRE_CSS = 'https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css';
+const MAPLIBRE_LEAFLET_JS = 'https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js';
+const OSM_ATTR = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+
+function loadAsset(url, isCss) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector((isCss ? 'link[href="' : 'script[src="') + url + '"]')) return resolve();
+    const el = document.createElement(isCss ? 'link' : 'script');
+    if (isCss) { el.rel = 'stylesheet'; el.href = url; } else { el.src = url; }
+    el.onload = () => resolve();
+    el.onerror = () => reject(new Error('non caricato: ' + url));
+    document.head.appendChild(el);
+  });
+}
+
+function hasWebGL() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(c.getContext('webgl2') || c.getContext('webgl'));
+  } catch (e) { return false; }
+}
+
+function addOsmFallback(map) {
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: OSM_ATTR, maxZoom: 19, className: 'tiles-dark',
+  }).addTo(map);
+}
+
+async function addBasemap(map) {
+  if (CARTO_KEY) {
+    L.tileLayer('https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=' + encodeURIComponent(CARTO_KEY), {
+      attribution: OSM_ATTR + ' © <a href="https://carto.com/attributions">CARTO</a>', maxZoom: 19,
+    }).addTo(map);
+    return;
+  }
+  if (!hasWebGL()) { addOsmFallback(map); return; }
+  try {
+    await Promise.all([loadAsset(MAPLIBRE_CSS, true), loadAsset(MAPLIBRE_JS)]);
+    await loadAsset(MAPLIBRE_LEAFLET_JS);
+    if (!L.maplibreGL) throw new Error('plugin MapLibre-Leaflet assente');
+    L.maplibreGL({ style: OFM_STYLE }).addTo(map);
+    // Attribuzione obbligatoria per OpenFreeMap: il plugin non la passa a Leaflet, la aggiungiamo noi
+    if (map.attributionControl) {
+      map.attributionControl.addAttribution('<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> ' + OSM_ATTR);
+    }
+  } catch (e) {
+    console.warn('[mappa] OpenFreeMap non disponibile, uso OSM:', e.message);
+    addOsmFallback(map);
+  }
+}
+
 function initMap() {
   _map = L.map('leaflet-map', {
     center: [41.9, 12.5], // Centro Italia
@@ -522,11 +583,7 @@ function initMap() {
     zoomControl: true,
   });
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap © CartoDB',
-    subdomains: 'abcd',
-    maxZoom: 19,
-  }).addTo(_map);
+  addBasemap(_map);
 
   _map.on('moveend', () => {
     const z = _map.getZoom();
@@ -1274,6 +1331,8 @@ function openFavView() {
   document.getElementById('fav-view').classList.add('visible');
   document.body.style.overflow = 'hidden';
   renderFavView();
+  // aggiorna i prezzi dei preferiti (al massimo ogni 2 ore) e ridisegna quando arrivano
+  if (window.hubFavRefresh) window.hubFavRefresh(false).catch(function() {});
 }
 
 function closeFavView() {
@@ -1332,6 +1391,7 @@ function renderFavView() {
       + '<div class="st-price">' + s.prezzo.toFixed(3) + '</div>'
       + '<div class="st-unit">\u20AC/' + unit + '</div>'
       + '<div class="st-dt">' + (s.dtComu||'') + '</div>'
+      + (window.hubFavHistory ? window.hubFavHistory(s) : '')
       + '<button class="fav-btn" data-cmp="' + esc(s.id) + '" style="background:rgba(91,155,213,.15);color:var(--bl);border-color:rgba(91,155,213,.3);margin-top:3px;font-size:0.6rem;padding:2px 7px">\u2696 Confronta</button>'
       + '<button class="fav-btn on" data-rm="' + esc(s.id) + '" style="margin-top:3px">\u2715</button>'
       + '</div>';
@@ -1366,6 +1426,8 @@ function openFavEdit(id) {
   _editingFavId = id;
   document.getElementById('fov-name').value = fav.customName || '';
   document.getElementById('fov-note').value = fav.note || '';
+  document.getElementById('fov-alert').value = typeof fav.alert === 'number' ? fav.alert.toFixed(3) : '';
+  document.getElementById('fov-alert-now').textContent = 'Prezzo attuale: ' + (typeof fav.prezzo === 'number' ? fav.prezzo.toFixed(3) + ' €' : 'n.d.');
   document.getElementById('fov-overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 }
@@ -1381,6 +1443,7 @@ function saveFavEdit() {
     favs[i].customName = document.getElementById('fov-name').value.trim();
     favs[i].note = document.getElementById('fov-note').value.trim();
     saveFavs(favs);
+    if (window.hubFavAlertSet) window.hubFavAlertSet(_editingFavId, document.getElementById('fov-alert').value);
   }
   closeFavEdit();
   renderFavView();

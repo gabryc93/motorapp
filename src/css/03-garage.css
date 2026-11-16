@@ -1009,3 +1009,52 @@
   color: #fff;
 }
 .gar-save:hover { filter: brightness(1.1); }
+
+/* ── Selettore veicolo (tendine + elenco modelli) ─────────────── */
+.gar-pick { margin-bottom: 6px; }
+.gar-pick .gar-field select { font-size: 16px; min-height: 42px; }   /* 16px: niente zoom automatico su iPhone */
+.gar-pick select:disabled { opacity: .45; }
+.gar-pick-h {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+  font-family: 'DM Mono', monospace; font-size: .58rem; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .1em; margin: 4px 0 7px;
+}
+.gar-pick-h span { text-transform: none; letter-spacing: .02em; }
+.gar-pick-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 7px;
+  max-height: 46vh; overflow-y: auto; padding: 2px; margin-bottom: 10px;
+}
+.gar-pick-card {
+  appearance: none; -webkit-appearance: none; text-align: left;
+  background: var(--surf2); border: 1px solid var(--brd); border-radius: 9px;
+  padding: 10px 11px; cursor: pointer; color: var(--t1);
+  display: flex; flex-direction: column; gap: 3px; min-height: 66px;
+  transition: border-color .12s ease, background .12s ease;
+}
+.gar-pick-card b { font: 600 .84rem 'DM Sans', sans-serif; line-height: 1.2; }
+.gar-pick-card small { font: 400 .6rem 'DM Mono', monospace; color: var(--t3); }
+.gar-pick-card:hover, .gar-pick-card:focus-visible { border-color: #b392f0; background: rgba(179,146,240,.08); outline: none; }
+.gar-pick-sel {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: rgba(179,146,240,.08); border: 1px solid rgba(179,146,240,.3);
+  border-radius: 9px; padding: 9px 12px; margin-bottom: 12px;
+}
+.gar-pick-sel small { display: block; font: 400 .55rem 'DM Mono', monospace; color: var(--t3); text-transform: uppercase; letter-spacing: .1em; }
+.gar-pick-sel b { font: 600 .92rem 'DM Sans', sans-serif; color: var(--t1); }
+.gar-pick-link {
+  appearance: none; -webkit-appearance: none; background: none; border: 0; padding: 6px 0;
+  color: #b392f0; font: 500 .7rem 'DM Mono', monospace; cursor: pointer; text-align: left;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.gar-pick-spec { background: var(--surf2); border: 1px solid var(--brd); border-radius: 9px; padding: 11px 12px; margin-bottom: 8px; }
+.gar-pick-spec-h { font: 400 .56rem 'DM Mono', monospace; color: #b392f0; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+.gar-pick-spec dl { display: grid; grid-template-columns: auto 1fr; gap: 5px 12px; font-size: .74rem; }
+.gar-pick-spec dt { color: var(--t3); font-family: 'DM Mono', monospace; font-size: .64rem; padding-top: 1px; }
+.gar-pick-spec dd { color: var(--t1); font-family: 'DM Mono', monospace; font-size: .7rem; }
+.gar-pick-spec p { font-size: .66rem; color: var(--t3); line-height: 1.45; margin-top: 8px; }
+.gar-manual { border-left: 2px solid rgba(179,146,240,.35); padding-left: 10px; margin-bottom: 6px; }
+.gar-pick .gar-field select {
+  appearance: none; -webkit-appearance: none; padding-right: 34px; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23b392f0' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+}

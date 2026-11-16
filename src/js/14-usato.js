@@ -105,13 +105,15 @@
   }
 
   /* ── Database veicoli (lo stesso db.json della Diagnosi) ─────────── */
+  // Scarica solo le marche degli annunci salvati (db diviso per marca)
   function loadDB() {
-    if (db || dbState === 'loading') return;
-    if (window._vdb) { db = window._vdb; dbState = 'ok'; return; }
+    var marche = S.ads.map(function(a) { return a.marca; }).filter(Boolean);
+    var missing = marche.filter(function(m) { return !window.hubVDB.has(m); });
+    if (!missing.length) { if (window._vdb) { db = window._vdb; dbState = 'ok'; } return; }
+    if (dbState === 'loading') return;
     dbState = 'loading';
-    fetch('./db.json', { cache: 'default' })
-      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(function(j) { window._vdb = db = j; dbState = 'ok'; render(); })
+    window.hubVDB.ensure(missing)
+      .then(function(j) { db = j; dbState = 'ok'; render(); if (openId && $('us-detail').classList.contains('visible')) renderDetail(); })
       .catch(function() { dbState = 'err'; render(); });
   }
   function catalog(tipo) {
@@ -229,6 +231,7 @@
     if (num(q.prezzoMax)) p.push('priceto=' + num(q.prezzoMax));
     if (num(q.kmMax)) p.push('kmto=' + num(q.kmMax));
     if (num(q.annoMin)) p.push('fregfrom=' + num(q.annoMin));
+    if (num(q.annoMax)) p.push('fregto=' + num(q.annoMax));
     if (fuel) p.push('fuel=' + fuel);
     if (q.cambio === 'Manuale') p.push('gear=M');
     if (q.cambio === 'Automatico') p.push('gear=A');
@@ -238,6 +241,7 @@
     if (nome) sp.push('q=' + encodeURIComponent(nome));
     if (num(q.prezzoMax)) sp.push('pe=' + num(q.prezzoMax));
     if (num(q.annoMin)) sp.push('ys=' + num(q.annoMin));
+    if (num(q.annoMax)) sp.push('ye=' + num(q.annoMax));
     out.push(['Subito', 'https://www.subito.it/annunci-italia/vendita/' + (moto ? 'moto-e-scooter' : 'auto') + '/?' + sp.join('&')]);
     var wp = ['keywords=' + encodeURIComponent(nome || (moto ? 'moto' : 'auto')), 'category_ids=' + (moto ? '14000' : '100')];
     if (num(q.prezzoMax)) wp.push('max_sale_price=' + num(q.prezzoMax));
@@ -377,7 +381,7 @@
       return html + '<div class="us-empty"><b>Nessuna ricerca salvata</b>Salva i criteri una volta: da qui apri la stessa ricerca su AutoScout24, Subito e Wallapop con i filtri già impostati, oppure la passi a Claude che cerca e valuta gli annunci per te.</div>';
     }
     html += S.searches.map(function(q) {
-      var crit = [num(q.prezzoMax) ? 'fino a ' + eur(num(q.prezzoMax)) : '', num(q.kmMax) ? 'max ' + kmf(num(q.kmMax)) : '', num(q.annoMin) ? 'dal ' + num(q.annoMin) : '', q.alim, q.cambio, q.zip ? 'CAP ' + q.zip + ' +' + (num(q.raggio) || 50) + ' km' : ''].filter(Boolean);
+      var crit = [num(q.prezzoMax) ? 'fino a ' + eur(num(q.prezzoMax)) : '', num(q.kmMax) ? 'max ' + kmf(num(q.kmMax)) : '', num(q.annoMin) ? 'dal ' + num(q.annoMin) : '', num(q.annoMax) ? 'al ' + num(q.annoMax) : '', q.alim, q.cambio, q.zip ? 'CAP ' + q.zip + ' +' + (num(q.raggio) || 50) + ' km' : ''].filter(Boolean);
       return '<article class="us-card"><header><h3>' + h(((q.marca || '') + ' ' + (q.modello || '')).trim() || (q.tipo === 'moto' ? 'Qualsiasi moto' : 'Qualsiasi auto')) + '</h3>' +
         '<button class="us-x" data-act="del-search" data-id="' + q.id + '" aria-label="Elimina ricerca">×</button></header>' +
         '<div class="us-meta">' + (crit.length ? crit.map(h).join(' · ') : 'Nessun filtro') + '</div>' +
@@ -542,6 +546,7 @@
         fld('Prezzo massimo (€)', '<input inputmode="numeric" data-f="prezzoMax" value="' + h(d.prezzoMax) + '">') +
         fld('Km massimi', '<input inputmode="numeric" data-f="kmMax" value="' + h(d.kmMax) + '">') +
         fld('Anno minimo', '<input inputmode="numeric" maxlength="4" data-f="annoMin" value="' + h(d.annoMin) + '">') +
+        fld('Anno massimo', '<input inputmode="numeric" maxlength="4" data-f="annoMax" value="' + h(d.annoMax) + '">') +
         fld('Alimentazione', '<select data-f="alim">' + opts(ALIM, d.alim, 'Qualsiasi') + '</select>') +
         fld('Cambio', '<select data-f="cambio">' + opts(['Manuale', 'Automatico'], d.cambio, 'Qualsiasi') + '</select>') +
         fld('CAP', '<input inputmode="numeric" maxlength="5" data-f="zip" value="' + h(d.zip) + '">') +
@@ -600,7 +605,7 @@
       case 'do-import':
         try {
           var n = importaJSON($('us-import-text').value);
-          show('us-import', false); view = 'annunci'; filtroStato = 'attivi'; render();
+          show('us-import', false); view = 'annunci'; filtroStato = 'attivi'; loadDB(); render();
           toast(n ? n + ' annunci importati' : 'Nessun annuncio nuovo da importare');
         } catch (err) { toast('Import non riuscito: ' + err.message); }
         break;
@@ -628,6 +633,7 @@
       if (d.id) { S.ads = S.ads.map(function(x) { return x.id === d.id ? d : x; }); }
       else { d.id = uid(); d.createdAt = Date.now(); S.ads.unshift(d); }
       save(); show('us-edit', false); editing = null;
+      loadDB();
       if (openId === d.id && $('us-detail').classList.contains('visible')) renderDetail();
       view = 'annunci'; render();
     } else {
@@ -685,5 +691,38 @@
     loadDB();
     render();
   };
+  /* ── Dal Garage: "Cerca simili" e "Quanto vale" ──────────────────── */
+  window.hubUsatoFromVehicle = function(id, mode) {
+    var v = (window.hubGarage && window.hubGarage.list ? window.hubGarage.list() : JSON.parse(localStorage.getItem('hub_garage_v1') || '[]'))
+      .filter(function(x) { return x.id === id; })[0];
+    if (!v) return;
+    S = load();
+    var anno = parseInt(v.annoImm, 10) || (/(\d{4})/.exec(v.anno || '') || [])[1];
+    anno = anno ? parseInt(anno, 10) : null;
+    var sp = window._vdb && window._vdb.specs && window._vdb.specs[[v.marca, v.modello, v.anno, v.motore].join('||')];
+    var al = sp && sp.alimentazione ? (/diesel/i.test(sp.alimentazione) ? 'Diesel' : /plug/i.test(sp.alimentazione) ? 'Plug-in' : /ibrid/i.test(sp.alimentazione) ? 'Ibrida' : /elettr/i.test(sp.alimentazione) ? 'Elettrica' : /gpl/i.test(sp.alimentazione) ? 'GPL' : 'Benzina') : '';
+    var nome = (v.marca + ' ' + v.modello + (v.motore ? ' ' + v.motore : '')).trim();
+    var q = { id: uid(), tipo: v.type === 'moto' ? 'moto' : 'auto', marca: v.marca, modello: v.modello, alim: al,
+      zip: S.settings.zip, raggio: S.settings.raggio || 100 };
+    if (mode === 'valore') {
+      // Annunci dello stesso modello, ±1 anno e km simili: la base per stimare quanto vale
+      if (anno) { q.annoMin = anno - 1; q.annoMax = anno + 1; }
+      if (v.kmTot) q.kmMax = Math.round((v.kmTot + 30000) / 10000) * 10000;
+      q.note = 'Stima del valore della mia ' + nome + (anno ? ' del ' + anno : '') + (v.kmTot ? ', ' + v.kmTot.toLocaleString('it-IT') + ' km' : '') + '.';
+      var r = ['Usa la skill cerca-usato per dirmi quanto vale la mia auto e a che prezzo metterla in vendita.',
+        'Veicolo: ' + nome + (anno ? ', immatricolata nel ' + anno : '') + (v.kmTot ? ', ' + v.kmTot + ' km' : '') + (al ? ', ' + al : '') + (v.targa ? ', targa ' + v.targa : '') + '.',
+        'Zona: ' + (S.settings.zip ? 'CAP ' + S.settings.zip : 'Milano') + '.',
+        'Confronta con almeno 5 annunci simili (stesso modello, ±1 anno, km comparabili) e dammi: valore da privato, valore in permuta, prezzo di pubblicazione consigliato.'];
+      copy(r.join('\n'), 'Richiesta "quanto vale" copiata: incollala a Claude');
+    } else {
+      if (anno) q.annoMin = anno - 2;
+      q.note = 'Simile alla mia ' + nome + '.';
+    }
+    S.searches.unshift(q); save();
+    view = 'ricerche';
+    window.hubGo('usato');
+    if (mode !== 'valore') toast('Ricerca creata: apri i portali qui sotto');
+  };
+
   window.hubUsato = { data: function() { return S; }, _calc: { passaggio: passaggio, costoVero: costoVero, areaB: areaB, giudizio: giudizio, portali: portali, importaJSON: importaJSON } };
 })();

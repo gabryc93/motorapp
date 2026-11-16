@@ -49,21 +49,7 @@
   var DB_NAME = 'autohub_v1';
   var DOCS_STORE = 'maintdocs';
   var _docDbPromise = null;
-  function openDocDB() {
-    if (_docDbPromise) return _docDbPromise;
-    _docDbPromise = new Promise(function(resolve, reject) {
-      if (!('indexedDB' in window)) { reject(new Error('IndexedDB not supported')); return; }
-      var req = indexedDB.open(DB_NAME, 2);
-      req.onupgradeneeded = function(ev) {
-        var db = ev.target.result;
-        if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath: 'id' });
-        if (!db.objectStoreNames.contains(DOCS_STORE)) db.createObjectStore(DOCS_STORE, { keyPath: 'id' });
-      };
-      req.onsuccess = function() { resolve(req.result); };
-      req.onerror = function() { reject(req.error); };
-    });
-    return _docDbPromise;
-  }
+  function openDocDB() { return window.hubIDB(); }   // apertura condivisa (versione 2)
   async function dbPutDoc(docId, dataUrl, mime) {
     var db = await openDocDB();
     return new Promise(function(resolve, reject) {

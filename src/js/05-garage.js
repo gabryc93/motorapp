@@ -442,22 +442,7 @@
   var DB_NAME = 'autohub_v1';
   var STORE = 'photos';
   var _dbPromise = null;
-  function openPhotoDB() {
-    if (_dbPromise) return _dbPromise;
-    _dbPromise = new Promise(function(resolve, reject) {
-      if (!('indexedDB' in window)) { reject(new Error('IndexedDB not supported')); return; }
-      var req = indexedDB.open(DB_NAME, 1);
-      req.onupgradeneeded = function(ev) {
-        var db = ev.target.result;
-        if (!db.objectStoreNames.contains(STORE)) {
-          db.createObjectStore(STORE, { keyPath: 'id' });
-        }
-      };
-      req.onsuccess = function() { resolve(req.result); };
-      req.onerror = function() { reject(req.error); };
-    });
-    return _dbPromise;
-  }
+  function openPhotoDB() { return window.hubIDB(); }   // apertura condivisa (versione 2)
   async function dbPutPhoto(vehicleId, blobUrl) {
     var db = await openPhotoDB();
     return new Promise(function(resolve, reject) {
@@ -583,6 +568,7 @@
       '<div class="gar-body">' +
         '<button class="gar-add-btn" onclick="openGarageEdit(null)">+ Aggiungi veicolo</button>' +
         '<div id="gar-list"></div>' +
+        '<button type="button" class="gar-autofill-btn" onclick="garCalendar()">📅 Tutte le scadenze nel calendario (.ics)</button>' +
       '</div>';
     document.body.appendChild(ov);
 
@@ -607,8 +593,8 @@
           '<button type="button" data-type="auto" onclick="_garSetType(\'auto\')">🚗 Auto</button>' +
           '<button type="button" data-type="moto" onclick="_garSetType(\'moto\')">🏍 Moto</button>' +
         '</div>' +
-        '<div class="gar-field"><label>Nome personalizzato</label>' +
-          '<input type="text" id="gar-f-name" placeholder="Es. Giulia di tutti i giorni" maxlength="40"></div>' +
+        '<div id="gar-pick" class="gar-pick"></div>' +
+        '<div id="gar-manual" class="gar-manual" style="display:none">' +
         '<div class="gar-row2">' +
           '<div class="gar-field"><label>Marca</label>' +
             '<input type="text" id="gar-f-marca" placeholder="Alfa Romeo" maxlength="30"></div>' +
@@ -619,12 +605,17 @@
           '<div class="gar-field"><label>Anno</label>' +
             '<input type="text" id="gar-f-anno" placeholder="2020" maxlength="4"></div>' +
           '<div class="gar-field"><label>Motore</label>' +
-            '<input type="text" id="gar-f-motore" placeholder="2.2 JTDM" maxlength="30"></div>' +
+            '<input type="text" id="gar-f-motore" placeholder="2.2 JTDM" maxlength="40"></div>' +
         '</div>' +
-        '<div class="gar-field"><label>Serbatoio lt</label>' +
-          '<input type="number" id="gar-f-tank" min="1" max="200" step="1" placeholder="Auto 50 · Moto 18"></div>' +
         '<button type="button" class="gar-autofill-btn" onclick="_garAutoFill()">🔍 Cerca specs nel database</button>' +
         '<div id="gar-autofill-result" class="gar-autofill-result"></div>' +
+        '</div>' +
+        '<div class="gar-row2">' +
+          '<div class="gar-field"><label>Nome personalizzato</label>' +
+            '<input type="text" id="gar-f-name" placeholder="Es. Giulia di tutti i giorni" maxlength="40"></div>' +
+          '<div class="gar-field"><label>Serbatoio lt</label>' +
+            '<input type="number" id="gar-f-tank" min="1" max="200" step="1" placeholder="Auto 50 · Moto 18"></div>' +
+        '</div>' +
         '<div class="gar-row2">' +
           '<div class="gar-field"><label>Targa</label>' +
             '<input type="text" id="gar-f-targa" placeholder="AB123CD" maxlength="10" style="text-transform:uppercase"></div>' +
@@ -847,7 +838,8 @@
     document.getElementById('gar-f-codici').value   = nt.codici || '';
     document.getElementById('gar-f-settings').value = nt.settings || '';
     document.getElementById('gar-f-note').value    = v ? (v.note || '') : '';
-    _garSetType(v ? (v.type || 'auto') : 'auto');
+    _garSetType(v ? (v.type || 'auto') : 'auto', true);
+    initPick(v);
 
     // Load existing photo into preview
     var prev = document.getElementById('gar-photo-preview');
@@ -869,12 +861,266 @@
     document.getElementById('gar-edit').classList.remove('visible');
   };
 
-  window._garSetType = function(t) {
+  window._garSetType = function(t, silent) {
+    var changed = _editingType !== t;
     _editingType = t;
     document.querySelectorAll('#gar-edit .gar-typebar button').forEach(function(b) {
       b.classList.toggle('on', b.dataset.type === t);
     });
+    // Cambio auto↔moto dall'utente: si riparte dalla marca
+    if (!silent && changed) {
+      _pick = { marca: '', modello: '', gen: '', anno: '', motore: '' };
+      syncFields();
+      renderPick();
+    }
   };
+
+  /* ════════════════════════════════════════════════════════════════
+     SELETTORE VEICOLO — tendine a cascata dal catalogo della Diagnosi
+     Marca → elenco modelli (schede) → serie/anni → anno → motorizzazione.
+     Le scelte vengono scritte nei campi gar-f-marca/modello/anno/motore
+     (anno = serie "2016–2019", come la Diagnosi; annoImm = anno preciso).
+     Le specifiche arrivano da db.json; senza db.json resta il vecchio
+     database interno (_hubVehicleDB).
+     ════════════════════════════════════════════════════════════════ */
+  var _pick = { marca: '', modello: '', gen: '', anno: '', motore: '' };
+  var _manual = false;
+  var _autoFilled = {};   // campi specs scritti dal selettore (si possono riscrivere)
+  var _vdbState = 'idle';
+
+  function catalogFor(type) {
+    try { return type === 'moto' ? MOTORCYCLES : VEHICLES; } catch (e) { return {}; }
+  }
+  function genYears(gen) {
+    var m = /(\d{4})\D+(\d{4})/.exec(gen || '');
+    return m ? [parseInt(m[1], 10), parseInt(m[2], 10)] : null;
+  }
+  function modelSummary(gens) {
+    var min = 9999, max = 0, n = 0;
+    Object.keys(gens).forEach(function(g) {
+      var y = genYears(g); if (y) { min = Math.min(min, y[0]); max = Math.max(max, y[1]); }
+      n += gens[g].length;
+    });
+    return { anni: min < 9999 ? min + '–' + max : '', motori: n, serie: Object.keys(gens).length };
+  }
+  function loadVDB(marca) {
+    return window.hubVDB.ensure(marca ? [marca] : []);
+  }
+  function specKey() { return [_pick.marca, _pick.modello, _pick.gen, _pick.motore].join('||'); }
+  function dbSpec() {
+    var db = window._vdb;
+    return db && db.specs ? db.specs[specKey()] || null : null;
+  }
+  function rangeMid(s) {
+    var m = /([\d.,]+)\s*[–-]\s*([\d.,]+)/.exec(String(s || ''));
+    if (m) return Math.round((parseFloat(m[1].replace(',', '.')) + parseFloat(m[2].replace(',', '.'))) / 2 * 10) / 10;
+    var n = parseFloat(String(s || '').replace(',', '.'));
+    return isFinite(n) ? n : null;
+  }
+  function mapCambio(t) {
+    t = (t || '').toLowerCase();
+    if (/dct|dsg|doppia|edc|s tronic|pdk/.test(t)) return 'dct';
+    if (/cvt|e-cvt/.test(t)) return 'cvt';
+    if (/sequenz/.test(t)) return 'sequenziale';
+    if (/auto/.test(t)) return 'automatico';
+    if (/manuale/.test(t)) return _editingType === 'moto' ? 'sequenziale' : 'manuale';
+    return '';
+  }
+  function mapTraz(t) {
+    t = (t || '').toLowerCase();
+    if (/catena/.test(t)) return 'catena';
+    if (/cardano/.test(t)) return 'cardano';
+    if (/cinghia/.test(t)) return 'cinghia';
+    if (/integrale|awd|4wd|4x4/.test(t)) return 'awd';
+    if (/posteriore|rwd/.test(t)) return 'rwd';
+    if (/anteriore|fwd/.test(t)) return 'fwd';
+    return '';
+  }
+  function cvFromName(m) { var x = /(\d{2,4})\s*cv/i.exec(m || ''); return x ? parseInt(x[1], 10) : null; }
+  function ccFromName(m) {
+    var x = /\b(\d)[.,](\d)\b/.exec(m || '');
+    return x ? parseInt(x[1] + x[2], 10) * 100 : null;
+  }
+
+  // Scrive un campo specs: riscrive solo se vuoto o scritto in precedenza dal selettore
+  function setSpec(id, val) {
+    var el = document.getElementById(id);
+    if (!el || val === null || val === undefined || val === '') return false;
+    if (el.value !== '' && !_autoFilled[id]) return false;
+    el.value = val; _autoFilled[id] = true;
+    return true;
+  }
+  function fillFromPick() {
+    var sp = dbSpec(), filled = [];
+    if (sp) {
+      if (setSpec('gar-f-cv', sp.potenza_cv)) filled.push('CV');
+      if (setSpec('gar-f-nm', sp.coppia_nm)) filled.push('Nm');
+      if (setSpec('gar-f-cc', sp.cilindrata_cc)) filled.push('cilindrata');
+      if (setSpec('gar-f-peso', sp.peso_kg)) filled.push('peso');
+      // 0-100 e velocità max nel db sono intervalli per categoria: non vanno nei campi come se fossero dati veri
+      if (setSpec('gar-f-cambio', mapCambio(sp.trasmissione))) filled.push('cambio');
+      if (setSpec('gar-f-traz', mapTraz(sp.trazione))) filled.push('trazione');
+      if (setSpec('gar-f-tank', sp.serbatoio_l)) filled.push('serbatoio');
+    } else {
+      // Senza db.json: potenza e cilindrata dal nome del motore, il resto dal database interno
+      if (setSpec('gar-f-cv', cvFromName(_pick.motore))) filled.push('CV');
+      if (setSpec('gar-f-cc', ccFromName(_pick.motore))) filled.push('cilindrata');
+      var lk = window._hubVehicleDB && window._hubVehicleDB.lookup({
+        marca: _pick.marca, modello: (window.hubModelloBase || String)(_pick.modello),
+        anno: parseInt(_pick.anno, 10) || (genYears(_pick.gen) || [])[0], type: _editingType
+      });
+      if (lk && lk.specs) {
+        if (setSpec('gar-f-cambio', lk.specs.cambio)) filled.push('cambio');
+        if (setSpec('gar-f-traz', lk.specs.trazione)) filled.push('trazione');
+      }
+    }
+    return filled;
+  }
+  function syncFields() {
+    document.getElementById('gar-f-marca').value = _pick.marca;
+    document.getElementById('gar-f-modello').value = _pick.modello;
+    document.getElementById('gar-f-anno').value = _pick.gen;
+    document.getElementById('gar-f-motore').value = _pick.motore;
+  }
+
+  function opt(v, label, sel) {
+    return '<option value="' + escSafe(v) + '"' + (v === sel ? ' selected' : '') + '>' + escSafe(label) + '</option>';
+  }
+  function renderPick() {
+    var box = document.getElementById('gar-pick');
+    if (!box) return;
+    var manualBox = document.getElementById('gar-manual');
+    if (manualBox) manualBox.style.display = _manual ? '' : 'none';
+    if (_manual) {
+      box.innerHTML = '<button type="button" class="gar-pick-link" onclick="_garPickManual(false)">← Scegli dall\'elenco</button>';
+      return;
+    }
+    var cat = catalogFor(_editingType), p = _pick, html = '';
+    var marche = Object.keys(cat).sort(function(a, b) { return a.localeCompare(b, 'it'); });
+
+    html += '<div class="gar-field"><label>1 · Marca</label><select id="gar-p-marca" onchange="_garPick(\'marca\', this.value)">' +
+      opt('', '— scegli la marca (' + marche.length + ') —', p.marca) + marche.map(function(m) { return opt(m, m, p.marca); }).join('') + '</select></div>';
+
+    if (p.marca && cat[p.marca]) {
+      var modelli = Object.keys(cat[p.marca]).sort(function(a, b) { return a.localeCompare(b, 'it'); });
+      if (!p.modello) {
+        html += '<div class="gar-pick-h">2 · Scegli il modello <span>' + modelli.length + ' modelli ' + escSafe(p.marca) + '</span></div>' +
+          '<div class="gar-pick-grid">' + modelli.map(function(m) {
+            var s = modelSummary(cat[p.marca][m]);
+            return '<button type="button" class="gar-pick-card" data-m="' + escSafe(m) + '" onclick="_garPick(\'modello\', this.dataset.m)">' +
+              '<b>' + escSafe(m) + '</b><small>' + s.anni + '</small><small>' + s.serie + (s.serie === 1 ? ' serie' : ' serie') + ' · ' + s.motori + ' motori</small></button>';
+          }).join('') + '</div>';
+      } else {
+        var gens = cat[p.marca][p.modello] || {}, genList = Object.keys(gens);
+        html += '<div class="gar-pick-sel"><div><small>Modello</small><b>' + escSafe(p.marca + ' ' + p.modello) + '</b></div>' +
+          '<button type="button" class="gar-pick-link" onclick="_garPick(\'modello\', \'\')">Cambia</button></div>';
+        html += '<div class="gar-row2">' +
+          '<div class="gar-field"><label>3 · Serie / anni</label><select id="gar-p-gen" onchange="_garPick(\'gen\', this.value)">' +
+            opt('', '— scegli —', p.gen) + genList.map(function(g) { return opt(g, g, p.gen); }).join('') + '</select></div>';
+        var yr = genYears(p.gen), years = [];
+        if (yr) for (var y = yr[1]; y >= yr[0]; y--) years.push(String(y));
+        html += '<div class="gar-field"><label>Anno immatricolazione</label><select id="gar-p-anno"' + (yr ? '' : ' disabled') + ' onchange="_garPick(\'anno\', this.value)">' +
+            opt('', yr ? '— facoltativo —' : 'prima la serie', p.anno) + years.map(function(y) { return opt(y, y, p.anno); }).join('') + '</select></div></div>';
+        var motori = p.gen && gens[p.gen] ? gens[p.gen] : [];
+        var db = window._vdb && window._vdb.specs;
+        html += '<div class="gar-field"><label>4 · Motorizzazione' + (motori.length ? ' (' + motori.length + ')' : '') + '</label><select id="gar-p-motore"' + (motori.length ? '' : ' disabled') + ' onchange="_garPick(\'motore\', this.value)">' +
+          opt('', motori.length ? '— scegli il motore —' : 'prima la serie', p.motore) + motori.map(function(m) {
+            var s = db && db[[p.marca, p.modello, p.gen, m].join('||')];
+            return opt(m, m + (s && s.alimentazione ? ' · ' + s.alimentazione.replace(/\s*\(.*\)/, '') : ''), p.motore);
+          }).join('') + '</select></div>';
+        if (p.motore) html += specCard();
+      }
+    }
+    html += '<button type="button" class="gar-pick-link" onclick="_garPickManual(true)">Il mio veicolo non è in elenco: inserisco a mano</button>';
+    box.innerHTML = html;
+  }
+  function specCard() {
+    var sp = dbSpec();
+    if (!sp) {
+      return '<div class="gar-pick-spec"><p>' + (_vdbState === 'loading' ? 'Carico la scheda tecnica…' :
+        window.hubVDB.has(_pick.marca) ? 'Nessuna scheda tecnica per questo motore: completa a mano le specifiche.' :
+        'Scheda tecnica non disponibile (dati non raggiungibili). Potenza e cilindrata ricavate dal nome del motore.') + '</p></div>';
+    }
+    var rows = [
+      ['Potenza', sp.potenza_cv ? sp.potenza_cv + ' CV · ' + sp.potenza_kw + ' kW' : ''],
+      ['Coppia', sp.coppia_nm ? sp.coppia_nm + ' Nm' : ''],
+      ['Cilindrata', sp.cilindrata_cc ? sp.cilindrata_cc + ' cc' : ''],
+      ['Alimentazione', sp.alimentazione || ''],
+      ['Cambio', sp.trasmissione || ''],
+      ['Trazione', sp.trazione || ''],
+      ['0-100 km/h', sp.acc_0_100_s ? sp.acc_0_100_s + ' s (stima di categoria)' : ''],
+      ['Velocità max', sp.vel_max_kmh ? sp.vel_max_kmh + ' km/h (stima di categoria)' : ''],
+      ['Consumo reale', sp.consumo_reale || ''],
+      ['Peso', sp.peso_kg ? sp.peso_kg + ' kg' : ''],
+      ['Serbatoio', sp.serbatoio_l ? sp.serbatoio_l + ' l' : ''],
+      ['Bagagliaio', sp.bagagliaio_l ? sp.bagagliaio_l + ' l' : '']
+    ].filter(function(r) { return r[1]; });
+    return '<div class="gar-pick-spec"><div class="gar-pick-spec-h">Scheda tecnica · inserita nelle specifiche</div><dl>' +
+      rows.map(function(r) { return '<dt>' + r[0] + '</dt><dd>' + escSafe(r[1]) + '</dd>'; }).join('') + '</dl>' +
+      '<p>0-100 e velocità max sono stime per categoria e non vengono inserite nelle specifiche: scrivile tu se conosci il dato. La coppia non è indicata perché nel database non era affidabile.</p></div>';
+  }
+
+  window._garPick = function(field, value) {
+    var order = ['marca', 'modello', 'gen', 'anno', 'motore'];
+    _pick[field] = value || '';
+    // Cambiare un livello azzera quelli successivi (l'anno no, se resta nella serie)
+    for (var i = order.indexOf(field) + 1; i < order.length; i++) {
+      if (order[i] === 'anno' && field === 'gen') {
+        var yr = genYears(_pick.gen), a = parseInt(_pick.anno, 10);
+        if (yr && a >= yr[0] && a <= yr[1]) continue;
+      }
+      if (field === 'anno') break;
+      _pick[order[i]] = '';
+    }
+    // serie unica: selezionata da sola
+    if (field === 'modello' && value) {
+      var gens = Object.keys((catalogFor(_editingType)[_pick.marca] || {})[value] || {});
+      if (gens.length === 1) _pick.gen = gens[0];
+    }
+    syncFields();
+    // Alla scelta della marca si scaricano i suoi dati (motori con alimentazione, schede tecniche)
+    if (field === 'marca' && value && !window.hubVDB.has(value)) {
+      _vdbState = 'loading';
+      loadVDB(value).then(function() { _vdbState = 'ok'; renderPick(); }, function() { _vdbState = 'err'; renderPick(); });
+    }
+    if (field === 'motore' && value) {
+      var filled = fillFromPick();
+      var nameEl = document.getElementById('gar-f-name');
+      if (nameEl && !nameEl.value) nameEl.placeholder = 'Es. ' + (window.hubModelloBase || String)(_pick.modello) + ' di tutti i giorni';
+      if (filled.length) {
+        var det = document.querySelector('#gar-edit details.gar-section');
+        if (det) det.open = true;
+      }
+    }
+    renderPick();
+    if (field === 'modello' && value) {
+      var g = document.getElementById('gar-p-gen');
+      if (g && !_pick.gen) g.focus();
+    }
+  };
+  window._garPickManual = function(on) {
+    _manual = !!on;
+    renderPick();
+    if (on) { var m = document.getElementById('gar-f-marca'); if (m) m.focus(); }
+  };
+  // Prepara il selettore all'apertura del form (nuovo veicolo o modifica)
+  function initPick(v) {
+    _autoFilled = {};
+    var cat = catalogFor(v ? (v.type || 'auto') : _editingType);
+    _pick = { marca: '', modello: '', gen: '', anno: v && v.annoImm ? String(v.annoImm) : '', motore: '' };
+    _manual = false;
+    if (v && v.marca) {
+      var inCat = cat[v.marca] && cat[v.marca][v.modello] && (!v.anno || cat[v.marca][v.modello][v.anno]) &&
+        (!v.motore || (cat[v.marca][v.modello][v.anno] || []).indexOf(v.motore) >= 0);
+      if (inCat) _pick = { marca: v.marca, modello: v.modello, gen: v.anno || '', anno: v.annoImm ? String(v.annoImm) : '', motore: v.motore || '' };
+      else _manual = true;
+    }
+    renderPick();
+    if (_pick.marca) loadVDB(_pick.marca).then(function() { if (document.getElementById('gar-edit').classList.contains('visible')) renderPick(); }, function() {});
+  }
+  window._garInitPick = initPick;
+  window._garPickAnnoImm = function() { return _manual ? '' : _pick.anno; };
+
 
   // Auto-fill specs from local DB. Populates ONLY empty fields; never overrides
   // anything the user has already typed.
@@ -949,7 +1195,7 @@
     var anno = document.getElementById('gar-f-anno').value.trim();
     var motore = document.getElementById('gar-f-motore').value.trim();
     if (!marca || !modello) {
-      alert('Inserisci almeno marca e modello.');
+      alert('Scegli almeno marca e modello (oppure inseriscili a mano).');
       return;
     }
     var patch = {
@@ -959,6 +1205,7 @@
       modello: modello,
       anno: anno,
       motore: motore,
+      annoImm: parseInt(window._garPickAnnoImm(), 10) || null,
       targa: document.getElementById('gar-f-targa').value.trim().toUpperCase(),
       kmTot: parseInt(document.getElementById('gar-f-km').value, 10) || 0,
       scadBollo: document.getElementById('gar-f-bollo').value || '',
@@ -1065,7 +1312,7 @@
       var isActive = v.id === activeId;
       var icon = v.type === 'moto' ? '🏍' : '🚗';
       var displayName = v.customName || (v.marca + ' ' + v.modello);
-      var spec = [v.marca, v.modello, v.anno, v.motore].filter(Boolean).join(' · ');
+      var spec = [v.marca, v.modello, v.annoImm || v.anno, v.motore].filter(Boolean).join(' · ');
       var tags = [];
       if (v.targa) tags.push(escSafe(v.targa));
       if (typeof v.kmTot === 'number' && v.kmTot > 0) tags.push(v.kmTot.toLocaleString('it-IT') + ' km');
@@ -1089,6 +1336,9 @@
           (isActive ? '' :
             '<button class="gar-veh-act" onclick="useVehicle(\'' + v.id + '\')">Usa</button>') +
           '<button class="gar-veh-act" onclick="openGarageEdit(\'' + v.id + '\')">Modifica</button>' +
+          '<button class="gar-veh-act" onclick="garCalendar(\'' + v.id + '\')" title="Scadenze nel calendario">📅 Scadenze</button>' +
+          '<button class="gar-veh-act" onclick="hubUsatoFromVehicle(\'' + v.id + '\', \'simili\')">Cerca simili</button>' +
+          '<button class="gar-veh-act" onclick="hubUsatoFromVehicle(\'' + v.id + '\', \'valore\')">Quanto vale</button>' +
           '<button class="gar-veh-act gar-veh-act-del" onclick="deleteVehicle(\'' + v.id + '\')">Elimina</button>' +
         '</div>' +
       '</div>';
@@ -1106,6 +1356,23 @@
       });
     });
   }
+
+  // Scadenze del veicolo (o di tutti) in un file calendario, con promemoria 7 giorni e 1 giorno prima
+  function scadEvents(v) {
+    var name = v.customName || (v.marca + ' ' + v.modello);
+    var items = [['scadBollo', 'Bollo'], ['scadRca', 'Assicurazione RCA'], ['scadRev', 'Revisione'], ['scadTagliando', 'Tagliando']];
+    return items.filter(function(x) { return /^\d{4}-\d{2}-\d{2}$/.test(v[x[0]] || ''); }).map(function(x) {
+      return { uid: v.id + '-' + x[0] + '-' + v[x[0]], date: v[x[0]], title: x[1] + ' · ' + name + (v.targa ? ' (' + v.targa + ')' : ''),
+        desc: 'Scadenza registrata in AutoHub.', alarms: [7 * 24 * 60, 24 * 60] };
+    });
+  }
+  window.garCalendar = function(id) {
+    var g = loadGarage(), list = id ? g.filter(function(v) { return v.id === id; }) : g;
+    var ev = [];
+    list.forEach(function(v) { ev = ev.concat(scadEvents(v)); });
+    if (!ev.length) { alert('Nessuna scadenza inserita: aggiungi le date di bollo, RCA, revisione o tagliando in Modifica.'); return; }
+    window.hubICS(ev, 'scadenze-' + (id && list[0] ? (list[0].targa || list[0].modello) : 'garage').replace(/[^\w-]+/g, '_').toLowerCase() + '.ics');
+  };
 
   function _formatScadenze(v) {
     var dates = [];
@@ -1150,7 +1417,7 @@
       return;
     }
     var name = v.customName || (v.marca + ' ' + v.modello);
-    var sub = [v.marca, v.modello, v.anno].filter(Boolean).join(' · ');
+    var sub = [v.marca, v.modello, v.annoImm || v.anno].filter(Boolean).join(' · ');
     var icon = v.type === 'moto' ? '🏍' : '🚗';
 
     // Compute kg/cv if specs present

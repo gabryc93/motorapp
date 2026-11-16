@@ -101,3 +101,19 @@
 @media (prefers-reduced-motion: reduce) {
   .hub-tabs, .hub-tab, .hub-more, .hub-more-sheet { transition: none; }
 }
+
+/* ── Foglio Backup ─────────────────────────────────────────────── */
+#hub-backup { z-index: 210; }
+.hub-bk-code { background: #1d1e24; border: 1px solid rgba(232,160,48,.35); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+.hub-bk-code small { display: block; font: 400 .6rem 'DM Mono', monospace; color: #8f8d99; margin-bottom: 6px; }
+.hub-bk-code b { font: 500 1.02rem 'DM Mono', monospace; letter-spacing: .08em; color: #e8a030; user-select: all; word-break: break-all; }
+.hub-bk-note { font: 400 .74rem 'DM Sans', sans-serif; color: #8f8d99; line-height: 1.5; margin: 8px 2px; }
+.hub-bk-msg { font: 400 .72rem 'DM Mono', monospace; color: #5fc58f; min-height: 1.2em; margin-top: 10px; }
+.hub-bk-msg.err { color: #f0655d; }
+
+/* ── Avviso nuova versione (PWA) ───────────────────────────────── */
+.hub-update { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--nav-h) + 22px + env(safe-area-inset-bottom, 0px)); z-index: 250;
+  display: flex; align-items: center; gap: 12px; width: min(440px, calc(100vw - 24px)); padding: 10px 10px 10px 14px; border-radius: 12px;
+  background: #24252d; border: 1px solid rgba(232,160,48,.45); color: #eeedf6; font: 500 .8rem 'DM Sans', sans-serif; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+.hub-update span { flex: 1; }
+.hub-update button { background: #e8a030; color: #111; border: 0; border-radius: 8px; padding: 8px 12px; font: 600 .74rem 'DM Mono', monospace; cursor: pointer; }

@@ -502,3 +502,28 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 #hub-fuel .map-weather-temp {font-family:var(--fd);font-size:1.1rem;font-weight:700;color:var(--tx);line-height:1.2}
 #hub-fuel .map-weather-desc {font-size:0.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin-top:1px}
 
+
+/* Tile OpenStreetMap scurite: solo ripiego quando OpenFreeMap/MapLibre non è disponibile */
+.leaflet-tile.tiles-dark,
+.tiles-dark .leaflet-tile {
+  filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.88) saturate(.55);
+}
+
+/* Il canvas MapLibre va sotto marker e popup di Leaflet */
+#leaflet-map .leaflet-gl-layer { z-index: 1; }
+
+/* ── Preferiti: andamento prezzo e avvisi ─────────────────────── */
+.fav-hist { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 4px; margin-top: 4px; color: var(--mut, #8f8d99); }
+.fav-spark { display: block; color: var(--am, #e8a030); }
+.fav-trend { font-family: 'DM Mono', monospace; font-size: .58rem; }
+.fav-trend.up { color: #f0655d; }
+.fav-trend.down { color: #5fc58f; }
+.fav-alert-tag { font-family: 'DM Mono', monospace; font-size: .56rem; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; padding: 1px 6px; }
+.fav-alert-tag.hit { color: #5fc58f; border-color: rgba(95,197,143,.45); }
+.hub-price-alert { display: flex; align-items: center; gap: 10px; margin: 10px 0 12px; padding: 11px 12px; border-radius: 12px; cursor: pointer;
+  background: rgba(95,197,143,.1); border: 1px solid rgba(95,197,143,.4); color: var(--txt, #eeedf6); }
+.hub-price-alert .hpa-ico { font-size: 1.2rem; }
+.hub-price-alert div { flex: 1; min-width: 0; }
+.hub-price-alert b { display: block; font: 600 .86rem 'DM Sans', sans-serif; }
+.hub-price-alert small { display: block; font: 400 .62rem 'DM Mono', monospace; color: var(--mut, #8f8d99); margin-top: 2px; }
+.hub-price-alert button { background: none; border: 0; color: var(--mut, #8f8d99); font-size: 1.2rem; cursor: pointer; padding: 0 4px; }

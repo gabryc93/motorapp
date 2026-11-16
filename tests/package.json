@@ -1,0 +1,7 @@
+{
+  "name": "autohub-tests",
+  "private": true,
+  "description": "Test automatici di AutoHub nel browser (Playwright). Uso: npm install, npx playwright install chromium, poi dalla cartella del progetto: python build.py --test",
+  "scripts": { "test": "node run.js" },
+  "devDependencies": { "playwright": "1.63.0" }
+}

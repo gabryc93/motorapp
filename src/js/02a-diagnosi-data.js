@@ -1114,7 +1114,6 @@ const VEHICLES = {
       "2012–2017": [
         "0.9 TwinAir 65cv",
         "0.9 TwinAir 85cv",
-        "1.0 Hybrid 70cv",
         "1.2 69cv",
         "1.3 MultiJet 75cv",
         "1.3 MultiJet 95cv 4x4"
