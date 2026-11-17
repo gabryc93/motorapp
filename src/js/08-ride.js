@@ -49,7 +49,7 @@
     ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Modalità Ride');
     ov.innerHTML =
       '<div class="rd-hdr"><h2>RIDE<small id="rd-veh">—</small></h2>' +
-        '<div class="rd-hdr-act"><button class="rd-close" type="button" onclick="rideHud()" title="Velocità a specchio da riflettere sul parabrezza">HUD</button>' +
+        '<div class="rd-hdr-act"><button class="rd-close" type="button" onclick="hubMusica.setup()" aria-label="Musica">🎵</button><button class="rd-close" type="button" onclick="rideHud()" title="Velocità a specchio da riflettere sul parabrezza">HUD</button>' +
         '<button class="rd-close" type="button" onclick="closeRide()">✕ Esci</button></div></div>' +
       '<div class="rd-modebar" role="tablist">' +
         '<button class="rd-mode-btn" data-mode="giro" onclick="rideSetMode(\'giro\')">Giro</button>' +
@@ -78,6 +78,7 @@
         cell('Tempo', 'rd-time', '00:00', '<span id="rd-tot">in movimento</span>') + cell('Distanza', 'rd-dist', '0.0', 'km') +
         cell('Media', 'rd-avg', '0', 'km/h') + cell('Max', 'rd-max', '0', 'km/h') +
       '</div>' +
+      '<div class="rd-np" id="rd-np" hidden aria-live="off"></div>' +
       '<div class="rd-actions" id="rd-actions"></div>' +
       '<div class="rd-perf-result" id="rd-perf-result"><div class="rd-perf-result-inner" id="rd-perf-result-inner"></div></div>';
     document.body.appendChild(ov);
@@ -469,11 +470,13 @@
     $('rd-veh').textContent = v ? vName(v) + ' · ' + (v.type === 'moto' ? 'Moto' : 'Auto') : 'Nessun veicolo attivo';
     $('rd-overlay').classList.add('visible');
     applyMode(); checkLive();
+    if (window.hubMusica) window.hubMusica.poll();
     if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
   };
   window.closeRide = function() {
     if (S.state === 'recording' || S.state === 'paused') { if (!confirm('Terminare la registrazione?')) return; rideStop(); }
     $('rd-overlay').classList.remove('visible', 'rd-hud');
+    if (window.hubRadio) window.hubRadio.stop();   // la radio vive dentro la Ride
     if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
   };
   window.rideStart = function() {

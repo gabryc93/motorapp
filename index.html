@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-11-16-1928">
+<meta name="autohub-build" content="2026-11-17-2121">
 <meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -5081,7 +5081,7 @@ button.ps-card:focus-visible, .ps-fbtn:focus-visible, .ps-seg:focus-visible, .ps
 .rd-hist-r.best { color: #c97fd4; } .rd-hist-r.nv { color: rgba(255,255,255,.35); }
 /* HUD: velocità, G-meter e dati di guida, a specchio per il parabrezza di notte */
 #rd-overlay.rd-hud { transform: scaleX(-1); justify-content: center; gap: 2vh; --hud: #7dffb0; }
-#rd-overlay.rd-hud > *:not(.rd-speedbox):not(.rd-stats) { display: none !important; }
+#rd-overlay.rd-hud > *:not(.rd-speedbox):not(.rd-stats):not(.rd-np) { display: none !important; }
 #rd-overlay.rd-hud .rd-speedbox { flex: 1 1 auto; gap: 5vw; cursor: pointer; padding: 2vh 4vw; }
 #rd-overlay.rd-hud .rd-speed-col { flex: 0 0 auto; border: 0; }
 #rd-overlay.rd-hud .rd-speed { font-size: min(30vw, 40vh); color: var(--hud); }
@@ -5101,6 +5101,59 @@ button.ps-card:focus-visible, .ps-fbtn:focus-visible, .ps-seg:focus-visible, .ps
   #rd-overlay.rd-hud .rd-speed { font-size: min(40vw, 26vh); }
   #rd-overlay.rd-hud .rd-gmeter { width: min(60vw, 30vh); height: min(60vw, 30vh); }
 }
+
+/* ── Musica (Spotify) ─────────────────────────────────────────── */
+.rd-np { display: flex; align-items: center; gap: 10px; margin: 0 12px 4px; padding: 8px 10px; border-radius: 12px; background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08); flex-shrink: 0; }
+.rd-np[hidden] { display: none !important; }
+.rd-np-art { width: 42px; height: 42px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+.rd-np-noart { display: flex; align-items: center; justify-content: center; background: rgba(30,215,96,.15); color: #1ed760; font-size: 1.2rem; }
+.rd-np-txt { flex: 1; min-width: 0; }
+.rd-np-t { font-size: .84rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rd-np-a { font-family: 'DM Mono', monospace; font-size: .62rem; color: rgba(255,255,255,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.rd-np-bar { height: 3px; background: rgba(255,255,255,.12); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.rd-np-bar i { display: block; height: 100%; background: #1ed760; }
+.rd-np.paused .rd-np-bar i { background: rgba(255,255,255,.4); }
+.rd-np-ctl { display: flex; gap: 2px; flex-shrink: 0; }
+.rd-np-ctl button { appearance: none; background: none; border: 0; color: #fff; font-size: 1.05rem; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; }
+.rd-np-ctl button:active { background: rgba(255,255,255,.12); }
+.rd-np-steps { text-align: left; font-size: .76rem; line-height: 1.55; color: rgba(255,255,255,.75); padding-left: 18px; margin: 10px 0; }
+.rd-np-steps a { color: #1ed760; }
+.rd-np-steps code { font-size: .68rem; background: rgba(255,255,255,.08); padding: 2px 5px; border-radius: 4px; word-break: break-all; }
+.rd-np-copy { appearance: none; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 5px; font-size: .6rem; padding: 2px 6px; cursor: pointer; }
+.rd-np-in { width: 100%; box-sizing: border-box; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.18); color: #fff; border-radius: 8px;
+  padding: 10px; font-family: 'DM Mono', monospace; font-size: .74rem; }
+.rd-np-ok { color: #6dd9a3; }
+#rd-perf-result-inner .rd-perf-note:empty { display: none; }
+/* nell'HUD: solo titolo e artista, grandi e in verde, senza comandi */
+#rd-overlay.rd-hud .rd-np { background: transparent; border: 0; margin: 0 3vw 2vh; justify-content: center; }
+#rd-overlay.rd-hud .rd-np-ctl, #rd-overlay.rd-hud .rd-np-art { display: none; }
+#rd-overlay.rd-hud .rd-np-txt { flex: 0 1 auto; text-align: center; max-width: 92vw; }
+#rd-overlay.rd-hud .rd-np-t { color: var(--hud); font-size: min(4.6vw, 4.4vh); }
+#rd-overlay.rd-hud .rd-np-a { color: var(--hud); opacity: .7; font-size: min(3vw, 3vh); }
+#rd-overlay.rd-hud .rd-np-bar { background: rgba(125,255,176,.18); }
+#rd-overlay.rd-hud .rd-np-bar i { background: var(--hud); }
+
+/* ── Radio ────────────────────────────────────────────────────── */
+.rd-mu-tabs { display: flex; gap: 6px; justify-content: center; margin: 4px 0 12px; }
+.rd-np-live { font-weight: 700; font-size: .55rem; color: #fff; background: #e5484d; border-radius: 3px; padding: 1px 4px; margin-right: 3px; letter-spacing: .06em; }
+.rd-ra-list { max-height: 46vh; overflow-y: auto; margin-top: 10px; text-align: left; }
+.rd-ra-h { font-family: 'DM Mono', monospace; font-size: .56rem; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.45); margin: 10px 0 4px; }
+.rd-ra-st { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,.06); border-radius: 6px; }
+.rd-ra-st.on { background: rgba(255,90,40,.14); }
+.rd-ra-st button { appearance: none; background: none; border: 0; color: #fff; cursor: pointer; padding: 0; font: inherit; }
+.rd-ra-play { position: relative; width: 36px; height: 36px; flex-shrink: 0; border-radius: 6px; overflow: hidden; background: rgba(255,255,255,.06) !important; }
+.rd-ra-play img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #fff; }
+.rd-ra-name { flex: 1; min-width: 0; text-align: left; font-size: .8rem !important; }
+.rd-ra-name small { display: block; font-family: 'DM Mono', monospace; font-size: .58rem; color: rgba(255,255,255,.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rd-ra-fav { font-size: 1.1rem !important; width: 34px; height: 34px; color: rgba(255,255,255,.4) !important; }
+.rd-ra-fav.on { color: #e8c547 !important; }
+.rd-ra-now { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: .74rem; color: #ffb199; background: rgba(255,90,40,.1);
+  border: 1px solid rgba(255,90,40,.3); border-radius: 8px; padding: 7px 10px; }
+.rd-ra-now span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rd-ra-now button { appearance: none; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px; padding: 4px 8px; font-size: .66rem; cursor: pointer; flex-shrink: 0; }
+.rd-ra-err { color: #ff8a82 !important; }
+#rd-overlay.rd-hud .rd-np-live { background: var(--hud); color: #000; }
 
 /* ═══════════════════════════════════════════════════════════════════
    MAINTENANCE — service tracker per vehicle, by km AND date
@@ -20733,7 +20786,7 @@ async function runCmp() {
     ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Modalità Ride');
     ov.innerHTML =
       '<div class="rd-hdr"><h2>RIDE<small id="rd-veh">—</small></h2>' +
-        '<div class="rd-hdr-act"><button class="rd-close" type="button" onclick="rideHud()" title="Velocità a specchio da riflettere sul parabrezza">HUD</button>' +
+        '<div class="rd-hdr-act"><button class="rd-close" type="button" onclick="hubMusica.setup()" aria-label="Musica">🎵</button><button class="rd-close" type="button" onclick="rideHud()" title="Velocità a specchio da riflettere sul parabrezza">HUD</button>' +
         '<button class="rd-close" type="button" onclick="closeRide()">✕ Esci</button></div></div>' +
       '<div class="rd-modebar" role="tablist">' +
         '<button class="rd-mode-btn" data-mode="giro" onclick="rideSetMode(\'giro\')">Giro</button>' +
@@ -20762,6 +20815,7 @@ async function runCmp() {
         cell('Tempo', 'rd-time', '00:00', '<span id="rd-tot">in movimento</span>') + cell('Distanza', 'rd-dist', '0.0', 'km') +
         cell('Media', 'rd-avg', '0', 'km/h') + cell('Max', 'rd-max', '0', 'km/h') +
       '</div>' +
+      '<div class="rd-np" id="rd-np" hidden aria-live="off"></div>' +
       '<div class="rd-actions" id="rd-actions"></div>' +
       '<div class="rd-perf-result" id="rd-perf-result"><div class="rd-perf-result-inner" id="rd-perf-result-inner"></div></div>';
     document.body.appendChild(ov);
@@ -21153,11 +21207,13 @@ async function runCmp() {
     $('rd-veh').textContent = v ? vName(v) + ' · ' + (v.type === 'moto' ? 'Moto' : 'Auto') : 'Nessun veicolo attivo';
     $('rd-overlay').classList.add('visible');
     applyMode(); checkLive();
+    if (window.hubMusica) window.hubMusica.poll();
     if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
   };
   window.closeRide = function() {
     if (S.state === 'recording' || S.state === 'paused') { if (!confirm('Terminare la registrazione?')) return; rideStop(); }
     $('rd-overlay').classList.remove('visible', 'rd-hud');
+    if (window.hubRadio) window.hubRadio.stop();   // la radio vive dentro la Ride
     if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
   };
   window.rideStart = function() {
@@ -21220,6 +21276,322 @@ async function runCmp() {
   window._rdInternals = { feed: onPosition, noGps: function(b) { noGps = b; }, state: function() { return { S: S, R: R, P: P }; }, PERF: PERF };
 
   document.addEventListener('DOMContentLoaded', function() { setTimeout(inject, 400); });
+})();
+</script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB MUSICA — brano in ascolto su Spotify nella Ride e nell'HUD
+   Spotify Web API con OAuth PKCE (nessun segreto nell'app): l'utente
+   crea una sua app su developer.spotify.com e incolla qui il Client ID.
+   Apple Music, Amazon Music e le app radio non permettono a una pagina
+   web di leggere cosa stanno suonando: non sono supportate.
+   Dati: hub_spotify_v1 { clientId, access, refresh, exp }
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  var KEY = 'hub_spotify_v1', PKCE = 'hub_spotify_pkce_v1';
+  var SCOPES = 'user-read-currently-playing user-read-playback-state user-modify-playback-state';
+  var ACC = 'https://accounts.spotify.com', API = 'https://api.spotify.com/v1';
+  function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function $(id) { return document.getElementById(id); }
+  function redirectUri() { return location.origin + location.pathname; }
+
+  var NP = null, lastPoll = 0, polling = false, noCtrl = false, errTxt = '';
+
+  /* ── PKCE ─────────────────────────────────────────────────────── */
+  function b64url(buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function verifier() { var a = new Uint8Array(48); crypto.getRandomValues(a); return b64url(a); }
+  function challenge(v) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)).then(b64url); }
+
+  function collega(clientId) {
+    clientId = String(clientId || '').trim();
+    if (!/^[0-9a-f]{32}$/i.test(clientId)) return Promise.reject(new Error('Il Client ID è di 32 caratteri (lettere a-f e numeri).'));
+    var v = verifier(), st = verifier().slice(0, 16);
+    jset(PKCE, { v: v, st: st, clientId: clientId, back: 'ride' });
+    return challenge(v).then(function(ch) {
+      location.href = ACC + '/authorize?response_type=code&client_id=' + clientId + '&scope=' + encodeURIComponent(SCOPES) +
+        '&redirect_uri=' + encodeURIComponent(redirectUri()) + '&code_challenge_method=S256&code_challenge=' + ch + '&state=' + st;
+    });
+  }
+  function token(body) {
+    return fetch(ACC + '/api/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(body).toString() })
+      .then(function(r) { return r.json().then(function(d) { if (!r.ok) throw new Error(d.error_description || d.error || 'HTTP ' + r.status); return d; }); });
+  }
+  function salva(clientId, d, old) {
+    var t = { clientId: clientId, access: d.access_token, refresh: d.refresh_token || (old && old.refresh), exp: Date.now() + (d.expires_in || 3600) * 1000 - 60000 };
+    jset(KEY, t); return t;
+  }
+  // ritorno da Spotify: ?code=…&state=…
+  function ritorno() {
+    var q = new URLSearchParams(location.search), code = q.get('code'), st = q.get('state'), err = q.get('error');
+    var P = jget(PKCE, null);
+    if (!P || !st || st !== P.st) return;
+    localStorage.removeItem(PKCE);
+    history.replaceState(null, '', location.pathname + location.hash);
+    var riapri = function() { if (P.back === 'ride' && window.openRide) setTimeout(function() { window.openRide(); }, 600); };
+    if (err || !code) { errTxt = err === 'access_denied' ? 'Collegamento annullato.' : 'Spotify ha risposto: ' + (err || 'errore'); riapri(); return; }
+    token({ grant_type: 'authorization_code', code: code, redirect_uri: redirectUri(), client_id: P.clientId, code_verifier: P.v })
+      .then(function(d) { salva(P.clientId, d); errTxt = ''; poll(true); })
+      .catch(function(e) { errTxt = 'Collegamento non riuscito: ' + e.message; })
+      .then(riapri);
+  }
+  function accesso() {
+    var t = jget(KEY, null);
+    if (!t || !t.access) return Promise.resolve(null);
+    if (Date.now() < t.exp) return Promise.resolve(t);
+    if (!t.refresh) return Promise.resolve(null);
+    return token({ grant_type: 'refresh_token', refresh_token: t.refresh, client_id: t.clientId }).then(function(d) { return salva(t.clientId, d, t); })
+      .catch(function(e) { if (/invalid_grant|revoked/i.test(e.message)) { localStorage.removeItem(KEY); errTxt = 'Collegamento Spotify scaduto: ricollegalo.'; } return null; });
+  }
+  function api(method, path) {
+    return accesso().then(function(t) {
+      if (!t) return { status: 0 };
+      return fetch(API + path, { method: method, headers: { Authorization: 'Bearer ' + t.access } }).then(function(r) {
+        if (r.status === 401) { var x = jget(KEY, {}); x.exp = 0; jset(KEY, x); }
+        if (r.status === 204 || method !== 'GET') return { status: r.status };
+        return r.json().then(function(d) { return { status: r.status, d: d }; }, function() { return { status: r.status }; });
+      });
+    });
+  }
+
+  /* ── Brano in ascolto ────────────────────────────────────────── */
+  function poll(force) {
+    if (polling || !jget(KEY, null)) return Promise.resolve();
+    var ov = $('rd-overlay');
+    if (!force && (!ov || !ov.classList.contains('visible') || document.visibilityState !== 'visible')) return Promise.resolve();
+    polling = true; lastPoll = Date.now();
+    return api('GET', '/me/player/currently-playing?additional_types=episode').then(function(r) {
+      if (r.status === 200 && r.d && r.d.item) {
+        var it = r.d.item, img = (it.album && it.album.images) || it.images || (it.show && it.show.images) || [];
+        NP = { title: it.name, artist: it.artists ? it.artists.map(function(a) { return a.name; }).join(', ') : it.show ? it.show.name : '',
+          img: img.length ? img[img.length > 1 ? img.length - 2 : 0].url : null, playing: !!r.d.is_playing, pos: r.d.progress_ms || 0, dur: it.duration_ms || 0, at: Date.now() };
+      } else if (r.status === 204 || r.status === 200) NP = null;
+      else if (r.status === 429) lastPoll = Date.now() + 25000;   // quota: rallenta
+      render();
+    }).catch(function() {}).then(function() { polling = false; });
+  }
+  function fmt(ms) { var s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+  function render() {
+    var el = $('rd-np'); if (!el) return;
+    var R = window.hubRadio && window.hubRadio.np();   // la radio dell'app ha la precedenza
+    var cur = R || (jget(KEY, null) ? NP : null);
+    if (!cur) { el.hidden = true; el.innerHTML = ''; el.dataset.k = ''; return; }
+    var pos = cur.live ? 0 : cur.playing ? Math.min(cur.dur, cur.pos + (Date.now() - cur.at)) : cur.pos, pct = !cur.live && cur.dur ? pos / cur.dur * 100 : 0;
+    var ctl = cur.live ? '<div class="rd-np-ctl"><button type="button" onclick="hubRadio.toggle()" aria-label="' + (cur.playing ? 'Pausa' : 'Riproduci') + '">' + (cur.playing ? '⏸' : '▶') + '</button>' +
+        '<button type="button" onclick="hubRadio.stop()" aria-label="Spegni la radio">⏹</button></div>'
+      : noCtrl ? '' : '<div class="rd-np-ctl"><button type="button" onclick="hubMusica.cmd(\'previous\')" aria-label="Brano precedente">⏮</button>' +
+        '<button type="button" onclick="hubMusica.cmd(\'' + (cur.playing ? 'pause' : 'play') + '\')" aria-label="' + (cur.playing ? 'Pausa' : 'Riproduci') + '">' + (cur.playing ? '⏸' : '▶') + '</button>' +
+        '<button type="button" onclick="hubMusica.cmd(\'next\')" aria-label="Brano successivo">⏭</button></div>';
+    var html = (cur.img ? '<img class="rd-np-art" src="' + esc(cur.img) + '" alt="" onerror="this.outerHTML=\'<div class=&quot;rd-np-art rd-np-noart&quot;>' + (cur.live ? '📻' : '♪') + '</div>\'">' : '<div class="rd-np-art rd-np-noart">' + (cur.live ? '📻' : '♪') + '</div>') +
+      '<div class="rd-np-txt"><div class="rd-np-t">' + esc(cur.title) + '</div><div class="rd-np-a">' + (cur.live ? '<b class="rd-np-live">LIVE</b> ' : '') + esc(cur.artist) + '</div>' +
+      (cur.live ? '' : '<div class="rd-np-bar"><i style="width:' + pct.toFixed(1) + '%"></i></div>') + '</div>' + ctl;
+    el.hidden = false; el.classList.toggle('paused', !cur.playing);
+    // aggiorna solo la barra se il brano è lo stesso, così i pulsanti non si ricreano a ogni secondo
+    var k = cur.src + '|' + cur.title + '|' + cur.artist + '|' + cur.playing + '|' + noCtrl;
+    if (el.dataset.k === k) { var b = el.querySelector('.rd-np-bar i'); if (b) b.style.width = pct.toFixed(1) + '%'; return; }
+    el.dataset.k = k; el.innerHTML = html;
+  }
+  function cmd(c) {
+    var m = c === 'pause' || c === 'play' ? 'PUT' : 'POST';
+    api(m, '/me/player/' + c).then(function(r) {
+      if (r.status === 403) { noCtrl = true; errTxt = 'Comandi non disponibili (servono Spotify Premium e i permessi dell\'app): resta la visualizzazione.'; }
+      if (NP && (c === 'pause' || c === 'play')) { NP.playing = c === 'play'; NP.at = Date.now(); }
+      render(); setTimeout(function() { poll(); }, 700);
+    });
+  }
+
+  /* ── Impostazioni (pannello nella Ride) ───────────────────────── */
+  var tab = null;
+  function setup(t2) {
+    var box = $('rd-perf-result-inner'); if (!box) return;
+    var t = jget(KEY, null), ruri = redirectUri();
+    tab = t2 || tab || (t ? 'spotify' : 'radio');
+    var tabs = '<div class="rd-mu-tabs" role="tablist"><button type="button" role="tab" class="rd-chip' + (tab === 'radio' ? ' on' : '') + '" onclick="hubMusica.setup(\'radio\')">📻 Radio</button>' +
+      '<button type="button" role="tab" class="rd-chip' + (tab === 'spotify' ? ' on' : '') + '" onclick="hubMusica.setup(\'spotify\')">Spotify</button></div>';
+    if (tab === 'radio' && window.hubRadio) {
+      box.innerHTML = '<div class="rd-perf-result-title">Musica nell\'HUD</div>' + tabs + '<div id="rd-ra-box"></div>' +
+        '<div class="rd-perf-result-actions"><button class="rd-perf-again" onclick="ridePerfClose()">Chiudi</button></div>';
+      window.hubRadio.pannello($('rd-ra-box'));
+      $('rd-perf-result').classList.add('visible');
+      return;
+    }
+    box.innerHTML = '<div class="rd-perf-result-title">Musica nell\'HUD</div>' + tabs +
+      (t ? '<p class="rd-perf-note rd-np-ok">✓ Spotify collegato. Il brano compare sotto i dati della Ride e nell\'HUD.</p>' +
+           '<div class="rd-perf-result-actions"><button class="rd-perf-close" onclick="hubMusica.scollega()">Scollega</button><button class="rd-perf-again" onclick="ridePerfClose()">Chiudi</button></div>'
+         : '<p class="rd-perf-note">Si collega <b>Spotify</b> con una tua app sviluppatore gratuita (2 minuti, una volta sola). Serve un account <b>Premium</b>.</p>' +
+           '<ol class="rd-np-steps"><li>Apri <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">developer.spotify.com/dashboard</a> e accedi.</li>' +
+           '<li><b>Create app</b>: nome a piacere, API <b>Web API</b>, Redirect URI:<br><code id="rd-np-uri">' + esc(ruri) + '</code> <button type="button" class="rd-np-copy" onclick="hubMusica.copia()">Copia</button></li>' +
+           '<li>Nelle impostazioni dell\'app copia il <b>Client ID</b> e incollalo qui.</li></ol>' +
+           '<input id="rd-np-cid" class="rd-np-in" placeholder="Client ID (32 caratteri)" autocomplete="off" spellcheck="false" value="' + esc((jget(PKCE, {}) || {}).clientId || '') + '">' +
+           '<p class="rd-perf-note" id="rd-np-err" role="alert">' + esc(errTxt) + '</p>' +
+           '<div class="rd-perf-result-actions"><button class="rd-perf-close" onclick="ridePerfClose()">Annulla</button><button class="rd-perf-again" onclick="hubMusica.vai()">Collega Spotify</button></div>') +
+      '<p class="rd-perf-note">Apple Music, Amazon Music e le app radio esterne non permettono a una pagina web di leggere il brano in riproduzione, quindi non possono comparire qui.</p>';
+    $('rd-perf-result').classList.add('visible');
+  }
+
+  window.hubMusica = {
+    setup: setup, cmd: cmd, poll: poll, render: render,
+    vai: function() {
+      var s = window._rdInternals && window._rdInternals.state && window._rdInternals.state().S;
+      if (s && (s.state === 'recording' || s.state === 'paused')) { $('rd-np-err').textContent = 'Termina la Ride prima di collegare: la pagina si ricarica.'; return; }
+      collega($('rd-np-cid').value).catch(function(e) { $('rd-np-err').textContent = e.message; });
+    },
+    scollega: function() { localStorage.removeItem(KEY); NP = null; noCtrl = false; render(); setup('spotify'); },
+    copia: function() { try { navigator.clipboard.writeText(redirectUri()); } catch (e) {} var b = document.querySelector('.rd-np-copy'); if (b) b.textContent = 'Copiato'; },
+    collegato: function() { return !!jget(KEY, null); },
+    _challenge: challenge, _ritorno: ritorno, _np: function() { return NP; }
+  };
+
+  // ogni secondo la barra avanza; ogni 5 s (solo con la Ride aperta e lo schermo acceso) chiede il brano
+  setInterval(function() { if (NP && NP.playing) render(); if (Date.now() - lastPoll > 5000 && !(window.hubRadio && window.hubRadio.np())) poll(); }, 1000);
+  document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'visible') poll(); });
+  if (/[?&]state=/.test(location.search)) ritorno();
+})();
+</script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB RADIO — radio in diretta dentro l'app (Ride e HUD)
+   Stazioni: Radio Browser (radio-browser.info), solo stream https.
+   Titolo in onda: Worker /api/icy (metadati ICY), ogni 20 s mentre suona.
+   Dati: hub_radio_lista_v1 (elenco, 7 giorni), hub_radio_pref_v1 (preferite, ultima)
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  var LISTA = 'hub_radio_lista_v1', PREF = 'hub_radio_pref_v1';
+  var MIRROR = ['https://de1.api.radio-browser.info', 'https://fi1.api.radio-browser.info', 'https://de2.api.radio-browser.info'];
+  function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+  var audio = null, cur = null, title = null, playing = false, icyT = null, errore = '', found = [], ultimo = '';
+
+  function rb(path) {
+    var i = 0;
+    var go = function() {
+      return fetch(MIRROR[i] + path, { headers: { Accept: 'application/json' } }).then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .catch(function(e) { if (++i < MIRROR.length) return go(); throw e; });
+    };
+    return go();
+  }
+  function pulisci(list) {
+    var seen = {};
+    return (list || []).filter(function(s) {
+      var u = s.url_resolved || s.url || '';
+      if (!/^https:/.test(u) || !s.name) return false;
+      var k = s.name.trim().toLowerCase(); if (seen[k]) return false; seen[k] = 1; return true;
+    }).map(function(s) {
+      return { id: s.stationuuid, name: s.name.trim(), url: s.url_resolved || s.url, img: /^https:/.test(s.favicon || '') ? s.favicon : '',
+        tags: (s.tags || '').split(',').filter(Boolean).slice(0, 3).join(' · '), br: s.bitrate || 0 };
+    });
+  }
+  // stazioni italiane più ascoltate (in memoria per 7 giorni) o ricerca per nome
+  function stazioni(q) {
+    if (!q) {
+      var c = jget(LISTA, null);
+      if (c && Date.now() - c.ts < 7 * 86400000 && c.list.length) return Promise.resolve(c.list);
+      return rb('/json/stations/search?countrycode=IT&is_https=true&hidebroken=true&order=clickcount&reverse=true&limit=80').then(function(d) {
+        var l = pulisci(d).slice(0, 50); jset(LISTA, { ts: Date.now(), list: l }); return l;
+      });
+    }
+    return rb('/json/stations/search?is_https=true&hidebroken=true&order=clickcount&reverse=true&limit=30&name=' + encodeURIComponent(q)).then(function(d) { return pulisci(d).slice(0, 20); });
+  }
+
+  /* ── Riproduzione ─────────────────────────────────────────────── */
+  function play(st) {
+    if (!audio) {
+      audio = new Audio(); audio.preload = 'none';
+      audio.addEventListener('playing', function() { playing = true; errore = ''; aggiorna(); });
+      audio.addEventListener('pause', function() { playing = false; aggiorna(); });
+      audio.addEventListener('error', function() { if (!cur) return; playing = false; errore = cur.name + ' non è raggiungibile ora: prova un\'altra stazione.'; aggiorna(); lista(); });
+    }
+    cur = st; title = null; errore = '';
+    audio.src = st.url;
+    var p = audio.play(); if (p && p.catch) p.catch(function(e) { if (e && e.name === 'NotAllowedError') { errore = 'Tocca di nuovo la stazione per avviare l\'audio.'; aggiorna(); } });
+    var pref = jget(PREF, {}); pref.ultima = st; jset(PREF, pref);
+    try { fetch(MIRROR[0] + '/json/url/' + st.id).catch(function() {}); } catch (e) {}   // conteggio ascolti, come chiede Radio Browser
+    clearInterval(icyT); icy(); icyT = setInterval(icy, 20000);
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('pause', function() { toggle(); });
+      navigator.mediaSession.setActionHandler('play', function() { toggle(); });
+      navigator.mediaSession.setActionHandler('stop', function() { stop(); });
+    }
+    aggiorna();
+  }
+  function toggle() { if (!audio || !cur) return; if (audio.paused) { audio.src = cur.url; audio.play().catch(function() {}); } else { audio.pause(); audio.removeAttribute('src'); audio.load(); } }
+  function stop() { if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); } cur = null; title = null; playing = false; clearInterval(icyT); aggiorna(); lista(); }
+  function icy() {
+    if (!cur || typeof WORKER === 'undefined') return;
+    var u = cur.url;
+    fetch(WORKER + '/api/icy?url=' + encodeURIComponent(u)).then(function(r) { return r.ok ? r.json() : {}; }).then(function(d) {
+      if (!cur || cur.url !== u) return;
+      var t = d && d.title && d.title.toLowerCase() !== cur.name.toLowerCase() && !/^(-|unknown|\s*)$/i.test(d.title) ? d.title : null;
+      if (t !== title) { title = t; aggiorna(); }
+    }).catch(function() {});
+  }
+  function aggiorna() {
+    if ('mediaSession' in navigator && cur && typeof MediaMetadata !== 'undefined') {
+      var sp = (title || '').split(' - ');
+      navigator.mediaSession.metadata = new MediaMetadata({ title: sp.length > 1 ? sp.slice(1).join(' - ') : title || cur.name, artist: sp.length > 1 ? sp[0] : 'Radio in diretta', album: cur.name, artwork: cur.img ? [{ src: cur.img }] : [] });
+    }
+    if (window.hubMusica && window.hubMusica.render) window.hubMusica.render();
+    var on = document.querySelectorAll('.rd-ra-st');
+    on.forEach(function(el) { el.classList.toggle('on', !!cur && el.dataset.id === cur.id); });
+  }
+  // cosa mostrare nella Ride/HUD: "Artista - Titolo" diviso, altrimenti il nome della stazione
+  function np() {
+    if (!cur) return null;
+    var sp = (title || '').split(' - ');
+    return { src: 'radio', live: true, playing: playing, img: cur.img,
+      title: title ? (sp.length > 1 ? sp.slice(1).join(' - ') : title) : cur.name,
+      artist: title ? (sp.length > 1 ? sp[0] + ' · ' : '') + cur.name : (playing ? 'In diretta' : 'In pausa') };
+  }
+
+  /* ── Pannello stazioni ────────────────────────────────────────── */
+  function riga(s) {
+    var fav = (jget(PREF, {}).fav || []).some(function(f) { return f.id === s.id; });
+    return '<div class="rd-ra-st' + (cur && cur.id === s.id ? ' on' : '') + '" data-id="' + esc(s.id) + '">' +
+      '<button type="button" class="rd-ra-play" data-id="' + esc(s.id) + '">' + (s.img ? '<img src="' + esc(s.img) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '<span>📻</span></button>' +
+      '<button type="button" class="rd-ra-name" data-id="' + esc(s.id) + '">' + esc(s.name) + (s.tags ? '<small>' + esc(s.tags) + '</small>' : '') + '</button>' +
+      '<button type="button" class="rd-ra-fav' + (fav ? ' on' : '') + '" data-fav="' + esc(s.id) + '" aria-label="' + (fav ? 'Togli dalle preferite' : 'Aggiungi alle preferite') + '">' + (fav ? '★' : '☆') + '</button></div>';
+  }
+  function lista() {
+    var box = document.getElementById('rd-ra-list'); if (!box) return;
+    var pref = jget(PREF, {}), fav = pref.fav || [];
+    var html = (errore ? '<p class="rd-perf-note rd-ra-err">' + esc(errore) + '</p>' : '') +
+      (cur ? '<div class="rd-ra-now"><span>▶ ' + esc(cur.name) + (title ? ' · ' + esc(title) : '') + '</span><button type="button" onclick="hubRadio.stop()">⏹ Stop</button></div>' : '');
+    if (fav.length && !ultimo) html += '<div class="rd-ra-h">Preferite</div>' + fav.map(riga).join('');
+    html += '<div class="rd-ra-h">' + (ultimo ? 'Risultati' : 'Più ascoltate in Italia') + '</div>' +
+      (found.length ? found.filter(function(s) { return ultimo || !fav.some(function(f) { return f.id === s.id; }); }).map(riga).join('') : '<p class="rd-perf-note">' + (S_load ? 'Carico le stazioni…' : 'Nessuna stazione trovata.') + '</p>');
+    box.innerHTML = html;
+  }
+  var S_load = false, cercaT = null;
+  function carica(q) {
+    ultimo = q || ''; S_load = true; lista();
+    stazioni(ultimo).then(function(l) { if ((q || '') !== ultimo) return; found = l; S_load = false; lista(); })
+      .catch(function() { S_load = false; found = []; errore = 'Elenco stazioni non raggiungibile: controlla la connessione.'; lista(); });
+  }
+  function trova(id) {
+    var all = found.concat(jget(PREF, {}).fav || []); if (cur) all.push(cur);
+    return all.filter(function(s) { return s.id === id; })[0];
+  }
+  function pannello(el) {
+    el.innerHTML = '<input type="search" id="rd-ra-q" class="rd-np-in" placeholder="Cerca una radio (es. Virgin, Deejay, RTL)" autocomplete="off">' +
+      '<div class="rd-ra-list" id="rd-ra-list"></div>' +
+      '<p class="rd-perf-note">Stazioni da radio-browser.info. Il titolo del brano compare solo se la radio lo trasmette nello stream.</p>';
+    var q = document.getElementById('rd-ra-q');
+    q.addEventListener('input', function() { clearTimeout(cercaT); cercaT = setTimeout(function() { carica(q.value.trim()); }, 400); });
+    document.getElementById('rd-ra-list').addEventListener('click', function(e) {
+      var f = e.target.closest('[data-fav]');
+      if (f) {
+        var s = trova(f.dataset.fav), pref = jget(PREF, {}), fav = pref.fav || [];
+        if (fav.some(function(x) { return x.id === s.id; })) fav = fav.filter(function(x) { return x.id !== s.id; }); else if (s) fav.unshift(s);
+        pref.fav = fav.slice(0, 20); jset(PREF, pref); lista(); return;
+      }
+      var b = e.target.closest('[data-id]');
+      if (b) { var st = trova(b.dataset.id); if (st) { if (cur && cur.id === st.id && playing) return; play(st); lista(); } }
+    });
+    carica('');
+  }
+
+  window.hubRadio = { pannello: pannello, play: play, stop: stop, toggle: toggle, np: np, _stato: function() { return { cur: cur, title: title, playing: playing }; }, _icy: icy };
 })();
 </script>
 

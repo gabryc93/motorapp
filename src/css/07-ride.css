@@ -452,7 +452,7 @@
 .rd-hist-r.best { color: #c97fd4; } .rd-hist-r.nv { color: rgba(255,255,255,.35); }
 /* HUD: velocità, G-meter e dati di guida, a specchio per il parabrezza di notte */
 #rd-overlay.rd-hud { transform: scaleX(-1); justify-content: center; gap: 2vh; --hud: #7dffb0; }
-#rd-overlay.rd-hud > *:not(.rd-speedbox):not(.rd-stats) { display: none !important; }
+#rd-overlay.rd-hud > *:not(.rd-speedbox):not(.rd-stats):not(.rd-np) { display: none !important; }
 #rd-overlay.rd-hud .rd-speedbox { flex: 1 1 auto; gap: 5vw; cursor: pointer; padding: 2vh 4vw; }
 #rd-overlay.rd-hud .rd-speed-col { flex: 0 0 auto; border: 0; }
 #rd-overlay.rd-hud .rd-speed { font-size: min(30vw, 40vh); color: var(--hud); }
@@ -472,3 +472,56 @@
   #rd-overlay.rd-hud .rd-speed { font-size: min(40vw, 26vh); }
   #rd-overlay.rd-hud .rd-gmeter { width: min(60vw, 30vh); height: min(60vw, 30vh); }
 }
+
+/* ── Musica (Spotify) ─────────────────────────────────────────── */
+.rd-np { display: flex; align-items: center; gap: 10px; margin: 0 12px 4px; padding: 8px 10px; border-radius: 12px; background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08); flex-shrink: 0; }
+.rd-np[hidden] { display: none !important; }
+.rd-np-art { width: 42px; height: 42px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+.rd-np-noart { display: flex; align-items: center; justify-content: center; background: rgba(30,215,96,.15); color: #1ed760; font-size: 1.2rem; }
+.rd-np-txt { flex: 1; min-width: 0; }
+.rd-np-t { font-size: .84rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rd-np-a { font-family: 'DM Mono', monospace; font-size: .62rem; color: rgba(255,255,255,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.rd-np-bar { height: 3px; background: rgba(255,255,255,.12); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.rd-np-bar i { display: block; height: 100%; background: #1ed760; }
+.rd-np.paused .rd-np-bar i { background: rgba(255,255,255,.4); }
+.rd-np-ctl { display: flex; gap: 2px; flex-shrink: 0; }
+.rd-np-ctl button { appearance: none; background: none; border: 0; color: #fff; font-size: 1.05rem; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; }
+.rd-np-ctl button:active { background: rgba(255,255,255,.12); }
+.rd-np-steps { text-align: left; font-size: .76rem; line-height: 1.55; color: rgba(255,255,255,.75); padding-left: 18px; margin: 10px 0; }
+.rd-np-steps a { color: #1ed760; }
+.rd-np-steps code { font-size: .68rem; background: rgba(255,255,255,.08); padding: 2px 5px; border-radius: 4px; word-break: break-all; }
+.rd-np-copy { appearance: none; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 5px; font-size: .6rem; padding: 2px 6px; cursor: pointer; }
+.rd-np-in { width: 100%; box-sizing: border-box; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.18); color: #fff; border-radius: 8px;
+  padding: 10px; font-family: 'DM Mono', monospace; font-size: .74rem; }
+.rd-np-ok { color: #6dd9a3; }
+#rd-perf-result-inner .rd-perf-note:empty { display: none; }
+/* nell'HUD: solo titolo e artista, grandi e in verde, senza comandi */
+#rd-overlay.rd-hud .rd-np { background: transparent; border: 0; margin: 0 3vw 2vh; justify-content: center; }
+#rd-overlay.rd-hud .rd-np-ctl, #rd-overlay.rd-hud .rd-np-art { display: none; }
+#rd-overlay.rd-hud .rd-np-txt { flex: 0 1 auto; text-align: center; max-width: 92vw; }
+#rd-overlay.rd-hud .rd-np-t { color: var(--hud); font-size: min(4.6vw, 4.4vh); }
+#rd-overlay.rd-hud .rd-np-a { color: var(--hud); opacity: .7; font-size: min(3vw, 3vh); }
+#rd-overlay.rd-hud .rd-np-bar { background: rgba(125,255,176,.18); }
+#rd-overlay.rd-hud .rd-np-bar i { background: var(--hud); }
+
+/* ── Radio ────────────────────────────────────────────────────── */
+.rd-mu-tabs { display: flex; gap: 6px; justify-content: center; margin: 4px 0 12px; }
+.rd-np-live { font-weight: 700; font-size: .55rem; color: #fff; background: #e5484d; border-radius: 3px; padding: 1px 4px; margin-right: 3px; letter-spacing: .06em; }
+.rd-ra-list { max-height: 46vh; overflow-y: auto; margin-top: 10px; text-align: left; }
+.rd-ra-h { font-family: 'DM Mono', monospace; font-size: .56rem; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.45); margin: 10px 0 4px; }
+.rd-ra-st { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,.06); border-radius: 6px; }
+.rd-ra-st.on { background: rgba(255,90,40,.14); }
+.rd-ra-st button { appearance: none; background: none; border: 0; color: #fff; cursor: pointer; padding: 0; font: inherit; }
+.rd-ra-play { position: relative; width: 36px; height: 36px; flex-shrink: 0; border-radius: 6px; overflow: hidden; background: rgba(255,255,255,.06) !important; }
+.rd-ra-play img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #fff; }
+.rd-ra-name { flex: 1; min-width: 0; text-align: left; font-size: .8rem !important; }
+.rd-ra-name small { display: block; font-family: 'DM Mono', monospace; font-size: .58rem; color: rgba(255,255,255,.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rd-ra-fav { font-size: 1.1rem !important; width: 34px; height: 34px; color: rgba(255,255,255,.4) !important; }
+.rd-ra-fav.on { color: #e8c547 !important; }
+.rd-ra-now { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: .74rem; color: #ffb199; background: rgba(255,90,40,.1);
+  border: 1px solid rgba(255,90,40,.3); border-radius: 8px; padding: 7px 10px; }
+.rd-ra-now span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rd-ra-now button { appearance: none; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px; padding: 4px 8px; font-size: .66rem; cursor: pointer; flex-shrink: 0; }
+.rd-ra-err { color: #ff8a82 !important; }
+#rd-overlay.rd-hud .rd-np-live { background: var(--hud); color: #000; }
