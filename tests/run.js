@@ -783,7 +783,7 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
       out.push({ titolo: 'Track day GT', inizio: f(sab, '09:00:00'), fine: f(sab, '18:00:00'), luogo: 'Autodromo Nazionale Monza', lat: 45.6156, lng: 9.2811, cat: ['Track Event'], url: 'https://www.monzanet.it/x' });
       return out; });
     await p.route('**/api/eventi', r => r.fulfill({ json: { eventi: ev }, headers: { 'access-control-allow-origin': '*' } }));
-    await p.evaluate(() => { localStorage.removeItem('hub_eventi_cache_v1'); localStorage.removeItem('hub_eventi_miei_v1'); openEventi(); });
+    await p.evaluate(() => { localStorage.removeItem('hub_eventi_cache_v2'); localStorage.removeItem('hub_eventi_miei_v1'); openEventi(); });
     await p.waitForFunction(() => /Track day GT/.test(document.getElementById('ev-body').textContent), null, { timeout: 5000 });
     let t = await p.$eval('#ev-body', e => e.textContent);
     expect(/4 date dal/.test(t) && (t.match(/Circuit Experience/g) || []).length === 1, 'date ripetute non raggruppate: ' + t.slice(0, 300));
@@ -791,6 +791,12 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     await p.evaluate(() => evFiltro('weekend'));
     t = await p.$eval('#ev-body', e => e.textContent);
     expect(/Track day GT/.test(t) && !/Circuit Experience/.test(t), 'filtro weekend: ' + t.slice(0, 200));
+    await p.evaluate(() => evFiltro('fiera'));
+    t = await p.$eval('#ev-body', e => e.textContent);
+    expect(/Auto e Moto d'Epoca/.test(t) && /fiera \/ mostra/.test(t) && !/Track day GT/.test(t), 'fiere da eventi.json: ' + t.slice(0, 300));
+    await p.evaluate(() => evFiltro('pista'));
+    expect(/Track day GT/.test(await p.$eval('#ev-body', e => e.textContent)), 'filtro in pista');
+    expect(await p.evaluate(() => [_eventiInternals.tipo({ titolo: 'Raduno Alfa Romeo club' }), _eventiInternals.tipo({ titolo: 'Mostra scambio Novegro' }), _eventiInternals.tipo({ titolo: 'Cars & Coffee' })].join()) === 'raduno,fiera,raduno', 'classificazione eventi');
     await p.evaluate(() => evNuovo()); await p.fill('#ev-t', 'Cars & Coffee Brianza'); await p.fill('#ev-l', 'Monza'); await p.click('#mt-sheet .gar-save');
     await p.evaluate(() => evFiltro('miei'));
     expect(/Cars & Coffee Brianza/.test(await p.$eval('#ev-body', e => e.textContent)), 'evento tuo');

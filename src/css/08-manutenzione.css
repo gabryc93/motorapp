@@ -526,3 +526,10 @@ body[data-pill-hidden="1"] .hub-tabs {
 .ev-h b { font-size: 14.5px; }
 .ev-tag { flex-shrink: 0; font-size: 10.5px; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,.08); text-transform: lowercase; }
 .ev-d { font-size: 12.5px; opacity: .75; margin: 6px 0 0; line-height: 1.4; }
+.ev-chips { display: flex; gap: 6px; overflow-x: auto; margin: 0 -14px 12px; padding: 0 14px 2px; scrollbar-width: none; }
+.ev-chips::-webkit-scrollbar { display: none; }
+.ev-chips button { flex-shrink: 0; appearance: none; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: var(--t2, #aaa); border-radius: 18px; padding: 7px 12px; font-size: 12.5px; cursor: pointer; }
+.ev-chips button.on { background: rgba(232,160,48,.16); border-color: rgba(232,160,48,.6); color: #fff; }
+.ev-t-fiera, .ev-t-mostra { background: rgba(91,155,213,.2) !important; color: #8fc0ec; }
+.ev-t-raduno { background: rgba(76,175,125,.2) !important; color: #7fd49a; }
+.ev-t-pista { background: rgba(224,90,74,.2) !important; color: #ff8a7a; }

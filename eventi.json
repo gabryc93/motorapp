@@ -1,0 +1,13 @@
+{
+  "_info": "Fiere, mostre e grandi raduni scelti a mano: l'app li unisce ai calendari automatici (Autodromo di Monza, Motor Valley). Aggiungi o correggi le voci qui; le date passate spariscono da sole. tipo: fiera | raduno | pista | mostra.",
+  "aggiornato": "2026-11-17",
+  "eventi": [
+    { "titolo": "Milano AutoClassica", "tipo": "fiera", "inizio": "2026-11-20 09:30:00", "fine": "2026-11-22 18:30:00", "luogo": "Fiera Milano Rho", "lat": 45.5206, "lng": 9.0870, "url": "https://www.milanoautoclassica.com", "descr": "Salone dell'auto classica e sportiva: club, restauratori, mostra scambio e aste." },
+    { "titolo": "Padova Only Classics", "tipo": "fiera", "inizio": "2027-02-26 09:00:00", "fine": "2027-02-28 18:00:00", "luogo": "Fiera di Padova", "lat": 45.4166, "lng": 11.8890, "url": "https://it.motor1.com/news/813265/auto-e-moto-epoca-2026-finale/", "descr": "Nuovo salone di auto e moto costruite fino al 1977." },
+    { "titolo": "Automotoretrò", "tipo": "fiera", "inizio": "2027-03-05 09:00:00", "fine": "2027-03-07 18:00:00", "luogo": "Fiere di Parma", "lat": 44.8285, "lng": 10.3134, "url": "https://www.fiereparma.it/en/events-schedule/", "descr": "Auto e moto storiche, ricambi e automobilia." },
+    { "titolo": "Motor Valley Fest", "tipo": "raduno", "inizio": "2027-05-06 10:00:00", "fine": "2027-05-09 19:00:00", "luogo": "Modena, centro storico", "lat": 44.6471, "lng": 10.9252, "url": "https://it.motor1.com/news/812459/motor-valley-fest-2027-date/", "descr": "Esposizioni dei costruttori della Motor Valley, raduni e incontri in piazza." },
+    { "titolo": "1000 Miglia del Centenario", "tipo": "raduno", "inizio": "2027-05-24 09:00:00", "fine": "2027-05-29 20:00:00", "luogo": "Brescia (partenza e arrivo)", "lat": 45.5416, "lng": 10.2118, "url": "https://1000miglia.it", "descr": "La corsa più bella del mondo compie 100 anni: sei giorni di gara, il passaggio delle auto è gratis lungo il percorso." },
+    { "titolo": "Salone Auto Torino", "tipo": "fiera", "inizio": "2027-09-24 10:00:00", "fine": "2027-09-26 20:00:00", "luogo": "Torino, centro", "lat": 45.0732, "lng": 7.6858, "url": "https://it.motor1.com/news/813414/salone-auto-torino-2027-date/", "descr": "Salone all'aperto tra piazze e giardini del centro." },
+    { "titolo": "Auto e Moto d'Epoca", "tipo": "fiera", "inizio": "2027-10-21 09:00:00", "fine": "2027-10-24 18:00:00", "luogo": "BolognaFiere", "lat": 44.5225, "lng": 11.3644, "url": "https://autoemotodepoca.com", "descr": "La più grande fiera di auto d'epoca in Europa, con mostra scambio." }
+  ]
+}
