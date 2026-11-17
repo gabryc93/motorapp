@@ -271,6 +271,7 @@
               '<button type="button" class="gar-photo-btn gar-photo-btn-rm" id="mt-doc-rm" onclick="_mtDocRemove()" style="display:none">Rimuovi</button>' +
             '</div>' +
           '</div></div>' +
+        '<div id="mt-f-off-slot"></div>' +
         '<div class="gar-field"><label>Note</label>' +
           '<textarea id="mt-f-note" rows="2" placeholder="Es. olio Castrol 5W30, pastiglie EBC, da Officina XY..." maxlength="200"></textarea></div>' +
         '<div class="gar-edit-btns">' +
@@ -312,6 +313,7 @@
     document.getElementById('mt-int-nota').textContent = preset && preset.nota ? preset.nota : 'Cambia gli intervalli se il libretto o il tuo meccanico dicono diversamente.';
     document.getElementById('mt-f-cost').value = '';
     document.getElementById('mt-f-note').value = '';
+    document.getElementById('mt-f-off-slot').innerHTML = window.hubOfficine ? window.hubOfficine.select('mt-f-off', '') : '';
     document.getElementById('mt-doc-preview').innerHTML = '<div class="mt-doc-empty">📎</div>';
     document.getElementById('mt-doc-rm').style.display = 'none';
     document.getElementById('mt-edit').classList.add('visible');
@@ -444,6 +446,7 @@
       cost: cost,
       docId: docId,
       note: document.getElementById('mt-f-note').value.trim(),
+      offId: document.getElementById('mt-f-off') ? document.getElementById('mt-f-off').value || null : null,
       ts: Date.now()
     });
     saveAll(all);
@@ -603,6 +606,7 @@
       '<div class="gar-row2"><div class="gar-field"><label>Banco: CV</label><input type="number" id="mm-cv" min="0" value="' + (m && m.cv || '') + '" placeholder="facoltativo"></div>' +
       '<div class="gar-field"><label>Banco: Nm</label><input type="number" id="mm-nm" min="0" value="' + (m && m.nm || '') + '" placeholder="facoltativo"></div></div>' +
       '<div class="gar-field"><label>Fattura o foto</label><input type="file" id="mm-doc" accept="image/*,application/pdf" onchange="mtModDoc(event)">' + (m && m.docId ? '<button type="button" class="gar-photo-btn" onclick="mtModView(\'' + m.id + '\')">📎 Apri allegato</button>' : '') + '</div>' +
+      (window.hubOfficine ? window.hubOfficine.select('mm-off', m ? m.offId : '') : '') +
       '<div class="gar-field"><label>Note</label><textarea id="mm-note" rows="2" maxlength="300">' + escSafe(m ? m.note || '' : '') + '</textarea></div>' +
       '<p class="mt-int-nota">Le modifiche a scarico, assetto, cerchi o potenza spesso vanno omologate o annotate sul libretto: verifica prima di circolare.</p>' +
       '<div class="gar-edit-btns">' + (m ? '<button type="button" class="gar-cancel" onclick="mtModDel(\'' + m.id + '\')">🗑 Elimina</button>' : '') +
@@ -622,7 +626,7 @@
     var all = jl(MK), old = id ? all.filter(function(x) { return x.id === id; })[0] : null, nid = id || uid(), docId = old ? old.docId : null;
     if (_modDoc) { docId = 'dm' + nid; try { await dbPutDoc(docId, _modDoc.dataUrl, _modDoc.mime); } catch (e) { docId = old ? old.docId : null; } }
     var rec = { id: nid, vid: v.id, titolo: val('mm-titolo'), cat: val('mm-cat'), costo: parseFloat(val('mm-costo')) || null, data: val('mm-data'), km: parseInt(val('mm-km'), 10) || null,
-      cv: parseFloat(val('mm-cv')) || null, nm: parseFloat(val('mm-nm')) || null, note: val('mm-note'), docId: docId };
+      cv: parseFloat(val('mm-cv')) || null, nm: parseFloat(val('mm-nm')) || null, note: val('mm-note'), docId: docId, offId: document.getElementById('mm-off') ? val('mm-off') || null : null };
     all = id ? all.map(function(x) { return x.id === id ? rec : x; }) : all.concat([rec]);
     js(MK, all); document.getElementById('mt-sheet').classList.remove('visible'); renderMaint();
   };
@@ -651,7 +655,7 @@
   var _tab = 'int';
   window.mtTab = function(t) { _tab = t; renderMaint(); };
   function tabs() {
-    return '<div class="mt-tabs" role="tablist">' + [['int', '🔧 Interventi'], ['gomme', '⚫ Gomme'], ['mod', '🛠 Modifiche']].map(function(t) {
+    return '<div class="mt-tabs" role="tablist">' + [['int', '🔧 Interventi'], ['gomme', '⚫ Gomme'], ['mod', '🛠 Modifiche'], ['off', '🏪 Officine']].map(function(t) {
       return '<button type="button" role="tab" aria-selected="' + (_tab === t[0]) + '" class="' + (_tab === t[0] ? 'on' : '') + '" onclick="mtTab(\'' + t[0] + '\')">' + t[1] + '</button>';
     }).join('') + '</div>';
   }
@@ -662,6 +666,7 @@
     if (!body) return;
     if (_tab === 'gomme') { body.innerHTML = tabs() + renderGomme(v); return; }
     if (_tab === 'mod') { body.innerHTML = tabs() + renderMods(v); return; }
+    if (_tab === 'off' && window.hubOfficine) { body.innerHTML = tabs() + window.hubOfficine.render(v); return; }
     var presets = presetsFor(v), K = kmStima(v);
     var icon = v.type === 'moto' ? '🏍' : '🚗';
     var name = v.customName || (v.marca + ' ' + v.modello);

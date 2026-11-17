@@ -165,7 +165,7 @@
   // Sezioni reali con DOM persistente
   var SECTIONS = ['oggi', 'fuel', 'diag', 'garage', 'usato'];
   // Tab "azione": aprono un overlay e tornano alla sezione precedente
-  var ACTIONS  = ['passi', 'ride', 'meteo', 'ms', 'giro', 'hud'];
+  var ACTIONS  = ['passi', 'ride', 'meteo', 'ms', 'giro', 'hud', 'park', 'eventi'];
   var _lastSection = 'oggi';
 
   function hubGo(name) {
@@ -216,6 +216,10 @@
         if (typeof window.openMotorsport === 'function') window.openMotorsport();
       } else if (name === 'giro') {
         if (typeof window.openGiro === 'function') window.openGiro();
+      } else if (name === 'park') {
+        if (typeof window.openParcheggio === 'function') window.openParcheggio();
+      } else if (name === 'eventi') {
+        if (typeof window.openEventi === 'function') window.openEventi();
       } else if (name === 'hud') {
         // scorciatoia dall'icona: Ride a schermo intero, pronta da avviare
         if (typeof window.openRide === 'function') { window.openRide(); if (!document.getElementById('rd-overlay').classList.contains('rd-hud')) window.rideHud(); }
@@ -415,7 +419,7 @@
     var wpo = document.getElementById('wp-overlay');
     var tco = document.getElementById('tco-overlay');
     var mso = document.getElementById('ms-overlay');
-    var usOpen = !!document.querySelector('.us-ov.visible');
+    var usOpen = !!document.querySelector('.us-ov.visible, #ric-overlay.visible, #doc-overlay.visible, #pk-overlay.visible, #ev-overlay.visible');
     var hide = usOpen ||
       (mv  && mv.classList.contains('visible')) ||
       (fv  && fv.classList.contains('visible')) ||
@@ -443,7 +447,7 @@
     var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay',
                'hub-cmp-overlay', 'gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
                'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
-               'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay'];
+               'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay', 'pk-overlay', 'ev-overlay'];
     if (typeof MutationObserver === 'function') {
       var obs = new MutationObserver(_hubUpdatePillVisibility);
       ids.forEach(function(id) {
@@ -453,7 +457,7 @@
       var lateRetry = setTimeout(function() {
         ['gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
          'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
-         'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay'].forEach(function(id) {
+         'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay', 'pk-overlay', 'ev-overlay'].forEach(function(id) {
           var el = document.getElementById(id);
           if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
         });

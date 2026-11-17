@@ -651,6 +651,16 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     await p.waitForFunction(() => /non può entrare/.test((document.getElementById('wp-zone') || {}).textContent || ''), null, { timeout: 8000 });
     z = await p.$eval('#wp-zone', e => e.textContent);
     expect(/Area B attiva alle 09:0\d: Corsa 1\.4 \(benzina Euro 3\) non può entrare/.test(z) && /il ticket non basta/.test(z), 'divieto Euro 3: ' + z);
+    // ricarica sul percorso per la plug-in
+    await p.route('**/api/ev?**', r => r.fulfill({ json: [Object.assign({ maxKW: 22, isFast: false, numPrese: 2, comune: 'Corsico', indirizzo: 'Via Roma 1', attivo: true }, mid(.3)), { lat: 45.6, lng: 9.6, maxKW: 150, comune: 'Lontano' }], headers: H }));
+    await p.evaluate(() => { hubGarage.update('cz1', { euro: 6, alim: 'plugin' }); });
+    await p.click('#wp-overlay .wp-go');
+    await p.waitForSelector('#wp-ric .wp-pieno-go', { timeout: 8000 });
+    await p.click('#wp-ric .wp-pieno-go');
+    await p.waitForFunction(() => /Via Roma 1|Nessuna colonnina/.test(document.getElementById('wp-ric').textContent), null, { timeout: 8000 });
+    const ric = await p.$eval('#wp-ric', e => e.textContent);
+    expect(/Via Roma 1/.test(ric) && !/Lontano/.test(ric) && /piena in ~/.test(ric), 'ricarica sul percorso: ' + ric.slice(0, 300));
+    await p.unroute('**/api/ev?**');
     // vignette: percorso che sale in Svizzera
     const vg = await p.evaluate(() => hubZone.vignette([{ lat: 45.8, lng: 9.0 }, { lat: 46.0, lng: 9.0 }, { lat: 46.3, lng: 9.0 }, { lat: 46.6, lng: 9.0 }]));
     expect(vg.length === 1 && vg[0].cc === 'CH' && /40 CHF/.test(vg[0].prezzi), 'vignetta Svizzera: ' + JSON.stringify(vg));
@@ -672,7 +682,7 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     await p.evaluate(() => { closeDocumenti(); hubGo('oggi'); });
     const o = await p.$eval('#oggi-root', e => e.textContent);
     expect(/Patente/.test(o) && /tra 30 giorni/.test(o), 'patente in scadenza non in Oggi');
-    expect(/Attiva il backup automatico/.test(o), 'invito al backup mancante');
+    expect(/Salva una copia/.test(o) && /iCloud Drive/.test(o), 'invito al backup mancante');
     await p.evaluate(() => { location.hash = 'giro'; });
     await p.waitForFunction(() => document.getElementById('gi-overlay') && document.getElementById('gi-overlay').classList.contains('visible'), null, { timeout: 3000 });
     await p.evaluate(() => { closeGiro(); history.replaceState(null, '', '#oggi'); });
@@ -714,6 +724,82 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     await p.unroute('**/api/richiami?**');
   }, page);
 
+  await test('Passi: stato ufficiale aperto/chiuso', async p => {
+    await p.route('**/api/passi', r => r.fulfill({ json: { passi: { stelvio: { stato: 'chiuso', dal: '2026-11-13', al: '2099-05-01' }, gavia: { stato: 'aperto' } } }, headers: { 'access-control-allow-origin': '*' } }));
+    await p.evaluate(() => { localStorage.removeItem('hub_passi_live_v1'); localStorage.removeItem('hub_passi_status_v3'); hubGo('passi'); });
+    await p.waitForFunction(() => localStorage.getItem('hub_passi_live_v1'), null, { timeout: 6000 });
+    const r = await p.evaluate(() => { const P = _psInternals.PASSES, g = id => P.find(x => x.id === id), gen = new Date(new Date().getFullYear() + 1, 0, 15).getTime();
+      return [_psInternals.chiusoIl(g('stelvio')), _psInternals.chiusoIl(g('gavia')), _psInternals.chiusoIl(g('gavia'), gen), _psInternals.computeStatus(g('stelvio'), null, { stato: 'chiuso', al: '2099-05-01' }).note]; });
+    expect(/riapertura prevista il 01\/05\/2099/.test(r[0]) && r[1] === false && r[2] && /Chiuso, riapertura/.test(r[3]), 'stato passi: ' + JSON.stringify(r));
+    await p.evaluate(() => closePassi());
+    await p.unroute('**/api/passi');
+  }, page);
+
+  await test('Officine: rubrica, preventivi, da chiedere e spese', async p => {
+    await p.evaluate(() => { localStorage.removeItem('hub_officine_v1'); hubGo('garage'); openMaint(); mtTab('off'); });
+    for (const [nome, prezzo] of [['Officina Rossi', 480], ['Garage Bianchi', 410]]) {
+      await p.evaluate(() => ofEdit(null)); await p.fill('#of-nome', nome); await p.fill('#of-tel', '02 1234567'); await p.click('#mt-sheet .gar-save');
+      const id = await p.evaluate(n => hubOfficine.list().find(o => o.nome === n).id, nome);
+      await p.evaluate(id => ofPrev(id), id); await p.fill('#of-pd', 'Cinghia distribuzione'); await p.fill('#of-pi', String(prezzo)); await p.click('#mt-sheet .gar-save');
+    }
+    const id = await p.evaluate(() => hubOfficine.list()[0].id);
+    await p.evaluate(id => ofChiedi(id), id); await p.fill('#of-q', 'Rumore ruota anteriore'); await p.click('#mt-sheet .gar-save');
+    let t = await p.$eval('#mt-body', e => e.textContent);
+    expect(/Confronto preventivi/.test(t) && /più conveniente Garage Bianchi/.test(t) && /70 € in meno di Officina Rossi/.test(t), 'confronto: ' + t.slice(0, 400));
+    expect(/Rumore ruota anteriore/.test(t) && (await p.$$('.of-act a[href^="tel:"]')).length === 2, 'da chiedere o telefono');
+    // intervento collegato all'officina
+    await p.evaluate(() => { mtTab('int'); openMaintEdit(hubOfficine.list().length && 'olio'); });
+    await p.selectOption('#mt-f-off', id); await p.fill('#mt-f-cost', '150'); await p.fill('#mt-f-km', '20000');
+    await p.evaluate(() => saveMaintEvent());
+    await p.waitForTimeout(300);
+    await p.evaluate(() => mtTab('off'));
+    t = await p.$eval('#mt-body', e => e.textContent);
+    expect(/1 lavoro · 150 € spesi/.test(t), 'spese officina: ' + t.slice(0, 300));
+    await p.evaluate(() => { const l = JSON.parse(localStorage.getItem('hub_maint_v1')); localStorage.setItem('hub_maint_v1', JSON.stringify(l.filter(e => !e.offId))); mtTab('int'); closeMaint(); });
+  }, page);
+
+  await test('Parcheggio: posizione, scadenza in Oggi, calendario', async p => {
+    await p.evaluate(() => { localStorage.removeItem('hub_parcheggio_v1'); openParcheggio(); });
+    await p.click('#pk-body .pk-big');
+    await p.waitForFunction(() => localStorage.getItem('hub_parcheggio_v1'), null, { timeout: 6000 });
+    await p.evaluate(() => pkScad(60));
+    let t = await p.$eval('#pk-body', e => e.textContent);
+    expect(/Scade alle/.test(t) && /Portami all'auto/.test(t), 'pannello parcheggio: ' + t.slice(0, 200));
+    expect(/maps\.apple\.com|google\.com\/maps/.test(await p.$eval('#pk-body a.pk-big', e => e.href)), 'link a piedi');
+    const dl = p.waitForEvent('download'); await p.click('.pk-ics');
+    expect((await dl).suggestedFilename() === 'parcheggio.ics', 'promemoria calendario');
+    await p.fill('#pk-nota', 'piano -2 B14'); await p.dispatchEvent('#pk-nota', 'change');
+    await p.evaluate(() => { closeParcheggio(); hubGo('oggi'); });
+    t = await p.$eval('#oggi-root', e => e.textContent);
+    expect(/Auto parcheggiata/.test(t) && /scade alle/.test(t) && /piano -2 B14/.test(t), 'parcheggio in Oggi: ' + t.slice(0, 200));
+    await p.evaluate(() => { openParcheggio(); pkPreso(); closeParcheggio(); hubGo('oggi'); });
+    expect(!/Auto parcheggiata/.test(await p.$eval('#oggi-root', e => e.textContent)), 'parcheggio non rimosso');
+  }, page);
+
+  await test('Eventi: calendario autodromo, date ripetute, eventi tuoi', async p => {
+    const ev = await p.evaluate(() => { const w = _eventiInternals.weekend(), z = n => String(n).padStart(2, '0'), f = (d, h) => d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + ' ' + h;
+      const sab = new Date(w[0]); sab.setDate(sab.getDate() + 1); const out = [];
+      for (let i = 0; i < 4; i++) { const d = new Date(w[0]); d.setDate(d.getDate() + 7 + i); out.push({ titolo: 'Circuit Experience', inizio: f(d, '08:00:00'), fine: f(d, '17:00:00'), luogo: 'Autodromo Nazionale Monza', lat: 45.6156, lng: 9.2811, cat: ['Tour'] }); }
+      out.push({ titolo: 'Track day GT', inizio: f(sab, '09:00:00'), fine: f(sab, '18:00:00'), luogo: 'Autodromo Nazionale Monza', lat: 45.6156, lng: 9.2811, cat: ['Track Event'], url: 'https://www.monzanet.it/x' });
+      return out; });
+    await p.route('**/api/eventi', r => r.fulfill({ json: { eventi: ev }, headers: { 'access-control-allow-origin': '*' } }));
+    await p.evaluate(() => { localStorage.removeItem('hub_eventi_cache_v1'); localStorage.removeItem('hub_eventi_miei_v1'); openEventi(); });
+    await p.waitForFunction(() => /Track day GT/.test(document.getElementById('ev-body').textContent), null, { timeout: 5000 });
+    let t = await p.$eval('#ev-body', e => e.textContent);
+    expect(/4 date dal/.test(t) && (t.match(/Circuit Experience/g) || []).length === 1, 'date ripetute non raggruppate: ' + t.slice(0, 300));
+    expect(/km da te/.test(t), 'distanza da te');
+    await p.evaluate(() => evFiltro('weekend'));
+    t = await p.$eval('#ev-body', e => e.textContent);
+    expect(/Track day GT/.test(t) && !/Circuit Experience/.test(t), 'filtro weekend: ' + t.slice(0, 200));
+    await p.evaluate(() => evNuovo()); await p.fill('#ev-t', 'Cars & Coffee Brianza'); await p.fill('#ev-l', 'Monza'); await p.click('#mt-sheet .gar-save');
+    await p.evaluate(() => evFiltro('miei'));
+    expect(/Cars & Coffee Brianza/.test(await p.$eval('#ev-body', e => e.textContent)), 'evento tuo');
+    const dl = p.waitForEvent('download'); await p.click('#ev-body .of-act button');
+    expect((await dl).suggestedFilename() === 'evento.ics', 'evento nel calendario');
+    await p.evaluate(() => { closeEventi(); localStorage.removeItem('hub_eventi_miei_v1'); });
+    await p.unroute('**/api/eventi');
+  }, page);
+
   await test('Motorsport: risultati F1 e classifica', async p => {
     await p.evaluate(() => { localStorage.removeItem('hub_ms_cache_v1'); hubGo('ms'); });
     await p.waitForTimeout(800);
@@ -736,6 +822,27 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
       return [/Panda/.test(enc), dec.ls.hub_garage_v1 === dump.ls.hub_garage_v1, wrong];
     });
     expect(!r[0], 'il backup cifrato contiene testo in chiaro'); expect(r[1], 'decifratura diversa dall\'originale'); expect(r[2] === 'rifiutato', 'codice sbagliato accettato');
+  }, page);
+
+  await test('Backup: copia nel cloud dell\'utente e cloud solo col proprietario', async p => {
+    await p.evaluate(() => { localStorage.removeItem('hub_backup_file_v1'); localStorage.removeItem('hub_owner_key_v1'); localStorage.removeItem('hub_cloud_v1'); });
+    const dl = p.waitForEvent('download');
+    await p.evaluate(() => { hubBackupOpen(); document.querySelector('[data-bk="share"]').click(); });
+    expect(/autohub-backup-.*\.json/.test((await dl).suggestedFilename()), 'file di backup non scaricato');
+    await p.waitForFunction(() => hubBackupFile() && hubBackupFile().lastAt > 0);
+    let txt = await p.$eval('#hub-backup-body', e => e.textContent);
+    expect(/Sono il proprietario/.test(txt) && !/Attiva backup automatico/.test(txt), 'cloud visibile senza chiave: ' + txt);
+    await p.evaluate(() => { document.querySelector('[data-bk="owner"]').click(); document.querySelector('[data-bk="genkey"]').click(); });
+    const k = await p.$eval('#hub-bk-key', e => e.textContent);
+    expect(/^[0-9a-f]{48}$/.test(k), 'chiave proprietario: ' + k);
+    let hdr = null;
+    await p.route('**/api/backup/**', r => { hdr = r.request().headers()['x-backup-key']; r.fulfill({ json: { status: 'saved' }, headers: { 'access-control-allow-origin': '*' } }); });
+    await p.evaluate(() => { document.querySelector('[data-bk="back"]').click(); document.querySelector('[data-bk="on"]').click(); });
+    await p.waitForFunction(() => /Backup salvato/.test(document.getElementById('hub-bk-msg').textContent), null, { timeout: 8000 });
+    expect(hdr === k, 'chiave non inviata al Worker');
+    await p.unroute('**/api/backup/**');
+    await p.evaluate(() => { localStorage.removeItem('hub_owner_key_v1'); localStorage.removeItem('hub_cloud_v1'); document.getElementById('hub-backup').classList.remove('visible'); hubGo('oggi'); });
+    expect(!/💾 Backup/.test(await p.$eval('#oggi-root', e => e.textContent)), 'promemoria backup dopo una copia recente');
   }, page);
 
   await test('Nessun errore JavaScript durante i test', async () => { expect(!errors.length, errors.join(' | ')); });

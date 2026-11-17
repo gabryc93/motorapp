@@ -476,3 +476,53 @@ body[data-pill-hidden="1"] .hub-tabs {
 .ric-act { display: flex; gap: 12px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
 .ric-act a { color: var(--accent, #e8a030); font-size: 13px; }
 .ric-act button { background: none; border: 1px solid rgba(255,255,255,.2); color: inherit; border-radius: 8px; padding: 5px 10px; font-size: 12px; }
+
+/* ── Officine ── */
+.mt-tabs button { padding-left: 2px; padding-right: 2px; white-space: nowrap; }
+.of-card { padding: 12px 14px; }
+.of-h { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.of-h b { display: block; font-size: 15px; }
+.of-h small { display: block; font-size: 12px; opacity: .7; margin-top: 2px; }
+.of-edit { background: none; border: 1px solid rgba(255,255,255,.15); color: inherit; border-radius: 8px; width: 34px; height: 34px; flex-shrink: 0; }
+.of-act { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
+.of-act a, .of-act button { background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: inherit; border-radius: 9px; padding: 7px 10px; font-size: 12.5px; text-decoration: none; }
+.of-ask { list-style: none; margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: rgba(232,160,48,.08); border: 1px solid rgba(232,160,48,.25); }
+.of-ask li { font-size: 13px; padding: 3px 0; }
+.of-ask small { opacity: .6; }
+.of-ask input { margin-right: 6px; vertical-align: -2px; }
+.of-prev { margin-top: 8px; border-top: 1px solid rgba(255,255,255,.08); }
+.of-prev > div { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 13px; }
+.of-prev span { flex: 1; min-width: 0; }
+.of-prev small { display: block; opacity: .6; font-size: 11px; }
+.of-prev button { background: none; border: 0; color: inherit; opacity: .5; }
+.of-note { font-size: 12.5px; opacity: .75; margin: 8px 0 0; }
+.of-conf ul { margin: 6px 0 0 16px; padding: 0; font-size: 13px; line-height: 1.5; }
+.of-chk { display: flex; gap: 8px; align-items: center; font-size: 13px; margin: 4px 0 10px; }
+
+/* ── Parcheggio e Eventi (overlay a schermo intero come Documenti) ── */
+#pk-overlay, #ev-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 70; display: none; flex-direction: column; }
+#pk-overlay.visible, #ev-overlay.visible { display: flex; }
+#pk-overlay .mt-hdr, #ev-overlay .mt-hdr { padding-top: calc(14px + var(--hub-safe-top, 0px)); }
+#pk-overlay .mt-body, #ev-overlay .mt-body { overflow-y: auto; flex: 1; }
+.pk-big { display: block; width: 100%; text-align: center; padding: 14px; border-radius: 12px; border: 0; background: #2f6fde; color: #fff; font-weight: 700; font-size: 15px; text-decoration: none; margin: 10px 0; cursor: pointer; }
+.pk-card { padding: 14px; }
+.pk-h b { display: block; font-size: 15px; }
+.pk-h small { display: block; font-size: 12px; opacity: .7; margin-top: 2px; }
+.pk-scadbox { margin-top: 10px; padding: 9px 12px; border-radius: 10px; background: rgba(255,255,255,.05); font-size: 14px; }
+.pk-scadbox.warn { background: rgba(232,160,48,.15); color: #f0b85a; }
+.pk-scadbox.crit { background: rgba(224,90,74,.18); color: #ff8a7a; }
+.pk-foto img { display: block; width: 100%; max-height: 260px; object-fit: cover; border-radius: 10px; margin-top: 10px; }
+.pk-nota, .pk-dist { font-size: 13px; margin: 8px 0 0; }
+.pk-dist { opacity: .75; }
+.pk-scad { display: flex; flex-wrap: wrap; gap: 6px; }
+.pk-scad button { background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: inherit; border-radius: 8px; padding: 7px 10px; font-size: 12.5px; }
+.pk-scad button.on { border-color: rgba(76,175,125,.6); }
+.pk-scad input { flex: 1; min-width: 100px; width: auto !important; }
+.gar-field input[type="file"] { font-size: .76rem; color: var(--t2, #aaa); max-width: 100%; }
+.pk-ics { width: 100%; margin-bottom: 10px; }
+.ev-card { padding: 12px 14px; }
+.ev-card.ev-wk { border-color: rgba(232,160,48,.45); }
+.ev-h { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.ev-h b { font-size: 14.5px; }
+.ev-tag { flex-shrink: 0; font-size: 10.5px; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,.08); text-transform: lowercase; }
+.ev-d { font-size: 12.5px; opacity: .75; margin: 6px 0 0; line-height: 1.4; }

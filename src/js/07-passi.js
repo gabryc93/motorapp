@@ -106,7 +106,7 @@
   ];
 
   /* ── Stato: stagione (indicativa) + meteo in vetta ─────────────── */
-  var STATUS_KEY = 'hub_passi_status_v2', STATUS_TTL = 3 * 3600 * 1000;
+  var STATUS_KEY = 'hub_passi_status_v3', STATUS_TTL = 3 * 3600 * 1000;
   var FAV_KEY = 'hub_passi_fav_v1', POS_KEY = 'hub_passi_pos_v1';
   var _status = {}, _statusTs = 0;
   function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
@@ -124,9 +124,27 @@
     var end = ms.filter(function(m) { return ms.indexOf(m === 12 ? 1 : m + 1) < 0; })[0];
     return 'Di solito chiuso ' + MESI[start - 1].toLowerCase() + '–' + MESI[end - 1].toLowerCase();
   }
-  function computeStatus(p, w) {
-    if (closedNow(p)) return { status: 'closed', note: chiusoTxt(p) + ': verifica prima di partire' };
-    if (!w) return { status: 'unknown', note: 'Meteo non disponibile' };
+  var LIVE_KEY = 'hub_passi_live_v1';
+  function liveCache() { var c = load(LIVE_KEY, null); return c && Date.now() - c.ts < 3 * 86400000 ? c.passi : {}; }
+  // Chiuso in quella data? Stato ufficiale se c'è (con le date di chiusura), altrimenti la stagione tipica
+  function chiusoIl(p, quando) {
+    var d = quando ? new Date(quando) : new Date(), l = liveCache()[p.id], iso = d.toISOString().slice(0, 10);
+    if (l && l.stato === 'chiuso') return !l.al || iso < l.al ? 'chiuso, riapertura prevista il ' + dataIt(l.al) : false;
+    if (l && l.stato === 'aperto' && (Date.now() - d) > -7 * 86400000) return false;   // aperto ora: vale per i prossimi giorni
+    return p.closed && p.closed.indexOf(d.getMonth() + 1) >= 0 ? chiusoTxt(p).toLowerCase() : false;
+  }
+  function dataIt(d) { return d ? d.split('-').reverse().join('/') : ''; }
+  // live: stato ufficiale del passo (ACE, tramite il Worker) quando disponibile
+  function computeStatus(p, w, live) {
+    if (live && live.stato === 'chiuso') return { status: 'closed', live: true, note: 'Chiuso' + (live.al ? ', riapertura prevista il ' + dataIt(live.al) : '') + ' (stato aggiornato)' };
+    var aperto = live && live.stato === 'aperto';
+    if (!aperto && closedNow(p)) return { status: 'closed', note: chiusoTxt(p) + ': verifica prima di partire' };
+    if (!w) return aperto ? { status: 'open', live: true, note: 'Aperto (stato aggiornato)' + (live.avviso ? ': possibile obbligo di catene' : '') } : { status: 'unknown', note: 'Meteo non disponibile' };
+    var r = meteoStatus(w);
+    if (aperto) { r.live = true; r.note = 'Aperto · ' + r.note; if (live.avviso && r.status === 'open') r.note += ' · verifica catene'; }
+    return r;
+  }
+  function meteoStatus(w) {
     if (w.snow > 3) return { status: 'caution', note: 'Neve in vetta (' + Math.round(w.snow) + ' cm): possibile chiusura' };
     if (w.tMin < 0 && w.snow > 0.2) return { status: 'caution', note: 'Gelo e neve: rischio ghiaccio' };
     if (w.tMin < 1) return { status: 'caution', note: 'Gelo possibile in cima (min ' + Math.round(w.tMin) + '°)' };
@@ -153,10 +171,20 @@
       }).catch(function() {});
     })).then(function() { return out; });
   }
+  function fetchLive() {
+    if (typeof WORKER === 'undefined') return Promise.resolve({});
+    return fetch(WORKER + '/api/passi').then(function(r) { return r.ok ? r.json() : {}; }).then(function(j) {
+      if (j.passi) store(LIVE_KEY, { ts: Date.now(), passi: j.passi });
+      return j.passi || liveCache();
+    }).catch(function() { return liveCache(); });
+  }
   function refreshStatus() {
-    var open = PASSES.filter(function(p) { return !closedNow(p); });
-    return fetchWeatherBatch(open).then(function(w) {
-      PASSES.forEach(function(p) { _status[p.id] = computeStatus(p, w[p.id]); });
+    return fetchLive().then(function(live) {
+      var open = PASSES.filter(function(p) { var l = live[p.id]; return l ? l.stato !== 'chiuso' : !closedNow(p); });
+      return fetchWeatherBatch(open).then(function(w) { return [live, w]; });
+    }).then(function(lw) {
+      var live = lw[0], w = lw[1];
+      PASSES.forEach(function(p) { _status[p.id] = computeStatus(p, w[p.id], live[p.id]); });
       _statusTs = Date.now(); store(STATUS_KEY, { ts: _statusTs, data: _status });
     });
   }
@@ -257,7 +285,7 @@
           '<span class="ps-card-diff d-' + p.diff + '">' + diffLbl(p.diff) + '</span></div>' +
       '</button>';
     }).join('');
-    html += '<p class="ps-fine">Lo stato "di solito chiuso" è indicativo: le date di apertura cambiano ogni anno con la neve. Il meteo è previsto alla quota del passo' + (_statusTs ? ' (aggiornato alle ' + new Date(_statusTs).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) + ')' : '') + '.</p>';
+    html += '<p class="ps-fine">Aperture e chiusure dei passi alpini principali da ACE (aggiornate più volte a settimana); per gli altri lo stato "di solito chiuso" è indicativo. Il meteo è previsto alla quota del passo' + (_statusTs ? ' (aggiornato alle ' + new Date(_statusTs).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) + ')' : '') + '.</p>';
     body.innerHTML = html;
   }
 
@@ -634,6 +662,7 @@
   };
   window.psRefreshStatus = function() { return refreshStatus().then(renderList); };
   // per i test
-  window._psInternals = { PASSES: PASSES, analizza: analizza, catene: catene, chiusoTxt: chiusoTxt, computeStatus: computeStatus };
+  if (!liveCache() || !Object.keys(liveCache()).length) setTimeout(fetchLive, 4000);
+  window._psInternals = { chiusoIl: chiusoIl, liveCache: liveCache, PASSES: PASSES, analizza: analizza, catene: catene, chiusoTxt: chiusoTxt, computeStatus: computeStatus };
   document.addEventListener('DOMContentLoaded', function() { setTimeout(inject, 350); });
 })();

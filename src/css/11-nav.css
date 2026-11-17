@@ -134,3 +134,7 @@
 .hub-top:focus-visible { outline: 2px solid #e8a030; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .hub-top { transition: none; } }
 html[data-theme="light"] .hub-top, body.light .hub-top { background: rgba(255,255,255,.92); color: #1b1a22; border-color: rgba(0,0,0,.12); }
+.hub-bk-warn { color: #e8a030; }
+.hub-bk-owner button { opacity: .75; }
+.hub-bk-steps { margin: 4px 0 10px 18px; padding: 0; font-size: .8rem; line-height: 1.5; color: #c9c7d1; }
+.hub-bk-steps li { margin-bottom: 4px; }

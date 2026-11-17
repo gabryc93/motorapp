@@ -266,7 +266,7 @@
       return route(pl, nomw).then(function(rt) {
         var smp = campiona(rt);
         return previsioni(smp).then(function(fc) {
-          S.data = { pl: pl, rt: rt, smp: smp, fc: fc, dep: dep, ret: ret, passi: passiSulPercorso(rt) }; S.pieno = null;
+          S.data = { pl: pl, rt: rt, smp: smp, fc: fc, dep: dep, ret: ret, passi: passiSulPercorso(rt) }; S.pieno = null; S.ric = null;
           jset(LAST, { from: pl[0], via: via ? pl[1] : null, to: pl[pl.length - 1], veh: S.veh, nomw: nomw });
           var rec = jget(RECENT, []).filter(function(r) { return r.name !== pl[pl.length - 1].name; });
           rec.unshift(pl[pl.length - 1]); jset(RECENT, rec.slice(0, 8)); chips();
@@ -339,6 +339,7 @@
     html += decisione(A.rows, rt);
     html += quando();
     html += '<div id="wp-pieno">' + pienoBox() + '</div>';
+    if (spina()) html += '<div id="wp-ric">' + ricBox() + '</div>';
     html += tappe('Andata · ' + giorno(D.dep) + ' ' + hhmm(D.dep), A, moto);
     if (R) html += R.rows.length ? tappe('Ritorno · ' + giorno(D.ret) + ' ' + hhmm(D.ret), R, moto) : '<div class="wp-alert">Ritorno oltre le previsioni disponibili.</div>';
     if (A.fuori) html += '<p class="wp-fine">Parte del viaggio è oltre le previsioni disponibili (fino a ' + giorno(last) + ').</p>';
@@ -375,8 +376,9 @@
     var D = S.data, moto = S.veh === 'moto', out = [];
     // passi chiusi nel mese del viaggio
     D.passi.forEach(function(x) {
-      var mese = new Date(D.dep + x.t * 1000).getMonth() + 1;
-      if (x.p.closed && x.p.closed.indexOf(mese) >= 0) out.push(['bad', '⛔ ' + esc(x.p.name) + ': ' + esc(window._psInternals.chiusoTxt(x.p).toLowerCase()) + '. Verifica l\'apertura prima di partire.']);
+      var quando = D.dep + x.t * 1000, mese = new Date(quando).getMonth() + 1;
+      var ch = window._psInternals.chiusoIl ? window._psInternals.chiusoIl(x.p, quando) : (x.p.closed && x.p.closed.indexOf(mese) >= 0 ? window._psInternals.chiusoTxt(x.p).toLowerCase() : false);
+      if (ch) out.push(['bad', '⛔ ' + esc(x.p.name) + ': ' + esc(ch) + '. Verifica l\'apertura prima di partire.']);
       else out.push(['info', '⛰ Passi sul percorso: ' + esc(x.p.name) + ' (' + x.p.alt + ' m)']);
     });
     var all = A.rows.concat(R ? R.rows : []);
@@ -498,6 +500,61 @@
         L.marker([x.lat, x.lng], { icon: L.divIcon({ className: 'wp-pieno-pin', html: '⛽' + (i + 1), iconSize: [34, 20] }) }).bindTooltip(x.prezzo.toFixed(3) + ' €/l').addTo(S.map);
       });
     }).catch(function(e) { S.pieno = { carb: carb, aut: aut, err: e.message || 'Distributori non disponibili' }; $('wp-pieno').innerHTML = pienoBox(); });
+  };
+
+  /* ── Ricarica sul percorso (plug-in ed elettriche): colonnine a meno di 1 km dalla strada ── */
+  function spina() { var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active(); return v && (v.alim === 'plugin' || v.alim === 'elettrica') ? v : null; }
+  function ricBox() {
+    var R = S.ric, v = spina();
+    var head = '<div class="wp-sec">🔌 Ricarica sul percorso</div>';
+    var go = '<div class="wp-pieno-f"><select id="wp-ric-min" aria-label="Potenza minima"><option value="0">Tutte le colonnine</option><option value="22"' + (R && R.min === 22 ? ' selected' : '') + '>Almeno 22 kW</option><option value="50"' + (R && R.min === 50 ? ' selected' : '') + '>Veloci (50 kW e oltre)</option></select>' +
+      '<button type="button" class="wp-pieno-go" onclick="wpRicarica()">Cerca</button></div>';
+    if (!R) return head + '<p class="wp-fine">Le colonnine attive a meno di 1 km dalla strada' + (v.alim === 'plugin' ? ': utili per arrivare in elettrico a destinazione o ricaricare durante la sosta.' : '.') + '</p>' + go;
+    if (R.load) return head + go + '<div class="wp-loading">Cerco le colonnine lungo la strada…</div>';
+    if (R.err) return head + go + '<div class="wp-error">' + esc(R.err) + '</div>';
+    if (!R.list.length) return head + go + '<p class="wp-fine">Nessuna colonnina' + (R.min ? ' da almeno ' + R.min + ' kW' : '') + ' a meno di 1 km dalla strada.</p>';
+    var pref = {}; try { pref = JSON.parse(localStorage.getItem('hub_ricarica_pref_v1') || '{}'); } catch (e) {}
+    var eur = pref.colonnina || 0.7, bat = parseFloat(v.batteria || (v.specs && v.specs.batteria_kwh)) || (v.alim === 'plugin' ? 12 : 50);
+    var pl = S.data.pl, o = pl[0], d = pl[pl.length - 1];
+    return head + go + '<p class="wp-fine">' + R.tot + ' colonnine lungo la strada' + (R.tot > R.list.length ? ', le ' + R.list.length + ' più comode' : '') + '. Una ricarica completa da ' + Math.round(bat) + ' kWh costa circa ' + Math.round(bat * eur) + ' € a ' + eur.toFixed(2).replace('.', ',') + ' €/kWh.</p>' +
+      '<div class="wp-pieno-l">' + R.list.map(function(x, i) {
+        var nav = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + o.lat + ',' + o.lng + '&destination=' + d.lat + ',' + d.lng + '&waypoints=' + x.lat + ',' + x.lng;
+        var ore = v.alim === 'plugin' && x.maxKW ? Math.min(bat / Math.min(x.maxKW, 7.4), 12) : null;   // i plug-in caricano in AC (di solito fino a 7,4 kW)
+        return '<a class="wp-pieno-r" href="' + nav + '" target="_blank" rel="noopener"><span class="wp-pieno-n">' + (i + 1) + '</span><span class="wp-pieno-t"><b>' + esc(x.indirizzo || x.comune || 'Colonnina') + '</b><small>km ' + Math.round(x.km) + ' · ' + esc(x.comune || '') + (x.off > .2 ? ' · ' + Math.round(x.off * 1000) + ' m dalla strada' : '') + (x.numPrese ? ' · ' + x.numPrese + (x.numPrese === 1 ? ' presa' : ' prese') : '') + '</small></span>' +
+          '<span class="wp-pieno-p"><b>' + (x.maxKW || '?') + ' kW</b><small>' + (ore ? 'piena in ~' + (ore < 1 ? Math.round(ore * 60) + ' min' : ore.toFixed(1).replace('.', ',') + ' h') : x.isFast ? 'veloce' : 'lenta') + '</small></span></a>';
+      }).join('') + '</div><p class="wp-fine">Dati delle colonnine dalla Piattaforma Unica Nazionale (aggiornati ogni mese): stato e prezzo li conferma l\'app dell\'operatore. Tocca per aggiungerla come tappa in Google Maps.</p>';
+  }
+  window.wpRicarica = function() {
+    var D = S.data; if (!D) return;
+    var min = parseInt($('wp-ric-min').value, 10) || 0;
+    S.ric = { min: min, load: true }; $('wp-ric').innerHTML = ricBox();
+    var c = D.rt.coords, cum = D.rt.cumD, L = cum[cum.length - 1], pts = [], last = -1, centri = [];
+    for (var j = 0; j < c.length; j++) if (cum[j] - last >= 0.2) { pts.push({ lat: c[j].lat, lng: c[j].lng, km: cum[j] }); last = cum[j]; }
+    for (var k = 0; k <= L; k += 16) { var best = null; pts.forEach(function(p) { if (!best || Math.abs(p.km - k) < Math.abs(best.km - k)) best = p; }); if (best) centri.push(best); }
+    if (centri.length > 40) centri = centri.filter(function(_, i) { return i % Math.ceil(centri.length / 40) === 0; });
+    var seen = {}, found = [], q = centri.slice();
+    function prossimo() {
+      var p = q.shift(); if (!p) return Promise.resolve();
+      return fetch(WORKER + '/api/ev?lat=' + p.lat.toFixed(4) + '&lng=' + p.lng.toFixed(4) + '&raggio=10').then(function(r) { return r.ok ? r.json() : []; }).then(function(list) {
+        (Array.isArray(list) ? list : []).forEach(function(x) {
+          var id = x.lat.toFixed(5) + ',' + x.lng.toFixed(5);
+          if (seen[id] || (x.maxKW || 0) < min) return; seen[id] = 1;
+          var b = 1e9, km = 0;
+          pts.forEach(function(pp) { var dd = dist(pp, x); if (dd < b) { b = dd; km = pp.km; } });
+          if (b <= 1) found.push(Object.assign({}, x, { off: b, km: km }));
+        });
+      }).catch(function() {}).then(prossimo);
+    }
+    Promise.all([prossimo(), prossimo(), prossimo(), prossimo()]).then(function() {
+      // una per tratto da ~25 km: la più potente e vicina alla strada
+      var tratti = {};
+      found.forEach(function(x) { var t = Math.floor(x.km / 25), cur = tratti[t], sc = (x.maxKW || 3) / (1 + x.off * 4); if (!cur || sc > cur.sc) tratti[t] = Object.assign({ sc: sc }, x); });
+      var list = Object.keys(tratti).map(function(t) { return tratti[t]; }).sort(function(a, b) { return a.km - b.km; }).slice(0, 8);
+      S.ric = { min: min, list: list, tot: found.length }; $('wp-ric').innerHTML = ricBox();
+      if (S.map && typeof L !== 'undefined' && window.L) list.forEach(function(x, i) {
+        window.L.marker([x.lat, x.lng], { icon: window.L.divIcon({ className: 'wp-pieno-pin', html: '🔌' + (i + 1), iconSize: [34, 20] }) }).bindTooltip((x.maxKW || '?') + ' kW').addTo(S.map);
+      });
+    }).catch(function(e) { S.ric = { min: min, err: e.message || 'Colonnine non disponibili' }; $('wp-ric').innerHTML = ricBox(); });
   };
 
   function mappa(rows) {

@@ -120,7 +120,7 @@
     // passi aperti nel mese, raggiungibili nell'anello
     if (S.stile === 'passi') {
       var P = (window._psInternals && window._psInternals.PASSES) || [];
-      P.filter(function(p) { var k = dist(s, p); return k > 15 && k <= L / 2.7 && !(p.closed && p.closed.indexOf(mese) >= 0); })
+      P.filter(function(p) { var k = dist(s, p); return k > 15 && k <= L / 2.7 && !(window._psInternals.chiusoIl ? window._psInternals.chiusoIl(p, when) : p.closed && p.closed.indexOf(mese) >= 0); })
         .sort(function(a, b) { return b.alt - a.alt; }).slice(0, 3).forEach(function(p) {
           var b = bearing(s, p), k = dist(s, p);
           out.push({ tipo: 'passo', passo: p, brg: b, wp: [{ lat: p.lat, lng: p.lng }, dest(s, b + 40, k * 0.75)], score: 100 + p.alt / 100 });

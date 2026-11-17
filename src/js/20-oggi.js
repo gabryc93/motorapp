@@ -179,13 +179,33 @@
   /* ── Backup automatico ─────────────────────────────────────────── */
   function renderBackup() {
     if (!garage().length) return '';
-    var c = jget('hub_cloud_v1', null);
-    if (!c || !c.code) return card('💾 Backup', '<p class="og-p">I tuoi dati sono solo su questo telefono. Con il backup cloud cifrato si salvano da soli (all\'apertura ogni 12 ore e quando chiudi l\'app): ti basta conservare un codice.</p><button class="og-btn og-ghost" onclick="hubBackupOpen()">Attiva il backup automatico</button>');
+    var c = jget('hub_cloud_v1', null), owner = window.hubBackupOwner && window.hubBackupOwner();
+    if (!owner || !c || !c.code) {
+      // backup nel cloud dell'utente: promemoria se l'ultima copia ha più di 30 giorni
+      var f = window.hubBackupFile ? window.hubBackupFile() : null, gf = f && f.lastAt ? Math.floor((Date.now() - f.lastAt) / 86400000) : null;
+      if (gf != null && gf < 30) return '';
+      return card('💾 Backup', '<p class="og-p">' + (gf == null ? 'I tuoi dati sono solo su questo telefono.' : 'L\'ultima copia dei tuoi dati è di ' + gf + ' giorni fa.') + ' Salvane una nel tuo iCloud Drive o Google Drive: se cambi telefono la ripristini in un attimo.</p>' +
+        '<button class="og-btn og-ghost" onclick="hubBackupShare()">Salva una copia</button>');
+    }
     var g = c.lastAt ? Math.floor((Date.now() - c.lastAt) / 86400000) : null;
     if (g == null || g >= 7) return card('💾 Backup', '<p class="og-p og-err">' + (g == null ? 'Nessun backup ancora salvato.' : 'Ultimo backup ' + g + ' giorni fa: forse non riesce a partire.') + '</p><button class="og-btn og-ghost" onclick="hubBackupOpen()">Salva ora</button>', 'og-c-crit');
     return '';
   }
 
+  function renderEventi() {
+    var l = window.hubEventiWeekend ? window.hubEventiWeekend() : [];
+    if (!l.length) return '';
+    var dt = function(x) { return new Date(String(x).replace(' ', 'T')); };
+    return card('🏁 Questo weekend', l.slice(0, 3).map(function(e) {
+      var d = dt(e.inizio), q = e.ripetuto ? 'tutti i giorni' : d.toLocaleDateString('it-IT', { weekday: 'long' }) + (e.tuttoIlGiorno ? '' : ' ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }));
+      return '<button type="button" class="og-ride" onclick="openEventi()">' + esc(e.titolo) + '<span>' + esc(q + (e.luogo ? ' · ' + e.luogo : '')) + '</span></button>';
+    }).join('') + (l.length > 3 ? '<p class="og-p og-small">e altri ' + (l.length - 3) + '</p>' : ''));
+  }
+  function renderParcheggio() {
+    var p = window.hubParcheggio ? window.hubParcheggio() : null;
+    if (!p) return '';
+    return '<button type="button" class="og-park' + (p.scaduto ? ' crit' : p.scad && p.scad - Date.now() < 900000 ? ' warn' : '') + '" onclick="openParcheggio()"><span>🅿</span><span><b>Auto parcheggiata</b><small>' + esc(p.testo) + (p.nota ? ' · ' + esc(p.nota) : '') + '</small></span><span class="og-park-go">Portami ›</span></button>';
+  }
   function card(t, body, cls) { return '<section class="og-card ' + (cls || '') + '"><h2 class="og-h">' + t + '</h2>' + body + '</section>'; }
 
   var _M = null;
@@ -198,18 +218,21 @@
         (g.length > 1 ? '<div class="og-veh" role="group" aria-label="Veicolo attivo">' + g.map(function(x) {
           return '<button type="button" class="' + (v && v.id === x.id ? 'on' : '') + '" onclick="ogVeicolo(\'' + esc(x.id) + '\')">' + (x.type === 'moto' ? '🏍 ' : '🚗 ') + esc(vName(x)) + '</button>';
         }).join('') + '</div>' : '') + '</header>' +
-      renderDaFare() + renderMeteo(_M) + renderEnergia() + renderUscita() + renderBackup() +
+      renderParcheggio() + renderDaFare() + renderMeteo(_M) + renderEnergia() + renderUscita() + renderEventi() + renderBackup() +
       card('Strumenti', '<div class="og-tools">' +
         '<button onclick="openGiro()"><span>🗺</span>Giro della domenica</button>' +
         '<button onclick="hubGo(\'meteo\')"><span>🌦</span>Meteo percorso</button>' +
         '<button onclick="hubGo(\'ride\')"><span>🏁</span>Ride</button>' +
-        '<button onclick="hubGo(\'passi\')"><span>⛰</span>Passi e strade</button></div>');
+        '<button onclick="hubGo(\'passi\')"><span>⛰</span>Passi e strade</button>' +
+        '<button onclick="openParcheggio()"><span>🅿</span>Parcheggio</button>' +
+        '<button onclick="openEventi()"><span>📅</span>Eventi vicino</button></div>');
   }
   window.ogVeicolo = function(id) { if (window.hubGarage) window.hubGarage.setActive(id); if (window._hubRefreshGarageBadge) window._hubRefreshGarageBadge(); render(); };
   window.oggiInit = function() {
     render();
     // richiami ufficiali (cache 1 giorno per modello): aggiorna Da fare se ce ne sono
     if (window.hubRichiamiAggiorna) window.hubRichiamiAggiorna().then(function() { render(); });
+    if (window.hubEventiAggiorna && new Date().getDay() !== 1 && new Date().getDay() !== 2 && new Date().getDay() !== 3) window.hubEventiAggiorna().then(function(l) { if (l) render(); });
     // prezzi medi del giorno, se la sezione Carburanti non li ha ancora caricati
     if (!window.hubMedie && !jget('hub_medie_v1', null) && typeof WORKER !== 'undefined') {
       fetch(WORKER + '/api/medie').then(function(r) { return r.ok ? r.json() : null; }).then(function(d) { if (d && d.Benzina) { window.hubMedie = d; render(); } }).catch(function() {});

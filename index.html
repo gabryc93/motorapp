@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-11-17-2328">
+<meta name="autohub-build" content="2026-11-17-2347">
 <meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -1780,6 +1780,10 @@ body[data-hub="fuel"]::before, body[data-hub="oggi"]::before { display: none !im
   margin-bottom: 5px;
 }
 .gar-field input[type="text"],
+.gar-field input:not([type]),
+.gar-field input[type="tel"],
+.gar-field input[type="url"],
+.gar-field input[type="time"],
 .gar-field input[type="number"],
 .gar-field input[type="date"],
 .gar-field textarea,
@@ -5709,6 +5713,56 @@ body[data-pill-hidden="1"] .hub-tabs {
 .ric-act a { color: var(--accent, #e8a030); font-size: 13px; }
 .ric-act button { background: none; border: 1px solid rgba(255,255,255,.2); color: inherit; border-radius: 8px; padding: 5px 10px; font-size: 12px; }
 
+/* ── Officine ── */
+.mt-tabs button { padding-left: 2px; padding-right: 2px; white-space: nowrap; }
+.of-card { padding: 12px 14px; }
+.of-h { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.of-h b { display: block; font-size: 15px; }
+.of-h small { display: block; font-size: 12px; opacity: .7; margin-top: 2px; }
+.of-edit { background: none; border: 1px solid rgba(255,255,255,.15); color: inherit; border-radius: 8px; width: 34px; height: 34px; flex-shrink: 0; }
+.of-act { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
+.of-act a, .of-act button { background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: inherit; border-radius: 9px; padding: 7px 10px; font-size: 12.5px; text-decoration: none; }
+.of-ask { list-style: none; margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: rgba(232,160,48,.08); border: 1px solid rgba(232,160,48,.25); }
+.of-ask li { font-size: 13px; padding: 3px 0; }
+.of-ask small { opacity: .6; }
+.of-ask input { margin-right: 6px; vertical-align: -2px; }
+.of-prev { margin-top: 8px; border-top: 1px solid rgba(255,255,255,.08); }
+.of-prev > div { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 13px; }
+.of-prev span { flex: 1; min-width: 0; }
+.of-prev small { display: block; opacity: .6; font-size: 11px; }
+.of-prev button { background: none; border: 0; color: inherit; opacity: .5; }
+.of-note { font-size: 12.5px; opacity: .75; margin: 8px 0 0; }
+.of-conf ul { margin: 6px 0 0 16px; padding: 0; font-size: 13px; line-height: 1.5; }
+.of-chk { display: flex; gap: 8px; align-items: center; font-size: 13px; margin: 4px 0 10px; }
+
+/* ── Parcheggio e Eventi (overlay a schermo intero come Documenti) ── */
+#pk-overlay, #ev-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 70; display: none; flex-direction: column; }
+#pk-overlay.visible, #ev-overlay.visible { display: flex; }
+#pk-overlay .mt-hdr, #ev-overlay .mt-hdr { padding-top: calc(14px + var(--hub-safe-top, 0px)); }
+#pk-overlay .mt-body, #ev-overlay .mt-body { overflow-y: auto; flex: 1; }
+.pk-big { display: block; width: 100%; text-align: center; padding: 14px; border-radius: 12px; border: 0; background: #2f6fde; color: #fff; font-weight: 700; font-size: 15px; text-decoration: none; margin: 10px 0; cursor: pointer; }
+.pk-card { padding: 14px; }
+.pk-h b { display: block; font-size: 15px; }
+.pk-h small { display: block; font-size: 12px; opacity: .7; margin-top: 2px; }
+.pk-scadbox { margin-top: 10px; padding: 9px 12px; border-radius: 10px; background: rgba(255,255,255,.05); font-size: 14px; }
+.pk-scadbox.warn { background: rgba(232,160,48,.15); color: #f0b85a; }
+.pk-scadbox.crit { background: rgba(224,90,74,.18); color: #ff8a7a; }
+.pk-foto img { display: block; width: 100%; max-height: 260px; object-fit: cover; border-radius: 10px; margin-top: 10px; }
+.pk-nota, .pk-dist { font-size: 13px; margin: 8px 0 0; }
+.pk-dist { opacity: .75; }
+.pk-scad { display: flex; flex-wrap: wrap; gap: 6px; }
+.pk-scad button { background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: inherit; border-radius: 8px; padding: 7px 10px; font-size: 12.5px; }
+.pk-scad button.on { border-color: rgba(76,175,125,.6); }
+.pk-scad input { flex: 1; min-width: 100px; width: auto !important; }
+.gar-field input[type="file"] { font-size: .76rem; color: var(--t2, #aaa); max-width: 100%; }
+.pk-ics { width: 100%; margin-bottom: 10px; }
+.ev-card { padding: 12px 14px; }
+.ev-card.ev-wk { border-color: rgba(232,160,48,.45); }
+.ev-h { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.ev-h b { font-size: 14.5px; }
+.ev-tag { flex-shrink: 0; font-size: 10.5px; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,.08); text-transform: lowercase; }
+.ev-d { font-size: 12.5px; opacity: .75; margin: 6px 0 0; line-height: 1.4; }
+
 /* ════════════════════════════════════════════════════════════════════
    CARBURANTI styles (scoped to #hub-fuel — no global pollution)
    ════════════════════════════════════════════════════════════════════ */
@@ -6569,6 +6623,10 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 .hub-top:focus-visible { outline: 2px solid #e8a030; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .hub-top { transition: none; } }
 html[data-theme="light"] .hub-top, body.light .hub-top { background: rgba(255,255,255,.92); color: #1b1a22; border-color: rgba(0,0,0,.12); }
+.hub-bk-warn { color: #e8a030; }
+.hub-bk-owner button { opacity: .75; }
+.hub-bk-steps { margin: 4px 0 10px 18px; padding: 0; font-size: .8rem; line-height: 1.5; color: #c9c7d1; }
+.hub-bk-steps li { margin-bottom: 4px; }
 /* ════════════════════════════════════════════════════════════════════
    USATO — ricerche salvate, annunci, confronto
    ════════════════════════════════════════════════════════════════════ */
@@ -6872,6 +6930,16 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
 .gi-zone { font-size: .72rem; color: var(--t2); line-height: 1.5; margin-top: 6px; }
 .gi-zone:empty { display: none; }
 .gi-zone a { color: inherit; }
+
+/* ── Parcheggio ── */
+.og-park { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; appearance: none; color: inherit; background: var(--card2); border: 1px solid var(--b1); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; cursor: pointer; }
+.og-park > span:first-child { font-size: 1.4rem; width: 34px; height: 34px; border-radius: 9px; background: #2f6fde; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.og-park b { display: block; font-size: .92rem; }
+.og-park small { display: block; font-size: .78rem; opacity: .75; margin-top: 2px; }
+.og-park > span:nth-child(2) { flex: 1; min-width: 0; }
+.og-park-go { font-size: .8rem; color: #e8a030; white-space: nowrap; }
+.og-park.warn { border-color: rgba(232,160,48,.6); }
+.og-park.crit { border-color: rgba(224,90,74,.7); background: rgba(224,90,74,.1); }
 </style>
 </head>
 <body data-hub="oggi">
@@ -7813,7 +7881,7 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
   // Sezioni reali con DOM persistente
   var SECTIONS = ['oggi', 'fuel', 'diag', 'garage', 'usato'];
   // Tab "azione": aprono un overlay e tornano alla sezione precedente
-  var ACTIONS  = ['passi', 'ride', 'meteo', 'ms', 'giro', 'hud'];
+  var ACTIONS  = ['passi', 'ride', 'meteo', 'ms', 'giro', 'hud', 'park', 'eventi'];
   var _lastSection = 'oggi';
 
   function hubGo(name) {
@@ -7864,6 +7932,10 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
         if (typeof window.openMotorsport === 'function') window.openMotorsport();
       } else if (name === 'giro') {
         if (typeof window.openGiro === 'function') window.openGiro();
+      } else if (name === 'park') {
+        if (typeof window.openParcheggio === 'function') window.openParcheggio();
+      } else if (name === 'eventi') {
+        if (typeof window.openEventi === 'function') window.openEventi();
       } else if (name === 'hud') {
         // scorciatoia dall'icona: Ride a schermo intero, pronta da avviare
         if (typeof window.openRide === 'function') { window.openRide(); if (!document.getElementById('rd-overlay').classList.contains('rd-hud')) window.rideHud(); }
@@ -8063,7 +8135,7 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
     var wpo = document.getElementById('wp-overlay');
     var tco = document.getElementById('tco-overlay');
     var mso = document.getElementById('ms-overlay');
-    var usOpen = !!document.querySelector('.us-ov.visible');
+    var usOpen = !!document.querySelector('.us-ov.visible, #ric-overlay.visible, #doc-overlay.visible, #pk-overlay.visible, #ev-overlay.visible');
     var hide = usOpen ||
       (mv  && mv.classList.contains('visible')) ||
       (fv  && fv.classList.contains('visible')) ||
@@ -8091,7 +8163,7 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
     var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay',
                'hub-cmp-overlay', 'gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
                'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
-               'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay'];
+               'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay', 'pk-overlay', 'ev-overlay'];
     if (typeof MutationObserver === 'function') {
       var obs = new MutationObserver(_hubUpdatePillVisibility);
       ids.forEach(function(id) {
@@ -8101,7 +8173,7 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
       var lateRetry = setTimeout(function() {
         ['gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
          'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
-         'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay'].forEach(function(id) {
+         'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay', 'pk-overlay', 'ev-overlay'].forEach(function(id) {
           var el = document.getElementById(id);
           if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
         });
@@ -20452,7 +20524,7 @@ async function runCmp() {
   ];
 
   /* ── Stato: stagione (indicativa) + meteo in vetta ─────────────── */
-  var STATUS_KEY = 'hub_passi_status_v2', STATUS_TTL = 3 * 3600 * 1000;
+  var STATUS_KEY = 'hub_passi_status_v3', STATUS_TTL = 3 * 3600 * 1000;
   var FAV_KEY = 'hub_passi_fav_v1', POS_KEY = 'hub_passi_pos_v1';
   var _status = {}, _statusTs = 0;
   function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
@@ -20470,9 +20542,27 @@ async function runCmp() {
     var end = ms.filter(function(m) { return ms.indexOf(m === 12 ? 1 : m + 1) < 0; })[0];
     return 'Di solito chiuso ' + MESI[start - 1].toLowerCase() + '–' + MESI[end - 1].toLowerCase();
   }
-  function computeStatus(p, w) {
-    if (closedNow(p)) return { status: 'closed', note: chiusoTxt(p) + ': verifica prima di partire' };
-    if (!w) return { status: 'unknown', note: 'Meteo non disponibile' };
+  var LIVE_KEY = 'hub_passi_live_v1';
+  function liveCache() { var c = load(LIVE_KEY, null); return c && Date.now() - c.ts < 3 * 86400000 ? c.passi : {}; }
+  // Chiuso in quella data? Stato ufficiale se c'è (con le date di chiusura), altrimenti la stagione tipica
+  function chiusoIl(p, quando) {
+    var d = quando ? new Date(quando) : new Date(), l = liveCache()[p.id], iso = d.toISOString().slice(0, 10);
+    if (l && l.stato === 'chiuso') return !l.al || iso < l.al ? 'chiuso, riapertura prevista il ' + dataIt(l.al) : false;
+    if (l && l.stato === 'aperto' && (Date.now() - d) > -7 * 86400000) return false;   // aperto ora: vale per i prossimi giorni
+    return p.closed && p.closed.indexOf(d.getMonth() + 1) >= 0 ? chiusoTxt(p).toLowerCase() : false;
+  }
+  function dataIt(d) { return d ? d.split('-').reverse().join('/') : ''; }
+  // live: stato ufficiale del passo (ACE, tramite il Worker) quando disponibile
+  function computeStatus(p, w, live) {
+    if (live && live.stato === 'chiuso') return { status: 'closed', live: true, note: 'Chiuso' + (live.al ? ', riapertura prevista il ' + dataIt(live.al) : '') + ' (stato aggiornato)' };
+    var aperto = live && live.stato === 'aperto';
+    if (!aperto && closedNow(p)) return { status: 'closed', note: chiusoTxt(p) + ': verifica prima di partire' };
+    if (!w) return aperto ? { status: 'open', live: true, note: 'Aperto (stato aggiornato)' + (live.avviso ? ': possibile obbligo di catene' : '') } : { status: 'unknown', note: 'Meteo non disponibile' };
+    var r = meteoStatus(w);
+    if (aperto) { r.live = true; r.note = 'Aperto · ' + r.note; if (live.avviso && r.status === 'open') r.note += ' · verifica catene'; }
+    return r;
+  }
+  function meteoStatus(w) {
     if (w.snow > 3) return { status: 'caution', note: 'Neve in vetta (' + Math.round(w.snow) + ' cm): possibile chiusura' };
     if (w.tMin < 0 && w.snow > 0.2) return { status: 'caution', note: 'Gelo e neve: rischio ghiaccio' };
     if (w.tMin < 1) return { status: 'caution', note: 'Gelo possibile in cima (min ' + Math.round(w.tMin) + '°)' };
@@ -20499,10 +20589,20 @@ async function runCmp() {
       }).catch(function() {});
     })).then(function() { return out; });
   }
+  function fetchLive() {
+    if (typeof WORKER === 'undefined') return Promise.resolve({});
+    return fetch(WORKER + '/api/passi').then(function(r) { return r.ok ? r.json() : {}; }).then(function(j) {
+      if (j.passi) store(LIVE_KEY, { ts: Date.now(), passi: j.passi });
+      return j.passi || liveCache();
+    }).catch(function() { return liveCache(); });
+  }
   function refreshStatus() {
-    var open = PASSES.filter(function(p) { return !closedNow(p); });
-    return fetchWeatherBatch(open).then(function(w) {
-      PASSES.forEach(function(p) { _status[p.id] = computeStatus(p, w[p.id]); });
+    return fetchLive().then(function(live) {
+      var open = PASSES.filter(function(p) { var l = live[p.id]; return l ? l.stato !== 'chiuso' : !closedNow(p); });
+      return fetchWeatherBatch(open).then(function(w) { return [live, w]; });
+    }).then(function(lw) {
+      var live = lw[0], w = lw[1];
+      PASSES.forEach(function(p) { _status[p.id] = computeStatus(p, w[p.id], live[p.id]); });
       _statusTs = Date.now(); store(STATUS_KEY, { ts: _statusTs, data: _status });
     });
   }
@@ -20603,7 +20703,7 @@ async function runCmp() {
           '<span class="ps-card-diff d-' + p.diff + '">' + diffLbl(p.diff) + '</span></div>' +
       '</button>';
     }).join('');
-    html += '<p class="ps-fine">Lo stato "di solito chiuso" è indicativo: le date di apertura cambiano ogni anno con la neve. Il meteo è previsto alla quota del passo' + (_statusTs ? ' (aggiornato alle ' + new Date(_statusTs).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) + ')' : '') + '.</p>';
+    html += '<p class="ps-fine">Aperture e chiusure dei passi alpini principali da ACE (aggiornate più volte a settimana); per gli altri lo stato "di solito chiuso" è indicativo. Il meteo è previsto alla quota del passo' + (_statusTs ? ' (aggiornato alle ' + new Date(_statusTs).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) + ')' : '') + '.</p>';
     body.innerHTML = html;
   }
 
@@ -20980,7 +21080,8 @@ async function runCmp() {
   };
   window.psRefreshStatus = function() { return refreshStatus().then(renderList); };
   // per i test
-  window._psInternals = { PASSES: PASSES, analizza: analizza, catene: catene, chiusoTxt: chiusoTxt, computeStatus: computeStatus };
+  if (!liveCache() || !Object.keys(liveCache()).length) setTimeout(fetchLive, 4000);
+  window._psInternals = { chiusoIl: chiusoIl, liveCache: liveCache, PASSES: PASSES, analizza: analizza, catene: catene, chiusoTxt: chiusoTxt, computeStatus: computeStatus };
   document.addEventListener('DOMContentLoaded', function() { setTimeout(inject, 350); });
 })();
 </script>
@@ -22502,6 +22603,7 @@ async function runCmp() {
               '<button type="button" class="gar-photo-btn gar-photo-btn-rm" id="mt-doc-rm" onclick="_mtDocRemove()" style="display:none">Rimuovi</button>' +
             '</div>' +
           '</div></div>' +
+        '<div id="mt-f-off-slot"></div>' +
         '<div class="gar-field"><label>Note</label>' +
           '<textarea id="mt-f-note" rows="2" placeholder="Es. olio Castrol 5W30, pastiglie EBC, da Officina XY..." maxlength="200"></textarea></div>' +
         '<div class="gar-edit-btns">' +
@@ -22543,6 +22645,7 @@ async function runCmp() {
     document.getElementById('mt-int-nota').textContent = preset && preset.nota ? preset.nota : 'Cambia gli intervalli se il libretto o il tuo meccanico dicono diversamente.';
     document.getElementById('mt-f-cost').value = '';
     document.getElementById('mt-f-note').value = '';
+    document.getElementById('mt-f-off-slot').innerHTML = window.hubOfficine ? window.hubOfficine.select('mt-f-off', '') : '';
     document.getElementById('mt-doc-preview').innerHTML = '<div class="mt-doc-empty">📎</div>';
     document.getElementById('mt-doc-rm').style.display = 'none';
     document.getElementById('mt-edit').classList.add('visible');
@@ -22675,6 +22778,7 @@ async function runCmp() {
       cost: cost,
       docId: docId,
       note: document.getElementById('mt-f-note').value.trim(),
+      offId: document.getElementById('mt-f-off') ? document.getElementById('mt-f-off').value || null : null,
       ts: Date.now()
     });
     saveAll(all);
@@ -22834,6 +22938,7 @@ async function runCmp() {
       '<div class="gar-row2"><div class="gar-field"><label>Banco: CV</label><input type="number" id="mm-cv" min="0" value="' + (m && m.cv || '') + '" placeholder="facoltativo"></div>' +
       '<div class="gar-field"><label>Banco: Nm</label><input type="number" id="mm-nm" min="0" value="' + (m && m.nm || '') + '" placeholder="facoltativo"></div></div>' +
       '<div class="gar-field"><label>Fattura o foto</label><input type="file" id="mm-doc" accept="image/*,application/pdf" onchange="mtModDoc(event)">' + (m && m.docId ? '<button type="button" class="gar-photo-btn" onclick="mtModView(\'' + m.id + '\')">📎 Apri allegato</button>' : '') + '</div>' +
+      (window.hubOfficine ? window.hubOfficine.select('mm-off', m ? m.offId : '') : '') +
       '<div class="gar-field"><label>Note</label><textarea id="mm-note" rows="2" maxlength="300">' + escSafe(m ? m.note || '' : '') + '</textarea></div>' +
       '<p class="mt-int-nota">Le modifiche a scarico, assetto, cerchi o potenza spesso vanno omologate o annotate sul libretto: verifica prima di circolare.</p>' +
       '<div class="gar-edit-btns">' + (m ? '<button type="button" class="gar-cancel" onclick="mtModDel(\'' + m.id + '\')">🗑 Elimina</button>' : '') +
@@ -22853,7 +22958,7 @@ async function runCmp() {
     var all = jl(MK), old = id ? all.filter(function(x) { return x.id === id; })[0] : null, nid = id || uid(), docId = old ? old.docId : null;
     if (_modDoc) { docId = 'dm' + nid; try { await dbPutDoc(docId, _modDoc.dataUrl, _modDoc.mime); } catch (e) { docId = old ? old.docId : null; } }
     var rec = { id: nid, vid: v.id, titolo: val('mm-titolo'), cat: val('mm-cat'), costo: parseFloat(val('mm-costo')) || null, data: val('mm-data'), km: parseInt(val('mm-km'), 10) || null,
-      cv: parseFloat(val('mm-cv')) || null, nm: parseFloat(val('mm-nm')) || null, note: val('mm-note'), docId: docId };
+      cv: parseFloat(val('mm-cv')) || null, nm: parseFloat(val('mm-nm')) || null, note: val('mm-note'), docId: docId, offId: document.getElementById('mm-off') ? val('mm-off') || null : null };
     all = id ? all.map(function(x) { return x.id === id ? rec : x; }) : all.concat([rec]);
     js(MK, all); document.getElementById('mt-sheet').classList.remove('visible'); renderMaint();
   };
@@ -22882,7 +22987,7 @@ async function runCmp() {
   var _tab = 'int';
   window.mtTab = function(t) { _tab = t; renderMaint(); };
   function tabs() {
-    return '<div class="mt-tabs" role="tablist">' + [['int', '🔧 Interventi'], ['gomme', '⚫ Gomme'], ['mod', '🛠 Modifiche']].map(function(t) {
+    return '<div class="mt-tabs" role="tablist">' + [['int', '🔧 Interventi'], ['gomme', '⚫ Gomme'], ['mod', '🛠 Modifiche'], ['off', '🏪 Officine']].map(function(t) {
       return '<button type="button" role="tab" aria-selected="' + (_tab === t[0]) + '" class="' + (_tab === t[0] ? 'on' : '') + '" onclick="mtTab(\'' + t[0] + '\')">' + t[1] + '</button>';
     }).join('') + '</div>';
   }
@@ -22893,6 +22998,7 @@ async function runCmp() {
     if (!body) return;
     if (_tab === 'gomme') { body.innerHTML = tabs() + renderGomme(v); return; }
     if (_tab === 'mod') { body.innerHTML = tabs() + renderMods(v); return; }
+    if (_tab === 'off' && window.hubOfficine) { body.innerHTML = tabs() + window.hubOfficine.render(v); return; }
     var presets = presetsFor(v), K = kmStima(v);
     var icon = v.type === 'moto' ? '🏍' : '🚗';
     var name = v.customName || (v.marca + ' ' + v.modello);
@@ -24032,13 +24138,33 @@ async function runCmp() {
   /* ── Backup automatico ─────────────────────────────────────────── */
   function renderBackup() {
     if (!garage().length) return '';
-    var c = jget('hub_cloud_v1', null);
-    if (!c || !c.code) return card('💾 Backup', '<p class="og-p">I tuoi dati sono solo su questo telefono. Con il backup cloud cifrato si salvano da soli (all\'apertura ogni 12 ore e quando chiudi l\'app): ti basta conservare un codice.</p><button class="og-btn og-ghost" onclick="hubBackupOpen()">Attiva il backup automatico</button>');
+    var c = jget('hub_cloud_v1', null), owner = window.hubBackupOwner && window.hubBackupOwner();
+    if (!owner || !c || !c.code) {
+      // backup nel cloud dell'utente: promemoria se l'ultima copia ha più di 30 giorni
+      var f = window.hubBackupFile ? window.hubBackupFile() : null, gf = f && f.lastAt ? Math.floor((Date.now() - f.lastAt) / 86400000) : null;
+      if (gf != null && gf < 30) return '';
+      return card('💾 Backup', '<p class="og-p">' + (gf == null ? 'I tuoi dati sono solo su questo telefono.' : 'L\'ultima copia dei tuoi dati è di ' + gf + ' giorni fa.') + ' Salvane una nel tuo iCloud Drive o Google Drive: se cambi telefono la ripristini in un attimo.</p>' +
+        '<button class="og-btn og-ghost" onclick="hubBackupShare()">Salva una copia</button>');
+    }
     var g = c.lastAt ? Math.floor((Date.now() - c.lastAt) / 86400000) : null;
     if (g == null || g >= 7) return card('💾 Backup', '<p class="og-p og-err">' + (g == null ? 'Nessun backup ancora salvato.' : 'Ultimo backup ' + g + ' giorni fa: forse non riesce a partire.') + '</p><button class="og-btn og-ghost" onclick="hubBackupOpen()">Salva ora</button>', 'og-c-crit');
     return '';
   }
 
+  function renderEventi() {
+    var l = window.hubEventiWeekend ? window.hubEventiWeekend() : [];
+    if (!l.length) return '';
+    var dt = function(x) { return new Date(String(x).replace(' ', 'T')); };
+    return card('🏁 Questo weekend', l.slice(0, 3).map(function(e) {
+      var d = dt(e.inizio), q = e.ripetuto ? 'tutti i giorni' : d.toLocaleDateString('it-IT', { weekday: 'long' }) + (e.tuttoIlGiorno ? '' : ' ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }));
+      return '<button type="button" class="og-ride" onclick="openEventi()">' + esc(e.titolo) + '<span>' + esc(q + (e.luogo ? ' · ' + e.luogo : '')) + '</span></button>';
+    }).join('') + (l.length > 3 ? '<p class="og-p og-small">e altri ' + (l.length - 3) + '</p>' : ''));
+  }
+  function renderParcheggio() {
+    var p = window.hubParcheggio ? window.hubParcheggio() : null;
+    if (!p) return '';
+    return '<button type="button" class="og-park' + (p.scaduto ? ' crit' : p.scad && p.scad - Date.now() < 900000 ? ' warn' : '') + '" onclick="openParcheggio()"><span>🅿</span><span><b>Auto parcheggiata</b><small>' + esc(p.testo) + (p.nota ? ' · ' + esc(p.nota) : '') + '</small></span><span class="og-park-go">Portami ›</span></button>';
+  }
   function card(t, body, cls) { return '<section class="og-card ' + (cls || '') + '"><h2 class="og-h">' + t + '</h2>' + body + '</section>'; }
 
   var _M = null;
@@ -24051,18 +24177,21 @@ async function runCmp() {
         (g.length > 1 ? '<div class="og-veh" role="group" aria-label="Veicolo attivo">' + g.map(function(x) {
           return '<button type="button" class="' + (v && v.id === x.id ? 'on' : '') + '" onclick="ogVeicolo(\'' + esc(x.id) + '\')">' + (x.type === 'moto' ? '🏍 ' : '🚗 ') + esc(vName(x)) + '</button>';
         }).join('') + '</div>' : '') + '</header>' +
-      renderDaFare() + renderMeteo(_M) + renderEnergia() + renderUscita() + renderBackup() +
+      renderParcheggio() + renderDaFare() + renderMeteo(_M) + renderEnergia() + renderUscita() + renderEventi() + renderBackup() +
       card('Strumenti', '<div class="og-tools">' +
         '<button onclick="openGiro()"><span>🗺</span>Giro della domenica</button>' +
         '<button onclick="hubGo(\'meteo\')"><span>🌦</span>Meteo percorso</button>' +
         '<button onclick="hubGo(\'ride\')"><span>🏁</span>Ride</button>' +
-        '<button onclick="hubGo(\'passi\')"><span>⛰</span>Passi e strade</button></div>');
+        '<button onclick="hubGo(\'passi\')"><span>⛰</span>Passi e strade</button>' +
+        '<button onclick="openParcheggio()"><span>🅿</span>Parcheggio</button>' +
+        '<button onclick="openEventi()"><span>📅</span>Eventi vicino</button></div>');
   }
   window.ogVeicolo = function(id) { if (window.hubGarage) window.hubGarage.setActive(id); if (window._hubRefreshGarageBadge) window._hubRefreshGarageBadge(); render(); };
   window.oggiInit = function() {
     render();
     // richiami ufficiali (cache 1 giorno per modello): aggiorna Da fare se ce ne sono
     if (window.hubRichiamiAggiorna) window.hubRichiamiAggiorna().then(function() { render(); });
+    if (window.hubEventiAggiorna && new Date().getDay() !== 1 && new Date().getDay() !== 2 && new Date().getDay() !== 3) window.hubEventiAggiorna().then(function(l) { if (l) render(); });
     // prezzi medi del giorno, se la sezione Carburanti non li ha ancora caricati
     if (!window.hubMedie && !jget('hub_medie_v1', null) && typeof WORKER !== 'undefined') {
       fetch(WORKER + '/api/medie').then(function(r) { return r.ok ? r.json() : null; }).then(function(d) { if (d && d.Benzina) { window.hubMedie = d; render(); } }).catch(function() {});
@@ -24204,7 +24333,7 @@ async function runCmp() {
     // passi aperti nel mese, raggiungibili nell'anello
     if (S.stile === 'passi') {
       var P = (window._psInternals && window._psInternals.PASSES) || [];
-      P.filter(function(p) { var k = dist(s, p); return k > 15 && k <= L / 2.7 && !(p.closed && p.closed.indexOf(mese) >= 0); })
+      P.filter(function(p) { var k = dist(s, p); return k > 15 && k <= L / 2.7 && !(window._psInternals.chiusoIl ? window._psInternals.chiusoIl(p, when) : p.closed && p.closed.indexOf(mese) >= 0); })
         .sort(function(a, b) { return b.alt - a.alt; }).slice(0, 3).forEach(function(p) {
           var b = bearing(s, p), k = dist(s, p);
           out.push({ tipo: 'passo', passo: p, brg: b, wp: [{ lat: p.lat, lng: p.lng }, dest(s, b + 40, k * 0.75)], score: 100 + p.alt / 100 });
@@ -24788,6 +24917,439 @@ async function runCmp() {
   document.addEventListener('DOMContentLoaded', function() { setTimeout(function() { inject(); badge(); }, 350); });
 })();
 </script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB OFFICINE — rubrica di officine di fiducia (Manutenzione → Officine)
+   · contatti (chiama, naviga), tipo, note
+   · "Da chiedere": promemoria da portare in officina, per auto
+   · preventivi con importo, per confrontarli
+   · quanto hai speso in ciascuna (interventi e modifiche collegati)
+   Dati: hub_officine_v1 [{id, nome, tipo, tel, indirizzo, note, chiedi:[{id,t,vid,fatto}], prev:[{id,descr,importo,data,vid}]}]
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  var KEY = 'hub_officine_v1';
+  var TIPI = { meccanico: '🔧 Meccanico', gommista: '⚫ Gommista', carrozzeria: '🎨 Carrozzeria', elettrauto: '⚡ Elettrauto', concessionaria: '🏢 Concessionaria', revisioni: '📋 Centro revisioni', altro: '• Altro' };
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function jl(k) { try { return JSON.parse(localStorage.getItem(k) || '[]') || []; } catch (e) { return []; } }
+  function js(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function uid() { return 'o' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function $(id) { return document.getElementById(id); }
+  function list() { return jl(KEY); }
+  function save(l) { js(KEY, l); }
+  function eur(n) { return Math.round(n).toLocaleString('it-IT') + ' €'; }
+  function rerender() { if (window.mtTab) window.mtTab('off'); }
+  function sheet(html) {
+    var el = $('mt-sheet');
+    if (!el) { el = document.createElement('div'); el.id = 'mt-sheet'; el.onclick = function(e) { if (e.target === el) el.classList.remove('visible'); }; document.body.appendChild(el); }
+    el.innerHTML = '<div class="gar-edit-card">' + html + '</div>'; el.classList.add('visible');
+  }
+  function chiudi() { var el = $('mt-sheet'); if (el) el.classList.remove('visible'); }
+  function nomeV(id) { var v = (window.hubGarage ? window.hubGarage.list() : []).filter(function(x) { return x.id === id; })[0]; return v ? v.customName || ((v.marca || '') + ' ' + (v.modello || '')).trim() : ''; }
+
+  // spesa per officina: interventi (hub_maint_v1, cost) e modifiche (hub_mods_v1, costo)
+  function spese(oid) {
+    var tot = 0, n = 0, ultima = '';
+    jl('hub_maint_v1').forEach(function(e) { if (e.offId === oid) { n++; tot += e.cost || 0; if ((e.doneDate || '') > ultima) ultima = e.doneDate; } });
+    jl('hub_mods_v1').forEach(function(m) { if (m.offId === oid) { n++; tot += m.costo || 0; if ((m.data || '') > ultima) ultima = m.data; } });
+    return { tot: tot, n: n, ultima: ultima };
+  }
+
+  function render(v) {
+    var l = list(), html = '';
+    if (!l.length) html += '<p class="mt-int-nota">Salva le officine di cui ti fidi: le chiami e ci arrivi con un tocco, colleghi interventi e fatture, ti segni cosa chiedere la prossima volta e confronti i preventivi.</p>';
+    html += l.map(function(o) {
+      var s = spese(o.id), aperte = (o.chiedi || []).filter(function(c) { return !c.fatto; });
+      var maps = o.indirizzo ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(o.nome + ' ' + o.indirizzo) : '';
+      var prev = (o.prev || []).slice().sort(function(a, b) { return (b.data || '').localeCompare(a.data || ''); });
+      return '<div class="mt-card of-card"><div class="of-h"><div><b>' + esc(o.nome) + '</b><small>' + esc(TIPI[o.tipo] || '') + (o.indirizzo ? ' · ' + esc(o.indirizzo) : '') + '</small></div>' +
+        '<button type="button" class="of-edit" onclick="ofEdit(\'' + o.id + '\')" aria-label="Modifica officina">✎</button></div>' +
+        '<div class="of-act">' + (o.tel ? '<a href="tel:' + esc(o.tel.replace(/[^\d+]/g, '')) + '">📞 Chiama</a>' : '') + (maps ? '<a href="' + maps + '" target="_blank" rel="noopener">📍 Mappa</a>' : '') +
+        '<button type="button" onclick="ofChiedi(\'' + o.id + '\')">❓ Da chiedere</button><button type="button" onclick="ofPrev(\'' + o.id + '\')">💶 Preventivo</button></div>' +
+        (s.n ? '<div class="mt-card-meta">' + s.n + (s.n === 1 ? ' lavoro' : ' lavori') + (s.tot ? ' · ' + eur(s.tot) + ' spesi' : '') + (s.ultima ? ' · ultimo il ' + s.ultima.split('-').reverse().join('/') : '') + '</div>' : '') +
+        (aperte.length ? '<ul class="of-ask">' + aperte.map(function(c) {
+          return '<li><label><input type="checkbox" onchange="ofFatto(\'' + o.id + '\',\'' + c.id + '\')"> ' + esc(c.t) + (c.vid ? ' <small>' + esc(nomeV(c.vid)) + '</small>' : '') + '</label></li>';
+        }).join('') + '</ul>' : '') +
+        (prev.length ? '<div class="of-prev">' + prev.map(function(p) {
+          return '<div><span>' + esc(p.descr) + '<small>' + (p.data || '').split('-').reverse().join('/') + (p.vid ? ' · ' + esc(nomeV(p.vid)) : '') + '</small></span><b>' + (p.importo ? eur(p.importo) : '—') + '</b><button type="button" onclick="ofPrevDel(\'' + o.id + '\',\'' + p.id + '\')" aria-label="Elimina preventivo">✕</button></div>';
+        }).join('') + '</div>' : '') +
+        (o.note ? '<p class="of-note">' + esc(o.note) + '</p>' : '') + '</div>';
+    }).join('');
+    var conf = confronto();
+    if (conf) html += conf;
+    return html + '<button class="fl-add-btn" onclick="ofEdit(null)">+ Officina</button>';
+  }
+  // preventivi per lo stesso lavoro in officine diverse: il più basso e la differenza
+  function confronto() {
+    var g = {};
+    list().forEach(function(o) { (o.prev || []).forEach(function(p) { if (!p.importo) return; var k = p.descr.toLowerCase().replace(/[^a-z0-9à-ù]+/g, ' ').trim(); (g[k] = g[k] || []).push({ o: o, p: p }); }); });
+    var righe = Object.keys(g).filter(function(k) { var os = {}; g[k].forEach(function(x) { os[x.o.id] = 1; }); return Object.keys(os).length > 1; }).map(function(k) {
+      var xs = g[k].sort(function(a, b) { return a.p.importo - b.p.importo; }), lo = xs[0], hi = xs[xs.length - 1];
+      return '<li><b>' + esc(lo.p.descr) + '</b>: più conveniente ' + esc(lo.o.nome) + ' (' + eur(lo.p.importo) + '), ' + eur(hi.p.importo - lo.p.importo) + ' in meno di ' + esc(hi.o.nome) + '</li>';
+    });
+    return righe.length ? '<div class="mt-card of-conf"><b>Confronto preventivi</b><ul>' + righe.join('') + '</ul></div>' : '';
+  }
+
+  window.ofEdit = function(id) {
+    var o = id ? list().filter(function(x) { return x.id === id; })[0] : null;
+    sheet('<h3>' + (o ? 'Modifica officina' : 'Nuova officina') + '</h3>' +
+      '<div class="gar-field"><label>Nome</label><input id="of-nome" maxlength="60" value="' + esc(o ? o.nome : '') + '" placeholder="Es. Officina Rossi"></div>' +
+      '<div class="gar-row2"><div class="gar-field"><label>Tipo</label><select id="of-tipo">' + Object.keys(TIPI).map(function(k) { return '<option value="' + k + '"' + ((o ? o.tipo : 'meccanico') === k ? ' selected' : '') + '>' + TIPI[k] + '</option>'; }).join('') + '</select></div>' +
+      '<div class="gar-field"><label>Telefono</label><input id="of-tel" type="tel" maxlength="20" value="' + esc(o ? o.tel || '' : '') + '"></div></div>' +
+      '<div class="gar-field"><label>Indirizzo</label><input id="of-ind" maxlength="120" value="' + esc(o ? o.indirizzo || '' : '') + '" placeholder="Via, città"></div>' +
+      '<div class="gar-field"><label>Note</label><textarea id="of-note" rows="2" maxlength="300" placeholder="Es. chiedere di Marco, chiuso il sabato, fa anche gli pneumatici">' + esc(o ? o.note || '' : '') + '</textarea></div>' +
+      '<div class="gar-edit-btns">' + (o ? '<button type="button" class="gar-cancel" onclick="ofDel(\'' + o.id + '\')">🗑 Elimina</button>' : '') +
+      '<button type="button" class="gar-cancel" onclick="ofChiudi()">Annulla</button><button type="button" class="gar-save" onclick="ofSave(\'' + (o ? o.id : '') + '\')">Salva</button></div>');
+  };
+  window.ofChiudi = chiudi;
+  window.ofSave = function(id) {
+    var val = function(x) { return $(x).value.trim(); };
+    if (!val('of-nome')) { alert('Scrivi il nome dell\'officina.'); return; }
+    var l = list(), o = id ? l.filter(function(x) { return x.id === id; })[0] : { id: uid(), chiedi: [], prev: [] };
+    Object.assign(o, { nome: val('of-nome'), tipo: val('of-tipo'), tel: val('of-tel'), indirizzo: val('of-ind'), note: val('of-note') });
+    if (!id) l.push(o);
+    save(l); chiudi(); rerender();
+  };
+  window.ofDel = function(id) {
+    if (!confirm('Eliminare questa officina? Gli interventi collegati restano.')) return;
+    save(list().filter(function(x) { return x.id !== id; })); chiudi(); rerender();
+  };
+  window.ofChiedi = function(id) {
+    var o = list().filter(function(x) { return x.id === id; })[0], v = window.hubGarage && window.hubGarage.active();
+    sheet('<h3>Da chiedere a ' + esc(o.nome) + '</h3>' +
+      '<div class="gar-field"><label>Cosa vuoi chiedere o far controllare</label><input id="of-q" maxlength="140" placeholder="Es. rumore dalla ruota anteriore destra in curva"></div>' +
+      (v ? '<label class="of-chk"><input type="checkbox" id="of-qv" checked> Riguarda ' + esc(nomeV(v.id)) + '</label>' : '') +
+      '<div class="gar-edit-btns"><button type="button" class="gar-cancel" onclick="ofChiudi()">Annulla</button><button type="button" class="gar-save" onclick="ofChiediSave(\'' + id + '\')">Aggiungi</button></div>');
+    setTimeout(function() { var q = $('of-q'); if (q) q.focus(); }, 50);
+  };
+  window.ofChiediSave = function(id) {
+    var t = $('of-q').value.trim(); if (!t) return;
+    var v = window.hubGarage && window.hubGarage.active(), l = list(), o = l.filter(function(x) { return x.id === id; })[0];
+    (o.chiedi = o.chiedi || []).push({ id: uid(), t: t, vid: v && $('of-qv') && $('of-qv').checked ? v.id : null, fatto: false });
+    save(l); chiudi(); rerender();
+  };
+  window.ofFatto = function(id, cid) {
+    var l = list(), o = l.filter(function(x) { return x.id === id; })[0];
+    o.chiedi = (o.chiedi || []).filter(function(c) { return c.id !== cid; });
+    save(l); setTimeout(rerender, 250);
+  };
+  window.ofPrev = function(id) {
+    var o = list().filter(function(x) { return x.id === id; })[0];
+    sheet('<h3>Preventivo di ' + esc(o.nome) + '</h3>' +
+      '<div class="gar-field"><label>Lavoro</label><input id="of-pd" maxlength="80" placeholder="Es. cinghia distribuzione + pompa acqua"></div>' +
+      '<div class="gar-row2"><div class="gar-field"><label>Importo €</label><input id="of-pi" type="number" min="0" step="1"></div>' +
+      '<div class="gar-field"><label>Data</label><input id="of-pdt" type="date" value="' + window.hubToday() + '"></div></div>' +
+      '<p class="mt-int-nota">Scrivi il lavoro con le stesse parole nelle diverse officine: l\'app confronta da sola i preventivi uguali.</p>' +
+      '<div class="gar-edit-btns"><button type="button" class="gar-cancel" onclick="ofChiudi()">Annulla</button><button type="button" class="gar-save" onclick="ofPrevSave(\'' + id + '\')">Salva</button></div>');
+  };
+  window.ofPrevSave = function(id) {
+    var d = $('of-pd').value.trim(); if (!d) { alert('Scrivi il lavoro.'); return; }
+    var v = window.hubGarage && window.hubGarage.active(), l = list(), o = l.filter(function(x) { return x.id === id; })[0];
+    (o.prev = o.prev || []).push({ id: uid(), descr: d, importo: parseFloat($('of-pi').value) || null, data: $('of-pdt').value, vid: v ? v.id : null });
+    save(l); chiudi(); rerender();
+  };
+  window.ofPrevDel = function(id, pid) {
+    var l = list(), o = l.filter(function(x) { return x.id === id; })[0];
+    o.prev = (o.prev || []).filter(function(p) { return p.id !== pid; });
+    save(l); rerender();
+  };
+  // menu a tendina per i moduli di interventi e modifiche
+  function select(idSel, val) {
+    var l = list();
+    return '<div class="gar-field"><label>Officina</label><select id="' + idSel + '"><option value="">' + (l.length ? '— nessuna —' : '— aggiungile in Officine —') + '</option>' +
+      l.map(function(o) { return '<option value="' + o.id + '"' + (o.id === val ? ' selected' : '') + '>' + esc(o.nome) + '</option>'; }).join('') + '</select></div>';
+  }
+  // promemoria aperti per l'auto attiva (badge nel tab)
+  function aperti(vid) {
+    var n = 0; list().forEach(function(o) { (o.chiedi || []).forEach(function(c) { if (!c.fatto && (!vid || !c.vid || c.vid === vid)) n++; }); }); return n;
+  }
+  window.hubOfficine = { list: list, render: render, select: select, spese: spese, aperti: aperti };
+})();
+</script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB PARCHEGGIO — "dove ho lasciato l'auto"
+   · posizione GPS, foto del posto (piano, colonna, cartello), nota
+   · scadenza di disco orario, strisce blu o ticket: conto alla rovescia in
+     Oggi e promemoria nel calendario del telefono (.ics con avviso)
+   · "Portami all'auto" a piedi con Mappe / Google Maps
+   Dati: hub_parcheggio_v1 {lat, lng, acc, ts, vid, nota, scad, foto} · foto in IDB (hubDocs, id "park")
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  var KEY = 'hub_parcheggio_v1', FOTO = 'park-foto';
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function $(id) { return document.getElementById(id); }
+  function get() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+  function set(p) { try { if (p) localStorage.setItem(KEY, JSON.stringify(p)); else localStorage.removeItem(KEY); } catch (e) {} }
+  function hhmm(ts) { return new Date(ts).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }); }
+  function quando(ts) {
+    var d = new Date(ts), oggi = new Date(); oggi.setHours(0, 0, 0, 0);
+    var g = Math.round((new Date(d).setHours(0, 0, 0, 0) - oggi) / 86400000);
+    return (g === 0 ? 'oggi' : g === -1 ? 'ieri' : g === 1 ? 'domani' : d.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' })) + ' alle ' + hhmm(ts);
+  }
+  function dist(a, b) {
+    var R = 6371000, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
+    var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+  function mancano(scad) {
+    var m = Math.round((scad - Date.now()) / 60000);
+    if (m < 0) return 'scaduto da ' + (-m < 60 ? -m + ' min' : Math.floor(-m / 60) + ' h ' + (-m % 60) + ' min');
+    return m < 60 ? 'tra ' + m + ' min' : 'tra ' + Math.floor(m / 60) + ' h ' + (m % 60 ? (m % 60) + ' min' : '');
+  }
+  var iOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  function navUrl(p) {
+    return iOS ? 'https://maps.apple.com/?daddr=' + p.lat + ',' + p.lng + '&dirflg=w' : 'https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=' + p.lat + ',' + p.lng;
+  }
+  // promemoria nel calendario del telefono: file .ics con avviso 10 minuti prima
+  function ics(p) {
+    var f = function(ts) { return new Date(ts).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); };
+    var txt = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//AutoHub//Parcheggio//IT', 'BEGIN:VEVENT', 'UID:park-' + p.ts + '@autohub', 'DTSTAMP:' + f(Date.now()),
+      'DTSTART:' + f(p.scad - 600000), 'DTEND:' + f(p.scad), 'SUMMARY:🅿 Sposta l\'auto (scade alle ' + hhmm(p.scad) + ')',
+      'DESCRIPTION:' + (p.nota ? p.nota.replace(/[,;\n]/g, ' ') + ' — ' : '') + 'https://maps.google.com/?q=' + p.lat + '\\,' + p.lng,
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Parcheggio in scadenza', 'TRIGGER:-PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    var a = document.createElement('a'), url = URL.createObjectURL(new Blob([txt], { type: 'text/calendar' }));
+    a.href = url; a.download = 'parcheggio.ics'; document.body.appendChild(a); a.click();
+    setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 300);
+  }
+
+  var stato = { msg: '', pos: null, foto: null, fotoNuova: null };
+  function inject() {
+    if ($('pk-overlay')) return;
+    var ov = document.createElement('div');
+    ov.id = 'pk-overlay'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-labelledby', 'pk-title');
+    ov.innerHTML = '<div class="mt-hdr"><h2 id="pk-title">PARCHEGGIO<small id="pk-veh">dove hai lasciato l\'auto</small></h2><button class="gar-close" onclick="closeParcheggio()">✕ Chiudi</button></div><div class="mt-body" id="pk-body"></div>';
+    document.body.appendChild(ov);
+  }
+  function scadForm(p) {
+    var opz = [[0, 'Nessuna'], [30, '30 min'], [60, '1 ora'], [90, '1 h 30'], [120, '2 ore'], [180, '3 ore']];
+    return '<div class="gar-field"><label>Scade (disco orario, strisce blu, ticket)</label><div class="pk-scad">' +
+      opz.map(function(o) { return '<button type="button" onclick="pkScad(' + o[0] + ')"' + (p && !p.scad && !o[0] ? ' class="on"' : '') + '>' + o[1] + '</button>'; }).join('') +
+      '<input type="time" id="pk-ora" aria-label="Oppure alle ore" value="' + (p && p.scad ? hhmm(p.scad) : '') + '" onchange="pkOra()"></div></div>';
+  }
+  function render() {
+    var b = $('pk-body'); if (!b) return;
+    var p = get(), html = '';
+    if (!p) {
+      html += '<p class="mt-int-nota">Salva il posto quando scendi dall\'auto: ti riporto lì a piedi, ti ricordo quando scade il disco o il ticket e, in un garage, la foto ti dice piano e colonna.</p>' +
+        '<button type="button" class="pk-big" onclick="pkQui()">📍 Ho parcheggiato qui</button>';
+    } else {
+      var v = (window.hubGarage ? window.hubGarage.list() : []).filter(function(x) { return x.id === p.vid; })[0];
+      var d = stato.pos ? dist(stato.pos, p) : null;
+      html += '<div class="mt-card pk-card"><div class="pk-h"><b>' + (v ? esc(v.customName || (v.marca + ' ' + v.modello)) : 'La tua auto') + '</b><small>parcheggiata ' + quando(p.ts) + (p.acc > 60 ? ' · posizione approssimativa (±' + Math.round(p.acc) + ' m)' : '') + '</small></div>' +
+        (p.scad ? '<div class="pk-scadbox' + (p.scad < Date.now() ? ' crit' : p.scad - Date.now() < 900000 ? ' warn' : '') + '">⏱ Scade alle <b>' + hhmm(p.scad) + '</b> · ' + mancano(p.scad) + '</div>' : '') +
+        '<div id="pk-foto" class="pk-foto">' + (stato.foto ? '<img src="' + stato.foto + '" alt="Foto del parcheggio">' : '') + '</div>' +
+        (p.nota ? '<p class="pk-nota">📝 ' + esc(p.nota) + '</p>' : '') +
+        (d != null ? '<p class="pk-dist">Sei a ' + (d < 1000 ? Math.round(d / 10) * 10 + ' m' : (d / 1000).toFixed(1).replace('.', ',') + ' km') + ' dall\'auto · circa ' + Math.max(1, Math.round(d / 80)) + ' min a piedi</p>' : '') +
+        '<a class="pk-big" href="' + navUrl(p) + '" target="_blank" rel="noopener">🚶 Portami all\'auto</a></div>' +
+        scadForm(p) +
+        (p.scad && p.scad > Date.now() ? '<button type="button" class="og-btn og-ghost pk-ics" onclick="pkIcs()">🔔 Promemoria nel calendario</button>' : '') +
+        '<div class="gar-field"><label>Nota</label><input id="pk-nota" maxlength="80" value="' + esc(p.nota || '') + '" placeholder="Es. piano -2, colonna B14" onchange="pkNota()"></div>' +
+        '<div class="gar-field"><label>Foto del posto</label><input type="file" id="pk-file" accept="image/*" capture="environment" onchange="pkFoto(event)"></div>' +
+        '<div class="gar-edit-btns"><button type="button" class="gar-cancel" onclick="pkQui()">📍 Aggiorna posizione</button><button type="button" class="gar-save" onclick="pkPreso()">✓ Ho ripreso l\'auto</button></div>';
+    }
+    html += '<div class="hub-bk-msg" role="status">' + esc(stato.msg) + '</div>';
+    b.innerHTML = html;
+  }
+  function posizione() {
+    return new Promise(function(ok, ko) {
+      if (!navigator.geolocation) return ko(new Error('posizione non disponibile'));
+      navigator.geolocation.getCurrentPosition(function(x) { ok({ lat: x.coords.latitude, lng: x.coords.longitude, acc: x.coords.accuracy }); }, function(e) { ko(new Error(e.message || 'posizione negata')); }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+    });
+  }
+  window.pkQui = function() {
+    stato.msg = 'Prendo la posizione…'; render();
+    posizione().then(function(x) {
+      var old = get(), v = window.hubGarage && window.hubGarage.active();
+      set({ lat: x.lat, lng: x.lng, acc: x.acc, ts: old ? old.ts : Date.now(), vid: old ? old.vid : v && v.id, nota: old ? old.nota : '', scad: old ? old.scad : null });
+      stato.pos = x; stato.msg = old ? 'Posizione aggiornata' : 'Parcheggio salvato'; render();
+    }, function(e) { stato.msg = 'Non riesco a prendere la posizione: ' + e.message; render(); });
+  };
+  window.pkScad = function(min) {
+    var p = get(); if (!p) return;
+    p.scad = min ? Date.now() + min * 60000 : null; set(p); stato.msg = min ? 'Ti ricordo la scadenza in Oggi' : ''; render(); oggi();
+  };
+  window.pkOra = function() {
+    var p = get(), v = $('pk-ora').value; if (!p || !v) return;
+    var d = new Date(); d.setHours(+v.split(':')[0], +v.split(':')[1], 0, 0);
+    if (d < Date.now() - 60000) d.setDate(d.getDate() + 1);
+    p.scad = d.getTime(); set(p); render(); oggi();
+  };
+  window.pkNota = function() { var p = get(); if (!p) return; p.nota = $('pk-nota').value.trim(); set(p); render(); };
+  window.pkIcs = function() { var p = get(); if (p && p.scad) ics(p); };
+  window.pkFoto = function(ev) {
+    var f = ev.target.files && ev.target.files[0]; if (!f) return;
+    var salva = function(d) { stato.foto = d; if (window.hubDocs) window.hubDocs.put(FOTO, d, 'image/jpeg'); var p = get(); if (p) { p.foto = true; set(p); } render(); };
+    if (typeof window._hubCompressImage === 'function') window._hubCompressImage(f, 1200).then(salva);
+    else { var r = new FileReader(); r.onload = function(e) { salva(e.target.result); }; r.readAsDataURL(f); }
+  };
+  window.pkPreso = function() {
+    set(null); stato.foto = null; stato.msg = '';
+    if (window.hubDocs) try { window.hubDocs.del(FOTO); } catch (e) {}
+    render(); oggi();
+  };
+  function oggi() { if (window._oggiInternals && document.body.dataset.hub === 'oggi') window._oggiInternals.render(); }
+  window.openParcheggio = function() {
+    inject(); stato.msg = ''; stato.foto = null;
+    $('pk-overlay').classList.add('visible'); render();
+    var p = get();
+    if (p && p.foto && window.hubDocs) window.hubDocs.get(FOTO).then(function(d) { if (d) { stato.foto = d.dataUrl; render(); } });
+    if (p) posizione().then(function(x) { stato.pos = x; render(); }, function() {});
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeParcheggio = function() { var o = $('pk-overlay'); if (o) o.classList.remove('visible'); if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility(); };
+  // per Oggi
+  window.hubParcheggio = function() { var p = get(); return p ? { ts: p.ts, scad: p.scad, nota: p.nota, testo: p.scad ? 'scade alle ' + hhmm(p.scad) + ' (' + mancano(p.scad) + ')' : 'da ' + quando(p.ts), scaduto: p.scad && p.scad < Date.now() } : null; };
+  // aggiorna il conto alla rovescia mentre il pannello è aperto
+  setInterval(function() { var o = $('pk-overlay'); if (o && o.classList.contains('visible') && get() && get().scad && !(document.activeElement && o.contains(document.activeElement) && /INPUT|TEXTAREA/.test(document.activeElement.tagName))) render(); }, 30000);
+})();
+</script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB EVENTI — eventi per appassionati vicino a te
+   · calendari degli autodromi (Worker /api/eventi, cache 12 ore): gare,
+     track day, tour in pista; le date ripetute diventano una sola voce
+   · i tuoi eventi (raduni, cars & coffee, mostre) aggiunti a mano
+   · "Aggiungi al calendario" (.ics) e indicazioni stradali
+   · in Oggi, dal giovedì: cosa c'è nel weekend
+   Dati: hub_eventi_cache_v1 {ts, eventi} · hub_eventi_miei_v1 [{id, titolo, inizio, luogo, url, note}]
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  var CK = 'hub_eventi_cache_v1', MK = 'hub_eventi_miei_v1', TTL = 12 * 3600000;
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function $(id) { return document.getElementById(id); }
+  function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function dt(s) { return new Date(String(s).replace(' ', 'T')); }
+  function giorno(d) { return d.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }); }
+  function ora(d) { return d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }); }
+  function km(a, b) {
+    var R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
+    var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+
+  function scarica(forza) {
+    var c = jget(CK, null);
+    if (!forza && c && Date.now() - c.ts < TTL) return Promise.resolve(c.eventi);
+    var w = typeof WORKER !== 'undefined' ? WORKER : 'https://osservaprezzi.gabrycois.workers.dev';
+    return fetch(w + '/api/eventi').then(function(r) { return r.json().then(function(j) { if (!r.ok || j.error) throw new Error(j.error || 'HTTP ' + r.status); return j; }); })
+      .then(function(j) { jset(CK, { ts: Date.now(), eventi: j.eventi || [] }); return j.eventi || []; })
+      .catch(function(e) { if (c) return c.eventi; throw e; });
+  }
+  // stesse date ripetute (es. tour quotidiani) → una voce con il periodo
+  function raggruppa(list) {
+    var g = {}, out = [];
+    list.forEach(function(e) { var k = e.titolo + '|' + e.luogo; (g[k] = g[k] || []).push(e); });
+    Object.keys(g).forEach(function(k) {
+      var xs = g[k].sort(function(a, b) { return a.inizio.localeCompare(b.inizio); });
+      if (xs.length >= 3) out.push(Object.assign({}, xs[0], { fine: xs[xs.length - 1].fine, date: xs.length, ripetuto: true }));
+      else xs.forEach(function(e) { out.push(e); });
+    });
+    return out.sort(function(a, b) { return a.inizio.localeCompare(b.inizio); });
+  }
+  function miei() { return jget(MK, []).filter(function(e) { return dt(e.inizio) > Date.now() - 86400000; }); }
+  function tutti(list) {
+    return raggruppa(list || []).concat(miei().map(function(e) { return Object.assign({ mio: true, fine: e.inizio.slice(0, 10) + ' 23:59:00' }, e); }))
+      .filter(function(e) { return dt(e.fine || e.inizio) >= Date.now() - 3600000; })
+      .sort(function(a, b) { return a.inizio.localeCompare(b.inizio); });
+  }
+  // venerdì–domenica di questo weekend (da lunedì a giovedì: il prossimo)
+  function weekend() {
+    var d = new Date(); d.setHours(0, 0, 0, 0);
+    var dow = d.getDay(), ven = new Date(d); ven.setDate(d.getDate() + (dow === 0 ? -2 : dow === 6 ? -1 : 5 - dow));
+    var dom = new Date(ven); dom.setDate(ven.getDate() + 2); dom.setHours(23, 59, 59);
+    return [ven, dom];
+  }
+  function nelWeekend(e) {
+    var w = weekend(), a = dt(e.inizio), b = dt(e.fine || e.inizio);
+    if (e.ripetuto) return a <= w[1] && b >= w[0];
+    return a <= w[1] && b >= w[0];
+  }
+  function ics(e) {
+    var f = function(d) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); };
+    var a = dt(e.inizio), b = e.fine && !e.ripetuto ? dt(e.fine) : new Date(a.getTime() + 3 * 3600000);
+    var txt = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//AutoHub//Eventi//IT', 'BEGIN:VEVENT', 'UID:' + encodeURIComponent(e.titolo + e.inizio) + '@autohub', 'DTSTAMP:' + f(new Date()),
+      'DTSTART:' + f(a), 'DTEND:' + f(b), 'SUMMARY:' + e.titolo.replace(/[,;]/g, ' '), 'LOCATION:' + (e.luogo || '').replace(/[,;]/g, ' '), 'URL:' + (e.url || ''),
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + e.titolo.replace(/[,;]/g, ' '), 'TRIGGER:-P1D', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    var el = document.createElement('a'), url = URL.createObjectURL(new Blob([txt], { type: 'text/calendar' }));
+    el.href = url; el.download = 'evento.ics'; document.body.appendChild(el); el.click();
+    setTimeout(function() { URL.revokeObjectURL(url); el.remove(); }, 300);
+  }
+
+  var stato = { list: null, load: false, err: '', filtro: 'tutti' };
+  function inject() {
+    if ($('ev-overlay')) return;
+    var ov = document.createElement('div');
+    ov.id = 'ev-overlay'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-labelledby', 'ev-title');
+    ov.innerHTML = '<div class="mt-hdr"><h2 id="ev-title">EVENTI<small>autodromi, raduni e i tuoi appuntamenti</small></h2><button class="gar-close" onclick="closeEventi()">✕ Chiudi</button></div><div class="mt-body" id="ev-body"></div>';
+    document.body.appendChild(ov);
+  }
+  var _vis = [];
+  function render() {
+    var b = $('ev-body'); if (!b) return;
+    var pos = jget('hub_oggi_pos_v1', null) || jget('hub_passi_pos_v1', null);
+    var list = tutti(stato.list).filter(function(e) { return stato.filtro === 'tutti' || (stato.filtro === 'weekend' ? nelWeekend(e) : e.mio); });
+    _vis = list;
+    var html = '<div class="mt-tabs" role="tablist">' + [['tutti', 'Tutti'], ['weekend', 'Questo weekend'], ['miei', 'I miei']].map(function(t) {
+      return '<button type="button" role="tab" aria-selected="' + (stato.filtro === t[0]) + '" class="' + (stato.filtro === t[0] ? 'on' : '') + '" onclick="evFiltro(\'' + t[0] + '\')">' + t[1] + '</button>';
+    }).join('') + '</div>';
+    if (stato.load) html += '<div class="wp-loading">Carico i calendari…</div>';
+    if (stato.err) html += '<div class="wp-error">' + esc(stato.err) + '</div>';
+    if (!stato.load && !list.length) html += '<p class="mt-int-nota">' + (stato.filtro === 'miei' ? 'Aggiungi raduni, cars & coffee o mostre a cui vuoi andare: li ritrovi qui e in Oggi.' : 'Nessun evento ' + (stato.filtro === 'weekend' ? 'questo weekend' : 'nei prossimi mesi') + '.') + '</p>';
+    html += list.map(function(e, i) {
+      var a = dt(e.inizio), z = dt(e.fine || e.inizio), quando;
+      if (e.ripetuto) quando = e.date + ' date dal ' + giorno(a) + ' al ' + giorno(z);
+      else if (a.toDateString() !== z.toDateString()) quando = 'dal ' + giorno(a) + ' al ' + giorno(z);
+      else quando = giorno(a) + (e.tuttoIlGiorno ? '' : ' · ' + ora(a));
+      var d = pos && e.lat ? Math.round(km(pos, e)) : null;
+      var nav = e.lat ? 'https://www.google.com/maps/dir/?api=1&destination=' + e.lat + ',' + e.lng : e.luogo ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(e.luogo) : '';
+      return '<div class="mt-card ev-card' + (nelWeekend(e) ? ' ev-wk' : '') + '"><div class="ev-h"><b>' + esc(e.titolo) + '</b>' + (e.mio ? '<span class="ev-tag">tuo</span>' : (e.cat || []).slice(0, 1).map(function(c) { return '<span class="ev-tag">' + esc(c) + '</span>'; }).join('')) + '</div>' +
+        '<div class="mt-card-meta">' + esc(quando) + ' · ' + esc(e.luogo || '') + (d != null ? ' · ' + d + ' km da te' : '') + (e.costo ? ' · ' + esc(e.costo) : '') + '</div>' +
+        (e.descr || e.note ? '<p class="ev-d">' + esc(e.descr || e.note) + '</p>' : '') +
+        '<div class="of-act">' + (e.url ? '<a href="' + esc(e.url) + '" target="_blank" rel="noopener">Dettagli ↗</a>' : '') + (nav ? '<a href="' + nav + '" target="_blank" rel="noopener">📍 Portami</a>' : '') +
+        '<button type="button" onclick="evIcs(' + i + ')">📅 Calendario</button>' + (e.mio ? '<button type="button" onclick="evDel(\'' + e.id + '\')">🗑</button>' : '') + '</div></div>';
+    }).join('');
+    html += '<button class="fl-add-btn" onclick="evNuovo()">+ Aggiungi un evento</button>' +
+      '<p class="mt-int-nota">Calendario ufficiale dell\'Autodromo di Monza (gare, track day e tour in pista), aggiornato due volte al giorno. Raduni e cars & coffee non hanno un calendario pubblico affidabile: aggiungili tu quando li vedi.</p>';
+    b.innerHTML = html;
+  }
+  window.evFiltro = function(f) { stato.filtro = f; render(); };
+  window.evIcs = function(i) { if (_vis[i]) ics(_vis[i]); };
+  window.evNuovo = function() {
+    var el = $('mt-sheet');
+    if (!el) { el = document.createElement('div'); el.id = 'mt-sheet'; el.onclick = function(e) { if (e.target === el) el.classList.remove('visible'); }; document.body.appendChild(el); }
+    el.innerHTML = '<div class="gar-edit-card"><h3>Nuovo evento</h3>' +
+      '<div class="gar-field"><label>Cosa</label><input id="ev-t" maxlength="80" placeholder="Es. Cars & Coffee Brianza"></div>' +
+      '<div class="gar-row2"><div class="gar-field"><label>Giorno</label><input type="date" id="ev-g" value="' + window.hubToday() + '"></div><div class="gar-field"><label>Ora</label><input type="time" id="ev-o" value="09:00"></div></div>' +
+      '<div class="gar-field"><label>Dove</label><input id="ev-l" maxlength="100" placeholder="Luogo o indirizzo"></div>' +
+      '<div class="gar-field"><label>Link (facoltativo)</label><input id="ev-u" type="url" maxlength="300"></div>' +
+      '<div class="gar-field"><label>Note</label><input id="ev-n" maxlength="140" placeholder="Es. iscrizione entro venerdì"></div>' +
+      '<div class="gar-edit-btns"><button type="button" class="gar-cancel" onclick="document.getElementById(\'mt-sheet\').classList.remove(\'visible\')">Annulla</button><button type="button" class="gar-save" onclick="evSalva()">Salva</button></div></div>';
+    el.classList.add('visible');
+  };
+  window.evSalva = function() {
+    var t = $('ev-t').value.trim(), g = $('ev-g').value; if (!t || !g) { alert('Scrivi cosa e quando.'); return; }
+    var u = $('ev-u').value.trim();
+    var l = jget(MK, []); l.push({ id: 'e' + Date.now().toString(36), titolo: t, inizio: g + ' ' + ($('ev-o').value || '09:00') + ':00', luogo: $('ev-l').value.trim(), url: /^https?:\/\//.test(u) ? u : '', note: $('ev-n').value.trim() });
+    jset(MK, l); $('mt-sheet').classList.remove('visible'); render(); oggi();
+  };
+  window.evDel = function(id) { if (!confirm('Eliminare questo evento?')) return; jset(MK, jget(MK, []).filter(function(e) { return e.id !== id; })); render(); oggi(); };
+  function oggi() { if (window._oggiInternals && document.body.dataset.hub === 'oggi') window._oggiInternals.render(); }
+  window.openEventi = function() {
+    inject(); $('ev-overlay').classList.add('visible');
+    var c = jget(CK, null); stato.list = c ? c.eventi : null; stato.load = !c; stato.err = ''; render();
+    scarica().then(function(l) { stato.list = l; stato.load = false; render(); }, function(e) { stato.load = false; stato.err = 'Calendari non disponibili ora (' + e.message + ').'; render(); });
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeEventi = function() { var o = $('ev-overlay'); if (o) o.classList.remove('visible'); if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility(); };
+  // per Oggi: dal giovedì, gli eventi del weekend (prima i tuoi)
+  window.hubEventiWeekend = function() {
+    var dow = new Date().getDay();
+    if (dow >= 1 && dow <= 3) return [];
+    var c = jget(CK, null);
+    return tutti(c ? c.eventi : []).filter(nelWeekend).sort(function(a, b) { return (b.mio ? 1 : 0) - (a.mio ? 1 : 0) || (a.ripetuto ? 1 : 0) - (b.ripetuto ? 1 : 0); });
+  };
+  window.hubEventiAggiorna = function() { return scarica().catch(function() { return null; }); };
+  window._eventiInternals = { raggruppa: raggruppa, weekend: weekend, nelWeekend: nelWeekend };
+})();
+</script>
 
 <!-- HUB WEATHER: meteo lungo il percorso (geocoding+OSRM+Open-Meteo) -->
 <script>/* ═══════════════════════════════════════════════════════════════════
@@ -25058,7 +25620,7 @@ async function runCmp() {
       return route(pl, nomw).then(function(rt) {
         var smp = campiona(rt);
         return previsioni(smp).then(function(fc) {
-          S.data = { pl: pl, rt: rt, smp: smp, fc: fc, dep: dep, ret: ret, passi: passiSulPercorso(rt) }; S.pieno = null;
+          S.data = { pl: pl, rt: rt, smp: smp, fc: fc, dep: dep, ret: ret, passi: passiSulPercorso(rt) }; S.pieno = null; S.ric = null;
           jset(LAST, { from: pl[0], via: via ? pl[1] : null, to: pl[pl.length - 1], veh: S.veh, nomw: nomw });
           var rec = jget(RECENT, []).filter(function(r) { return r.name !== pl[pl.length - 1].name; });
           rec.unshift(pl[pl.length - 1]); jset(RECENT, rec.slice(0, 8)); chips();
@@ -25131,6 +25693,7 @@ async function runCmp() {
     html += decisione(A.rows, rt);
     html += quando();
     html += '<div id="wp-pieno">' + pienoBox() + '</div>';
+    if (spina()) html += '<div id="wp-ric">' + ricBox() + '</div>';
     html += tappe('Andata · ' + giorno(D.dep) + ' ' + hhmm(D.dep), A, moto);
     if (R) html += R.rows.length ? tappe('Ritorno · ' + giorno(D.ret) + ' ' + hhmm(D.ret), R, moto) : '<div class="wp-alert">Ritorno oltre le previsioni disponibili.</div>';
     if (A.fuori) html += '<p class="wp-fine">Parte del viaggio è oltre le previsioni disponibili (fino a ' + giorno(last) + ').</p>';
@@ -25167,8 +25730,9 @@ async function runCmp() {
     var D = S.data, moto = S.veh === 'moto', out = [];
     // passi chiusi nel mese del viaggio
     D.passi.forEach(function(x) {
-      var mese = new Date(D.dep + x.t * 1000).getMonth() + 1;
-      if (x.p.closed && x.p.closed.indexOf(mese) >= 0) out.push(['bad', '⛔ ' + esc(x.p.name) + ': ' + esc(window._psInternals.chiusoTxt(x.p).toLowerCase()) + '. Verifica l\'apertura prima di partire.']);
+      var quando = D.dep + x.t * 1000, mese = new Date(quando).getMonth() + 1;
+      var ch = window._psInternals.chiusoIl ? window._psInternals.chiusoIl(x.p, quando) : (x.p.closed && x.p.closed.indexOf(mese) >= 0 ? window._psInternals.chiusoTxt(x.p).toLowerCase() : false);
+      if (ch) out.push(['bad', '⛔ ' + esc(x.p.name) + ': ' + esc(ch) + '. Verifica l\'apertura prima di partire.']);
       else out.push(['info', '⛰ Passi sul percorso: ' + esc(x.p.name) + ' (' + x.p.alt + ' m)']);
     });
     var all = A.rows.concat(R ? R.rows : []);
@@ -25290,6 +25854,61 @@ async function runCmp() {
         L.marker([x.lat, x.lng], { icon: L.divIcon({ className: 'wp-pieno-pin', html: '⛽' + (i + 1), iconSize: [34, 20] }) }).bindTooltip(x.prezzo.toFixed(3) + ' €/l').addTo(S.map);
       });
     }).catch(function(e) { S.pieno = { carb: carb, aut: aut, err: e.message || 'Distributori non disponibili' }; $('wp-pieno').innerHTML = pienoBox(); });
+  };
+
+  /* ── Ricarica sul percorso (plug-in ed elettriche): colonnine a meno di 1 km dalla strada ── */
+  function spina() { var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active(); return v && (v.alim === 'plugin' || v.alim === 'elettrica') ? v : null; }
+  function ricBox() {
+    var R = S.ric, v = spina();
+    var head = '<div class="wp-sec">🔌 Ricarica sul percorso</div>';
+    var go = '<div class="wp-pieno-f"><select id="wp-ric-min" aria-label="Potenza minima"><option value="0">Tutte le colonnine</option><option value="22"' + (R && R.min === 22 ? ' selected' : '') + '>Almeno 22 kW</option><option value="50"' + (R && R.min === 50 ? ' selected' : '') + '>Veloci (50 kW e oltre)</option></select>' +
+      '<button type="button" class="wp-pieno-go" onclick="wpRicarica()">Cerca</button></div>';
+    if (!R) return head + '<p class="wp-fine">Le colonnine attive a meno di 1 km dalla strada' + (v.alim === 'plugin' ? ': utili per arrivare in elettrico a destinazione o ricaricare durante la sosta.' : '.') + '</p>' + go;
+    if (R.load) return head + go + '<div class="wp-loading">Cerco le colonnine lungo la strada…</div>';
+    if (R.err) return head + go + '<div class="wp-error">' + esc(R.err) + '</div>';
+    if (!R.list.length) return head + go + '<p class="wp-fine">Nessuna colonnina' + (R.min ? ' da almeno ' + R.min + ' kW' : '') + ' a meno di 1 km dalla strada.</p>';
+    var pref = {}; try { pref = JSON.parse(localStorage.getItem('hub_ricarica_pref_v1') || '{}'); } catch (e) {}
+    var eur = pref.colonnina || 0.7, bat = parseFloat(v.batteria || (v.specs && v.specs.batteria_kwh)) || (v.alim === 'plugin' ? 12 : 50);
+    var pl = S.data.pl, o = pl[0], d = pl[pl.length - 1];
+    return head + go + '<p class="wp-fine">' + R.tot + ' colonnine lungo la strada' + (R.tot > R.list.length ? ', le ' + R.list.length + ' più comode' : '') + '. Una ricarica completa da ' + Math.round(bat) + ' kWh costa circa ' + Math.round(bat * eur) + ' € a ' + eur.toFixed(2).replace('.', ',') + ' €/kWh.</p>' +
+      '<div class="wp-pieno-l">' + R.list.map(function(x, i) {
+        var nav = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + o.lat + ',' + o.lng + '&destination=' + d.lat + ',' + d.lng + '&waypoints=' + x.lat + ',' + x.lng;
+        var ore = v.alim === 'plugin' && x.maxKW ? Math.min(bat / Math.min(x.maxKW, 7.4), 12) : null;   // i plug-in caricano in AC (di solito fino a 7,4 kW)
+        return '<a class="wp-pieno-r" href="' + nav + '" target="_blank" rel="noopener"><span class="wp-pieno-n">' + (i + 1) + '</span><span class="wp-pieno-t"><b>' + esc(x.indirizzo || x.comune || 'Colonnina') + '</b><small>km ' + Math.round(x.km) + ' · ' + esc(x.comune || '') + (x.off > .2 ? ' · ' + Math.round(x.off * 1000) + ' m dalla strada' : '') + (x.numPrese ? ' · ' + x.numPrese + (x.numPrese === 1 ? ' presa' : ' prese') : '') + '</small></span>' +
+          '<span class="wp-pieno-p"><b>' + (x.maxKW || '?') + ' kW</b><small>' + (ore ? 'piena in ~' + (ore < 1 ? Math.round(ore * 60) + ' min' : ore.toFixed(1).replace('.', ',') + ' h') : x.isFast ? 'veloce' : 'lenta') + '</small></span></a>';
+      }).join('') + '</div><p class="wp-fine">Dati delle colonnine dalla Piattaforma Unica Nazionale (aggiornati ogni mese): stato e prezzo li conferma l\'app dell\'operatore. Tocca per aggiungerla come tappa in Google Maps.</p>';
+  }
+  window.wpRicarica = function() {
+    var D = S.data; if (!D) return;
+    var min = parseInt($('wp-ric-min').value, 10) || 0;
+    S.ric = { min: min, load: true }; $('wp-ric').innerHTML = ricBox();
+    var c = D.rt.coords, cum = D.rt.cumD, L = cum[cum.length - 1], pts = [], last = -1, centri = [];
+    for (var j = 0; j < c.length; j++) if (cum[j] - last >= 0.2) { pts.push({ lat: c[j].lat, lng: c[j].lng, km: cum[j] }); last = cum[j]; }
+    for (var k = 0; k <= L; k += 16) { var best = null; pts.forEach(function(p) { if (!best || Math.abs(p.km - k) < Math.abs(best.km - k)) best = p; }); if (best) centri.push(best); }
+    if (centri.length > 40) centri = centri.filter(function(_, i) { return i % Math.ceil(centri.length / 40) === 0; });
+    var seen = {}, found = [], q = centri.slice();
+    function prossimo() {
+      var p = q.shift(); if (!p) return Promise.resolve();
+      return fetch(WORKER + '/api/ev?lat=' + p.lat.toFixed(4) + '&lng=' + p.lng.toFixed(4) + '&raggio=10').then(function(r) { return r.ok ? r.json() : []; }).then(function(list) {
+        (Array.isArray(list) ? list : []).forEach(function(x) {
+          var id = x.lat.toFixed(5) + ',' + x.lng.toFixed(5);
+          if (seen[id] || (x.maxKW || 0) < min) return; seen[id] = 1;
+          var b = 1e9, km = 0;
+          pts.forEach(function(pp) { var dd = dist(pp, x); if (dd < b) { b = dd; km = pp.km; } });
+          if (b <= 1) found.push(Object.assign({}, x, { off: b, km: km }));
+        });
+      }).catch(function() {}).then(prossimo);
+    }
+    Promise.all([prossimo(), prossimo(), prossimo(), prossimo()]).then(function() {
+      // una per tratto da ~25 km: la più potente e vicina alla strada
+      var tratti = {};
+      found.forEach(function(x) { var t = Math.floor(x.km / 25), cur = tratti[t], sc = (x.maxKW || 3) / (1 + x.off * 4); if (!cur || sc > cur.sc) tratti[t] = Object.assign({ sc: sc }, x); });
+      var list = Object.keys(tratti).map(function(t) { return tratti[t]; }).sort(function(a, b) { return a.km - b.km; }).slice(0, 8);
+      S.ric = { min: min, list: list, tot: found.length }; $('wp-ric').innerHTML = ricBox();
+      if (S.map && typeof L !== 'undefined' && window.L) list.forEach(function(x, i) {
+        window.L.marker([x.lat, x.lng], { icon: window.L.divIcon({ className: 'wp-pieno-pin', html: '🔌' + (i + 1), iconSize: [34, 20] }) }).bindTooltip((x.maxKW || '?') + ' kW').addTo(S.map);
+      });
+    }).catch(function(e) { S.ric = { min: min, err: e.message || 'Colonnine non disponibili' }; $('wp-ric').innerHTML = ricBox(); });
   };
 
   function mappa(rows) {
@@ -27617,7 +28236,12 @@ async function runCmp() {
 })();
 </script>
 <script>/* ═══════════════════════════════════════════════════════════════════
-   BACKUP — file e cloud (Worker)
+   BACKUP — nel cloud dell'utente (file) e cloud del proprietario (Worker)
+   · Per tutti: copia completa salvata nel PROPRIO cloud (iCloud Drive,
+     Google Drive…) con il foglio di condivisione del telefono, e ripristino
+     dallo stesso file. Promemoria in Oggi se l'ultima copia è vecchia.
+   · Solo per il proprietario dell'app: backup automatico sul Worker, che
+     accetta i dati soltanto con la chiave segreta BACKUP_KEY.
    · Il backup contiene tutti i dati salvati nel browser (localStorage)
      più foto dei veicoli e documenti della manutenzione (IndexedDB).
    · Backup cloud: i dati vengono cifrati sul dispositivo (AES-GCM) con una
@@ -27634,6 +28258,7 @@ async function runCmp() {
               'opf_favs', 'opf_hidden_cards', 'opf_cmp_liters', 'ad_rem', 'autodiagnosi_diary', 'ad_theme'];
   var STORES = ['photos', 'maintdocs'];
   var CLOUD = 'hub_cloud_v1';   // { code, lastHash, lastAt }
+  var OWNER = 'hub_owner_key_v1', FILE = 'hub_backup_file_v1';   // chiave proprietario · { lastAt } ultima copia su file
   var AUTO_MS = 12 * 3600 * 1000;
 
   function workerBase() {
@@ -27697,14 +28322,33 @@ async function runCmp() {
   }
 
   /* ── File ────────────────────────────────────────────────────────── */
+  function fileFatto() { try { localStorage.setItem(FILE, JSON.stringify({ lastAt: Date.now() })); } catch (e) {} }
+  function scarica(blob, name) {
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 200);
+  }
   window.hubExportData = function() {
-    collect(true).then(function(dump) {
+    return collect(true).then(function(dump) {
       var blob = new Blob([JSON.stringify(dump)], { type: 'application/json' });
-      var url = URL.createObjectURL(blob), a = document.createElement('a');
-      a.href = url; a.download = 'autohub-backup-' + window.hubToday() + '.json';
-      document.body.appendChild(a); a.click();
-      setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 200);
+      scarica(blob, 'autohub-backup-' + window.hubToday() + '.json'); fileFatto();
     }).catch(function(e) { alert('Esportazione non riuscita: ' + e.message); });
+  };
+  // Copia nel cloud dell'utente: foglio di condivisione → "Salva su File" (iCloud Drive) o Google Drive
+  window.hubBackupShare = function() {
+    return collect(true).then(function(dump) {
+      var name = 'autohub-backup-' + window.hubToday() + '.json', blob = new Blob([JSON.stringify(dump)], { type: 'application/json' });
+      var file = typeof File === 'function' ? new File([blob], name, { type: 'application/json' }) : null;
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        return navigator.share({ files: [file], title: 'Backup AutoHub' }).then(function() { fileFatto(); return 'condiviso'; }, function(e) {
+          if (e && e.name === 'AbortError') return 'annullato';
+          scarica(blob, name); fileFatto(); return 'scaricato';
+        });
+      }
+      scarica(blob, name); fileFatto(); return 'scaricato';
+    }).then(function(r) { msg(r === 'annullato' ? '' : r === 'condiviso' ? 'Copia salvata. Tienila nel tuo iCloud Drive o Google Drive.' : 'File scaricato: spostalo nel tuo cloud (iCloud Drive, Google Drive).'); if (window._oggiInternals && document.body.dataset.hub === 'oggi') window._oggiInternals.render(); return r; })
+      .catch(function(e) { alert('Backup non riuscito: ' + e.message); });
   };
   window.hubImportData = function(input) {
     var file = input && input.files && input.files[0];
@@ -27762,6 +28406,8 @@ async function runCmp() {
   }
 
   /* ── Cloud ───────────────────────────────────────────────────────── */
+  function ownerKey() { try { return localStorage.getItem(OWNER) || ''; } catch (e) { return ''; } }
+  function hdr(extra) { return Object.assign({ 'X-Backup-Key': ownerKey() }, extra || {}); }
   function cloud() { try { return JSON.parse(localStorage.getItem(CLOUD) || 'null'); } catch (e) { return null; } }
   function setCloud(c) { try { if (c) localStorage.setItem(CLOUD, JSON.stringify(c)); else localStorage.removeItem(CLOUD); } catch (e) {} }
 
@@ -27774,7 +28420,7 @@ async function runCmp() {
       return hashOf(forHash).then(function(h) {
         if (!force && h === c.lastHash) return { skipped: true };
         return Promise.all([cloudId(c.code), encrypt(c.code, dump)]).then(function(r) {
-          return fetch(workerBase() + '/api/backup/' + r[0], { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: r[1] })
+          return fetch(workerBase() + '/api/backup/' + r[0], { method: 'PUT', headers: hdr({ 'Content-Type': 'application/json' }), body: r[1] })
             .then(function(res) {
               return res.json().catch(function() { return {}; }).then(function(j) {
                 if (!res.ok) throw new Error(j.error || ('HTTP ' + res.status));
@@ -27787,7 +28433,7 @@ async function runCmp() {
     });
   }
   function download(code) {
-    return cloudId(code).then(function(id) { return fetch(workerBase() + '/api/backup/' + id); }).then(function(res) {
+    return cloudId(code).then(function(id) { return fetch(workerBase() + '/api/backup/' + id, { headers: hdr() }); }).then(function(res) {
       if (res.status === 404) throw new Error('Nessun backup trovato con questo codice');
       if (!res.ok) return res.json().catch(function() { return {}; }).then(function(j) { throw new Error(j.error || ('HTTP ' + res.status)); });
       return res.text();
@@ -27798,7 +28444,7 @@ async function runCmp() {
   // Salvataggio automatico: all'apertura (se è passato abbastanza tempo) e quando l'app va in secondo piano
   function autoSave(minAge) {
     var c = cloud();
-    if (!c || !c.code || !navigator.onLine) return;
+    if (!c || !c.code || !ownerKey() || !navigator.onLine) return;
     if (c.lastAt && Date.now() - c.lastAt < minAge) return;
     upload(false).catch(function(e) { console.warn('[backup] automatico non riuscito:', e.message); });
   }
@@ -27826,29 +28472,73 @@ async function runCmp() {
   function close() { var el = document.getElementById('hub-backup'); if (el) el.classList.remove('visible'); }
   function msg(text, err) { var m = document.getElementById('hub-bk-msg'); if (m) { m.textContent = text; m.className = 'hub-bk-msg' + (err ? ' err' : ''); } }
   function render() {
-    var c = cloud(), b = document.getElementById('hub-backup-body');
-    var html = '<div class="hub-more-h">Backup su file</div><div class="hub-more-list">' +
-      '<button data-bk="export">Scarica backup completo <b>.json con foto e documenti</b></button>' +
-      '<button data-bk="import">Ripristina da file <b>sostituisce i dati</b></button></div>' +
-      '<div class="hub-more-h">Backup cloud</div>';
-    if (c && c.code) {
-      html += '<div class="hub-bk-code"><small>Il tuo codice: conservalo, serve per recuperare i dati</small><b id="hub-bk-code">' + h(c.code) + '</b></div>' +
-        '<div class="hub-more-list"><button data-bk="copy">Copia il codice <b>da salvare nelle note</b></button>' +
-        '<button data-bk="save">Salva ora <b>ultimo: ' + when(c.lastAt) + '</b></button>' +
-        '<button data-bk="restore">Ripristina da cloud <b>codice di un altro dispositivo</b></button>' +
-        '<button data-bk="off">Disattiva su questo dispositivo <b>il backup resta sul server</b></button></div>' +
-        '<p class="hub-bk-note">Salvataggio automatico all\'apertura (ogni 12 ore) e quando chiudi l\'app, solo se i dati sono cambiati. I dati partono già cifrati: senza il codice nessuno può leggerli.</p>';
-    } else {
-      html += '<p class="hub-bk-note">Salva una copia cifrata dei tuoi dati sul tuo Worker, così non li perdi se svuoti il browser o cambi telefono. Nessun account: ti basta un codice.</p>' +
-        '<div class="hub-more-list"><button data-bk="on">Attiva backup cloud <b>crea il codice</b></button>' +
-        '<button data-bk="restore">Ho già un codice <b>ripristina</b></button></div>';
+    var c = cloud(), b = document.getElementById('hub-backup-body'), f = null, key = ownerKey();
+    try { f = JSON.parse(localStorage.getItem(FILE) || 'null'); } catch (e) {}
+    var html = '<div class="hub-more-h">Backup nel tuo cloud</div>' +
+      '<p class="hub-bk-note">Una copia completa (veicoli, rifornimenti, foto e documenti) che salvi tu in iCloud Drive o Google Drive. I dati restano tuoi: l\'app non li manda a nessun server.</p>' +
+      '<div class="hub-more-list"><button data-bk="share">Salva una copia <b>ultima: ' + when(f && f.lastAt) + '</b></button>' +
+      '<button data-bk="import">Ripristina da file <b>sostituisce i dati</b></button></div>';
+    if (key) {
+      html += '<div class="hub-more-h">Backup automatico (proprietario)</div>';
+      if (c && c.code) {
+        html += '<div class="hub-bk-code"><small>Il tuo codice: conservalo, serve per recuperare i dati</small><b id="hub-bk-code">' + h(c.code) + '</b></div>' +
+          '<div class="hub-more-list"><button data-bk="copy">Copia il codice <b>da salvare nelle note</b></button>' +
+          '<button data-bk="save">Salva ora <b>ultimo: ' + when(c.lastAt) + '</b></button>' +
+          '<button data-bk="restore">Ripristina da cloud <b>codice di un altro dispositivo</b></button>' +
+          '<button data-bk="off">Disattiva su questo dispositivo <b>il backup resta sul server</b></button></div>' +
+          '<p class="hub-bk-note">Salvataggio automatico all\'apertura (ogni 12 ore) e quando chiudi l\'app, solo se i dati sono cambiati. Cifrato sul telefono: senza il codice nessuno può leggerlo.</p>';
+      } else {
+        html += '<div class="hub-more-list"><button data-bk="on">Attiva backup automatico <b>crea il codice</b></button>' +
+          '<button data-bk="restore">Ho già un codice <b>ripristina</b></button></div>';
+      }
+      html += '<div class="hub-more-list"><button data-bk="showkey">Chiave del proprietario <b>per il secret BACKUP_KEY</b></button><button data-bk="delkey">Rimuovi la chiave da questo telefono <b>disattiva il backup automatico</b></button></div>';
+    } else if (!window.HUB_STORE) {
+      if (c && c.code) html += '<p class="hub-bk-note hub-bk-warn">Il backup automatico sul server ora richiede la chiave del proprietario: senza, non viene più salvato.</p>';
+      html += '<div class="hub-more-list hub-bk-owner"><button data-bk="owner">Sono il proprietario dell\'app <b>backup automatico sul mio Worker</b></button></div>';
     }
     html += '<div id="hub-bk-msg" class="hub-bk-msg" role="status"></div>';
     b.innerHTML = html;
   }
+  function newKey() {
+    var r = crypto.getRandomValues(new Uint8Array(24));
+    return Array.from(r).map(function(x) { return x.toString(16).padStart(2, '0'); }).join('');
+  }
+  function mostraChiave(k) {
+    var b = document.getElementById('hub-backup-body');
+    b.innerHTML = '<div class="hub-more-h">Chiave del proprietario</div>' +
+      '<div class="hub-bk-code"><small>Copiala e incollala su Cloudflare come Secret</small><b id="hub-bk-key">' + h(k) + '</b></div>' +
+      '<ol class="hub-bk-steps"><li>Cloudflare → Workers → il tuo Worker → <b>Settings → Variables and Secrets</b></li><li><b>Add</b> → tipo <b>Secret</b>, nome <b>BACKUP_KEY</b>, valore: la chiave qui sopra → <b>Deploy</b></li><li>Sugli altri tuoi dispositivi: Backup → Sono il proprietario → Ho già la chiave</li></ol>' +
+      '<div class="hub-more-list"><button data-bk="copykey">Copia la chiave</button><button data-bk="back">Fatto</button></div><div id="hub-bk-msg" class="hub-bk-msg" role="status"></div>';
+  }
   function action(a) {
     var c = cloud();
     if (a === 'export') return window.hubExportData();
+    if (a === 'share') return window.hubBackupShare();
+    if (a === 'back') return render();
+    if (a === 'owner') {
+      var b = document.getElementById('hub-backup-body');
+      b.innerHTML = '<div class="hub-more-h">Backup automatico sul tuo Worker</div><p class="hub-bk-note">Serve una chiave segreta, uguale sull\'app e sul Worker: così solo tu puoi salvare e leggere backup sul tuo server, anche se altri usano l\'app.</p>' +
+        '<div class="hub-more-list"><button data-bk="genkey">Crea la chiave <b>primo dispositivo</b></button><button data-bk="haskey">Ho già la chiave <b>la incollo</b></button><button data-bk="back">Annulla</button></div><div id="hub-bk-msg" class="hub-bk-msg" role="status"></div>';
+      return;
+    }
+    if (a === 'genkey') { var k = newKey(); try { localStorage.setItem(OWNER, k); } catch (e) {} mostraChiave(k); return; }
+    if (a === 'showkey') return mostraChiave(ownerKey());
+    if (a === 'haskey') {
+      var v = (prompt('Incolla la chiave del proprietario (48 caratteri)') || '').trim().toLowerCase();
+      if (!v) return;
+      if (!/^[0-9a-f]{48}$/.test(v)) { msg('Chiave non valida', true); return; }
+      try { localStorage.setItem(OWNER, v); } catch (e) {}
+      render(); msg('Chiave salvata su questo dispositivo');
+      return;
+    }
+    if (a === 'copykey') {
+      (navigator.clipboard ? navigator.clipboard.writeText(ownerKey()) : Promise.reject()).then(function() { msg('Chiave copiata'); }, function() { msg('Copia a mano la chiave qui sopra'); });
+      return;
+    }
+    if (a === 'delkey') {
+      if (confirm('Rimuovo la chiave da questo telefono? Il backup automatico si ferma; quello già salvato resta sul server.')) { try { localStorage.removeItem(OWNER); } catch (e) {} render(); }
+      return;
+    }
     if (a === 'import') return document.getElementById('hub-import-file').click();
     if (a === 'copy') {
       (navigator.clipboard ? navigator.clipboard.writeText(c.code) : Promise.reject()).then(function() { msg('Codice copiato'); }, function() { msg('Copia a mano il codice qui sopra'); });
@@ -27889,6 +28579,8 @@ async function runCmp() {
   };
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
 
+  window.hubBackupFile = function() { try { return JSON.parse(localStorage.getItem(FILE) || 'null'); } catch (e) { return null; } };
+  window.hubBackupOwner = function() { return !!ownerKey(); };
   window.hubBackup = { collect: collect, restore: restore, upload: upload, download: download, _encrypt: encrypt, _decrypt: decrypt, _cloudId: cloudId };
 })();
 </script>

@@ -87,3 +87,13 @@
 .gi-zone { font-size: .72rem; color: var(--t2); line-height: 1.5; margin-top: 6px; }
 .gi-zone:empty { display: none; }
 .gi-zone a { color: inherit; }
+
+/* ── Parcheggio ── */
+.og-park { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; appearance: none; color: inherit; background: var(--card2); border: 1px solid var(--b1); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; cursor: pointer; }
+.og-park > span:first-child { font-size: 1.4rem; width: 34px; height: 34px; border-radius: 9px; background: #2f6fde; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.og-park b { display: block; font-size: .92rem; }
+.og-park small { display: block; font-size: .78rem; opacity: .75; margin-top: 2px; }
+.og-park > span:nth-child(2) { flex: 1; min-width: 0; }
+.og-park-go { font-size: .8rem; color: #e8a030; white-space: nowrap; }
+.og-park.warn { border-color: rgba(232,160,48,.6); }
+.og-park.crit { border-color: rgba(224,90,74,.7); background: rgba(224,90,74,.1); }

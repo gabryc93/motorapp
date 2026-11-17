@@ -42,6 +42,18 @@
       ]
     },
     {
+      "name": "Parcheggio",
+      "short_name": "Parcheggio",
+      "description": "Salva dove hai lasciato l'auto o tornaci a piedi",
+      "url": "./#park",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
       "name": "Ride e HUD",
       "short_name": "HUD",
       "description": "Registratore GPS con HUD a tutto schermo",
@@ -58,18 +70,6 @@
       "short_name": "Giro",
       "description": "Anelli su strade belle senza autostrade",
       "url": "./#giro",
-      "icons": [
-        {
-          "src": "icons/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Carburanti",
-      "short_name": "Carburanti",
-      "description": "Distributori più convenienti vicino a te",
-      "url": "./#fuel",
       "icons": [
         {
           "src": "icons/icon-192.png",

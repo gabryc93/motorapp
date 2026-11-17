@@ -839,6 +839,10 @@
   margin-bottom: 5px;
 }
 .gar-field input[type="text"],
+.gar-field input:not([type]),
+.gar-field input[type="tel"],
+.gar-field input[type="url"],
+.gar-field input[type="time"],
 .gar-field input[type="number"],
 .gar-field input[type="date"],
 .gar-field textarea,
