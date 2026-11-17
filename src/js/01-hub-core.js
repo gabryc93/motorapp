@@ -443,7 +443,7 @@
     var ids = ['map-view', 'fav-view', 'modal-overlay', 'fav-edit-overlay',
                'hub-cmp-overlay', 'gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
                'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
-               'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay'];
+               'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay'];
     if (typeof MutationObserver === 'function') {
       var obs = new MutationObserver(_hubUpdatePillVisibility);
       ids.forEach(function(id) {
@@ -453,7 +453,7 @@
       var lateRetry = setTimeout(function() {
         ['gar-overlay', 'gar-edit', 'fl-overlay', 'fl-edit',
          'ps-overlay', 'ps-detail', 'rd-overlay', 'mt-overlay', 'mt-edit',
-         'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay'].forEach(function(id) {
+         'rdl-overlay', 'rdl-detail', 'wp-overlay', 'tco-overlay', 'ms-overlay', 'ric-overlay', 'doc-overlay'].forEach(function(id) {
           var el = document.getElementById(id);
           if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
         });

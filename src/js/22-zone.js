@@ -106,11 +106,22 @@
     return fetch(base + '/api/autovelox?s=' + s.toFixed(3) + '&w=' + w.toFixed(3) + '&n=' + n.toFixed(3) + '&e=' + e.toFixed(3)).then(function(r) {
       return r.json().then(function(j) { if (!r.ok || j.error) throw new Error(j.error || 'HTTP ' + r.status); return j; });
     }).then(function(j) {
-      var pts = []; for (var i = 0; i < coords.length; i += Math.max(1, Math.floor(coords.length / 3000))) pts.push(coords[i]);
-      return (j.autovelox || []).filter(function(a) {
-        for (var i = 0; i < pts.length; i++) if (Math.abs(pts[i].lat - a.lat) < .002 && dist(pts[i], a) < .06) return true;
+      var pts = [], st = Math.max(1, Math.floor(coords.length / 3000));
+      for (var i = 0; i < coords.length; i += st) pts.push(coords[i]);
+      if (pts[pts.length - 1] !== coords[coords.length - 1]) pts.push(coords[coords.length - 1]);
+      // distanza dal tratto di strada (non solo dai vertici: sui rettilinei i punti del percorso sono radi)
+      function vicino(a) {
+        var k = Math.cos(a.lat * Math.PI / 180) * 111.32;
+        for (var i = 0; i < pts.length; i++) {
+          var p = pts[i], q = pts[i + 1] || p;
+          if (Math.min(p.lat, q.lat) - .002 > a.lat || Math.max(p.lat, q.lat) + .002 < a.lat) continue;
+          var px = (p.lng - a.lng) * k, py = (p.lat - a.lat) * 110.57, dx = (q.lng - p.lng) * k, dy = (q.lat - p.lat) * 110.57, l2 = dx * dx + dy * dy;
+          var t = l2 ? Math.max(0, Math.min(1, -(px * dx + py * dy) / l2)) : 0, x = px + t * dx, y = py + t * dy;
+          if (x * x + y * y < .0036) return true;   // entro 60 m
+        }
         return false;
-      });
+      }
+      return (j.autovelox || []).filter(vicino);
     });
   }
 

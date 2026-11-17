@@ -455,3 +455,24 @@ body[data-pill-hidden="1"] .hub-tabs {
 #doc-view-in img { max-width: 100%; max-height: 100%; object-fit: contain; }
 #doc-view-in iframe { width: 100%; height: 100%; border: 0; background: #fff; }
 #doc-overlay .gar-field input { width: 100%; box-sizing: border-box; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: var(--t1, #eee); border-radius: 8px; padding: 10px; font: inherit; font-size: .85rem; }
+
+/* ── Richiami ufficiali ── */
+#ric-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 70; display: none; flex-direction: column; }
+#ric-overlay.visible { display: flex; }
+#ric-overlay .mt-hdr { padding-top: calc(14px + var(--hub-safe-top, 0px)); }
+#ric-overlay .mt-body { overflow-y: auto; flex: 1; }
+.ric-vinrow { display: flex; gap: 8px; }
+.ric-vinrow input { flex: 1; min-width: 0; font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: .04em; }
+.ric-card { padding: 12px 14px; }
+.ric-h { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.ric-badge { flex-shrink: 0; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 10px; background: rgba(255,255,255,.08); }
+.ric-tua { border-color: rgba(224,90,74,.5); }
+.ric-tua .ric-badge { background: rgba(224,90,74,.2); color: #ff8a7a; }
+.ric-forse .ric-badge { background: rgba(232,160,48,.18); color: #f0b85a; }
+.ric-fatto .ric-badge { background: rgba(80,190,120,.18); color: #7fd49a; }
+.ric-no { opacity: .6; }
+.ric-txt { margin: 6px 0 0; font-size: 13px; line-height: 1.45; }
+.ric-why { margin: 6px 0 0; font-size: 12px; opacity: .75; font-style: italic; }
+.ric-act { display: flex; gap: 12px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+.ric-act a { color: var(--accent, #e8a030); font-size: 13px; }
+.ric-act button { background: none; border: 1px solid rgba(255,255,255,.2); color: inherit; border-radius: 8px; padding: 5px 10px; font-size: 12px; }

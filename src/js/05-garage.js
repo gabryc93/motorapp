@@ -518,9 +518,10 @@
     else localStorage.removeItem(GAR_ACTIVE);
   }
   function getActiveVehicle() {
-    var id = getActiveId();
+    var id = getActiveId(), g = loadGarage();
     if (!id) return null;
-    return loadGarage().find(function(v) { return v.id === id; }) || null;
+    // se l'auto attiva è stata eliminata, passa alla prima rimasta
+    return g.find(function(v) { return v.id === id; }) || g[0] || null;
   }
   // Public API for other modules (fuel logging, comparator, etc.)
   window.hubGarage = {

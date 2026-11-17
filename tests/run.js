@@ -70,7 +70,7 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
   });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(e.message));
-  page.on('dialog', d => d.accept());
+  page.on('dialog', d => { if (!page._ownDialog) d.accept().catch(() => {}); });
   await page.goto(base, { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(2500);
 
@@ -605,7 +605,7 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     await p.click('#mt-sheet .gar-save');
     txt = await p.$eval('#mt-body', e => e.textContent);
     expect(/10 anni: da sostituire/.test(txt), 'gomme vecchie non segnalate');
-    p.once('dialog', d => d.accept('13300'));
+    p._ownDialog = true; p.once('dialog', d => { p._ownDialog = false; d.accept('13300'); });
     await p.click('.mt-gomma-act button:has-text("Monta queste")');
     const g = await p.evaluate(() => JSON.parse(localStorage.getItem('hub_gomme_v1')));
     const est = g.find(x => x.tipo === 'estive'), inv = g.find(x => x.tipo === 'invernali');
@@ -640,7 +640,7 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
       return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + 'T09:00'; });
     await p.fill('#wp-from', 'Duomo Milano'); await p.fill('#wp-to', 'Abbiategrasso'); await p.fill('#wp-when', lun); await p.fill('#wp-ret', '');
     await p.click('#wp-overlay .wp-go');
-    await p.waitForFunction(() => /autovelox/.test(document.getElementById('wp-zone').textContent), null, { timeout: 8000 });
+    await p.waitForFunction(() => /autovelox/.test((document.getElementById('wp-zone') || {}).textContent || ''), null, { timeout: 8000 });
     let z = await p.$eval('#wp-zone', e => e.textContent);
     expect(/Area B alle 09:0\d: Corsa 1\.4 può entrare \(benzina Euro 4: vietata dal 1° ottobre 2028\)/.test(z), 'Area B Euro 4: ' + z);
     expect(/Area C attiva alle 09:0\d: ticket 7,50 €/.test(z), 'Area C ticket: ' + z);
@@ -648,7 +648,7 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     // Euro 3: divieto
     await p.evaluate(() => { hubGarage.update('cz1', { euro: 3 }); });
     await p.click('#wp-overlay .wp-go');
-    await p.waitForFunction(() => /non può entrare/.test(document.getElementById('wp-zone').textContent), null, { timeout: 8000 });
+    await p.waitForFunction(() => /non può entrare/.test((document.getElementById('wp-zone') || {}).textContent || ''), null, { timeout: 8000 });
     z = await p.$eval('#wp-zone', e => e.textContent);
     expect(/Area B attiva alle 09:0\d: Corsa 1\.4 \(benzina Euro 3\) non può entrare/.test(z) && /il ticket non basta/.test(z), 'divieto Euro 3: ' + z);
     // vignette: percorso che sale in Svizzera
@@ -661,7 +661,7 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
   await test('Documenti, patente in Oggi, backup e scorciatoie dall\'icona', async p => {
     const day = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
     await p.evaluate(() => { localStorage.removeItem('hub_documenti_v1'); localStorage.removeItem('hub_cloud_v1'); hubGo('garage'); openDocumenti(); });
-    const fc = p.waitForEvent('filechooser');
+    const fc = p.waitForEvent('filechooser'); fc.catch(() => {});
     await p.click('.doc-cell .doc-thumb');
     const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
     await (await fc).setFiles({ name: 'libretto.png', mimeType: 'image/png', buffer: png });
@@ -678,6 +678,40 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     await p.evaluate(() => { closeGiro(); history.replaceState(null, '', '#oggi'); });
     const man = await p.evaluate(() => fetch('manifest.webmanifest').then(r => r.json()));
     expect(man.shortcuts && man.shortcuts.some(x => x.url === './#hud'), 'scorciatoie nel manifest');
+  }, page);
+
+  await test('Richiami ufficiali: telaio, Garage e Oggi', async p => {
+    const R = { id: 9, ref: 'SR/01/2026', data: '2026-06-11', modelli: '308 V3, 408', descr: '', rischio: 'Il cablaggio può surriscaldarsi.', tipi: ['FIRE'],
+      periodi: ['308 V3: 01.11.2023 - 12.02.2026'], vin: [{ m: '308 V3', da: 'VR3F4DGXTPY500007', a: 'VR3F4DGM6TY520657' }],
+      misure: ['richiamo in officina (volontario del costruttore)'], url: 'https://ec.europa.eu/safety-gate-alerts/screen/webReport/alertDetail/9?lang=it' };
+    const R2 = Object.assign({}, R, { id: 10, ref: 'SR/02/2020', data: '2020-01-01', modelli: '208', periodi: [], vin: [] });
+    await p.route('**/api/richiami?**', r => r.fulfill({ contentType: 'application/json', body: JSON.stringify({ richiami: [R, R2] }) }));
+    const prima = await p.evaluate(() => { const v = hubGarage.active(); const o = { marca: v.marca, modello: v.modello, vin: v.vin, annoImm: v.annoImm, richiamiFatti: v.richiamiFatti };
+      hubGarage.update(v.id, { marca: 'Peugeot', modello: '308 SW Hybrid', vin: '', annoImm: 2024, richiamiFatti: [] }); localStorage.removeItem('hub_richiami_v1'); return o; });
+    const val = await p.evaluate(R => [
+      hubRichiami.valuta(R, { modello: '308', vin: 'VR3F4DGXTPY510000' }).st,
+      hubRichiami.valuta(R, { modello: '308', vin: 'VR3F4DGXTPY600000' }).st,
+      hubRichiami.valuta(R, { modello: '308', vin: '' }).st,
+      hubRichiami.valuta(R, { modello: '308', annoImm: 2019 }).st,
+      hubRichiami.valuta(R, { modello: '3008', vin: '' }).st], R);
+    expect(val.join() === 'tua,no,forse,no,no', 'valutazione: ' + val);
+    await p.evaluate(() => { hubGo('garage'); openRichiami(); });
+    await p.waitForSelector('#ric-body .ric-card', { timeout: 4000 });
+    let b = await p.$eval('#ric-body', e => e.textContent);
+    expect(/Da verificare/.test(b) && !/208/.test(b), 'elenco richiami: ' + b.slice(0, 200));
+    await p.fill('#ric-vin', 'vr3f4dgxtpy510000'); await p.click('.ric-vinrow button');
+    b = await p.$eval('#ric-body', e => e.textContent);
+    expect(/Riguarda la tua auto/.test(b), 'telaio nell\'intervallo non riconosciuto');
+    expect(/per la tua auto/.test(await p.$eval('#ric-launch-stat', e => e.textContent)), 'contatore nel Garage');
+    await p.evaluate(() => { closeRichiami(); hubGo('oggi'); });
+    expect(/Richiamo ufficiale da fare/.test(await p.$eval('#oggi-root', e => e.textContent)), 'richiamo non in Oggi');
+    await p.evaluate(() => { hubGo('garage'); openRichiami(); });
+    await p.waitForSelector('.ric-act button');
+    await p.click('.ric-act button');
+    await p.evaluate(() => { closeRichiami(); hubGo('oggi'); });
+    { const t = await p.$eval('#oggi-root', e => e.textContent), f = await p.evaluate(() => hubGarage.active().richiamiFatti); expect(!/Richiamo ufficiale da fare/.test(t), 'richiamo fatto ancora in Oggi: ' + JSON.stringify(f) + ' ' + t.slice(0, 300)); }
+    await p.evaluate(o => { hubGarage.update(hubGarage.active().id, o); localStorage.removeItem('hub_richiami_v1'); }, prima);
+    await p.unroute('**/api/richiami?**');
   }, page);
 
   await test('Motorsport: risultati F1 e classifica', async p => {

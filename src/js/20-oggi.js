@@ -37,6 +37,9 @@
     });
     var pat = window.hubPatenteScad ? window.hubPatenteScad() : null;
     if (pat && garage()[0]) out.push({ v: garage()[0], nome: 'Patente', giorni: pat.giorni, data: pat.data, tipo: 'doc', icon: '🪪', nascondiAuto: true });
+    (window.hubRichiamiDaFare ? window.hubRichiamiDaFare() : []).forEach(function(x) {
+      out.push({ v: x.v, nome: x.st === 'tua' ? 'Richiamo ufficiale da fare' : 'Richiamo da verificare', giorni: x.st === 'tua' ? -1 : 20, quando: x.st === 'tua' ? 'gratis in officina' : 'controlla il telaio', tipo: 'ric', icon: '🛡' });
+    });
     return out.sort(function(a, b) { return a.giorni - b.giorni; });
   }
   function renderDaFare() {
@@ -56,6 +59,7 @@
     hubGo('garage');
     setTimeout(function() {
       if (tipo === 'doc' && window.openDocumenti) { window.openDocumenti(); return; }
+      if (tipo === 'ric' && window.openRichiami) { window.openRichiami(); return; }
       if ((tipo === 'mt' || tipo === 'gomme') && window.openMaint) { if (tipo === 'gomme' && window.mtTab) window.mtTab('gomme'); else if (window.mtTab) window.mtTab('int'); window.openMaint(); }
       else if (window.openGarageEdit) window.openGarageEdit(vid);
     }, 250);
@@ -204,6 +208,8 @@
   window.ogVeicolo = function(id) { if (window.hubGarage) window.hubGarage.setActive(id); if (window._hubRefreshGarageBadge) window._hubRefreshGarageBadge(); render(); };
   window.oggiInit = function() {
     render();
+    // richiami ufficiali (cache 1 giorno per modello): aggiorna Da fare se ce ne sono
+    if (window.hubRichiamiAggiorna) window.hubRichiamiAggiorna().then(function() { render(); });
     // prezzi medi del giorno, se la sezione Carburanti non li ha ancora caricati
     if (!window.hubMedie && !jget('hub_medie_v1', null) && typeof WORKER !== 'undefined') {
       fetch(WORKER + '/api/medie').then(function(r) { return r.ok ? r.json() : null; }).then(function(d) { if (d && d.Benzina) { window.hubMedie = d; render(); } }).catch(function() {});
