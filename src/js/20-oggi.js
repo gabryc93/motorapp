@@ -27,6 +27,8 @@
         var g = Math.round((new Date(v[x[0]] + 'T00:00:00') - oggi) / 86400000);
         if (g <= 30) out.push({ v: v, nome: x[1], giorni: g, data: v[x[0]], tipo: 'scad' });
       });
+      var gav = window.hubGommeAvviso ? window.hubGommeAvviso(v) : null;
+      if (gav) out.push({ v: v, nome: /invernali/.test(gav) ? 'Monta le gomme invernali' : 'Monta le gomme estive', giorni: /invernali/.test(gav) ? 0 : 10, quando: /invernali/.test(gav) ? 'obbligo in corso' : 'cambio stagione', tipo: 'gomme', icon: '⚫' });
       (window.hubMaintScad ? window.hubMaintScad(v) : []).forEach(function(m) {
         var g = m.daysRem != null ? m.daysRem : null, scad = m.status === 'crit';
         var quando = m.kmRem != null && (g == null || m.kmRem / 40 < g) ? (m.kmRem < 0 ? 'superato di ' + Math.abs(m.kmRem).toLocaleString('it-IT') + ' km' : 'tra ' + m.kmRem.toLocaleString('it-IT') + ' km') : null;
@@ -50,7 +52,10 @@
   window.ogApri = function(tipo, vid) {
     if (window.hubGarage) window.hubGarage.setActive(vid);
     hubGo('garage');
-    setTimeout(function() { if (tipo === 'mt' && window.openMaint) window.openMaint(); else if (window.openGarageEdit) window.openGarageEdit(vid); }, 250);
+    setTimeout(function() {
+      if ((tipo === 'mt' || tipo === 'gomme') && window.openMaint) { if (tipo === 'gomme' && window.mtTab) window.mtTab('gomme'); else if (window.mtTab) window.mtTab('int'); window.openMaint(); }
+      else if (window.openGarageEdit) window.openGarageEdit(vid);
+    }, 250);
   };
 
   /* ── Meteo per guidare ─────────────────────────────────────────── */

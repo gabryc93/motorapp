@@ -399,6 +399,8 @@ body:has(#rdl-detail.visible) .hub-tabs,
 body:has(#wp-overlay.visible) .hub-tabs,
 body:has(#tco-overlay.visible) .hub-tabs,
 body:has(#ms-overlay.visible) .hub-tabs,
+body:has(#gi-overlay.visible) .hub-tabs,
+body:has(#mt-sheet.visible) .hub-tabs,
 body[data-pill-hidden="1"] .hub-tabs {
   opacity: 0;
   transform: translateX(-50%) translateY(24px);
@@ -408,3 +410,25 @@ body[data-pill-hidden="1"] .hub-tabs {
   transition: opacity .22s ease, transform .22s ease;
 }
 
+
+/* ── Manutenzione v2: schede, gomme, modifiche ─────────────────── */
+#mt-sheet { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(3px); z-index: 85; display: none; align-items: flex-end; justify-content: center; }
+#mt-sheet.visible { display: flex; }
+@media (min-width: 600px) { #mt-sheet { align-items: center; } }
+#mt-sheet .gar-edit-card { max-height: 90vh; overflow-y: auto; }
+.mt-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.mt-tabs button { flex: 1; appearance: none; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: var(--t2, #aaa); border-radius: 10px; padding: 9px 4px;
+  font-family: 'DM Mono', monospace; font-size: .7rem; cursor: pointer; }
+.mt-tabs button.on { background: rgba(76,175,125,.16); border-color: rgba(76,175,125,.6); color: #fff; }
+.mt-alert { background: rgba(232,160,48,.1); border: 1px solid rgba(232,160,48,.4); color: #ffd699; border-radius: 10px; padding: 10px 12px; font-size: .78rem; line-height: 1.45; margin-bottom: 10px; }
+.mt-int-row { margin-top: 2px; }
+.mt-int-nota { font-size: .7rem; color: var(--t3, #888); line-height: 1.5; margin: 4px 0 12px; }
+.mt-gomma.on { border-color: rgba(76,175,125,.55); }
+.mt-gomma-w { font-size: .72rem; line-height: 1.5; color: #ffd699; margin-top: 8px; }
+.mt-gomma-act { display: flex; gap: 8px; margin-top: 10px; }
+.mt-gomma-act button { appearance: none; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: var(--t1, #eee); border-radius: 8px; padding: 7px 12px; font-size: .74rem; cursor: pointer; }
+.mt-mods-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); gap: 8px; margin-bottom: 12px; }
+.mt-mods-sum > div { background: var(--surf, #13131a); border: 1px solid var(--brd, #2a2d33); border-radius: 10px; padding: 9px 10px; }
+.mt-mods-sum small { display: block; font-family: 'DM Mono', monospace; font-size: .58rem; color: var(--t3, #888); }
+.mt-mods-sum b { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 1.35rem; }
+.mt-check { display: flex; align-items: center; gap: 8px; font-size: .8rem; color: var(--t2, #aaa); margin: 4px 0 6px; }

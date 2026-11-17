@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-11-17-2224">
+<meta name="autohub-build" content="2026-11-17-2243">
 <meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -4079,6 +4079,20 @@ a.ms-card { text-decoration: none; color: inherit; }
 .wp-why { font-family: 'DM Mono', monospace; font-size: .6rem; color: #ffd699; margin-top: 3px; }
 .wp-fine { font-size: .66rem; color: var(--t3); line-height: 1.5; margin: 12px 0 4px; }
 
+/* ── Meteo percorso: pieno sul percorso ───────────────────────── */
+.wp-pieno-f { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; margin: 6px 0 8px; }
+.wp-pieno-f select, .wp-pieno-f input { min-width: 0; background: var(--surf2); border: 1px solid var(--brd); color: var(--t1); border-radius: 8px; padding: 9px 8px; font-family: 'DM Mono', monospace; font-size: .72rem; }
+.wp-pieno-go { appearance: none; background: #e8a030; color: #1a1200; border: 0; border-radius: 8px; padding: 0 14px; font-weight: 600; font-size: .76rem; cursor: pointer; }
+.wp-pieno-l { display: flex; flex-direction: column; gap: 6px; }
+.wp-pieno-r { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; background: var(--surf); border: 1px solid var(--brd); text-decoration: none; color: var(--t1); }
+.wp-pieno-n { width: 22px; height: 22px; border-radius: 50%; background: #e8a030; color: #1a1200; font-family: 'DM Mono', monospace; font-size: .66rem; display: grid; place-items: center; flex-shrink: 0; }
+.wp-pieno-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wp-pieno-t b { font-size: .8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wp-pieno-t small, .wp-pieno-p small { font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--t3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wp-pieno-p { display: flex; flex-direction: column; align-items: flex-end; }
+.wp-pieno-p b { font-family: 'DM Mono', monospace; font-size: .86rem; color: #9be6bf; }
+.wp-pieno-pin { background: #e8a030; color: #1a1200; border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+
 /* ═══════════════════════════════════════════════════════════════════
    PASSI ALPINI / APPENNINICI — curated database for motorcyclists
    ═══════════════════════════════════════════════════════════════════ */
@@ -5097,8 +5111,10 @@ button.ps-card:focus-visible, .ps-fbtn:focus-visible, .ps-seg:focus-visible, .ps
 .rd-hist-r { display: grid; grid-template-columns: 50px 70px 1fr; gap: 8px; font-family: 'DM Mono', monospace; font-size: .64rem; color: rgba(255,255,255,.65); padding: 3px 0; }
 .rd-hist-r.best { color: #c97fd4; } .rd-hist-r.nv { color: rgba(255,255,255,.35); }
 /* HUD: velocità, G-meter e dati di guida, a specchio per il parabrezza di notte */
-#rd-overlay.rd-hud { transform: scaleX(-1); justify-content: center; gap: 2vh; --hud: #7dffb0; }
-#rd-overlay.rd-hud > *:not(.rd-speedbox):not(.rd-stats):not(.rd-np) { display: none !important; }
+#rd-overlay.rd-hud { justify-content: center; gap: 2vh; --hud: #7dffb0; }
+#rd-overlay.rd-hud.rd-mirror { transform: scaleX(-1); }
+#rd-overlay.rd-hud > *:not(.rd-speedbox):not(.rd-stats):not(.rd-np):not(.rd-obd):not(.rd-hudbar):not(.rd-perf-result) { display: none !important; }
+#rd-overlay.rd-hud.rd-mirror .rd-perf-result, #rd-overlay.rd-hud.rd-mirror .rd-hudbar { transform: scaleX(-1); }   /* i comandi si leggono dritti */
 #rd-overlay.rd-hud .rd-speedbox { flex: 1 1 auto; gap: 5vw; cursor: pointer; padding: 2vh 4vw; }
 #rd-overlay.rd-hud .rd-speed-col { flex: 0 0 auto; border: 0; }
 #rd-overlay.rd-hud .rd-speed { font-size: min(30vw, 40vh); color: var(--hud); }
@@ -5171,6 +5187,45 @@ button.ps-card:focus-visible, .ps-fbtn:focus-visible, .ps-seg:focus-visible, .ps
 .rd-ra-now button { appearance: none; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px; padding: 4px 8px; font-size: .66rem; cursor: pointer; flex-shrink: 0; }
 .rd-ra-err { color: #ff8a82 !important; }
 #rd-overlay.rd-hud .rd-np-live { background: var(--hud); color: #000; }
+
+/* ── HUD: comandi a scomparsa ─────────────────────────────────── */
+.rd-hudbar { display: none; }
+#rd-overlay.rd-hud .rd-hudbar { display: flex; position: absolute; top: calc(10px + var(--hub-safe-top, 0px)); left: 50%; translate: -50% 0; z-index: 5; gap: 8px;
+  opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+#rd-overlay.rd-hud.rd-mirror .rd-hudbar { translate: 50% 0; left: auto; right: 50%; }
+#rd-overlay.rd-hud.rd-hudbar-on .rd-hudbar { opacity: 1; pointer-events: auto; }
+.rd-hudbar button { appearance: none; background: rgba(20,22,26,.92); border: 1px solid rgba(125,255,176,.4); color: #7dffb0; border-radius: 999px; padding: 9px 14px;
+  font-family: 'DM Mono', monospace; font-size: .74rem; cursor: pointer; white-space: nowrap; }
+.rd-hudbar button.on { background: #7dffb0; color: #06140d; }
+#rd-overlay.rd-hud { position: fixed; }
+#rd-overlay.rd-hud .rd-speedbox, #rd-overlay.rd-hud .rd-stats, #rd-overlay.rd-hud .rd-obd { cursor: pointer; }
+
+/* ── OBD: giri, acqua, turbo, batteria ────────────────────────── */
+.rd-obd { margin: 0 12px 8px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); flex-shrink: 0; }
+.rd-obd[hidden] { display: none !important; }
+.rd-rpm { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 4px 8px; }
+.rd-rpm b { font-family: 'Fraunces', Georgia, serif; font-size: 1.5rem; font-variant-numeric: tabular-nums; color: #fff; }
+.rd-rpm small, .rd-obd-v small { font-family: 'DM Mono', monospace; font-size: .56rem; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .08em; }
+.rd-rpm-bar { height: 10px; border-radius: 5px; background: rgba(255,255,255,.08); overflow: hidden; }
+.rd-rpm-bar i { display: block; height: 100%; background: #3fbf7f; transition: width .15s linear; }
+.rd-rpm-bar i.amb { background: #e8c547; } .rd-rpm-bar i.red { background: #e5484d; }
+.rd-obd-v { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-family: 'DM Mono', monospace; font-size: .9rem; color: #fff; }
+.rd-obd-v span { display: flex; flex-direction: column; }
+.rd-obd-dtc { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px; }
+.rd-obd-dtc a { font-family: 'DM Mono', monospace; font-size: .9rem; color: #ffb199; background: rgba(229,72,77,.12); border: 1px solid rgba(229,72,77,.4); border-radius: 8px; padding: 6px 10px; text-decoration: none; }
+#rd-overlay.rd-hud .rd-obd { background: transparent; border: 0; margin: 0 4vw 1vh; }
+#rd-overlay.rd-hud .rd-rpm b, #rd-overlay.rd-hud .rd-obd-v { color: var(--hud); }
+#rd-overlay.rd-hud .rd-rpm b { font-size: min(9vw, 9vh); }
+#rd-overlay.rd-hud .rd-rpm small, #rd-overlay.rd-hud .rd-obd-v small { color: var(--hud); opacity: .65; }
+#rd-overlay.rd-hud .rd-rpm-bar { height: min(3vh, 18px); background: rgba(125,255,176,.12); }
+#rd-overlay.rd-hud .rd-obd-v { font-size: min(5vw, 5vh); }
+/* con l'OBD c'è una riga in più: velocità e G-meter un po' più piccoli */
+#rd-overlay.rd-hud:has(.rd-obd:not([hidden])) .rd-speed { font-size: min(24vw, 30vh); }
+#rd-overlay.rd-hud:has(.rd-obd:not([hidden])) .rd-gmeter { width: min(28vw, 34vh); height: min(28vw, 34vh); }
+@media (orientation: portrait) {
+  #rd-overlay.rd-hud:has(.rd-obd:not([hidden])) .rd-speed { font-size: min(34vw, 20vh); }
+  #rd-overlay.rd-hud:has(.rd-obd:not([hidden])) .rd-gmeter { width: min(46vw, 22vh); height: min(46vw, 22vh); }
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    MAINTENANCE — service tracker per vehicle, by km AND date
@@ -5572,6 +5627,8 @@ body:has(#rdl-detail.visible) .hub-tabs,
 body:has(#wp-overlay.visible) .hub-tabs,
 body:has(#tco-overlay.visible) .hub-tabs,
 body:has(#ms-overlay.visible) .hub-tabs,
+body:has(#gi-overlay.visible) .hub-tabs,
+body:has(#mt-sheet.visible) .hub-tabs,
 body[data-pill-hidden="1"] .hub-tabs {
   opacity: 0;
   transform: translateX(-50%) translateY(24px);
@@ -5581,6 +5638,28 @@ body[data-pill-hidden="1"] .hub-tabs {
   transition: opacity .22s ease, transform .22s ease;
 }
 
+
+/* ── Manutenzione v2: schede, gomme, modifiche ─────────────────── */
+#mt-sheet { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(3px); z-index: 85; display: none; align-items: flex-end; justify-content: center; }
+#mt-sheet.visible { display: flex; }
+@media (min-width: 600px) { #mt-sheet { align-items: center; } }
+#mt-sheet .gar-edit-card { max-height: 90vh; overflow-y: auto; }
+.mt-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.mt-tabs button { flex: 1; appearance: none; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: var(--t2, #aaa); border-radius: 10px; padding: 9px 4px;
+  font-family: 'DM Mono', monospace; font-size: .7rem; cursor: pointer; }
+.mt-tabs button.on { background: rgba(76,175,125,.16); border-color: rgba(76,175,125,.6); color: #fff; }
+.mt-alert { background: rgba(232,160,48,.1); border: 1px solid rgba(232,160,48,.4); color: #ffd699; border-radius: 10px; padding: 10px 12px; font-size: .78rem; line-height: 1.45; margin-bottom: 10px; }
+.mt-int-row { margin-top: 2px; }
+.mt-int-nota { font-size: .7rem; color: var(--t3, #888); line-height: 1.5; margin: 4px 0 12px; }
+.mt-gomma.on { border-color: rgba(76,175,125,.55); }
+.mt-gomma-w { font-size: .72rem; line-height: 1.5; color: #ffd699; margin-top: 8px; }
+.mt-gomma-act { display: flex; gap: 8px; margin-top: 10px; }
+.mt-gomma-act button { appearance: none; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: var(--t1, #eee); border-radius: 8px; padding: 7px 12px; font-size: .74rem; cursor: pointer; }
+.mt-mods-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); gap: 8px; margin-bottom: 12px; }
+.mt-mods-sum > div { background: var(--surf, #13131a); border: 1px solid var(--brd, #2a2d33); border-radius: 10px; padding: 9px 10px; }
+.mt-mods-sum small { display: block; font-family: 'DM Mono', monospace; font-size: .58rem; color: var(--t3, #888); }
+.mt-mods-sum b { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 1.35rem; }
+.mt-check { display: flex; align-items: center; gap: 8px; font-size: .8rem; color: var(--t2, #aaa); margin: 4px 0 6px; }
 
 /* ════════════════════════════════════════════════════════════════════
    CARBURANTI styles (scoped to #hub-fuel — no global pollution)
@@ -21033,6 +21112,165 @@ async function runCmp() {
 })();
 </script>
 <script>/* ═══════════════════════════════════════════════════════════════════
+   HUB OBD — chiavetta OBD2 Bluetooth LE (ELM327) via Web Bluetooth
+   Dati in diretta per Ride e HUD: giri, velocità, temperatura acqua,
+   pressione turbo, tensione batteria; lettura e cancellazione codici errore.
+   Funziona su Chrome/Edge Android e desktop e nell'app del Play Store;
+   su iPhone serve un browser con Web Bluetooth (es. Bluefy), Safari no.
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function $(id) { return document.getElementById(id); }
+  // servizi BLE usati dalle chiavette ELM327 più diffuse (Vgate/vLinker, Veepeak, cloni)
+  var SERVIZI = [0xfff0, 0xffe0, 0x18f0, 'e7810a71-73ae-499d-8c15-faa9aef0c3f2'];
+  var NOMI = ['OBD', 'OBDII', 'vLinker', 'VLINK', 'IOS-Vlink', 'Android-Vlink', 'V-LINK', 'VEEPEAK', 'Vgate', 'iCar', 'ELM327', 'KONNWEI'];
+
+  var dev = null, rx = null, tx = null, buf = '', attesa = null, coda = Promise.resolve(), loopOn = false;
+  var D = { stato: 'off', nome: '', rpm: null, kmh: null, h2o: null, map: null, baro: null, volt: null, ts: 0, errore: '' };
+  var ascoltatori = [];
+
+  function supportato() { return !!(navigator.bluetooth && navigator.bluetooth.requestDevice); }
+  function notifica() { ascoltatori.forEach(function(f) { try { f(D); } catch (e) {} }); }
+
+  /* ── Comandi ELM327: uno alla volta, risposta fino al prompt ">" ── */
+  function invia(cmd, ms) {
+    var p = coda.then(function() {
+      return new Promise(function(ok) {
+        buf = '';
+        var t = setTimeout(function() { attesa = null; ok(buf.trim() || 'TIMEOUT'); }, ms || 2500);
+        attesa = function(txt) { clearTimeout(t); attesa = null; ok(txt); };
+        var data = new TextEncoder().encode(cmd + '\r');
+        (tx.properties.writeWithoutResponse && tx.writeValueWithoutResponse ? tx.writeValueWithoutResponse(data) : tx.writeValue(data)).catch(function() { clearTimeout(t); attesa = null; ok('ERRORE'); });
+      });
+    });
+    coda = p.catch(function() {});
+    return p;
+  }
+  function ricevi(ev) {
+    buf += new TextDecoder().decode(ev.target.value);
+    var i = buf.indexOf('>');
+    if (i >= 0 && attesa) { var txt = buf.slice(0, i).replace(/\r/g, '\n').trim(); buf = buf.slice(i + 1); attesa(txt); }
+  }
+  // "41 0C 1A F8" → [0x1A, 0xF8] per la modalità/pid richiesta
+  function byte(risp, pid) {
+    var h = risp.replace(/[^0-9A-F]/gi, '').toUpperCase(), k = h.indexOf('41' + pid);
+    if (k < 0) return null;
+    var out = [], s = h.slice(k + 4);
+    for (var i = 0; i + 1 < s.length && out.length < 4; i += 2) out.push(parseInt(s.slice(i, i + 2), 16));
+    return out;
+  }
+  function decodeDTC(risp) {
+    // risposta modo 03: "43" + coppie di byte; 0000 = vuoto
+    var h = risp.replace(/[^0-9A-F]/gi, '').toUpperCase(), out = [], k;
+    while ((k = h.indexOf('43')) >= 0) {
+      h = h.slice(k + 2);
+      for (var i = 0; i + 3 < h.length; i += 4) {
+        var w = h.slice(i, i + 4); if (w === '0000') continue;
+        if (!/^[0-9A-F]{4}$/.test(w)) break;
+        var n = parseInt(w[0], 16), code = 'PCBU'[n >> 2] + (n & 3) + w.slice(1);
+        if (out.indexOf(code) < 0) out.push(code);
+      }
+      break;
+    }
+    return out;
+  }
+
+  function connetti() {
+    if (!supportato()) return Promise.reject(new Error(/iPhone|iPad|iPod/.test(navigator.userAgent) ? 'Safari su iPhone non permette il Bluetooth alle pagine web: apri AutoHub con un browser che lo supporta, come Bluefy.' : 'Questo browser non supporta il Bluetooth per le pagine web: usa Chrome o Edge.'));
+    D.stato = 'connessione'; D.errore = ''; notifica();
+    var filtri = SERVIZI.map(function(s) { return { services: [s] }; }).concat(NOMI.map(function(n) { return { namePrefix: n }; }));
+    return navigator.bluetooth.requestDevice({ filters: filtri, optionalServices: SERVIZI }).then(function(d) {
+      dev = d; D.nome = d.name || 'OBD';
+      d.addEventListener('gattserverdisconnected', function() { loopOn = false; D.stato = 'off'; D.errore = 'Chiavetta scollegata'; notifica(); });
+      return d.gatt.connect();
+    }).then(function(srv) { return srv.getPrimaryServices(); }).then(function(svcs) {
+      // si cerca la coppia di caratteristiche: una che notifica (risposte) e una scrivibile (comandi)
+      return Promise.all(svcs.map(function(s) { return s.getCharacteristics().catch(function() { return []; }); })).then(function(gr) {
+        var all = [].concat.apply([], gr);
+        rx = all.filter(function(c) { return c.properties.notify || c.properties.indicate; })[0];
+        tx = all.filter(function(c) { return c.properties.write || c.properties.writeWithoutResponse; })[0];
+        if (!rx || !tx) throw new Error('Chiavetta non compatibile (nessun canale seriale trovato)');
+        rx.addEventListener('characteristicvaluechanged', ricevi);
+        return rx.startNotifications();
+      });
+    }).then(function() {
+      return invia('ATZ', 3000).then(function() { return invia('ATE0'); }).then(function() { return invia('ATL0'); }).then(function() { return invia('ATS0'); })
+        .then(function() { return invia('ATH0'); }).then(function() { return invia('ATSP0'); }).then(function() { return invia('0100', 8000); });
+    }).then(function(r) {
+      if (!/4100/i.test(r.replace(/\s/g, ''))) throw new Error('La centralina non risponde: accendi il quadro (o il motore) e riprova. Risposta: ' + r.slice(0, 60));
+      return invia('0133').then(function(b) { var x = byte(b, '33'); D.baro = x ? x[0] : 101; });
+    }).then(function() {
+      D.stato = 'on'; notifica(); avviaLoop();
+    }).catch(function(e) {
+      D.stato = 'off'; D.errore = e && e.name === 'NotFoundError' ? '' : (e.message || String(e)); notifica();
+      try { if (dev && dev.gatt.connected) dev.gatt.disconnect(); } catch (x) {}
+      if (D.errore) throw new Error(D.errore);
+    });
+  }
+  function disconnetti() { loopOn = false; try { if (dev && dev.gatt.connected) dev.gatt.disconnect(); } catch (e) {} D.stato = 'off'; D.rpm = D.kmh = D.h2o = D.map = D.volt = null; notifica(); }
+
+  // giri a ogni giro del ciclo, gli altri dati a rotazione
+  var CICLO = ['010D', '0105', '010B', 'ATRV'];
+  function avviaLoop() {
+    if (loopOn) return; loopOn = true;
+    var i = 0;
+    (function passo() {
+      if (!loopOn || D.stato !== 'on') return;
+      var altro = CICLO[i++ % CICLO.length];
+      invia('010C', 1200).then(function(r) { var b = byte(r, '0C'); if (b && b.length >= 2) D.rpm = Math.round((b[0] * 256 + b[1]) / 4); })
+        .then(function() { return invia(altro, 1200); }).then(function(r) {
+          if (altro === 'ATRV') { var v = parseFloat(String(r).replace(',', '.')); if (!isNaN(v)) D.volt = v; }
+          else { var b = byte(r, altro.slice(2)); if (b) { if (altro === '010D') D.kmh = b[0]; if (altro === '0105') D.h2o = b[0] - 40; if (altro === '010B') D.map = b[0]; } }
+          D.ts = Date.now(); notifica();
+        }).then(function() { setTimeout(passo, 30); });
+    })();
+  }
+  function leggiDTC() {
+    if (D.stato !== 'on') return Promise.reject(new Error('Collega prima la chiavetta'));
+    return invia('03', 5000).then(function(r) { return /NO DATA/i.test(r) ? [] : decodeDTC(r); });
+  }
+  function cancellaDTC() {
+    if (D.stato !== 'on') return Promise.reject(new Error('Collega prima la chiavetta'));
+    return invia('04', 5000).then(function(r) { return /44/.test(r.replace(/\s/g, '')); });
+  }
+
+  /* ── Pannello nella Ride ─────────────────────────────────────── */
+  var dtc = null, msg = '';
+  function pannello() {
+    var box = $('rd-perf-result-inner'); if (!box) return;
+    var on = D.stato === 'on', cella = function(l, v) { return '<div class="rd-perf-result-cell"><div class="rd-perf-result-cell-lbl">' + l + '</div><div class="rd-perf-result-cell-val">' + v + '</div></div>'; };
+    box.innerHTML = '<div class="rd-perf-result-title">OBD · ' + (on ? '🟢 ' + esc(D.nome) : D.stato === 'connessione' ? 'collegamento…' : 'non collegata') + '</div>' +
+      (on ? '<div class="rd-perf-result-grid">' + cella('Giri', D.rpm != null ? D.rpm.toLocaleString('it-IT') : '—') + cella('Acqua', D.h2o != null ? D.h2o + '°C' : '—') +
+          cella('Turbo', D.map != null ? fmtBoost() : '—') + cella('Batteria', D.volt != null ? D.volt.toFixed(1).replace('.', ',') + ' V' : '—') + '</div>' +
+          '<div class="rd-perf-result-actions"><button class="rd-perf-close" onclick="hubOBD._dtc()">🔧 Leggi codici errore</button><button class="rd-perf-close" onclick="hubOBD.disconnetti();hubOBD.pannello()">Scollega</button></div>' +
+          (dtc ? '<div class="rd-obd-dtc">' + (dtc.length ? dtc.map(function(c) { return '<a href="https://www.google.com/search?q=' + encodeURIComponent(c + ' ' + veicolo()) + '" target="_blank" rel="noopener">' + c + '</a>'; }).join('') +
+            '<button class="rd-perf-close" onclick="hubOBD._clr()">Cancella codici</button>' : '<p class="rd-perf-note">✓ Nessun codice errore memorizzato.</p>') + '</div>' : '')
+        : '<p class="rd-perf-note">Con una chiavetta OBD2 Bluetooth LE (per esempio Vgate vLinker) vedi giri, acqua, turbo e batteria nella Ride e nell\'HUD, e leggi i codici errore. Inserisci la chiavetta nella presa OBD (sotto il volante), accendi il quadro e tocca Collega.</p>' +
+          (!supportato() ? '<p class="rd-perf-note rd-ra-err">' + (/iPhone|iPad|iPod/.test(navigator.userAgent) ? 'Su iPhone Safari non permette il Bluetooth alle pagine web: apri carburanti.netlify.app con l\'app Bluefy (browser con Web Bluetooth).' : 'Questo browser non supporta il Bluetooth per le pagine web: usa Chrome o Edge.') + '</p>' : '') +
+          '<div class="rd-perf-result-actions"><button class="rd-perf-again" onclick="hubOBD._conn()"' + (supportato() ? '' : ' disabled') + '>🔌 Collega</button></div>') +
+      (msg || D.errore ? '<p class="rd-perf-note rd-ra-err" role="alert">' + esc(msg || D.errore) + '</p>' : '') +
+      '<div class="rd-perf-result-actions"><button class="rd-perf-again" onclick="ridePerfClose()">Chiudi</button></div>';
+    $('rd-perf-result').classList.add('visible');
+  }
+  function veicolo() { var v = window.hubGarage && window.hubGarage.active(); return v ? (v.marca || '') + ' ' + (v.modello || '') : ''; }
+  function fmtBoost() { var b = (D.map - (D.baro || 101)) / 100; return (b >= 0 ? '+' : '') + b.toFixed(2).replace('.', ',') + ' bar'; }
+  function aperto() { var r = $('rd-perf-result'), t = r && r.querySelector('.rd-perf-result-title'); return r && r.classList.contains('visible') && t && /^OBD/.test(t.textContent); }
+  var ult = 0;
+  ascoltatori.push(function() { if (aperto() && Date.now() - ult > 700) { ult = Date.now(); pannello(); } });
+
+  window.hubOBD = {
+    supportato: supportato, connetti: connetti, disconnetti: disconnetti, leggiDTC: leggiDTC, cancellaDTC: cancellaDTC, pannello: pannello,
+    dati: function() { return D; }, boost: function() { return D.map != null ? (D.map - (D.baro || 101)) / 100 : null; },
+    fresco: function() { return D.stato === 'on' && Date.now() - D.ts < 3000; },
+    onChange: function(f) { ascoltatori.push(f); },
+    _conn: function() { msg = ''; dtc = null; connetti().then(pannello, function(e) { msg = e.message; pannello(); }); pannello(); },
+    _dtc: function() { msg = ''; leggiDTC().then(function(c) { dtc = c; pannello(); }, function(e) { msg = e.message; pannello(); }); },
+    _clr: function() { if (!confirm('Cancellare i codici errore? La spia si spegne, ma se il guasto c\'è ancora tornerà.')) return; cancellaDTC().then(function(ok) { dtc = ok ? [] : dtc; msg = ok ? '' : 'La centralina non ha confermato la cancellazione.'; pannello(); }); },
+    _decodeDTC: decodeDTC, _byte: byte
+  };
+})();
+</script>
+<script>/* ═══════════════════════════════════════════════════════════════════
    HUB RIDE — registratore GPS a schermo intero
    Modalità: Giro (uscita libera) · Prestazioni (0-100, 0-200, 80-120,
    100-0, 0-400 m) · Pista (cronometro giri con traguardo GPS).
@@ -21073,7 +21311,7 @@ async function runCmp() {
     return { startTs: Date.now(), segStart: Date.now(), elapsedMs: 0, movingMs: 0, distanceM: 0, maxKmh: 0, track: [],
       last: null, fixes: 0, stillSince: null, laps: [], lapT0: null, line: null, vid: (veicolo() || {}).id || null };
   }
-  function savePref() { jset(PREF, { mode: S.mode, perf: S.perf }); }
+  function savePref() { pref.mode = S.mode; pref.perf = S.perf; jset(PREF, pref); }
 
   /* ── Interfaccia ─────────────────────────────────────────────── */
   function inject() {
@@ -21083,7 +21321,7 @@ async function runCmp() {
     ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Modalità Ride');
     ov.innerHTML =
       '<div class="rd-hdr"><h2>RIDE<small id="rd-veh">—</small></h2>' +
-        '<div class="rd-hdr-act"><button class="rd-close" type="button" onclick="hubMusica.setup()" aria-label="Musica">🎵</button><button class="rd-close" type="button" onclick="rideHud()" title="Velocità a specchio da riflettere sul parabrezza">HUD</button>' +
+        '<div class="rd-hdr-act"><button class="rd-close" type="button" onclick="hubMusica.setup()" aria-label="Musica">🎵</button><button class="rd-close" type="button" onclick="hubOBD.pannello()" aria-label="OBD">🔌</button><button class="rd-close" type="button" onclick="rideHud()" title="Schermo a tutto campo per la guida, anche a specchio per il parabrezza">HUD</button>' +
         '<button class="rd-close" type="button" onclick="closeRide()">✕ Esci</button></div></div>' +
       '<div class="rd-modebar" role="tablist">' +
         '<button class="rd-mode-btn" data-mode="giro" onclick="rideSetMode(\'giro\')">Giro</button>' +
@@ -21099,7 +21337,11 @@ async function runCmp() {
       '<div class="rd-perf-modeline" id="rd-perf-modeline" style="display:none"></div>' +
       '<div id="rd-error-slot"></div>' +
       '<div class="rd-lap" id="rd-lap" style="display:none"></div>' +
-      '<div class="rd-speedbox" id="rd-speedbox" onclick="if(document.getElementById(\'rd-overlay\').classList.contains(\'rd-hud\'))rideHud()">' +
+      '<div class="rd-hudbar" id="rd-hudbar" role="toolbar" aria-label="Comandi HUD">' +
+        '<button type="button" id="rd-hud-mirror" onclick="rideHudMirror()" aria-pressed="false">⇋ Specchio</button>' +
+        '<button type="button" onclick="rideHudBar(false);hubOBD.pannello()">🔌 OBD</button>' +
+        '<button type="button" onclick="rideHud()">✕ Esci dall\'HUD</button></div>' +
+      '<div class="rd-speedbox" id="rd-speedbox" onclick="rideHudTap()">' +
         '<div class="rd-speed-col"><div class="rd-speed" id="rd-speed">0</div><div class="rd-speed-unit">km/h</div>' +
           '<div class="rd-sub" id="rd-sub"></div></div>' +
         '<div class="rd-gmeter" id="rd-gmeter" style="display:none">' +
@@ -21108,7 +21350,8 @@ async function runCmp() {
           '<line x1="100" y1="8" x2="100" y2="192" stroke="rgba(255,255,255,.06)"/><line x1="8" y1="100" x2="192" y2="100" stroke="rgba(255,255,255,.06)"/></svg>' +
           '<div class="rd-gmeter-dot" id="rd-gdot"></div><div class="rd-gmeter-label"><span class="rd-gmeter-val" id="rd-gval">0.0</span> G</div></div>' +
       '</div>' +
-      '<div class="rd-stats">' +
+      '<div class="rd-obd" id="rd-obd" hidden onclick="rideHudTap()"></div>' +
+      '<div class="rd-stats" onclick="rideHudTap()">' +
         cell('Tempo', 'rd-time', '00:00', '<span id="rd-tot">in movimento</span>') + cell('Distanza', 'rd-dist', '0.0', 'km') +
         cell('Media', 'rd-avg', '0', 'km/h') + cell('Max', 'rd-max', '0', 'km/h') +
       '</div>' +
@@ -21182,7 +21425,8 @@ async function runCmp() {
     var p = A().xy(a, b); var h = Math.atan2(p.x, p.y) * 180 / Math.PI; return (h + 360) % 360;
   }
   function render(kmh, f) {
-    $('rd-speed').textContent = Math.round(kmh);
+    // con l'OBD collegato la velocità mostrata è quella della centralina (istantanea)
+    $('rd-speed').textContent = window.hubOBD && window.hubOBD.fresco() && window.hubOBD.dati().kmh != null ? window.hubOBD.dati().kmh : Math.round(kmh);
     $('rd-dist').textContent = (R.distanceM / 1000).toFixed(R.distanceM < 100000 ? 1 : 0);
     $('rd-max').textContent = Math.round(R.maxKmh);
     $('rd-avg').textContent = R.movingMs > 30000 ? Math.round(R.distanceM / 1000 / (R.movingMs / 3600000)) : '0';
@@ -21439,8 +21683,43 @@ async function runCmp() {
   window.rideHud = function() {
     var ov = $('rd-overlay'), on = !ov.classList.contains('rd-hud');
     ov.classList.toggle('rd-hud', on);
+    ov.classList.toggle('rd-mirror', on && !!pref.hudMirror);
+    rideHudBar(on);   // all'apertura i comandi restano visibili qualche secondo
     if (on) { showError(''); startG(); }   // nell'HUD il G-meter è sempre visibile
   };
+  // HUD: un tocco mostra/nasconde i comandi (specchio, OBD, uscita), che spariscono da soli dopo 5 s
+  var barT = null;
+  window.rideHudBar = function(show) {
+    var ov = $('rd-overlay'); if (!ov) return;
+    ov.classList.toggle('rd-hudbar-on', !!show && ov.classList.contains('rd-hud'));
+    clearTimeout(barT); if (show) barT = setTimeout(function() { ov.classList.remove('rd-hudbar-on'); }, 5000);
+    var m = $('rd-hud-mirror'); if (m) { m.setAttribute('aria-pressed', !!pref.hudMirror); m.classList.toggle('on', !!pref.hudMirror); }
+  };
+  window.rideHudTap = function() {
+    var ov = $('rd-overlay'); if (!ov || !ov.classList.contains('rd-hud')) return;
+    rideHudBar(!ov.classList.contains('rd-hudbar-on'));
+  };
+  window.rideHudMirror = function() {
+    pref.hudMirror = !pref.hudMirror; savePref();
+    $('rd-overlay').classList.toggle('rd-mirror', pref.hudMirror);
+    rideHudBar(true);
+  };
+  // riga OBD: giri (barra che si colora verso il limitatore), acqua, turbo, batteria
+  function renderObd() {
+    var el = $('rd-obd'); if (!el || !window.hubOBD) return;
+    var D = window.hubOBD.dati();
+    if (D.stato !== 'on') { el.hidden = true; return; }
+    var max = (veicolo() && veicolo().specs && veicolo().specs.rpmMax) || 6500, rpm = D.rpm || 0, pct = Math.min(100, rpm / max * 100);
+    var b = window.hubOBD.boost();
+    el.hidden = false;
+    el.innerHTML = '<div class="rd-rpm"><b>' + (D.rpm != null ? rpm.toLocaleString('it-IT') : '—') + '</b><small>giri/min</small>' +
+      '<div class="rd-rpm-bar"><i style="width:' + pct.toFixed(1) + '%" class="' + (pct > 85 ? 'red' : pct > 70 ? 'amb' : '') + '"></i></div></div>' +
+      '<div class="rd-obd-v"><span><small>Acqua</small>' + (D.h2o != null ? D.h2o + '°' : '—') + '</span>' +
+      '<span><small>Turbo</small>' + (b != null ? (b >= 0 ? '+' : '') + b.toFixed(1).replace('.', ',') : '—') + '</span>' +
+      '<span><small>Batteria</small>' + (D.volt != null ? D.volt.toFixed(1).replace('.', ',') + ' V' : '—') + '</span></div>';
+    if (window.hubOBD.fresco() && D.kmh != null && (!R || S.state !== 'recording')) $('rd-speed').textContent = D.kmh;
+  }
+  if (window.hubOBD) window.hubOBD.onChange(function() { renderObd(); });
 
   /* ── Wake lock ───────────────────────────────────────────────── */
   function lockOn() { try { if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(function(w) { wakeLock = w; }).catch(function() {}); } catch (e) {} }
@@ -22026,9 +22305,42 @@ async function runCmp() {
   function loadAll() { try { return JSON.parse(localStorage.getItem(MT_KEY) || '[]'); } catch(e) { return []; } }
   function saveAll(r) { try { localStorage.setItem(MT_KEY, JSON.stringify(r)); } catch(e) {} }
 
+  // Intervalli: base per auto/moto → adattati al motore (distribuzione, elettrica) → modificati dall'utente
   function presetsFor(v) {
-    return (v && v.type === 'moto') ? PRESETS_MOTO : PRESETS_AUTO;
+    var base = (v && v.type === 'moto') ? PRESETS_MOTO : PRESETS_AUTO;
+    var out = base.map(function(p) { return Object.assign({}, p); });
+    if (!v) return out;
+    if (v.alim === 'elettrica') out = out.filter(function(p) { return ['olio', 'filtro', 'filtro-olio', 'cinghia', 'candele', 'filtro-aria'].indexOf(p.type) < 0; });
+    var mn = null;
+    try { mn = window.hubMotoriNoti ? window.hubMotoriNoti(v.marca, v.modello, v.anno, v.motore, v.specs || {}) : null; } catch (e) {}
+    var dist = mn && mn.distribuzione || (v.specs && v.specs.distribuzione) || '';
+    out.forEach(function(p) {
+      if (p.type === 'cinghia' && /bagno/i.test(dist)) { p.name = 'Cinghia distribuzione a bagno d\'olio'; p.km = 100000; p.months = 72; p.fonte = 'motore'; p.nota = 'Intervallo prudente per questa cinghia: controlla anche il libretto e i richiami della casa.'; }
+      else if (p.type === 'cinghia' && /catena/i.test(dist)) { p.name = 'Catena distribuzione (controllo)'; p.km = 120000; p.months = null; p.fonte = 'motore'; p.nota = 'La catena non ha una sostituzione programmata: si controllano rumorosità e allungamento.'; }
+      if (p.type === 'olio' && /bagno/i.test(dist)) { p.km = Math.min(p.km, 15000); p.fonte = 'motore'; p.nota = 'Con la cinghia a bagno d\'olio conviene cambiare l\'olio spesso e solo con quello omologato.'; }
+      var o = v.maintInt && v.maintInt[p.type];
+      if (o) { if (o.km !== undefined) p.km = o.km; if (o.months !== undefined) p.months = o.months; p.fonte = 'tuo'; }
+    });
+    return out;
   }
+
+  // Km percorsi al giorno (rifornimenti e interventi degli ultimi 13 mesi) e km di oggi stimati
+  function kmStima(v) {
+    if (!v) return { kmGiorno: null, kmOggi: 0, stimato: false };
+    var pts = [], lim = Date.now() - 400 * 86400000;
+    try { JSON.parse(localStorage.getItem('hub_refuels_v1') || '[]').forEach(function(r) { if (r.vehicleId === v.id && r.km > 0 && r.date) pts.push({ t: new Date(r.date).getTime(), km: r.km }); }); } catch (e) {}
+    // gli interventi solo se mancano i rifornimenti (i km dei rifornimenti sono più regolari)
+    if (pts.filter(function(x) { return x.t >= lim; }).length < 2) loadAll().forEach(function(e) { if (e.vehicleId === v.id && e.doneKm > 0 && e.doneDate) pts.push({ t: new Date(e.doneDate).getTime(), km: e.doneKm }); });
+    pts = pts.filter(function(x) { return x.t >= lim && !isNaN(x.t); }).sort(function(a, b) { return a.t - b.t; });
+    var kmTot = v.kmTot || 0;
+    if (pts.length < 2) return { kmGiorno: null, kmOggi: kmTot, stimato: false };
+    var a = pts[0], b = pts[pts.length - 1], giorni = (b.t - a.t) / 86400000;
+    if (giorni < 20 || b.km <= a.km) return { kmGiorno: null, kmOggi: kmTot, stimato: false };
+    var kg = (b.km - a.km) / giorni, ult = pts.reduce(function(m, x) { return x.km > m.km ? x : m; }, b);
+    var oggi = Math.round(Math.max(kmTot, ult.km + kg * Math.max(0, (Date.now() - ult.t) / 86400000)));
+    return { kmGiorno: kg, kmOggi: oggi, stimato: oggi > kmTot + 50 };
+  }
+  window.hubKmStima = kmStima;
 
   // Compute status for a maintenance item:
   //   kmRem = km until next service (or null if no km interval)
@@ -22068,7 +22380,10 @@ async function runCmp() {
     } else {
       status = 'ok';
     }
-    return { kmRem: kmRem, daysRem: daysRem, pct: pct, status: status };
+    // giorni stimati prima della scadenza: la prima tra data e km (al ritmo di guida attuale)
+    var kg = arguments[3], giorniKm = kmRem != null && kg ? Math.round(kmRem / kg) : null;
+    var giorni = daysRem != null && giorniKm != null ? Math.min(daysRem, giorniKm) : daysRem != null ? daysRem : giorniKm;
+    return { kmRem: kmRem, daysRem: daysRem, pct: pct, status: status, giorniKm: giorniKm, giorni: giorni };
   }
 
   function injectMaintUI() {
@@ -22113,6 +22428,11 @@ async function runCmp() {
         '</div>' +
         '<div class="gar-field"><label>Costo €</label>' +
           '<input type="number" id="mt-f-cost" min="0" step="0.01" placeholder="120.00"></div>' +
+        '<div class="gar-row2 mt-int-row">' +
+          '<div class="gar-field"><label>Prossimo ogni km</label><input type="number" id="mt-f-ikm" min="0" step="500" placeholder="—"></div>' +
+          '<div class="gar-field"><label>o ogni mesi</label><input type="number" id="mt-f-imesi" min="0" step="1" placeholder="—"></div>' +
+        '</div>' +
+        '<p class="mt-int-nota" id="mt-int-nota"></p>' +
         '<div class="gar-field"><label>Documento (fattura, ricevuta...)</label>' +
           '<div class="mt-doc-row" id="mt-doc-row">' +
             '<div class="mt-doc-preview" id="mt-doc-preview"><div class="mt-doc-empty">📎</div></div>' +
@@ -22157,7 +22477,10 @@ async function runCmp() {
     var preset = presetsFor(v).find(function(p) { return p.type === presetType; });
     document.getElementById('mt-edit-title').textContent = preset ? preset.name : 'Intervento';
     document.getElementById('mt-f-date').value = window.hubToday();
-    document.getElementById('mt-f-km').value = (v && v.kmTot) || '';
+    document.getElementById('mt-f-km').value = kmStima(v).kmOggi || (v && v.kmTot) || '';
+    document.getElementById('mt-f-ikm').value = preset && preset.km ? preset.km : '';
+    document.getElementById('mt-f-imesi').value = preset && preset.months ? preset.months : '';
+    document.getElementById('mt-int-nota').textContent = preset && preset.nota ? preset.nota : 'Cambia gli intervalli se il libretto o il tuo meccanico dicono diversamente.';
     document.getElementById('mt-f-cost').value = '';
     document.getElementById('mt-f-note').value = '';
     document.getElementById('mt-doc-preview').innerHTML = '<div class="mt-doc-empty">📎</div>';
@@ -22295,6 +22618,14 @@ async function runCmp() {
       ts: Date.now()
     });
     saveAll(all);
+    // intervallo modificato: diventa quello di questo veicolo
+    var preset = presetsFor(v).find(function(p) { return p.type === _editingType; }) || {};
+    var ik = parseInt(document.getElementById('mt-f-ikm').value, 10), im = parseInt(document.getElementById('mt-f-imesi').value, 10);
+    ik = isNaN(ik) || ik <= 0 ? null : ik; im = isNaN(im) || im <= 0 ? null : im;
+    if (ik !== (preset.km || null) || im !== (preset.months || null)) {
+      var mi = Object.assign({}, v.maintInt || {}); mi[_editingType] = { km: ik, months: im };
+      window.hubGarage.update(v.id, { maintInt: mi });
+    }
     if (window.hubGarage && km > (v.kmTot || 0)) {
       window.hubGarage.update(v.id, { kmTot: km });
       if (typeof window._hubRefreshGarageBadge === 'function') window._hubRefreshGarageBadge();
@@ -22311,21 +22642,198 @@ async function runCmp() {
     return ev.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); })[0];
   }
 
+  /* ── Treni di gomme ─────────────────────────────────────────── */
+  var GK = 'hub_gomme_v1', MK = 'hub_mods_v1';
+  function jl(k) { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch (e) { return []; } }
+  function js(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var TIPI = { estive: 'Estive', invernali: 'Invernali', 'all-season': '4 stagioni', track: 'Pista' };
+  function gommeDi(v) {
+    var all = jl(GK), mie = all.filter(function(g) { return g.vid === v.id; });
+    // primo accesso: il treno indicato nel Garage diventa quello montato
+    var gg = v.gomme || {}, gia = mie.some(function(g) { return montato(g) || (g.tipo === (gg.tipo || 'estive') && (g.marca || '') === (gg.marca || '') && (g.modello || '') === (gg.modello || '')); });
+    if (!gia && (gg.misura || gg.marca)) {
+      var g0 = { id: uid(), vid: v.id, tipo: v.gomme.tipo || 'estive', marca: v.gomme.marca || '', modello: v.gomme.modello || '', misura: v.gomme.misura || '', dot: null, mm: null,
+        periodi: [{ da: v.gomme.kmMontaggio || v.kmTot || 0, daData: v.gomme.dataMontaggio || window.hubToday() }] };
+      all.push(g0); js(GK, all); mie = mie.concat([g0]);
+    }
+    return mie;
+  }
+  function montato(g) { var p = g.periodi && g.periodi[g.periodi.length - 1]; return !!(p && p.a == null); }
+  function kmGomme(g, kmOggi) { return (g.periodi || []).reduce(function(a, p) { return a + Math.max(0, (p.a != null ? p.a : kmOggi) - p.da); }, 0); }
+  // stagione: obbligo invernali (o catene) dal 15/11 al 15/4; le invernali si tolgono entro il 15/5
+  function stagione() { var d = new Date(), m = d.getMonth() + 1, g = d.getDate(); return (m === 11 && g >= 15) || m === 12 || m <= 3 || (m === 4 && g <= 15) ? 'inverno' : (m === 5 && g > 15) || (m > 5 && m < 10) || (m === 10 && g < 15) ? 'estate' : 'cambio'; }
+  function avvisoGomme(v) {
+    var g = gommeDi(v).filter(montato)[0]; if (!g) return null;
+    var st = stagione();
+    if (st === 'inverno' && g.tipo === 'estive') return 'Monta le gomme invernali (o tieni le catene a bordo): obbligo fino al 15 aprile su molte strade';
+    if (st === 'estate' && g.tipo === 'invernali') return 'Monta le gomme estive: con il caldo le invernali frenano peggio e si consumano prima';
+    return null;
+  }
+  window.hubGommeAvviso = avvisoGomme;
+  function renderGomme(v) {
+    var K = kmStima(v), list = gommeDi(v), anno = new Date().getFullYear(), av = avvisoGomme(v);
+    var html = av ? '<div class="mt-alert">⚠ ' + escSafe(av) + '</div>' : '';
+    html += list.sort(function(a, b) { return montato(b) - montato(a); }).map(function(g) {
+      var km = kmGomme(g, K.kmOggi), eta = g.dot ? anno - g.dot : null, warn = [];
+      if (eta != null && eta >= 8) warn.push('🔴 ' + eta + ' anni: da sostituire anche se sembrano buone');
+      else if (eta != null && eta >= 6) warn.push('🟡 ' + eta + ' anni: fai controllare la gomma');
+      var minMm = g.tipo === 'invernali' ? 4 : 3;
+      if (g.mm != null && g.mm < 1.6) warn.push('🔴 ' + String(g.mm).replace('.', ',') + ' mm: sotto il minimo di legge (1,6 mm)');
+      else if (g.mm != null && g.mm < minMm) warn.push('🟡 ' + String(g.mm).replace('.', ',') + ' mm: consigliato cambiarle sotto ' + minMm + ' mm');
+      return '<div class="mt-card mt-gomma' + (montato(g) ? ' on' : '') + (warn.some(function(w) { return w[0] === '🔴'; }) ? ' crit' : warn.length ? ' warn' : '') + '">' +
+        '<div class="mt-card-row"><div class="mt-card-icon">' + (g.tipo === 'invernali' ? '❄️' : g.tipo === 'all-season' ? '🌦' : g.tipo === 'track' ? '🏁' : '☀️') + '</div>' +
+        '<div class="mt-card-info"><div class="mt-card-name">' + escSafe(TIPI[g.tipo] || 'Gomme') + (g.marca ? ' · ' + escSafe(g.marca + ' ' + (g.modello || '')) : '') + '</div>' +
+        '<div class="mt-card-meta">' + escSafe([g.misura, g.dot ? 'DOT ' + g.dot : '', g.mm != null ? String(g.mm).replace('.', ',') + ' mm' : ''].filter(Boolean).join(' · ')) + '</div></div>' +
+        '<div class="mt-card-status ' + (montato(g) ? 'ok' : '') + '">' + (montato(g) ? 'Montate' : 'In garage') + '</div></div>' +
+        '<div class="mt-card-detail"><span>' + km.toLocaleString('it-IT') + ' km fatti</span><span>' + (g.periodi || []).length + ' stagion' + ((g.periodi || []).length === 1 ? 'e' : 'i') + '</span></div>' +
+        (warn.length ? '<div class="mt-gomma-w">' + warn.map(escSafe).join('<br>') + '</div>' : '') +
+        '<div class="mt-gomma-act">' + (montato(g) ? '' : '<button type="button" onclick="mtGommeMonta(\'' + g.id + '\')">⇄ Monta queste</button>') +
+          '<button type="button" onclick="mtGommeEdit(\'' + g.id + '\')">✎ Modifica</button></div></div>';
+    }).join('');
+    html += '<button class="fl-add-btn" onclick="mtGommeEdit(null)">+ Treno di gomme</button>' +
+      '<p class="mt-int-nota">Registra estive e invernali: al cambio stagione tocca "Monta queste" e l\'app tiene il conto dei km di ciascun treno.</p>';
+    return html;
+  }
+  window.mtGommeMonta = function(id) {
+    var v = window.hubGarage.active(), K = kmStima(v), km = parseInt(prompt('Km del contachilometri al cambio gomme:', K.kmOggi), 10);
+    if (isNaN(km)) return;
+    var all = jl(GK), oggi = window.hubToday();
+    all.forEach(function(g) {
+      if (g.vid !== v.id) return;
+      var p = g.periodi && g.periodi[g.periodi.length - 1];
+      if (montato(g)) { p.a = km; p.aData = oggi; }
+      if (g.id === id) { g.periodi = (g.periodi || []).concat([{ da: km, daData: oggi }]); }
+    });
+    js(GK, all);
+    var nuovo = all.filter(function(g) { return g.id === id; })[0];
+    if (nuovo) window.hubGarage.update(v.id, { gomme: Object.assign({}, v.gomme || {}, { tipo: nuovo.tipo, marca: nuovo.marca, modello: nuovo.modello, misura: nuovo.misura || (v.gomme || {}).misura, dataMontaggio: oggi, kmMontaggio: km }), kmTot: Math.max(v.kmTot || 0, km) });
+    renderMaint();
+  };
+  window.mtGommeEdit = function(id) {
+    var v = window.hubGarage.active(), g = id ? jl(GK).filter(function(x) { return x.id === id; })[0] : null;
+    var m = document.getElementById('mt-sheet');
+    if (!m) { m = document.createElement('div'); m.id = 'mt-sheet'; m.onclick = function(e) { if (e.target === m) m.classList.remove('visible'); }; document.body.appendChild(m); }
+    m.innerHTML = '<div class="gar-edit-card"><h3>' + (g ? 'Modifica gomme' : 'Nuovo treno di gomme') + '</h3>' +
+      '<div class="gar-row2"><div class="gar-field"><label>Tipo</label><select id="mg-tipo">' + Object.keys(TIPI).map(function(k) { return '<option value="' + k + '"' + ((g ? g.tipo : 'invernali') === k ? ' selected' : '') + '>' + TIPI[k] + '</option>'; }).join('') + '</select></div>' +
+      '<div class="gar-field"><label>Misura</label><input id="mg-misura" maxlength="30" value="' + escSafe(g ? g.misura : (v.gomme && v.gomme.misura) || '') + '" placeholder="225/45 R17"></div></div>' +
+      '<div class="gar-row2"><div class="gar-field"><label>Marca</label><input id="mg-marca" maxlength="30" value="' + escSafe(g ? g.marca : '') + '"></div>' +
+      '<div class="gar-field"><label>Modello</label><input id="mg-modello" maxlength="40" value="' + escSafe(g ? g.modello : '') + '"></div></div>' +
+      '<div class="gar-row2"><div class="gar-field"><label>Anno DOT</label><input type="number" id="mg-dot" min="2000" max="2100" value="' + (g && g.dot || '') + '" placeholder="es. 2023"></div>' +
+      '<div class="gar-field"><label>Battistrada mm</label><input type="number" id="mg-mm" min="0" max="12" step="0.5" value="' + (g && g.mm != null ? g.mm : '') + '" placeholder="es. 6"></div></div>' +
+      (g ? '' : '<label class="mt-check"><input type="checkbox" id="mg-on"> Sono montate adesso</label>') +
+      '<p class="mt-int-nota">L\'anno è nelle ultime due cifre del codice DOT sul fianco (es. 2423 = settimana 24 del 2023).</p>' +
+      '<div class="gar-edit-btns">' + (g ? '<button type="button" class="gar-cancel" onclick="mtGommeDel(\'' + g.id + '\')">🗑 Elimina</button>' : '') +
+      '<button type="button" class="gar-cancel" onclick="document.getElementById(\'mt-sheet\').classList.remove(\'visible\')">Annulla</button>' +
+      '<button type="button" class="gar-save" onclick="mtGommeSave(\'' + (g ? g.id : '') + '\')">Salva</button></div></div>';
+    m.classList.add('visible');
+  };
+  window.mtGommeSave = function(id) {
+    var v = window.hubGarage.active(), all = jl(GK), val = function(x) { return document.getElementById(x).value.trim(); };
+    var rec = { tipo: val('mg-tipo'), misura: val('mg-misura'), marca: val('mg-marca'), modello: val('mg-modello'), dot: parseInt(val('mg-dot'), 10) || null, mm: val('mg-mm') === '' ? null : parseFloat(val('mg-mm').replace(',', '.')) };
+    if (id) all = all.map(function(g) { return g.id === id ? Object.assign({}, g, rec) : g; });
+    else {
+      var on = document.getElementById('mg-on').checked, K = kmStima(v);
+      if (on) all.forEach(function(g) { if (g.vid === v.id && montato(g)) { var p = g.periodi[g.periodi.length - 1]; p.a = K.kmOggi; p.aData = window.hubToday(); } });
+      all.push(Object.assign({ id: uid(), vid: v.id, periodi: on ? [{ da: K.kmOggi, daData: window.hubToday() }] : [] }, rec));
+    }
+    js(GK, all); document.getElementById('mt-sheet').classList.remove('visible'); renderMaint();
+  };
+  window.mtGommeDel = function(id) {
+    if (!confirm('Eliminare questo treno di gomme?')) return;
+    js(GK, jl(GK).filter(function(g) { return g.id !== id; })); document.getElementById('mt-sheet').classList.remove('visible'); renderMaint();
+  };
+
+  /* ── Modifiche ed elaborazioni ───────────────────────────────── */
+  var CAT = { motore: '⚙ Motore', scarico: '💨 Scarico', assetto: '🔩 Assetto', freni: '🛑 Freni', cerchi: '⭕ Cerchi', interni: '🪑 Interni', estetica: '✨ Estetica', elettronica: '🔌 Elettronica', altro: '🧰 Altro' };
+  function renderMods(v) {
+    var list = jl(MK).filter(function(m) { return m.vid === v.id; }).sort(function(a, b) { return (b.data || '').localeCompare(a.data || ''); });
+    var tot = list.reduce(function(a, m) { return a + (m.costo || 0); }, 0);
+    var banco = list.filter(function(m) { return m.cv; }).sort(function(a, b) { return (b.data || '').localeCompare(a.data || ''); })[0];
+    var html = '<div class="mt-mods-sum"><div><small>Modifiche</small><b>' + list.length + '</b></div><div><small>Speso</small><b>' + Math.round(tot).toLocaleString('it-IT') + ' €</b></div>' +
+      (banco ? '<div><small>Ultima prova al banco</small><b>' + banco.cv + ' CV' + (banco.nm ? ' · ' + banco.nm + ' Nm' : '') + '</b></div>' : '') + '</div>';
+    html += list.map(function(m) {
+      return '<div class="mt-card" onclick="mtModEdit(\'' + m.id + '\')"><div class="mt-card-row"><div class="mt-card-icon">' + (CAT[m.cat] || '🧰').split(' ')[0] + '</div>' +
+        '<div class="mt-card-info"><div class="mt-card-name">' + escSafe(m.titolo) + '</div><div class="mt-card-meta">' + escSafe([m.data ? m.data.split('-').reverse().join('/') : '', m.km ? m.km.toLocaleString('it-IT') + ' km' : '', m.cv ? m.cv + ' CV al banco' : ''].filter(Boolean).join(' · ')) + '</div></div>' +
+        '<div class="mt-card-status">' + (m.costo ? Math.round(m.costo).toLocaleString('it-IT') + ' €' : '') + (m.docId ? ' 📎' : '') + '</div></div>' +
+        (m.note ? '<div class="mt-card-detail"><span>' + escSafe(m.note.slice(0, 80)) + '</span></div>' : '') + '</div>';
+    }).join('');
+    if (!list.length) html += '<p class="mt-int-nota">Tieni traccia di elaborazioni, ricambi e accessori: costo, fattura, prove al banco. Utile anche quando vendi l\'auto.</p>';
+    return html + '<button class="fl-add-btn" onclick="mtModEdit(null)">+ Modifica</button>';
+  }
+  var _modDoc = null;
+  window.mtModEdit = function(id) {
+    var v = window.hubGarage.active(), m = id ? jl(MK).filter(function(x) { return x.id === id; })[0] : null; _modDoc = null;
+    var el = document.getElementById('mt-sheet');
+    if (!el) { el = document.createElement('div'); el.id = 'mt-sheet'; el.onclick = function(e) { if (e.target === el) el.classList.remove('visible'); }; document.body.appendChild(el); }
+    el.innerHTML = '<div class="gar-edit-card"><h3>' + (m ? 'Modifica' : 'Nuova modifica') + '</h3>' +
+      '<div class="gar-field"><label>Cosa hai fatto</label><input id="mm-titolo" maxlength="80" value="' + escSafe(m ? m.titolo : '') + '" placeholder="Es. Scarico Akrapovič, mappa stage 1, ammortizzatori Bilstein"></div>' +
+      '<div class="gar-row2"><div class="gar-field"><label>Categoria</label><select id="mm-cat">' + Object.keys(CAT).map(function(k) { return '<option value="' + k + '"' + ((m ? m.cat : 'motore') === k ? ' selected' : '') + '>' + CAT[k] + '</option>'; }).join('') + '</select></div>' +
+      '<div class="gar-field"><label>Costo €</label><input type="number" id="mm-costo" min="0" step="1" value="' + (m && m.costo || '') + '"></div></div>' +
+      '<div class="gar-row2"><div class="gar-field"><label>Data</label><input type="date" id="mm-data" value="' + (m ? m.data : window.hubToday()) + '"></div>' +
+      '<div class="gar-field"><label>Km</label><input type="number" id="mm-km" min="0" value="' + (m ? m.km || '' : kmStima(v).kmOggi || '') + '"></div></div>' +
+      '<div class="gar-row2"><div class="gar-field"><label>Banco: CV</label><input type="number" id="mm-cv" min="0" value="' + (m && m.cv || '') + '" placeholder="facoltativo"></div>' +
+      '<div class="gar-field"><label>Banco: Nm</label><input type="number" id="mm-nm" min="0" value="' + (m && m.nm || '') + '" placeholder="facoltativo"></div></div>' +
+      '<div class="gar-field"><label>Fattura o foto</label><input type="file" id="mm-doc" accept="image/*,application/pdf" onchange="mtModDoc(event)">' + (m && m.docId ? '<button type="button" class="gar-photo-btn" onclick="mtModView(\'' + m.id + '\')">📎 Apri allegato</button>' : '') + '</div>' +
+      '<div class="gar-field"><label>Note</label><textarea id="mm-note" rows="2" maxlength="300">' + escSafe(m ? m.note || '' : '') + '</textarea></div>' +
+      '<p class="mt-int-nota">Le modifiche a scarico, assetto, cerchi o potenza spesso vanno omologate o annotate sul libretto: verifica prima di circolare.</p>' +
+      '<div class="gar-edit-btns">' + (m ? '<button type="button" class="gar-cancel" onclick="mtModDel(\'' + m.id + '\')">🗑 Elimina</button>' : '') +
+      '<button type="button" class="gar-cancel" onclick="document.getElementById(\'mt-sheet\').classList.remove(\'visible\')">Annulla</button>' +
+      '<button type="button" class="gar-save" onclick="mtModSave(\'' + (m ? m.id : '') + '\')">Salva</button></div></div>';
+    el.classList.add('visible');
+  };
+  window.mtModDoc = function(ev) {
+    var f = ev.target.files && ev.target.files[0]; if (!f) return;
+    if (f.size > 5 * 1024 * 1024) { alert('File troppo grande (>5MB).'); ev.target.value = ''; return; }
+    if (f.type.indexOf('image/') === 0 && typeof window._hubCompressImage === 'function') window._hubCompressImage(f, 1400).then(function(d) { _modDoc = { dataUrl: d, mime: 'image/jpeg' }; });
+    else { var r = new FileReader(); r.onload = function(e) { _modDoc = { dataUrl: e.target.result, mime: f.type }; }; r.readAsDataURL(f); }
+  };
+  window.mtModSave = async function(id) {
+    var v = window.hubGarage.active(), val = function(x) { return document.getElementById(x).value.trim(); };
+    if (!val('mm-titolo')) { alert('Scrivi cosa hai fatto.'); return; }
+    var all = jl(MK), old = id ? all.filter(function(x) { return x.id === id; })[0] : null, nid = id || uid(), docId = old ? old.docId : null;
+    if (_modDoc) { docId = 'dm' + nid; try { await dbPutDoc(docId, _modDoc.dataUrl, _modDoc.mime); } catch (e) { docId = old ? old.docId : null; } }
+    var rec = { id: nid, vid: v.id, titolo: val('mm-titolo'), cat: val('mm-cat'), costo: parseFloat(val('mm-costo')) || null, data: val('mm-data'), km: parseInt(val('mm-km'), 10) || null,
+      cv: parseFloat(val('mm-cv')) || null, nm: parseFloat(val('mm-nm')) || null, note: val('mm-note'), docId: docId };
+    all = id ? all.map(function(x) { return x.id === id ? rec : x; }) : all.concat([rec]);
+    js(MK, all); document.getElementById('mt-sheet').classList.remove('visible'); renderMaint();
+  };
+  window.mtModDel = function(id) {
+    if (!confirm('Eliminare questa modifica?')) return;
+    var m = jl(MK).filter(function(x) { return x.id === id; })[0];
+    if (m && m.docId) { try { dbDeleteDoc(m.docId); } catch (e) {} }
+    js(MK, jl(MK).filter(function(x) { return x.id !== id; })); document.getElementById('mt-sheet').classList.remove('visible'); renderMaint();
+  };
+  window.mtModView = async function(id) {
+    var m = jl(MK).filter(function(x) { return x.id === id; })[0]; if (!m || !m.docId) return;
+    var d = await dbGetDoc(m.docId); if (!d) { alert('Allegato non trovato.'); return; }
+    var w = window.open(); if (!w) { alert('Pop-up bloccati.'); return; }
+    w.document.write(d.mime === 'application/pdf' ? '<iframe src="' + d.dataUrl + '" style="border:0;width:100%;height:100vh"></iframe>' : '<body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="' + d.dataUrl + '" style="max-width:100%;max-height:100vh"></body>');
+  };
+
   // Interventi in scadenza o scaduti di un veicolo (per la pagina Oggi)
   window.hubMaintScad = function(v) {
     if (!v) return [];
     return presetsFor(v).map(function(p) {
-      var st = statusFor(p, lastEventFor(v.id, p.type), v.kmTot || 0);
-      return { type: p.type, icon: p.icon, name: p.name, status: st.status, kmRem: st.kmRem, daysRem: st.daysRem };
+      var K = kmStima(v), st = statusFor(p, lastEventFor(v.id, p.type), K.kmOggi, K.kmGiorno);
+      return { type: p.type, icon: p.icon, name: p.name, status: st.status, kmRem: st.kmRem, daysRem: st.giorni != null ? st.giorni : st.daysRem };
     }).filter(function(x) { return x.status === 'warn' || x.status === 'crit'; });
   };
 
+  var _tab = 'int';
+  window.mtTab = function(t) { _tab = t; renderMaint(); };
+  function tabs() {
+    return '<div class="mt-tabs" role="tablist">' + [['int', '🔧 Interventi'], ['gomme', '⚫ Gomme'], ['mod', '🛠 Modifiche']].map(function(t) {
+      return '<button type="button" role="tab" aria-selected="' + (_tab === t[0]) + '" class="' + (_tab === t[0] ? 'on' : '') + '" onclick="mtTab(\'' + t[0] + '\')">' + t[1] + '</button>';
+    }).join('') + '</div>';
+  }
   function renderMaint() {
     var v = window.hubGarage && window.hubGarage.active();
     if (!v) return;
     var body = document.getElementById('mt-body');
     if (!body) return;
-    var presets = presetsFor(v);
+    if (_tab === 'gomme') { body.innerHTML = tabs() + renderGomme(v); return; }
+    if (_tab === 'mod') { body.innerHTML = tabs() + renderMods(v); return; }
+    var presets = presetsFor(v), K = kmStima(v);
     var icon = v.type === 'moto' ? '🏍' : '🚗';
     var name = v.customName || (v.marca + ' ' + v.modello);
 
@@ -22333,12 +22841,14 @@ async function runCmp() {
       '<div class="mt-veh-icon">' + icon + '</div>' +
       '<div class="mt-veh-info">' +
         '<div class="mt-veh-name">' + escSafe(name) + '</div>' +
-        '<div class="mt-veh-km">' + (v.kmTot || 0).toLocaleString('it-IT') + ' km · ' + presets.length + ' interventi tracciati</div>' +
+        '<div class="mt-veh-km">' + (K.stimato ? '≈ ' + K.kmOggi.toLocaleString('it-IT') + ' km oggi (stima)' : (v.kmTot || 0).toLocaleString('it-IT') + ' km') +
+          (K.kmGiorno ? ' · ' + Math.round(K.kmGiorno * 30).toLocaleString('it-IT') + ' km al mese' : '') + '</div>' +
       '</div></div>';
+    html = tabs() + html;
 
     html += presets.map(function(p) {
       var last = lastEventFor(v.id, p.type);
-      var st = statusFor(p, last, v.kmTot || 0);
+      var st = statusFor(p, last, K.kmOggi, K.kmGiorno);
       var statusLbl = '', statusClass = '';
       var detailParts = [];
       var barPct = 0;
@@ -22393,6 +22903,9 @@ async function runCmp() {
       if (p.km) nextInfoLeft += 'ogni ' + p.km.toLocaleString('it-IT') + ' km';
       if (p.km && p.months) nextInfoLeft += ' o ';
       if (p.months) nextInfoLeft += 'ogni ' + p.months + ' mesi';
+      if (p.fonte === 'motore') nextInfoLeft += ' · dal motore';
+      else if (p.fonte === 'tuo') nextInfoLeft += ' · tuo intervallo';
+      if (st.giorniKm != null && st.status !== 'crit' && last && p.km) nextInfoLeft += ' · ≈ ' + (st.giorniKm > 60 ? Math.round(st.giorniKm / 30) + ' mesi' : st.giorniKm + ' giorni') + ' al tuo ritmo';
 
       return '<div class="' + cardClass + '" onclick="_maintCardClick(\'' + p.type + '\')">' +
         '<div class="mt-card-row">' +
@@ -22428,7 +22941,7 @@ async function runCmp() {
     presets.forEach(function(p) {
       var last = lastEventFor(v.id, p.type);
       if (!last) return;
-      var st = statusFor(p, last, v.kmTot || 0);
+      var K = kmStima(v), st = statusFor(p, last, K.kmOggi, K.kmGiorno);
       if (st.status === 'crit') { worst = 'crit'; critN++; }
       else if (st.status === 'warn' && worst !== 'crit') { worst = 'warn'; warnN++; }
     });
@@ -23307,6 +23820,8 @@ async function runCmp() {
         var g = Math.round((new Date(v[x[0]] + 'T00:00:00') - oggi) / 86400000);
         if (g <= 30) out.push({ v: v, nome: x[1], giorni: g, data: v[x[0]], tipo: 'scad' });
       });
+      var gav = window.hubGommeAvviso ? window.hubGommeAvviso(v) : null;
+      if (gav) out.push({ v: v, nome: /invernali/.test(gav) ? 'Monta le gomme invernali' : 'Monta le gomme estive', giorni: /invernali/.test(gav) ? 0 : 10, quando: /invernali/.test(gav) ? 'obbligo in corso' : 'cambio stagione', tipo: 'gomme', icon: '⚫' });
       (window.hubMaintScad ? window.hubMaintScad(v) : []).forEach(function(m) {
         var g = m.daysRem != null ? m.daysRem : null, scad = m.status === 'crit';
         var quando = m.kmRem != null && (g == null || m.kmRem / 40 < g) ? (m.kmRem < 0 ? 'superato di ' + Math.abs(m.kmRem).toLocaleString('it-IT') + ' km' : 'tra ' + m.kmRem.toLocaleString('it-IT') + ' km') : null;
@@ -23330,7 +23845,10 @@ async function runCmp() {
   window.ogApri = function(tipo, vid) {
     if (window.hubGarage) window.hubGarage.setActive(vid);
     hubGo('garage');
-    setTimeout(function() { if (tipo === 'mt' && window.openMaint) window.openMaint(); else if (window.openGarageEdit) window.openGarageEdit(vid); }, 250);
+    setTimeout(function() {
+      if ((tipo === 'mt' || tipo === 'gomme') && window.openMaint) { if (tipo === 'gomme' && window.mtTab) window.mtTab('gomme'); else if (window.mtTab) window.mtTab('int'); window.openMaint(); }
+      else if (window.openGarageEdit) window.openGarageEdit(vid);
+    }, 250);
   };
 
   /* ── Meteo per guidare ─────────────────────────────────────────── */
@@ -24052,7 +24570,7 @@ async function runCmp() {
       return route(pl, nomw).then(function(rt) {
         var smp = campiona(rt);
         return previsioni(smp).then(function(fc) {
-          S.data = { pl: pl, rt: rt, smp: smp, fc: fc, dep: dep, ret: ret, passi: passiSulPercorso(rt) };
+          S.data = { pl: pl, rt: rt, smp: smp, fc: fc, dep: dep, ret: ret, passi: passiSulPercorso(rt) }; S.pieno = null;
           jset(LAST, { from: pl[0], via: via ? pl[1] : null, to: pl[pl.length - 1], veh: S.veh, nomw: nomw });
           var rec = jget(RECENT, []).filter(function(r) { return r.name !== pl[pl.length - 1].name; });
           rec.unshift(pl[pl.length - 1]); jset(RECENT, rec.slice(0, 8)); chips();
@@ -24123,6 +24641,7 @@ async function runCmp() {
     html += avvisi(A, R);
     html += decisione(A.rows, rt);
     html += quando();
+    html += '<div id="wp-pieno">' + pienoBox() + '</div>';
     html += tappe('Andata · ' + giorno(D.dep) + ' ' + hhmm(D.dep), A, moto);
     if (R) html += R.rows.length ? tappe('Ritorno · ' + giorno(D.ret) + ' ' + hhmm(D.ret), R, moto) : '<div class="wp-alert">Ritorno oltre le previsioni disponibili.</div>';
     if (A.fuori) html += '<p class="wp-fine">Parte del viaggio è oltre le previsioni disponibili (fino a ' + giorno(last) + ').</p>';
@@ -24194,6 +24713,72 @@ async function runCmp() {
         '</div></div>';
     }).join('') + '</div>';
   }
+  /* ── Pieno sul percorso: distributori a meno di 1,5 km dalla strada, i più convenienti ── */
+  var CARB = ['Benzina', 'Diesel', 'GPL', 'Metano'];
+  function carbVeicolo() {
+    var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active(), a = v && v.alim || '';
+    return /diesel/.test(a) ? 'Diesel' : a === 'gpl' ? 'GPL' : a === 'metano' ? 'Metano' : 'Benzina';
+  }
+  function pienoBox() {
+    var P = S.pieno;
+    var form = '<div class="wp-pieno-f"><select id="wp-carb" aria-label="Carburante">' + CARB.map(function(c) { return '<option' + (c === (P && P.carb || carbVeicolo()) ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select>' +
+      '<input type="number" id="wp-aut" min="10" max="2000" step="10" placeholder="Autonomia km" aria-label="Autonomia residua in km" value="' + (P && P.aut || '') + '">' +
+      '<button type="button" class="wp-pieno-go" onclick="wpPieno()">Cerca</button></div>';
+    var head = '<div class="wp-sec">⛽ Pieno sul percorso</div>';
+    if (!P) return head + '<p class="wp-fine">I distributori più convenienti a meno di 1,5 km dalla strada (prezzi self di oggi). Con l\'autonomia indicata mostro solo quelli che raggiungi.</p>' + form;
+    if (P.load) return head + form + '<div class="wp-loading">Cerco i distributori lungo la strada…</div>';
+    if (P.err) return head + form + '<div class="wp-error">' + esc(P.err) + '</div>';
+    if (!P.list.length) return head + form + '<p class="wp-fine">Nessun distributore ' + P.carb.toLowerCase() + ' a meno di 1,5 km dalla strada' + (P.aut ? ' entro ' + P.aut + ' km' : '') + '.</p>';
+    var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active(), serb = v && (v.serbatoio || (v.specs && v.specs.serbatoio_l)) || 40;
+    var pl = S.data.pl, o = pl[0], d = pl[pl.length - 1];
+    return head + form + '<p class="wp-fine">' + P.tot + ' distributori lungo la strada · prezzo medio ' + P.media.toFixed(3).replace('.', ',') + ' €/l</p>' +
+      '<div class="wp-pieno-l">' + P.list.map(function(x, i) {
+        var risp = (P.media - x.prezzo) * serb;
+        var nav = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + o.lat + ',' + o.lng + '&destination=' + d.lat + ',' + d.lng + '&waypoints=' + x.lat + ',' + x.lng;
+        return '<a class="wp-pieno-r" href="' + nav + '" target="_blank" rel="noopener"><span class="wp-pieno-n">' + (i + 1) + '</span><span class="wp-pieno-t"><b>' + esc(x.bandiera || x.nome) + '</b><small>km ' + Math.round(x.km) + ' · ' + esc(x.comune || x.indirizzo || '') + (x.off > .3 ? ' · ' + x.off.toFixed(1).replace('.', ',') + ' km dalla strada' : '') + '</small></span>' +
+          '<span class="wp-pieno-p"><b>' + x.prezzo.toFixed(3).replace('.', ',') + '</b><small>' + (risp >= 1 ? '−' + Math.round(risp) + ' € sul pieno' : 'nella media') + '</small></span></a>';
+      }).join('') + '</div><p class="wp-fine">Il risparmio è calcolato su un pieno da ' + Math.round(serb) + ' l rispetto alla media dei distributori sul percorso. Tocca un distributore per aggiungerlo come tappa in Google Maps.</p>';
+  }
+  window.wpPieno = function() {
+    var D = S.data; if (!D) return;
+    var carb = $('wp-carb').value, aut = parseFloat($('wp-aut').value) || null;
+    S.pieno = { carb: carb, aut: aut, load: true }; $('wp-pieno').innerHTML = pienoBox();
+    var c = D.rt.coords, cum = D.rt.cumD, L = cum[cum.length - 1], fino = aut ? Math.min(L, aut * 0.9) : L;
+    // riquadri da ~20 km lungo la strada, con 2 km di margine
+    var boxes = [];
+    for (var k = 0; k < fino; k += 20) {
+      var la1 = 90, la2 = -90, lo1 = 180, lo2 = -180;
+      for (var i = 0; i < c.length; i++) if (cum[i] >= k && cum[i] <= Math.min(fino, k + 20)) { la1 = Math.min(la1, c[i].lat); la2 = Math.max(la2, c[i].lat); lo1 = Math.min(lo1, c[i].lng); lo2 = Math.max(lo2, c[i].lng); }
+      if (la1 <= la2) boxes.push([la1 - .018, lo1 - .025, la2 + .018, lo2 + .025]);
+    }
+    // punti della strada ogni ~200 m per misurare la distanza dei distributori
+    var pts = [], last = -1;
+    for (var j = 0; j < c.length; j++) if (cum[j] - last >= 0.2 && cum[j] <= fino) { pts.push({ lat: c[j].lat, lng: c[j].lng, km: cum[j] }); last = cum[j]; }
+    var seen = {}, found = [], q = boxes.slice();
+    function prossimo() {
+      var b = q.shift(); if (!b) return Promise.resolve();
+      return fetch(WORKER + '/api/bbox?lat1=' + b[0].toFixed(4) + '&lng1=' + b[1].toFixed(4) + '&lat2=' + b[2].toFixed(4) + '&lng2=' + b[3].toFixed(4) + '&carburante=' + encodeURIComponent(carb) + '&self=1')
+        .then(function(r) { return r.ok ? r.json() : []; }).then(function(list) {
+          (Array.isArray(list) ? list : []).forEach(function(x) {
+            if (seen[x.id] || !(x.prezzo > 0.3)) return; seen[x.id] = 1;
+            var best = 1e9, km = 0;
+            pts.forEach(function(p) { var dd = dist(p, x); if (dd < best) { best = dd; km = p.km; } });
+            if (best <= 1.5) found.push(Object.assign({}, x, { off: best, km: km }));
+          });
+        }).catch(function() {}).then(prossimo);
+    }
+    Promise.all([prossimo(), prossimo(), prossimo()]).then(function() {
+      if (!boxes.length) throw new Error('Percorso non valido');
+      found.sort(function(a, b) { return a.prezzo - b.prezzo; });
+      var media = found.length ? found.reduce(function(a, x) { return a + x.prezzo; }, 0) / found.length : 0;
+      S.pieno = { carb: carb, aut: aut, list: found.slice(0, 5), tot: found.length, media: media };
+      $('wp-pieno').innerHTML = pienoBox();
+      if (S.map && typeof L !== 'undefined') S.pieno.list.forEach(function(x, i) {
+        L.marker([x.lat, x.lng], { icon: L.divIcon({ className: 'wp-pieno-pin', html: '⛽' + (i + 1), iconSize: [34, 20] }) }).bindTooltip(x.prezzo.toFixed(3) + ' €/l').addTo(S.map);
+      });
+    }).catch(function(e) { S.pieno = { carb: carb, aut: aut, err: e.message || 'Distributori non disponibili' }; $('wp-pieno').innerHTML = pienoBox(); });
+  };
+
   function mappa(rows) {
     if (S.map) { try { S.map.remove(); } catch (e) {} S.map = null; }
     var el = $('wp-map');
@@ -26532,7 +27117,7 @@ async function runCmp() {
 
   // Dati dell'utente (le cache rigenerabili sono escluse apposta)
   var KEYS = ['hub_garage_v1', 'hub_garage_prefs_v1', 'hub_passi_fav_v1', 'hub_active_vehicle_v1', 'hub_refuels_v1', 'hub_maint_v1', 'hub_rides_v1',
-              'hub_perf_best_v1', 'hub_perf_runs_v1', 'hub_ricarica_pref_v1', 'hub_giro_pref_v1', 'hub_oggi_pos_v1', 'hub_ride_lines_v1', 'hub_ride_pref_v1', 'hub_usato_v1', 'hub_ms_prefs_v1', 'hub_price_alerts_v1',
+              'hub_perf_best_v1', 'hub_perf_runs_v1', 'hub_ricarica_pref_v1', 'hub_gomme_v1', 'hub_mods_v1', 'hub_giro_pref_v1', 'hub_oggi_pos_v1', 'hub_ride_lines_v1', 'hub_ride_pref_v1', 'hub_usato_v1', 'hub_ms_prefs_v1', 'hub_price_alerts_v1',
               'opf_favs', 'opf_hidden_cards', 'opf_cmp_liters', 'ad_rem', 'autodiagnosi_diary', 'ad_theme'];
   var STORES = ['photos', 'maintdocs'];
   var CLOUD = 'hub_cloud_v1';   // { code, lastHash, lastAt }

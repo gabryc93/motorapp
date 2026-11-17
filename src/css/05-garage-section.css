@@ -1790,3 +1790,17 @@ a.ms-card { text-decoration: none; color: inherit; }
 .wp-step-temp .wp-pass { color: #c97fd4; }
 .wp-why { font-family: 'DM Mono', monospace; font-size: .6rem; color: #ffd699; margin-top: 3px; }
 .wp-fine { font-size: .66rem; color: var(--t3); line-height: 1.5; margin: 12px 0 4px; }
+
+/* ── Meteo percorso: pieno sul percorso ───────────────────────── */
+.wp-pieno-f { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; margin: 6px 0 8px; }
+.wp-pieno-f select, .wp-pieno-f input { min-width: 0; background: var(--surf2); border: 1px solid var(--brd); color: var(--t1); border-radius: 8px; padding: 9px 8px; font-family: 'DM Mono', monospace; font-size: .72rem; }
+.wp-pieno-go { appearance: none; background: #e8a030; color: #1a1200; border: 0; border-radius: 8px; padding: 0 14px; font-weight: 600; font-size: .76rem; cursor: pointer; }
+.wp-pieno-l { display: flex; flex-direction: column; gap: 6px; }
+.wp-pieno-r { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; background: var(--surf); border: 1px solid var(--brd); text-decoration: none; color: var(--t1); }
+.wp-pieno-n { width: 22px; height: 22px; border-radius: 50%; background: #e8a030; color: #1a1200; font-family: 'DM Mono', monospace; font-size: .66rem; display: grid; place-items: center; flex-shrink: 0; }
+.wp-pieno-t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wp-pieno-t b { font-size: .8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wp-pieno-t small, .wp-pieno-p small { font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--t3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wp-pieno-p { display: flex; flex-direction: column; align-items: flex-end; }
+.wp-pieno-p b { font-family: 'DM Mono', monospace; font-size: .86rem; color: #9be6bf; }
+.wp-pieno-pin { background: #e8a030; color: #1a1200; border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.5); }

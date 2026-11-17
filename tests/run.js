@@ -512,6 +512,114 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     for (const u of ['**/api.open-meteo.com/v1/elevation**', '**/router.project-osrm.org/**', '**/api.open-meteo.com/v1/forecast**', '**/photon.komoot.io/reverse**']) await p.unroute(u);
   }, page);
 
+  await test('HUD e OBD: schermo dritto o a specchio, giri e codici errore dalla chiavetta', async p => {
+    await p.evaluate(() => {
+      const enc = new TextEncoder(); let cb = null;
+      const R = { ATZ: 'ELM327 v1.5', '0100': 'SEARCHING...\r41 00 BE 3F A8 13', '0133': '41 33 65', '010C': '41 0C 1A F8', '010D': '41 0D 3C', '0105': '41 05 7B', '010B': '41 0B 8C', ATRV: '13.9V', '03': '43 01 33 03 00 00 00', '04': '44' };
+      const rx = { properties: { notify: true }, addEventListener: (t, f) => { cb = f; }, startNotifications: async () => {} };
+      const tx = { properties: { write: true }, writeValue: async d => { const c = new TextDecoder().decode(d).trim(); setTimeout(() => cb({ target: { value: enc.encode((R[c] || 'OK') + '\r\r>') } }), 3); } };
+      Object.defineProperty(navigator, 'bluetooth', { configurable: true, value: { requestDevice: async () => ({ name: 'vLinker MS', addEventListener() {}, gatt: { connected: true, disconnect() {},
+        connect: async () => ({ getPrimaryServices: async () => [{ getCharacteristics: async () => [rx, tx] }] }) } }) } });
+      localStorage.removeItem('hub_ride_pref_v1');
+      openRide(); rideHud();
+    });
+    const h1 = await p.evaluate(() => { const o = document.getElementById('rd-overlay'); return { hud: o.classList.contains('rd-hud'), mirror: o.classList.contains('rd-mirror'), bar: o.classList.contains('rd-hudbar-on') }; });
+    expect(h1.hud && !h1.mirror && h1.bar, 'HUD dritto con i comandi visibili all\'apertura: ' + JSON.stringify(h1));
+    await p.click('#rd-hud-mirror');
+    expect(await p.evaluate(() => document.getElementById('rd-overlay').classList.contains('rd-mirror') && JSON.parse(localStorage.getItem('hub_ride_pref_v1')).hudMirror === true), 'specchio non attivato o non ricordato');
+    await p.evaluate(() => hubOBD.connetti());
+    await p.waitForFunction(() => { const d = hubOBD.dati(); return d.rpm && d.h2o != null && d.map != null && d.volt != null; }, null, { timeout: 8000 });
+    const r = await p.evaluate(() => ({ d: hubOBD.dati(), b: hubOBD.boost(), obd: document.getElementById('rd-obd').textContent, vis: !document.getElementById('rd-obd').hidden }));
+    expect(r.d.rpm === 1726 && r.d.kmh === 60 && r.d.h2o === 83 && r.d.volt === 13.9 && Math.abs(r.b - 0.39) < 0.01, 'valori OBD: ' + JSON.stringify(r.d));
+    expect(r.vis && /1\.?726/.test(r.obd) && /83°/.test(r.obd), 'riga OBD nell\'HUD: ' + r.obd);
+    const dtc = await p.evaluate(() => hubOBD.leggiDTC());
+    expect(dtc.join(',') === 'P0133,P0300', 'codici errore: ' + dtc);
+    await p.evaluate(() => { hubOBD.disconnetti(); rideHudMirror(); rideHud(); closeRide(); localStorage.removeItem('hub_ride_pref_v1'); });
+  }, page);
+
+  await test('Meteo percorso: pieno sul percorso, solo distributori vicini alla strada', async p => {
+    const A = { lat: 45.4642, lng: 9.19 }, B = { lat: 46.17, lng: 9.87 }, N = 100, H = { 'access-control-allow-origin': '*' };
+    await p.route('**/photon.komoot.io/**', r => { const q = new URL(r.request().url()).searchParams.get('q') || '', c = /sondrio/i.test(q) ? B : A;
+      r.fulfill({ json: { features: [{ geometry: { coordinates: [c.lng, c.lat] }, properties: { name: /sondrio/i.test(q) ? 'Sondrio' : 'Milano' } }] }, headers: H }); });
+    await p.route('**/router.project-osrm.org/**', r => { const coords = []; for (let i = 0; i < N; i++) coords.push([A.lng + (B.lng - A.lng) * i / (N - 1), A.lat + (B.lat - A.lat) * i / (N - 1)]);
+      r.fulfill({ json: { routes: [{ distance: 95000, duration: 5400, geometry: { coordinates: coords }, legs: [{ annotation: { duration: Array(N - 1).fill(5400 / (N - 1)) } }] }] }, headers: H }); });
+    await p.route('**/api.open-meteo.com/**', r => { const n = new URL(r.request().url()).searchParams.get('latitude').split(',').length, HH = 384, t0 = Math.floor(Date.now() / 3600000) * 3600 - 7200, time = [];
+      for (let k = 0; k < HH; k++) time.push(t0 + k * 3600);
+      r.fulfill({ json: Array(n).fill({ elevation: 300, hourly: { time, temperature_2m: Array(HH).fill(12), precipitation: Array(HH).fill(0), precipitation_probability: Array(HH).fill(0), weather_code: Array(HH).fill(1),
+        wind_speed_10m: Array(HH).fill(5), wind_gusts_10m: Array(HH).fill(10), visibility: Array(HH).fill(20000), is_day: Array(HH).fill(1), snowfall: Array(HH).fill(0) } }), headers: H }); });
+    const mid = f => ({ lat: A.lat + (B.lat - A.lat) * f, lng: A.lng + (B.lng - A.lng) * f });
+    const st = [Object.assign({ id: 'a', nome: 'Vicino caro', bandiera: 'Eni', prezzo: 1.85, comune: 'Lecco' }, mid(.3)),
+      Object.assign({ id: 'b', nome: 'Vicino economico', bandiera: 'Tamoil', prezzo: 1.69, comune: 'Colico' }, mid(.8), { lng: mid(.8).lng + 0.005 }),
+      Object.assign({ id: 'c', nome: 'Lontano', bandiera: 'Ip', prezzo: 1.50, comune: 'Altrove' }, mid(.5), { lng: mid(.5).lng + 0.2 })];
+    let bboxCalls = 0;
+    await p.route('**/api/bbox?**', r => { bboxCalls++; const u = new URL(r.request().url()).searchParams;
+      const la1 = +u.get('lat1'), la2 = +u.get('lat2'), lo1 = +u.get('lng1'), lo2 = +u.get('lng2');
+      r.fulfill({ json: st.filter(s => s.lat >= la1 && s.lat <= la2 && s.lng >= lo1 && s.lng <= lo2), headers: H }); });
+    await p.evaluate(() => { localStorage.removeItem('hub_meteo_last_v1'); hubGo('meteo'); });
+    await p.fill('#wp-from', 'Milano'); await p.fill('#wp-to', 'Sondrio'); await p.fill('#wp-ret', '');
+    await p.click('#wp-overlay .wp-go'); await p.waitForSelector('#wp-carb');
+    await p.selectOption('#wp-carb', 'Benzina'); await p.click('.wp-pieno-go');
+    await p.waitForSelector('.wp-pieno-r', { timeout: 8000 });
+    const r = await p.evaluate(() => [...document.querySelectorAll('.wp-pieno-r')].map(a => a.textContent + '|' + a.href));
+    expect(r.length === 2 && /Tamoil/.test(r[0]) && /Eni/.test(r[1]), 'distributori (il più economico primo, quello lontano escluso): ' + r.join(' / '));
+    expect(/waypoints=/.test(r[0]) && /km 76|km 77|km 75/.test(r[0]), 'km lungo il percorso o link: ' + r[0]);
+    // con 40 km di autonomia resta solo quello raggiungibile
+    await p.fill('#wp-aut', '40'); await p.click('.wp-pieno-go');
+    await p.waitForFunction(() => document.querySelectorAll('.wp-pieno-r').length === 1, null, { timeout: 8000 });
+    expect(/Eni/.test(await p.$eval('.wp-pieno-r', e => e.textContent)), 'autonomia non rispettata');
+    await p.evaluate(() => closeWeather());
+    for (const u of ['**/photon.komoot.io/**', '**/router.project-osrm.org/**', '**/api.open-meteo.com/**', '**/api/bbox?**']) await p.unroute(u);
+  }, page);
+
+  await test('Manutenzione: intervalli dal motore, km stimati, gomme e modifiche', async p => {
+    const day = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    await p.evaluate((d) => {
+      const g = hubGarage.list().filter(v => v.id !== 'mt1');
+      g.push({ id: 'mt1', type: 'auto', marca: 'Prova', modello: 'X', alim: 'benzina', kmTot: 13000, specs: { distribuzione: 'Cinghia a bagno d\'olio' }, gomme: { tipo: 'estive', misura: '225/45 R17', kmMontaggio: 9000 } });
+      hubGarage.save(g); hubGarage.setActive('mt1');
+      localStorage.setItem('hub_refuels_v1', JSON.stringify([{ id: 'k1', vehicleId: 'mt1', date: d.a, km: 10000, litri: 30, isFull: true }, { id: 'k2', vehicleId: 'mt1', date: d.b, km: 13000, litri: 30, isFull: true }]));
+      localStorage.setItem('hub_maint_v1', JSON.stringify([{ id: 'e1', vehicleId: 'mt1', type: 'olio', doneKm: 1000, doneDate: d.c, ts: 1 }]));
+      localStorage.removeItem('hub_gomme_v1'); localStorage.removeItem('hub_mods_v1');
+      hubGo('garage'); mtTab('int'); openMaint();
+    }, { a: day(-110), b: day(-10), c: day(-300) });
+    let txt = await p.$eval('#mt-body', e => e.textContent);
+    expect(/≈ 13\.3\d\d km oggi/.test(txt) && /900 km al mese/.test(txt), 'km stimati: ' + txt.slice(0, 160));
+    expect(/Cinghia distribuzione a bagno d'olio/.test(txt) && /dal motore/.test(txt) && /ogni 15\.000 km/.test(txt), 'intervalli dal motore mancanti');
+    expect(/≈ 3 mesi al tuo ritmo/.test(txt), 'scadenza in mesi al ritmo di guida mancante');
+    // intervallo personalizzato
+    await p.evaluate(() => openMaintEdit('olio'));
+    await p.fill('#mt-f-ikm', '10000'); await p.click('#mt-edit .gar-save');
+    await p.waitForTimeout(200);
+    expect(await p.evaluate(() => hubGarage.active().maintInt.olio.km === 10000 && /tuo intervallo/.test(document.getElementById('mt-body').textContent)), 'intervallo personalizzato non salvato');
+    // gomme: il treno del Garage diventa quello montato
+    await p.evaluate(() => mtTab('gomme'));
+    txt = await p.$eval('#mt-body', e => e.textContent);
+    const m = new Date().getMonth() + 1, inverno = m === 12 || m <= 3 || (m === 11 && new Date().getDate() >= 15) || (m === 4 && new Date().getDate() <= 15);
+    expect(/Estive/.test(txt) && /Montate/.test(txt) && /4\.?3\d\d km fatti/.test(txt), 'treno estivo dal Garage: ' + txt.slice(0, 200));
+    if (inverno) {
+      expect(/Monta le gomme invernali/.test(txt), 'avviso stagione mancante');
+      expect(await p.evaluate(() => _oggiInternals.daFare().some(x => /invernali/.test(x.nome))), 'avviso gomme non in Oggi');
+    }
+    await p.evaluate(() => mtGommeEdit(null));
+    await p.selectOption('#mg-tipo', 'invernali'); await p.fill('#mg-dot', '2016'); await p.fill('#mg-mm', '5');
+    await p.click('#mt-sheet .gar-save');
+    txt = await p.$eval('#mt-body', e => e.textContent);
+    expect(/10 anni: da sostituire/.test(txt), 'gomme vecchie non segnalate');
+    p.once('dialog', d => d.accept('13300'));
+    await p.click('.mt-gomma-act button:has-text("Monta queste")');
+    const g = await p.evaluate(() => JSON.parse(localStorage.getItem('hub_gomme_v1')));
+    const est = g.find(x => x.tipo === 'estive'), inv = g.find(x => x.tipo === 'invernali');
+    expect(est.periodi[0].a === 13300 && inv.periodi[0].da === 13300 && inv.periodi[0].a == null, 'cambio gomme: ' + JSON.stringify(g));
+    expect(await p.evaluate(() => hubGarage.active().gomme.tipo === 'invernali'), 'gomme montate non aggiornate nel Garage');
+    // modifiche
+    await p.evaluate(() => { mtTab('mod'); mtModEdit(null); });
+    await p.fill('#mm-titolo', 'Scarico sportivo'); await p.fill('#mm-costo', '450'); await p.fill('#mm-cv', '140');
+    await p.click('#mt-sheet .gar-save'); await p.waitForTimeout(200);
+    txt = await p.$eval('#mt-body', e => e.textContent);
+    expect(/Scarico sportivo/.test(txt) && /450 €/.test(txt) && /140 CV/.test(txt), 'modifica non mostrata: ' + txt.slice(0, 200));
+    await p.evaluate(() => { mtTab('int'); closeMaint(); });
+  }, page);
+
   await test('Motorsport: risultati F1 e classifica', async p => {
     await p.evaluate(() => { localStorage.removeItem('hub_ms_cache_v1'); hubGo('ms'); });
     await p.waitForTimeout(800);

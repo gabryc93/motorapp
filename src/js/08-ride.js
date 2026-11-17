@@ -39,7 +39,7 @@
     return { startTs: Date.now(), segStart: Date.now(), elapsedMs: 0, movingMs: 0, distanceM: 0, maxKmh: 0, track: [],
       last: null, fixes: 0, stillSince: null, laps: [], lapT0: null, line: null, vid: (veicolo() || {}).id || null };
   }
-  function savePref() { jset(PREF, { mode: S.mode, perf: S.perf }); }
+  function savePref() { pref.mode = S.mode; pref.perf = S.perf; jset(PREF, pref); }
 
   /* ── Interfaccia ─────────────────────────────────────────────── */
   function inject() {
@@ -49,7 +49,7 @@
     ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Modalità Ride');
     ov.innerHTML =
       '<div class="rd-hdr"><h2>RIDE<small id="rd-veh">—</small></h2>' +
-        '<div class="rd-hdr-act"><button class="rd-close" type="button" onclick="hubMusica.setup()" aria-label="Musica">🎵</button><button class="rd-close" type="button" onclick="rideHud()" title="Velocità a specchio da riflettere sul parabrezza">HUD</button>' +
+        '<div class="rd-hdr-act"><button class="rd-close" type="button" onclick="hubMusica.setup()" aria-label="Musica">🎵</button><button class="rd-close" type="button" onclick="hubOBD.pannello()" aria-label="OBD">🔌</button><button class="rd-close" type="button" onclick="rideHud()" title="Schermo a tutto campo per la guida, anche a specchio per il parabrezza">HUD</button>' +
         '<button class="rd-close" type="button" onclick="closeRide()">✕ Esci</button></div></div>' +
       '<div class="rd-modebar" role="tablist">' +
         '<button class="rd-mode-btn" data-mode="giro" onclick="rideSetMode(\'giro\')">Giro</button>' +
@@ -65,7 +65,11 @@
       '<div class="rd-perf-modeline" id="rd-perf-modeline" style="display:none"></div>' +
       '<div id="rd-error-slot"></div>' +
       '<div class="rd-lap" id="rd-lap" style="display:none"></div>' +
-      '<div class="rd-speedbox" id="rd-speedbox" onclick="if(document.getElementById(\'rd-overlay\').classList.contains(\'rd-hud\'))rideHud()">' +
+      '<div class="rd-hudbar" id="rd-hudbar" role="toolbar" aria-label="Comandi HUD">' +
+        '<button type="button" id="rd-hud-mirror" onclick="rideHudMirror()" aria-pressed="false">⇋ Specchio</button>' +
+        '<button type="button" onclick="rideHudBar(false);hubOBD.pannello()">🔌 OBD</button>' +
+        '<button type="button" onclick="rideHud()">✕ Esci dall\'HUD</button></div>' +
+      '<div class="rd-speedbox" id="rd-speedbox" onclick="rideHudTap()">' +
         '<div class="rd-speed-col"><div class="rd-speed" id="rd-speed">0</div><div class="rd-speed-unit">km/h</div>' +
           '<div class="rd-sub" id="rd-sub"></div></div>' +
         '<div class="rd-gmeter" id="rd-gmeter" style="display:none">' +
@@ -74,7 +78,8 @@
           '<line x1="100" y1="8" x2="100" y2="192" stroke="rgba(255,255,255,.06)"/><line x1="8" y1="100" x2="192" y2="100" stroke="rgba(255,255,255,.06)"/></svg>' +
           '<div class="rd-gmeter-dot" id="rd-gdot"></div><div class="rd-gmeter-label"><span class="rd-gmeter-val" id="rd-gval">0.0</span> G</div></div>' +
       '</div>' +
-      '<div class="rd-stats">' +
+      '<div class="rd-obd" id="rd-obd" hidden onclick="rideHudTap()"></div>' +
+      '<div class="rd-stats" onclick="rideHudTap()">' +
         cell('Tempo', 'rd-time', '00:00', '<span id="rd-tot">in movimento</span>') + cell('Distanza', 'rd-dist', '0.0', 'km') +
         cell('Media', 'rd-avg', '0', 'km/h') + cell('Max', 'rd-max', '0', 'km/h') +
       '</div>' +
@@ -148,7 +153,8 @@
     var p = A().xy(a, b); var h = Math.atan2(p.x, p.y) * 180 / Math.PI; return (h + 360) % 360;
   }
   function render(kmh, f) {
-    $('rd-speed').textContent = Math.round(kmh);
+    // con l'OBD collegato la velocità mostrata è quella della centralina (istantanea)
+    $('rd-speed').textContent = window.hubOBD && window.hubOBD.fresco() && window.hubOBD.dati().kmh != null ? window.hubOBD.dati().kmh : Math.round(kmh);
     $('rd-dist').textContent = (R.distanceM / 1000).toFixed(R.distanceM < 100000 ? 1 : 0);
     $('rd-max').textContent = Math.round(R.maxKmh);
     $('rd-avg').textContent = R.movingMs > 30000 ? Math.round(R.distanceM / 1000 / (R.movingMs / 3600000)) : '0';
@@ -405,8 +411,43 @@
   window.rideHud = function() {
     var ov = $('rd-overlay'), on = !ov.classList.contains('rd-hud');
     ov.classList.toggle('rd-hud', on);
+    ov.classList.toggle('rd-mirror', on && !!pref.hudMirror);
+    rideHudBar(on);   // all'apertura i comandi restano visibili qualche secondo
     if (on) { showError(''); startG(); }   // nell'HUD il G-meter è sempre visibile
   };
+  // HUD: un tocco mostra/nasconde i comandi (specchio, OBD, uscita), che spariscono da soli dopo 5 s
+  var barT = null;
+  window.rideHudBar = function(show) {
+    var ov = $('rd-overlay'); if (!ov) return;
+    ov.classList.toggle('rd-hudbar-on', !!show && ov.classList.contains('rd-hud'));
+    clearTimeout(barT); if (show) barT = setTimeout(function() { ov.classList.remove('rd-hudbar-on'); }, 5000);
+    var m = $('rd-hud-mirror'); if (m) { m.setAttribute('aria-pressed', !!pref.hudMirror); m.classList.toggle('on', !!pref.hudMirror); }
+  };
+  window.rideHudTap = function() {
+    var ov = $('rd-overlay'); if (!ov || !ov.classList.contains('rd-hud')) return;
+    rideHudBar(!ov.classList.contains('rd-hudbar-on'));
+  };
+  window.rideHudMirror = function() {
+    pref.hudMirror = !pref.hudMirror; savePref();
+    $('rd-overlay').classList.toggle('rd-mirror', pref.hudMirror);
+    rideHudBar(true);
+  };
+  // riga OBD: giri (barra che si colora verso il limitatore), acqua, turbo, batteria
+  function renderObd() {
+    var el = $('rd-obd'); if (!el || !window.hubOBD) return;
+    var D = window.hubOBD.dati();
+    if (D.stato !== 'on') { el.hidden = true; return; }
+    var max = (veicolo() && veicolo().specs && veicolo().specs.rpmMax) || 6500, rpm = D.rpm || 0, pct = Math.min(100, rpm / max * 100);
+    var b = window.hubOBD.boost();
+    el.hidden = false;
+    el.innerHTML = '<div class="rd-rpm"><b>' + (D.rpm != null ? rpm.toLocaleString('it-IT') : '—') + '</b><small>giri/min</small>' +
+      '<div class="rd-rpm-bar"><i style="width:' + pct.toFixed(1) + '%" class="' + (pct > 85 ? 'red' : pct > 70 ? 'amb' : '') + '"></i></div></div>' +
+      '<div class="rd-obd-v"><span><small>Acqua</small>' + (D.h2o != null ? D.h2o + '°' : '—') + '</span>' +
+      '<span><small>Turbo</small>' + (b != null ? (b >= 0 ? '+' : '') + b.toFixed(1).replace('.', ',') : '—') + '</span>' +
+      '<span><small>Batteria</small>' + (D.volt != null ? D.volt.toFixed(1).replace('.', ',') + ' V' : '—') + '</span></div>';
+    if (window.hubOBD.fresco() && D.kmh != null && (!R || S.state !== 'recording')) $('rd-speed').textContent = D.kmh;
+  }
+  if (window.hubOBD) window.hubOBD.onChange(function() { renderObd(); });
 
   /* ── Wake lock ───────────────────────────────────────────────── */
   function lockOn() { try { if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(function(w) { wakeLock = w; }).catch(function() {}); } catch (e) {} }

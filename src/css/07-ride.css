@@ -451,8 +451,10 @@
 .rd-hist-r { display: grid; grid-template-columns: 50px 70px 1fr; gap: 8px; font-family: 'DM Mono', monospace; font-size: .64rem; color: rgba(255,255,255,.65); padding: 3px 0; }
 .rd-hist-r.best { color: #c97fd4; } .rd-hist-r.nv { color: rgba(255,255,255,.35); }
 /* HUD: velocità, G-meter e dati di guida, a specchio per il parabrezza di notte */
-#rd-overlay.rd-hud { transform: scaleX(-1); justify-content: center; gap: 2vh; --hud: #7dffb0; }
-#rd-overlay.rd-hud > *:not(.rd-speedbox):not(.rd-stats):not(.rd-np) { display: none !important; }
+#rd-overlay.rd-hud { justify-content: center; gap: 2vh; --hud: #7dffb0; }
+#rd-overlay.rd-hud.rd-mirror { transform: scaleX(-1); }
+#rd-overlay.rd-hud > *:not(.rd-speedbox):not(.rd-stats):not(.rd-np):not(.rd-obd):not(.rd-hudbar):not(.rd-perf-result) { display: none !important; }
+#rd-overlay.rd-hud.rd-mirror .rd-perf-result, #rd-overlay.rd-hud.rd-mirror .rd-hudbar { transform: scaleX(-1); }   /* i comandi si leggono dritti */
 #rd-overlay.rd-hud .rd-speedbox { flex: 1 1 auto; gap: 5vw; cursor: pointer; padding: 2vh 4vw; }
 #rd-overlay.rd-hud .rd-speed-col { flex: 0 0 auto; border: 0; }
 #rd-overlay.rd-hud .rd-speed { font-size: min(30vw, 40vh); color: var(--hud); }
@@ -525,3 +527,42 @@
 .rd-ra-now button { appearance: none; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px; padding: 4px 8px; font-size: .66rem; cursor: pointer; flex-shrink: 0; }
 .rd-ra-err { color: #ff8a82 !important; }
 #rd-overlay.rd-hud .rd-np-live { background: var(--hud); color: #000; }
+
+/* ── HUD: comandi a scomparsa ─────────────────────────────────── */
+.rd-hudbar { display: none; }
+#rd-overlay.rd-hud .rd-hudbar { display: flex; position: absolute; top: calc(10px + var(--hub-safe-top, 0px)); left: 50%; translate: -50% 0; z-index: 5; gap: 8px;
+  opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+#rd-overlay.rd-hud.rd-mirror .rd-hudbar { translate: 50% 0; left: auto; right: 50%; }
+#rd-overlay.rd-hud.rd-hudbar-on .rd-hudbar { opacity: 1; pointer-events: auto; }
+.rd-hudbar button { appearance: none; background: rgba(20,22,26,.92); border: 1px solid rgba(125,255,176,.4); color: #7dffb0; border-radius: 999px; padding: 9px 14px;
+  font-family: 'DM Mono', monospace; font-size: .74rem; cursor: pointer; white-space: nowrap; }
+.rd-hudbar button.on { background: #7dffb0; color: #06140d; }
+#rd-overlay.rd-hud { position: fixed; }
+#rd-overlay.rd-hud .rd-speedbox, #rd-overlay.rd-hud .rd-stats, #rd-overlay.rd-hud .rd-obd { cursor: pointer; }
+
+/* ── OBD: giri, acqua, turbo, batteria ────────────────────────── */
+.rd-obd { margin: 0 12px 8px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); flex-shrink: 0; }
+.rd-obd[hidden] { display: none !important; }
+.rd-rpm { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 4px 8px; }
+.rd-rpm b { font-family: 'Fraunces', Georgia, serif; font-size: 1.5rem; font-variant-numeric: tabular-nums; color: #fff; }
+.rd-rpm small, .rd-obd-v small { font-family: 'DM Mono', monospace; font-size: .56rem; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .08em; }
+.rd-rpm-bar { height: 10px; border-radius: 5px; background: rgba(255,255,255,.08); overflow: hidden; }
+.rd-rpm-bar i { display: block; height: 100%; background: #3fbf7f; transition: width .15s linear; }
+.rd-rpm-bar i.amb { background: #e8c547; } .rd-rpm-bar i.red { background: #e5484d; }
+.rd-obd-v { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-family: 'DM Mono', monospace; font-size: .9rem; color: #fff; }
+.rd-obd-v span { display: flex; flex-direction: column; }
+.rd-obd-dtc { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px; }
+.rd-obd-dtc a { font-family: 'DM Mono', monospace; font-size: .9rem; color: #ffb199; background: rgba(229,72,77,.12); border: 1px solid rgba(229,72,77,.4); border-radius: 8px; padding: 6px 10px; text-decoration: none; }
+#rd-overlay.rd-hud .rd-obd { background: transparent; border: 0; margin: 0 4vw 1vh; }
+#rd-overlay.rd-hud .rd-rpm b, #rd-overlay.rd-hud .rd-obd-v { color: var(--hud); }
+#rd-overlay.rd-hud .rd-rpm b { font-size: min(9vw, 9vh); }
+#rd-overlay.rd-hud .rd-rpm small, #rd-overlay.rd-hud .rd-obd-v small { color: var(--hud); opacity: .65; }
+#rd-overlay.rd-hud .rd-rpm-bar { height: min(3vh, 18px); background: rgba(125,255,176,.12); }
+#rd-overlay.rd-hud .rd-obd-v { font-size: min(5vw, 5vh); }
+/* con l'OBD c'è una riga in più: velocità e G-meter un po' più piccoli */
+#rd-overlay.rd-hud:has(.rd-obd:not([hidden])) .rd-speed { font-size: min(24vw, 30vh); }
+#rd-overlay.rd-hud:has(.rd-obd:not([hidden])) .rd-gmeter { width: min(28vw, 34vh); height: min(28vw, 34vh); }
+@media (orientation: portrait) {
+  #rd-overlay.rd-hud:has(.rd-obd:not([hidden])) .rd-speed { font-size: min(34vw, 20vh); }
+  #rd-overlay.rd-hud:has(.rd-obd:not([hidden])) .rd-gmeter { width: min(46vw, 22vh); height: min(46vw, 22vh); }
+}

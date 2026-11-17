@@ -266,7 +266,7 @@
       return route(pl, nomw).then(function(rt) {
         var smp = campiona(rt);
         return previsioni(smp).then(function(fc) {
-          S.data = { pl: pl, rt: rt, smp: smp, fc: fc, dep: dep, ret: ret, passi: passiSulPercorso(rt) };
+          S.data = { pl: pl, rt: rt, smp: smp, fc: fc, dep: dep, ret: ret, passi: passiSulPercorso(rt) }; S.pieno = null;
           jset(LAST, { from: pl[0], via: via ? pl[1] : null, to: pl[pl.length - 1], veh: S.veh, nomw: nomw });
           var rec = jget(RECENT, []).filter(function(r) { return r.name !== pl[pl.length - 1].name; });
           rec.unshift(pl[pl.length - 1]); jset(RECENT, rec.slice(0, 8)); chips();
@@ -337,6 +337,7 @@
     html += avvisi(A, R);
     html += decisione(A.rows, rt);
     html += quando();
+    html += '<div id="wp-pieno">' + pienoBox() + '</div>';
     html += tappe('Andata · ' + giorno(D.dep) + ' ' + hhmm(D.dep), A, moto);
     if (R) html += R.rows.length ? tappe('Ritorno · ' + giorno(D.ret) + ' ' + hhmm(D.ret), R, moto) : '<div class="wp-alert">Ritorno oltre le previsioni disponibili.</div>';
     if (A.fuori) html += '<p class="wp-fine">Parte del viaggio è oltre le previsioni disponibili (fino a ' + giorno(last) + ').</p>';
@@ -408,6 +409,72 @@
         '</div></div>';
     }).join('') + '</div>';
   }
+  /* ── Pieno sul percorso: distributori a meno di 1,5 km dalla strada, i più convenienti ── */
+  var CARB = ['Benzina', 'Diesel', 'GPL', 'Metano'];
+  function carbVeicolo() {
+    var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active(), a = v && v.alim || '';
+    return /diesel/.test(a) ? 'Diesel' : a === 'gpl' ? 'GPL' : a === 'metano' ? 'Metano' : 'Benzina';
+  }
+  function pienoBox() {
+    var P = S.pieno;
+    var form = '<div class="wp-pieno-f"><select id="wp-carb" aria-label="Carburante">' + CARB.map(function(c) { return '<option' + (c === (P && P.carb || carbVeicolo()) ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select>' +
+      '<input type="number" id="wp-aut" min="10" max="2000" step="10" placeholder="Autonomia km" aria-label="Autonomia residua in km" value="' + (P && P.aut || '') + '">' +
+      '<button type="button" class="wp-pieno-go" onclick="wpPieno()">Cerca</button></div>';
+    var head = '<div class="wp-sec">⛽ Pieno sul percorso</div>';
+    if (!P) return head + '<p class="wp-fine">I distributori più convenienti a meno di 1,5 km dalla strada (prezzi self di oggi). Con l\'autonomia indicata mostro solo quelli che raggiungi.</p>' + form;
+    if (P.load) return head + form + '<div class="wp-loading">Cerco i distributori lungo la strada…</div>';
+    if (P.err) return head + form + '<div class="wp-error">' + esc(P.err) + '</div>';
+    if (!P.list.length) return head + form + '<p class="wp-fine">Nessun distributore ' + P.carb.toLowerCase() + ' a meno di 1,5 km dalla strada' + (P.aut ? ' entro ' + P.aut + ' km' : '') + '.</p>';
+    var v = window.hubGarage && window.hubGarage.active && window.hubGarage.active(), serb = v && (v.serbatoio || (v.specs && v.specs.serbatoio_l)) || 40;
+    var pl = S.data.pl, o = pl[0], d = pl[pl.length - 1];
+    return head + form + '<p class="wp-fine">' + P.tot + ' distributori lungo la strada · prezzo medio ' + P.media.toFixed(3).replace('.', ',') + ' €/l</p>' +
+      '<div class="wp-pieno-l">' + P.list.map(function(x, i) {
+        var risp = (P.media - x.prezzo) * serb;
+        var nav = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + o.lat + ',' + o.lng + '&destination=' + d.lat + ',' + d.lng + '&waypoints=' + x.lat + ',' + x.lng;
+        return '<a class="wp-pieno-r" href="' + nav + '" target="_blank" rel="noopener"><span class="wp-pieno-n">' + (i + 1) + '</span><span class="wp-pieno-t"><b>' + esc(x.bandiera || x.nome) + '</b><small>km ' + Math.round(x.km) + ' · ' + esc(x.comune || x.indirizzo || '') + (x.off > .3 ? ' · ' + x.off.toFixed(1).replace('.', ',') + ' km dalla strada' : '') + '</small></span>' +
+          '<span class="wp-pieno-p"><b>' + x.prezzo.toFixed(3).replace('.', ',') + '</b><small>' + (risp >= 1 ? '−' + Math.round(risp) + ' € sul pieno' : 'nella media') + '</small></span></a>';
+      }).join('') + '</div><p class="wp-fine">Il risparmio è calcolato su un pieno da ' + Math.round(serb) + ' l rispetto alla media dei distributori sul percorso. Tocca un distributore per aggiungerlo come tappa in Google Maps.</p>';
+  }
+  window.wpPieno = function() {
+    var D = S.data; if (!D) return;
+    var carb = $('wp-carb').value, aut = parseFloat($('wp-aut').value) || null;
+    S.pieno = { carb: carb, aut: aut, load: true }; $('wp-pieno').innerHTML = pienoBox();
+    var c = D.rt.coords, cum = D.rt.cumD, L = cum[cum.length - 1], fino = aut ? Math.min(L, aut * 0.9) : L;
+    // riquadri da ~20 km lungo la strada, con 2 km di margine
+    var boxes = [];
+    for (var k = 0; k < fino; k += 20) {
+      var la1 = 90, la2 = -90, lo1 = 180, lo2 = -180;
+      for (var i = 0; i < c.length; i++) if (cum[i] >= k && cum[i] <= Math.min(fino, k + 20)) { la1 = Math.min(la1, c[i].lat); la2 = Math.max(la2, c[i].lat); lo1 = Math.min(lo1, c[i].lng); lo2 = Math.max(lo2, c[i].lng); }
+      if (la1 <= la2) boxes.push([la1 - .018, lo1 - .025, la2 + .018, lo2 + .025]);
+    }
+    // punti della strada ogni ~200 m per misurare la distanza dei distributori
+    var pts = [], last = -1;
+    for (var j = 0; j < c.length; j++) if (cum[j] - last >= 0.2 && cum[j] <= fino) { pts.push({ lat: c[j].lat, lng: c[j].lng, km: cum[j] }); last = cum[j]; }
+    var seen = {}, found = [], q = boxes.slice();
+    function prossimo() {
+      var b = q.shift(); if (!b) return Promise.resolve();
+      return fetch(WORKER + '/api/bbox?lat1=' + b[0].toFixed(4) + '&lng1=' + b[1].toFixed(4) + '&lat2=' + b[2].toFixed(4) + '&lng2=' + b[3].toFixed(4) + '&carburante=' + encodeURIComponent(carb) + '&self=1')
+        .then(function(r) { return r.ok ? r.json() : []; }).then(function(list) {
+          (Array.isArray(list) ? list : []).forEach(function(x) {
+            if (seen[x.id] || !(x.prezzo > 0.3)) return; seen[x.id] = 1;
+            var best = 1e9, km = 0;
+            pts.forEach(function(p) { var dd = dist(p, x); if (dd < best) { best = dd; km = p.km; } });
+            if (best <= 1.5) found.push(Object.assign({}, x, { off: best, km: km }));
+          });
+        }).catch(function() {}).then(prossimo);
+    }
+    Promise.all([prossimo(), prossimo(), prossimo()]).then(function() {
+      if (!boxes.length) throw new Error('Percorso non valido');
+      found.sort(function(a, b) { return a.prezzo - b.prezzo; });
+      var media = found.length ? found.reduce(function(a, x) { return a + x.prezzo; }, 0) / found.length : 0;
+      S.pieno = { carb: carb, aut: aut, list: found.slice(0, 5), tot: found.length, media: media };
+      $('wp-pieno').innerHTML = pienoBox();
+      if (S.map && typeof L !== 'undefined') S.pieno.list.forEach(function(x, i) {
+        L.marker([x.lat, x.lng], { icon: L.divIcon({ className: 'wp-pieno-pin', html: '⛽' + (i + 1), iconSize: [34, 20] }) }).bindTooltip(x.prezzo.toFixed(3) + ' €/l').addTo(S.map);
+      });
+    }).catch(function(e) { S.pieno = { carb: carb, aut: aut, err: e.message || 'Distributori non disponibili' }; $('wp-pieno').innerHTML = pienoBox(); });
+  };
+
   function mappa(rows) {
     if (S.map) { try { S.map.remove(); } catch (e) {} S.map = null; }
     var el = $('wp-map');
