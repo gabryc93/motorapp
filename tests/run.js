@@ -501,7 +501,14 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     await p.waitForFunction(() => /Nessun passo aperto/.test(document.getElementById('gi-result').textContent) || document.querySelector('.gi-card b') && /Via /.test(document.querySelector('.gi-card b').textContent), null, { timeout: 10000 });
     const m = new Date().getMonth() + 1;
     if (m >= 11 || m <= 3) expect(/Nessun passo aperto/.test(await p.$eval('#gi-result', e => e.textContent)), 'avviso passi chiusi mancante');
+    // in fondo ai risultati il pulsante "torna su" riporta all'inizio del pannello (risultati lunghi simulati)
+    await p.evaluate(() => { document.getElementById('gi-result').insertAdjacentHTML('beforeend', '<div style="height:2000px"></div>'); const b = document.querySelector('#gi-overlay .wp-body'); b.scrollTop = b.scrollHeight; });
+    await p.waitForSelector('#hub-top.on', { timeout: 3000 });
+    await p.click('#hub-top'); await p.waitForTimeout(900);
+    expect(await p.evaluate(() => document.querySelector('#gi-overlay .wp-body').scrollTop) < 5, 'torna su non riporta in cima al Giro');
     await p.evaluate(() => { giroSet('stile', 'curve'); closeGiro(); });
+    await p.waitForTimeout(200);
+    expect(!(await p.evaluate(() => document.getElementById('hub-top').classList.contains('on'))), 'torna su resta visibile dopo la chiusura');
     for (const u of ['**/api.open-meteo.com/v1/elevation**', '**/router.project-osrm.org/**', '**/api.open-meteo.com/v1/forecast**', '**/photon.komoot.io/reverse**']) await p.unroute(u);
   }, page);
 

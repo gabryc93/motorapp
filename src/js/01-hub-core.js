@@ -230,16 +230,27 @@
       btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
       btn.addEventListener('click', function() {
         var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+        (target || window).scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
       });
       document.body.appendChild(btn);
       return btn;
     }
+    // vale per la pagina e per i pannelli a schermo intero che scorrono da soli (Giro, Meteo, Passi, Diario…)
+    var target = null;
     function update() {
       ticking = false;
-      ensure().classList.toggle('on', window.scrollY > 700);
+      var t = target || window, visibile = t === window || (t.isConnected && t.offsetParent !== null);
+      var y = t === window ? window.scrollY : t.scrollTop;
+      ensure().classList.toggle('on', visibile && y > (t === window ? 700 : 250));
     }
-    window.addEventListener('scroll', function() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    function pianifica() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    document.addEventListener('scroll', function(e) {
+      var el = e.target === document || e.target === document.documentElement ? window : e.target;
+      if (el !== window && el.scrollHeight - el.clientHeight < 250) return;   // liste piccole, mappe, caroselli
+      target = el; pianifica();
+    }, { passive: true, capture: true });
+    // chiudendo un pannello il pulsante deve sparire
+    document.addEventListener('click', function() { setTimeout(pianifica, 50); }, true);
   })();
 
   /* ── Foglio "Altro": strumenti, tema, backup ─────────────────── */
