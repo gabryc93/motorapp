@@ -335,6 +335,7 @@
       ' · arrivo ' + hhmm(D.dep + rt.durS * 1000) + ' · <a href="' + gmaps + '" target="_blank" rel="noopener">Apri in Google Maps ↗</a></div></div>' +
       '<div class="wp-map" id="wp-map" aria-label="Mappa del percorso con il meteo"></div>';
     html += avvisi(A, R);
+    html += '<div id="wp-zone" class="wp-alerts"></div>';
     html += decisione(A.rows, rt);
     html += quando();
     html += '<div id="wp-pieno">' + pienoBox() + '</div>';
@@ -345,6 +346,30 @@
     res.innerHTML = html;
     var bst = res.querySelector('.wp-hr.best'); if (bst) bst.parentNode.scrollLeft = bst.offsetLeft - bst.parentNode.offsetLeft - 60;
     mappa(A.rows);
+    zone();
+  }
+  // Area B/C, vignette e autovelox sul percorso (in background: il meteo è già visibile)
+  function zone() {
+    if (!window.hubZone || !S.data) return;
+    var D = S.data, rt = D.rt, v = window.hubGarage && window.hubGarage.active && window.hubGarage.active(), box = $('wp-zone');
+    var out = window.hubZone.milano(rt.coords, function(i) { return rt.cumT[i] || 0; }, D.dep, v);
+    var pinta = function() { var b = $('wp-zone'); if (b && S.data === D) b.innerHTML = out.map(function(a) { return '<div class="wp-al wp-al-' + (a[0] === 'ok' ? 'info' : a[0]) + '">' + a[1] + '</div>'; }).join(''); };
+    pinta();
+    window.hubZone.vignette(rt.coords).then(function(L) {
+      L.forEach(function(x) { out.push(['warn', '🛣 ' + x.paese + ': sulle autostrade serve la vignetta (' + x.prezzi + '). <a href="' + x.url + '" target="_blank" rel="noopener">Acquisto ufficiale ↗</a>' + (rt.nomw ? ' Non serve se resti fuori dalle autostrade.' : '')]); });
+      pinta();
+    });
+    if (D.velox) { out.push(D.velox.msg); pinta(); veloxMappa(D.velox.L); return; }
+    window.hubZone.autovelox(rt.coords).then(function(lista) {
+      var lim = {}; lista.forEach(function(a) { if (a.max) lim[a.max] = 1; });
+      var msg = ['info', lista.length ? '📷 ' + lista.length + ' autovelox fissi segnalati sul percorso' + (Object.keys(lim).length ? ' (limiti ' + Object.keys(lim).sort(function(a, b) { return a - b; }).join(', ') + ' km/h)' : '') + ': li trovi sulla mappa. Fonte OpenStreetMap, può non essere completa.' : '📷 Nessun autovelox fisso segnalato su OpenStreetMap lungo il percorso.'];
+      D.velox = { L: lista, msg: msg }; out.push(msg); pinta();
+      veloxMappa(lista);
+    }).catch(function(e) { out.push(['info', '📷 Autovelox non disponibili ora (' + esc(e.message) + ').']); pinta(); });
+  }
+  function veloxMappa(list) {
+    if (!S.map || typeof window.L === 'undefined') return;
+    list.forEach(function(a) { window.L.marker([a.lat, a.lng], { icon: window.L.divIcon({ className: 'wp-velox-pin', html: '📷' + (a.max ? '<b>' + esc(a.max) + '</b>' : ''), iconSize: [40, 20] }) }).addTo(S.map); });
   }
   function avvisi(A, R) {
     var D = S.data, moto = S.veh === 'moto', out = [];

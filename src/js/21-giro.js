@@ -259,11 +259,28 @@
         '<div class="gi-meta"><span>Curve <i class="gi-dots">' + pallini(g.curve) + '</i></span><span>▲ ' + g.salita.toLocaleString('it-IT') + ' m' + (g.qMax ? ' · max ' + g.qMax.toLocaleString('it-IT') + ' m' : '') + '</span></div>' +
         (g.passi.length ? '<div class="gi-passi">⛰ ' + esc(g.passi.map(function(p) { return p.name; }).join(' · ')) + '</div>' : '') +
         '<div class="gi-meteo">' + hhmm(R.when) + ' → ' + hhmm(R.when + g.r.s * 1000) + ' · ' + mt + '</div>' +
+        '<div class="gi-zone" id="gi-zone-' + i + '"></div>' +
         '<div class="gi-act"><a class="gi-btn" href="' + gmaps(R.s, g) + '" target="_blank" rel="noopener">Apri in Google Maps ↗</a><button type="button" class="gi-btn gi-ghost" onclick="giroGpx(' + i + ')">⬇ GPX</button></div></div>';
     }).join('');
     html += '<p class="wp-fine">Giri calcolati senza autostrade su OpenStreetMap (OSRM); le curve si misurano sul tracciato, i tempi non contano traffico e soste. Controlla sempre chiusure e meteo prima di partire.</p>';
     res.innerHTML = html;
     mappa();
+    zone();
+  }
+  // Area B/C, vignette e autovelox per ogni giro (in background)
+  function zone() {
+    if (!window.hubZone) return;
+    var R = S.res, v = window.hubGarage && window.hubGarage.active && window.hubGarage.active();
+    R.G.forEach(function(g, i) {
+      var righe = window.hubZone.milano(g.r.coords, function(k) { return k / Math.max(1, g.r.coords.length - 1) * g.r.s; }, R.when, v).map(function(a) { return a[1]; });
+      var pinta = function() { var el = $('gi-zone-' + i); if (el && S.res === R) el.innerHTML = righe.map(function(t) { return '<div>' + t + '</div>'; }).join(''); };
+      pinta();
+      window.hubZone.vignette(g.r.coords).then(function(L) { L.forEach(function(x) { righe.push('🛣 ' + x.paese + ': vignetta solo sulle autostrade'); }); pinta(); });
+      window.hubZone.autovelox(g.r.coords).then(function(L) {
+        righe.push(L.length ? '📷 ' + L.length + ' autovelox fissi segnalati' : '📷 nessun autovelox fisso segnalato'); pinta();
+        if (S.map && window.L) L.forEach(function(a) { window.L.marker([a.lat, a.lng], { icon: window.L.divIcon({ className: 'wp-velox-pin', html: '📷' + (a.max ? '<b>' + a.max + '</b>' : ''), iconSize: [40, 20] }) }).addTo(S.map); });
+      }).catch(function() {});
+    });
   }
   function gmaps(s, g) {
     return 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + s.lat + ',' + s.lng + '&destination=' + s.lat + ',' + s.lng +

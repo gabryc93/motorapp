@@ -84,3 +84,6 @@
 .gi-act { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .gi-btn { appearance: none; display: inline-block; text-decoration: none; background: var(--c); color: #0b0b0d; border: 0; border-radius: 8px; padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .76rem; cursor: pointer; }
 .gi-ghost { background: transparent; color: var(--t1); border: 1px solid var(--brd, #2a2d33); }
+.gi-zone { font-size: .72rem; color: var(--t2); line-height: 1.5; margin-top: 6px; }
+.gi-zone:empty { display: none; }
+.gi-zone a { color: inherit; }

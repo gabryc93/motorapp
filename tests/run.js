@@ -620,6 +620,66 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     await p.evaluate(() => { mtTab('int'); closeMaint(); });
   }, page);
 
+  await test('Zone sul percorso: Area B e C di Milano, autovelox, vignette', async p => {
+    const H = { 'access-control-allow-origin': '*' }, A = { lat: 45.4642, lng: 9.19 }, B = { lat: 45.3984, lng: 8.9183 }, N = 120;
+    await p.route('**/photon.komoot.io/api/**', r => { const q = new URL(r.request().url()).searchParams.get('q') || '', c = /abbiategrasso/i.test(q) ? B : A;
+      r.fulfill({ json: { features: [{ geometry: { coordinates: [c.lng, c.lat] }, properties: { name: /abbiategrasso/i.test(q) ? 'Abbiategrasso' : 'Duomo' } }] }, headers: H }); });
+    await p.route('**/photon.komoot.io/reverse**', r => { const u = new URL(r.request().url()).searchParams; r.fulfill({ json: { features: [{ properties: { countrycode: +u.get('lat') > 46 ? 'CH' : 'IT', city: 'X' } }] }, headers: H }); });
+    await p.route('**/router.project-osrm.org/**', r => { const c = []; for (let i = 0; i < N; i++) c.push([A.lng + (B.lng - A.lng) * i / (N - 1), A.lat + (B.lat - A.lat) * i / (N - 1)]);
+      r.fulfill({ json: { routes: [{ distance: 26000, duration: 2400, geometry: { coordinates: c }, legs: [{ annotation: { duration: Array(N - 1).fill(2400 / (N - 1)) } }] }] }, headers: H }); });
+    await p.route('**/api.open-meteo.com/**', r => { const n = new URL(r.request().url()).searchParams.get('latitude').split(',').length, HH = 384, t0 = Math.floor(Date.now() / 3600000) * 3600 - 7200, time = [];
+      for (let k = 0; k < HH; k++) time.push(t0 + k * 3600);
+      r.fulfill({ json: Array(n).fill({ elevation: 120, hourly: { time, temperature_2m: Array(HH).fill(12), precipitation: Array(HH).fill(0), precipitation_probability: Array(HH).fill(0), weather_code: Array(HH).fill(1),
+        wind_speed_10m: Array(HH).fill(5), wind_gusts_10m: Array(HH).fill(10), visibility: Array(HH).fill(20000), is_day: Array(HH).fill(1), snowfall: Array(HH).fill(0) } }), headers: H }); });
+    const mid = f => ({ lat: A.lat + (B.lat - A.lat) * f, lng: A.lng + (B.lng - A.lng) * f });
+    await p.route('**/api/autovelox?**', r => r.fulfill({ json: { autovelox: [Object.assign({ max: '50' }, mid(.5)), { lat: 45.6, lng: 9.5, max: '90' }] }, headers: H }));
+    // lunedì prossimo alle 9:00, Corsa benzina Euro 4
+    const lun = await p.evaluate(() => { const d = new Date(); d.setDate(d.getDate() + ((8 - d.getDay()) % 7 || 7)); d.setHours(9, 0, 0, 0); const z = n => String(n).padStart(2, '0');
+      const g = hubGarage.list().filter(v => v.id !== 'cz1'); g.push({ id: 'cz1', type: 'auto', marca: 'Opel', modello: 'Corsa', customName: 'Corsa 1.4', alim: 'benzina', euro: 4 }); hubGarage.save(g); hubGarage.setActive('cz1');
+      localStorage.removeItem('hub_meteo_last_v1'); hubGo('meteo');
+      return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + 'T09:00'; });
+    await p.fill('#wp-from', 'Duomo Milano'); await p.fill('#wp-to', 'Abbiategrasso'); await p.fill('#wp-when', lun); await p.fill('#wp-ret', '');
+    await p.click('#wp-overlay .wp-go');
+    await p.waitForFunction(() => /autovelox/.test(document.getElementById('wp-zone').textContent), null, { timeout: 8000 });
+    let z = await p.$eval('#wp-zone', e => e.textContent);
+    expect(/Area B alle 09:0\d: Corsa 1\.4 può entrare \(benzina Euro 4: vietata dal 1° ottobre 2028\)/.test(z), 'Area B Euro 4: ' + z);
+    expect(/Area C attiva alle 09:0\d: ticket 7,50 €/.test(z), 'Area C ticket: ' + z);
+    expect(/1 autovelox fissi segnalati sul percorso \(limiti 50 km\/h\)/.test(z), 'autovelox: ' + z);
+    // Euro 3: divieto
+    await p.evaluate(() => { hubGarage.update('cz1', { euro: 3 }); });
+    await p.click('#wp-overlay .wp-go');
+    await p.waitForFunction(() => /non può entrare/.test(document.getElementById('wp-zone').textContent), null, { timeout: 8000 });
+    z = await p.$eval('#wp-zone', e => e.textContent);
+    expect(/Area B attiva alle 09:0\d: Corsa 1\.4 \(benzina Euro 3\) non può entrare/.test(z) && /il ticket non basta/.test(z), 'divieto Euro 3: ' + z);
+    // vignette: percorso che sale in Svizzera
+    const vg = await p.evaluate(() => hubZone.vignette([{ lat: 45.8, lng: 9.0 }, { lat: 46.0, lng: 9.0 }, { lat: 46.3, lng: 9.0 }, { lat: 46.6, lng: 9.0 }]));
+    expect(vg.length === 1 && vg[0].cc === 'CH' && /40 CHF/.test(vg[0].prezzi), 'vignetta Svizzera: ' + JSON.stringify(vg));
+    await p.evaluate(() => { closeWeather(); hubGarage.save(hubGarage.list().filter(v => v.id !== 'cz1')); });
+    for (const u of ['**/photon.komoot.io/api/**', '**/photon.komoot.io/reverse**', '**/router.project-osrm.org/**', '**/api.open-meteo.com/**', '**/api/autovelox?**']) await p.unroute(u);
+  }, page);
+
+  await test('Documenti, patente in Oggi, backup e scorciatoie dall\'icona', async p => {
+    const day = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    await p.evaluate(() => { localStorage.removeItem('hub_documenti_v1'); localStorage.removeItem('hub_cloud_v1'); hubGo('garage'); openDocumenti(); });
+    const fc = p.waitForEvent('filechooser');
+    await p.click('.doc-cell .doc-thumb');
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+    await (await fc).setFiles({ name: 'libretto.png', mimeType: 'image/png', buffer: png });
+    await p.waitForFunction(() => { const d = JSON.parse(localStorage.getItem('hub_documenti_v1') || '{}'), v = hubGarage.active(); return d[v.id] && d[v.id]['libretto-f']; }, null, { timeout: 5000 });
+    await p.fill('#doc-pat-scad', day(30)); await p.dispatchEvent('#doc-pat-scad', 'change');
+    const stat = await p.$eval('#doc-launch-stat', e => e.textContent);
+    expect(/1 salvato/.test(stat), 'contatore documenti: ' + stat);
+    await p.evaluate(() => { closeDocumenti(); hubGo('oggi'); });
+    const o = await p.$eval('#oggi-root', e => e.textContent);
+    expect(/Patente/.test(o) && /tra 30 giorni/.test(o), 'patente in scadenza non in Oggi');
+    expect(/Attiva il backup automatico/.test(o), 'invito al backup mancante');
+    await p.evaluate(() => { location.hash = 'giro'; });
+    await p.waitForFunction(() => document.getElementById('gi-overlay') && document.getElementById('gi-overlay').classList.contains('visible'), null, { timeout: 3000 });
+    await p.evaluate(() => { closeGiro(); history.replaceState(null, '', '#oggi'); });
+    const man = await p.evaluate(() => fetch('manifest.webmanifest').then(r => r.json()));
+    expect(man.shortcuts && man.shortcuts.some(x => x.url === './#hud'), 'scorciatoie nel manifest');
+  }, page);
+
   await test('Motorsport: risultati F1 e classifica', async p => {
     await p.evaluate(() => { localStorage.removeItem('hub_ms_cache_v1'); hubGo('ms'); });
     await p.waitForTimeout(800);

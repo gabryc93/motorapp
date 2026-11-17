@@ -165,7 +165,7 @@
   // Sezioni reali con DOM persistente
   var SECTIONS = ['oggi', 'fuel', 'diag', 'garage', 'usato'];
   // Tab "azione": aprono un overlay e tornano alla sezione precedente
-  var ACTIONS  = ['passi', 'ride', 'meteo', 'ms'];
+  var ACTIONS  = ['passi', 'ride', 'meteo', 'ms', 'giro', 'hud'];
   var _lastSection = 'oggi';
 
   function hubGo(name) {
@@ -214,6 +214,11 @@
         if (typeof window.openWeather === 'function') window.openWeather();
       } else if (name === 'ms') {
         if (typeof window.openMotorsport === 'function') window.openMotorsport();
+      } else if (name === 'giro') {
+        if (typeof window.openGiro === 'function') window.openGiro();
+      } else if (name === 'hud') {
+        // scorciatoia dall'icona: Ride a schermo intero, pronta da avviare
+        if (typeof window.openRide === 'function') { window.openRide(); if (!document.getElementById('rd-overlay').classList.contains('rd-hud')) window.rideHud(); }
       }
     }
   }

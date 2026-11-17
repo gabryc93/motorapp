@@ -35,6 +35,8 @@
         out.push({ v: v, nome: m.name, giorni: scad ? -1 : g != null ? g : 30, quando: quando, tipo: 'mt', icon: m.icon });
       });
     });
+    var pat = window.hubPatenteScad ? window.hubPatenteScad() : null;
+    if (pat && garage()[0]) out.push({ v: garage()[0], nome: 'Patente', giorni: pat.giorni, data: pat.data, tipo: 'doc', icon: '🪪', nascondiAuto: true });
     return out.sort(function(a, b) { return a.giorni - b.giorni; });
   }
   function renderDaFare() {
@@ -45,7 +47,7 @@
       var cls = x.giorni < 0 ? 'crit' : x.giorni <= 7 ? 'warn' : 'soon';
       var q = x.quando || (x.giorni < 0 ? 'scaduto da ' + Math.abs(x.giorni) + (Math.abs(x.giorni) === 1 ? ' giorno' : ' giorni') : x.giorni === 0 ? 'oggi' : x.giorni === 1 ? 'domani' : 'tra ' + x.giorni + ' giorni');
       return '<button type="button" class="og-todo og-' + cls + '" onclick="ogApri(\'' + x.tipo + '\',\'' + esc(x.v.id) + '\')">' +
-        '<span class="og-dot" aria-hidden="true"></span><span class="og-todo-t">' + (x.icon ? x.icon + ' ' : '') + esc(x.nome) + (molti ? '<small>' + esc(vName(x.v)) + '</small>' : '') + '</span>' +
+        '<span class="og-dot" aria-hidden="true"></span><span class="og-todo-t">' + (x.icon ? x.icon + ' ' : '') + esc(x.nome) + (molti && !x.nascondiAuto ? '<small>' + esc(vName(x.v)) + '</small>' : '') + '</span>' +
         '<span class="og-todo-q">' + esc(q) + '</span></button>';
     }).join('') + (list.length > 6 ? '<p class="og-p og-small">e altre ' + (list.length - 6) + '</p>' : ''), list.some(function(x) { return x.giorni < 0; }) ? 'og-c-crit' : '');
   }
@@ -53,6 +55,7 @@
     if (window.hubGarage) window.hubGarage.setActive(vid);
     hubGo('garage');
     setTimeout(function() {
+      if (tipo === 'doc' && window.openDocumenti) { window.openDocumenti(); return; }
       if ((tipo === 'mt' || tipo === 'gomme') && window.openMaint) { if (tipo === 'gomme' && window.mtTab) window.mtTab('gomme'); else if (window.mtTab) window.mtTab('int'); window.openMaint(); }
       else if (window.openGarageEdit) window.openGarageEdit(vid);
     }, 250);
@@ -169,6 +172,16 @@
       '<p class="og-p og-small">Questo mese: ' + Math.round(mese).toLocaleString('it-IT') + ' km</p>');
   }
 
+  /* ── Backup automatico ─────────────────────────────────────────── */
+  function renderBackup() {
+    if (!garage().length) return '';
+    var c = jget('hub_cloud_v1', null);
+    if (!c || !c.code) return card('💾 Backup', '<p class="og-p">I tuoi dati sono solo su questo telefono. Con il backup cloud cifrato si salvano da soli (all\'apertura ogni 12 ore e quando chiudi l\'app): ti basta conservare un codice.</p><button class="og-btn og-ghost" onclick="hubBackupOpen()">Attiva il backup automatico</button>');
+    var g = c.lastAt ? Math.floor((Date.now() - c.lastAt) / 86400000) : null;
+    if (g == null || g >= 7) return card('💾 Backup', '<p class="og-p og-err">' + (g == null ? 'Nessun backup ancora salvato.' : 'Ultimo backup ' + g + ' giorni fa: forse non riesce a partire.') + '</p><button class="og-btn og-ghost" onclick="hubBackupOpen()">Salva ora</button>', 'og-c-crit');
+    return '';
+  }
+
   function card(t, body, cls) { return '<section class="og-card ' + (cls || '') + '"><h2 class="og-h">' + t + '</h2>' + body + '</section>'; }
 
   var _M = null;
@@ -181,7 +194,7 @@
         (g.length > 1 ? '<div class="og-veh" role="group" aria-label="Veicolo attivo">' + g.map(function(x) {
           return '<button type="button" class="' + (v && v.id === x.id ? 'on' : '') + '" onclick="ogVeicolo(\'' + esc(x.id) + '\')">' + (x.type === 'moto' ? '🏍 ' : '🚗 ') + esc(vName(x)) + '</button>';
         }).join('') + '</div>' : '') + '</header>' +
-      renderDaFare() + renderMeteo(_M) + renderEnergia() + renderUscita() +
+      renderDaFare() + renderMeteo(_M) + renderEnergia() + renderUscita() + renderBackup() +
       card('Strumenti', '<div class="og-tools">' +
         '<button onclick="openGiro()"><span>🗺</span>Giro della domenica</button>' +
         '<button onclick="hubGo(\'meteo\')"><span>🌦</span>Meteo percorso</button>' +

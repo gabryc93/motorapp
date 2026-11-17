@@ -10,8 +10,72 @@
   "background_color": "#0b0b0d",
   "theme_color": "#0b0b0d",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "./",
+  "shortcuts": [
+    {
+      "name": "Oggi",
+      "short_name": "Oggi",
+      "description": "Scadenze, meteo per guidare e pieno",
+      "url": "./#oggi",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Ride e HUD",
+      "short_name": "HUD",
+      "description": "Registratore GPS con HUD a tutto schermo",
+      "url": "./#hud",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Giro della domenica",
+      "short_name": "Giro",
+      "description": "Anelli su strade belle senza autostrade",
+      "url": "./#giro",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Carburanti",
+      "short_name": "Carburanti",
+      "description": "Distributori più convenienti vicino a te",
+      "url": "./#fuel",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }

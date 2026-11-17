@@ -86,6 +86,9 @@
   //   null = no change, '' = remove, {dataUrl, mime} = new
   var _pendingDoc = null;
 
+  // archivio documenti condiviso (fatture, libretto, polizza, patente)
+  window.hubDocs = { put: dbPutDoc, get: dbGetDoc, del: dbDeleteDoc };
+
   window._mtDocChange = function(ev) {
     var file = ev.target.files && ev.target.files[0];
     if (!file) return;

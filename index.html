@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-11-17-2243">
+<meta name="autohub-build" content="2026-11-17-2258">
 <meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -4092,6 +4092,10 @@ a.ms-card { text-decoration: none; color: inherit; }
 .wp-pieno-p { display: flex; flex-direction: column; align-items: flex-end; }
 .wp-pieno-p b { font-family: 'DM Mono', monospace; font-size: .86rem; color: #9be6bf; }
 .wp-pieno-pin { background: #e8a030; color: #1a1200; border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+.wp-velox-pin { background: #111; color: #fff; border: 2px solid #e5484d; border-radius: 10px; font-size: 11px; line-height: 16px; text-align: center; white-space: nowrap; }
+.wp-velox-pin b { margin-left: 2px; font-family: 'DM Mono', monospace; }
+.wp-al a { color: inherit; text-decoration: underline; }
+#wp-zone:empty { display: none; }
 
 /* ═══════════════════════════════════════════════════════════════════
    PASSI ALPINI / APPENNINICI — curated database for motorcyclists
@@ -5629,6 +5633,7 @@ body:has(#tco-overlay.visible) .hub-tabs,
 body:has(#ms-overlay.visible) .hub-tabs,
 body:has(#gi-overlay.visible) .hub-tabs,
 body:has(#mt-sheet.visible) .hub-tabs,
+body:has(#doc-overlay.visible) .hub-tabs,
 body[data-pill-hidden="1"] .hub-tabs {
   opacity: 0;
   transform: translateX(-50%) translateY(24px);
@@ -5660,6 +5665,28 @@ body[data-pill-hidden="1"] .hub-tabs {
 .mt-mods-sum small { display: block; font-family: 'DM Mono', monospace; font-size: .58rem; color: var(--t3, #888); }
 .mt-mods-sum b { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 1.35rem; }
 .mt-check { display: flex; align-items: center; gap: 8px; font-size: .8rem; color: var(--t2, #aaa); margin: 4px 0 6px; }
+
+/* ── Documenti ────────────────────────────────────────────────── */
+#doc-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 70; display: none; flex-direction: column; }
+#doc-overlay.visible { display: flex; }
+#doc-overlay .mt-hdr { padding-top: calc(14px + var(--hub-safe-top, 0px)); }
+.doc-sec { font-family: 'DM Mono', monospace; font-size: .64rem; text-transform: uppercase; letter-spacing: .1em; color: var(--t2, #aaa); margin: 6px 0 8px; }
+.doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.doc-cell { display: flex; flex-direction: column; gap: 6px; }
+.doc-thumb { appearance: none; aspect-ratio: 1.55; width: 100%; border-radius: 10px; border: 1px dashed var(--brd, #2a2d33); background: var(--surf, #13131a); color: var(--t3, #888);
+  display: grid; place-items: center; overflow: hidden; cursor: pointer; font-size: 1.4rem; padding: 0; }
+.doc-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.doc-thumb span { font-family: 'DM Mono', monospace; font-size: .9rem; }
+.doc-lbl { display: flex; justify-content: space-between; align-items: center; font-size: .72rem; color: var(--t2, #aaa); }
+.doc-x { appearance: none; background: none; border: 0; cursor: pointer; font-size: .85rem; padding: 2px 4px; }
+.doc-warn { color: #ffd699; }
+.doc-view { position: fixed; inset: 0; background: rgba(0,0,0,.94); z-index: 90; display: none; flex-direction: column; align-items: stretch; padding: calc(12px + var(--hub-safe-top, 0px)) 12px 12px; }
+.doc-view.visible { display: flex; }
+.doc-view .gar-close { align-self: flex-end; margin-bottom: 10px; }
+#doc-view-in { flex: 1; display: flex; align-items: center; justify-content: center; overflow: auto; }
+#doc-view-in img { max-width: 100%; max-height: 100%; object-fit: contain; }
+#doc-view-in iframe { width: 100%; height: 100%; border: 0; background: #fff; }
+#doc-overlay .gar-field input { width: 100%; box-sizing: border-box; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: var(--t1, #eee); border-radius: 8px; padding: 10px; font: inherit; font-size: .85rem; }
 
 /* ════════════════════════════════════════════════════════════════════
    CARBURANTI styles (scoped to #hub-fuel — no global pollution)
@@ -6821,6 +6848,9 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
 .gi-act { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .gi-btn { appearance: none; display: inline-block; text-decoration: none; background: var(--c); color: #0b0b0d; border: 0; border-radius: 8px; padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .76rem; cursor: pointer; }
 .gi-ghost { background: transparent; color: var(--t1); border: 1px solid var(--brd, #2a2d33); }
+.gi-zone { font-size: .72rem; color: var(--t2); line-height: 1.5; margin-top: 6px; }
+.gi-zone:empty { display: none; }
+.gi-zone a { color: inherit; }
 </style>
 </head>
 <body data-hub="oggi">
@@ -7762,7 +7792,7 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
   // Sezioni reali con DOM persistente
   var SECTIONS = ['oggi', 'fuel', 'diag', 'garage', 'usato'];
   // Tab "azione": aprono un overlay e tornano alla sezione precedente
-  var ACTIONS  = ['passi', 'ride', 'meteo', 'ms'];
+  var ACTIONS  = ['passi', 'ride', 'meteo', 'ms', 'giro', 'hud'];
   var _lastSection = 'oggi';
 
   function hubGo(name) {
@@ -7811,6 +7841,11 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
         if (typeof window.openWeather === 'function') window.openWeather();
       } else if (name === 'ms') {
         if (typeof window.openMotorsport === 'function') window.openMotorsport();
+      } else if (name === 'giro') {
+        if (typeof window.openGiro === 'function') window.openGiro();
+      } else if (name === 'hud') {
+        // scorciatoia dall'icona: Ride a schermo intero, pronta da avviare
+        if (typeof window.openRide === 'function') { window.openRide(); if (!document.getElementById('rd-overlay').classList.contains('rd-hud')) window.rideHud(); }
       }
     }
   }
@@ -22260,6 +22295,9 @@ async function runCmp() {
   //   null = no change, '' = remove, {dataUrl, mime} = new
   var _pendingDoc = null;
 
+  // archivio documenti condiviso (fatture, libretto, polizza, patente)
+  window.hubDocs = { put: dbPutDoc, get: dbGetDoc, del: dbDeleteDoc };
+
   window._mtDocChange = function(ev) {
     var file = ev.target.files && ev.target.files[0];
     if (!file) return;
@@ -23828,6 +23866,8 @@ async function runCmp() {
         out.push({ v: v, nome: m.name, giorni: scad ? -1 : g != null ? g : 30, quando: quando, tipo: 'mt', icon: m.icon });
       });
     });
+    var pat = window.hubPatenteScad ? window.hubPatenteScad() : null;
+    if (pat && garage()[0]) out.push({ v: garage()[0], nome: 'Patente', giorni: pat.giorni, data: pat.data, tipo: 'doc', icon: '🪪', nascondiAuto: true });
     return out.sort(function(a, b) { return a.giorni - b.giorni; });
   }
   function renderDaFare() {
@@ -23838,7 +23878,7 @@ async function runCmp() {
       var cls = x.giorni < 0 ? 'crit' : x.giorni <= 7 ? 'warn' : 'soon';
       var q = x.quando || (x.giorni < 0 ? 'scaduto da ' + Math.abs(x.giorni) + (Math.abs(x.giorni) === 1 ? ' giorno' : ' giorni') : x.giorni === 0 ? 'oggi' : x.giorni === 1 ? 'domani' : 'tra ' + x.giorni + ' giorni');
       return '<button type="button" class="og-todo og-' + cls + '" onclick="ogApri(\'' + x.tipo + '\',\'' + esc(x.v.id) + '\')">' +
-        '<span class="og-dot" aria-hidden="true"></span><span class="og-todo-t">' + (x.icon ? x.icon + ' ' : '') + esc(x.nome) + (molti ? '<small>' + esc(vName(x.v)) + '</small>' : '') + '</span>' +
+        '<span class="og-dot" aria-hidden="true"></span><span class="og-todo-t">' + (x.icon ? x.icon + ' ' : '') + esc(x.nome) + (molti && !x.nascondiAuto ? '<small>' + esc(vName(x.v)) + '</small>' : '') + '</span>' +
         '<span class="og-todo-q">' + esc(q) + '</span></button>';
     }).join('') + (list.length > 6 ? '<p class="og-p og-small">e altre ' + (list.length - 6) + '</p>' : ''), list.some(function(x) { return x.giorni < 0; }) ? 'og-c-crit' : '');
   }
@@ -23846,6 +23886,7 @@ async function runCmp() {
     if (window.hubGarage) window.hubGarage.setActive(vid);
     hubGo('garage');
     setTimeout(function() {
+      if (tipo === 'doc' && window.openDocumenti) { window.openDocumenti(); return; }
       if ((tipo === 'mt' || tipo === 'gomme') && window.openMaint) { if (tipo === 'gomme' && window.mtTab) window.mtTab('gomme'); else if (window.mtTab) window.mtTab('int'); window.openMaint(); }
       else if (window.openGarageEdit) window.openGarageEdit(vid);
     }, 250);
@@ -23962,6 +24003,16 @@ async function runCmp() {
       '<p class="og-p og-small">Questo mese: ' + Math.round(mese).toLocaleString('it-IT') + ' km</p>');
   }
 
+  /* ── Backup automatico ─────────────────────────────────────────── */
+  function renderBackup() {
+    if (!garage().length) return '';
+    var c = jget('hub_cloud_v1', null);
+    if (!c || !c.code) return card('💾 Backup', '<p class="og-p">I tuoi dati sono solo su questo telefono. Con il backup cloud cifrato si salvano da soli (all\'apertura ogni 12 ore e quando chiudi l\'app): ti basta conservare un codice.</p><button class="og-btn og-ghost" onclick="hubBackupOpen()">Attiva il backup automatico</button>');
+    var g = c.lastAt ? Math.floor((Date.now() - c.lastAt) / 86400000) : null;
+    if (g == null || g >= 7) return card('💾 Backup', '<p class="og-p og-err">' + (g == null ? 'Nessun backup ancora salvato.' : 'Ultimo backup ' + g + ' giorni fa: forse non riesce a partire.') + '</p><button class="og-btn og-ghost" onclick="hubBackupOpen()">Salva ora</button>', 'og-c-crit');
+    return '';
+  }
+
   function card(t, body, cls) { return '<section class="og-card ' + (cls || '') + '"><h2 class="og-h">' + t + '</h2>' + body + '</section>'; }
 
   var _M = null;
@@ -23974,7 +24025,7 @@ async function runCmp() {
         (g.length > 1 ? '<div class="og-veh" role="group" aria-label="Veicolo attivo">' + g.map(function(x) {
           return '<button type="button" class="' + (v && v.id === x.id ? 'on' : '') + '" onclick="ogVeicolo(\'' + esc(x.id) + '\')">' + (x.type === 'moto' ? '🏍 ' : '🚗 ') + esc(vName(x)) + '</button>';
         }).join('') + '</div>' : '') + '</header>' +
-      renderDaFare() + renderMeteo(_M) + renderEnergia() + renderUscita() +
+      renderDaFare() + renderMeteo(_M) + renderEnergia() + renderUscita() + renderBackup() +
       card('Strumenti', '<div class="og-tools">' +
         '<button onclick="openGiro()"><span>🗺</span>Giro della domenica</button>' +
         '<button onclick="hubGo(\'meteo\')"><span>🌦</span>Meteo percorso</button>' +
@@ -24264,11 +24315,28 @@ async function runCmp() {
         '<div class="gi-meta"><span>Curve <i class="gi-dots">' + pallini(g.curve) + '</i></span><span>▲ ' + g.salita.toLocaleString('it-IT') + ' m' + (g.qMax ? ' · max ' + g.qMax.toLocaleString('it-IT') + ' m' : '') + '</span></div>' +
         (g.passi.length ? '<div class="gi-passi">⛰ ' + esc(g.passi.map(function(p) { return p.name; }).join(' · ')) + '</div>' : '') +
         '<div class="gi-meteo">' + hhmm(R.when) + ' → ' + hhmm(R.when + g.r.s * 1000) + ' · ' + mt + '</div>' +
+        '<div class="gi-zone" id="gi-zone-' + i + '"></div>' +
         '<div class="gi-act"><a class="gi-btn" href="' + gmaps(R.s, g) + '" target="_blank" rel="noopener">Apri in Google Maps ↗</a><button type="button" class="gi-btn gi-ghost" onclick="giroGpx(' + i + ')">⬇ GPX</button></div></div>';
     }).join('');
     html += '<p class="wp-fine">Giri calcolati senza autostrade su OpenStreetMap (OSRM); le curve si misurano sul tracciato, i tempi non contano traffico e soste. Controlla sempre chiusure e meteo prima di partire.</p>';
     res.innerHTML = html;
     mappa();
+    zone();
+  }
+  // Area B/C, vignette e autovelox per ogni giro (in background)
+  function zone() {
+    if (!window.hubZone) return;
+    var R = S.res, v = window.hubGarage && window.hubGarage.active && window.hubGarage.active();
+    R.G.forEach(function(g, i) {
+      var righe = window.hubZone.milano(g.r.coords, function(k) { return k / Math.max(1, g.r.coords.length - 1) * g.r.s; }, R.when, v).map(function(a) { return a[1]; });
+      var pinta = function() { var el = $('gi-zone-' + i); if (el && S.res === R) el.innerHTML = righe.map(function(t) { return '<div>' + t + '</div>'; }).join(''); };
+      pinta();
+      window.hubZone.vignette(g.r.coords).then(function(L) { L.forEach(function(x) { righe.push('🛣 ' + x.paese + ': vignetta solo sulle autostrade'); }); pinta(); });
+      window.hubZone.autovelox(g.r.coords).then(function(L) {
+        righe.push(L.length ? '📷 ' + L.length + ' autovelox fissi segnalati' : '📷 nessun autovelox fisso segnalato'); pinta();
+        if (S.map && window.L) L.forEach(function(a) { window.L.marker([a.lat, a.lng], { icon: window.L.divIcon({ className: 'wp-velox-pin', html: '📷' + (a.max ? '<b>' + a.max + '</b>' : ''), iconSize: [40, 20] }) }).addTo(S.map); });
+      }).catch(function() {});
+    });
   }
   function gmaps(s, g) {
     return 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + s.lat + ',' + s.lng + '&destination=' + s.lat + ',' + s.lng +
@@ -24298,6 +24366,240 @@ async function runCmp() {
   }
 
   window._giInternals = { curve: curve, dest: dest, candidati: candidati, state: function() { return S; } };
+})();
+</script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB ZONE — cosa incontri lungo un percorso
+   • Milano Area B e Area C: perimetri ricavati dai varchi (open data Comune
+     di Milano, 2026), regole per alimentazione/Euro e orari, ticket Area C
+   • Vignette: Svizzera, Austria, Slovenia (prezzi 2026)
+   • Autovelox fissi segnalati su OpenStreetMap (Worker /api/autovelox)
+   window.hubZone = { milano, vignette, autovelox, dentro }
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  var POLY = {"B":[[45.48326,9.25881],[45.48699,9.24751],[45.49201,9.25303],[45.49605,9.23561],[45.51219,9.25629],[45.51876,9.24284],[45.52127,9.22701],[45.52152,9.22467],[45.52109,9.21437],[45.52553,9.20243],[45.5238,9.19227],[45.51377,9.18236],[45.52902,9.17867],[45.52246,9.17413],[45.5311,9.16225],[45.52129,9.15209],[45.52071,9.1464],[45.52096,9.13586],[45.5172,9.12024],[45.5113,9.12556],[45.51262,9.10491],[45.51234,9.09871],[45.5045,9.09526],[45.48427,9.14605],[45.49473,9.07598],[45.48962,9.07167],[45.47746,9.08572],[45.47264,9.0801],[45.45921,9.07527],[45.449,9.06723],[45.45256,9.10254],[45.45392,9.11618],[45.44727,9.12106],[45.44269,9.12431],[45.43819,9.12385],[45.42747,9.13933],[45.42631,9.16012],[45.41359,9.16496],[45.40266,9.17485],[45.41646,9.20572],[45.43263,9.20578],[45.43458,9.20971],[45.41466,9.2413],[45.43408,9.23544],[45.42961,9.24699],[45.43746,9.26614],[45.44425,9.26643],[45.46181,9.24469],[45.47142,9.26143]],"C":[[45.45229,9.19105],[45.4523,9.19892],[45.45256,9.20157],[45.4601,9.20607],[45.4624,9.20637],[45.47155,9.20504],[45.474,9.20451],[45.47946,9.1915],[45.48015,9.18653],[45.48052,9.18292],[45.47381,9.1701],[45.46942,9.16606],[45.46284,9.16529],[45.46032,9.16691],[45.45433,9.17628],[45.45321,9.17838],[45.45237,9.18865]]};
+  function dentro(poly, p) {   // punto nel poligono [[lat,lng],…] (ray casting)
+    var x = p.lng, y = p.lat, ins = false;
+    for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      var yi = poly[i][0], xi = poly[i][1], yj = poly[j][0], xj = poly[j][1];
+      if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) ins = !ins;
+    }
+    return ins;
+  }
+  function dist(a, b) {
+    var R = Math.PI / 180, dLat = (b.lat - a.lat) * R, dLng = (b.lng - a.lng) * R;
+    var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(a.lat * R) * Math.cos(b.lat * R);
+    return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(x)));
+  }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function hhmm(ms) { var d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  // Area B e C: lunedì-venerdì 7:30-19:30 (i festivi non sono contati qui)
+  function attiva(ms) { var d = new Date(ms), g = d.getDay(), m = d.getHours() * 60 + d.getMinutes(); return g >= 1 && g <= 5 && m >= 450 && m < 1170; }
+
+  // Divieti Area B (auto) in vigore alla data: benzina fino a Euro 3 (Euro 4 dal 1/10/2028),
+  // diesel fino a Euro 5 (Euro 6 A-B-C dal 1/10/2028, Euro 6 D dal 1/10/2030)
+  function divieto(v, ms) {
+    if (!v || v.type === 'moto') return null;
+    var a = v.alim || '', e = parseInt(v.euro, 10);
+    if (a === 'elettrica') return { ok: true };
+    if (!e) return { ok: null, txt: 'inserisci la classe Euro nel Garage per sapere se puoi entrare' };
+    var diesel = /diesel/.test(a), y2028 = ms >= new Date('2028-10-01').getTime(), y2030 = ms >= new Date('2030-10-01').getTime();
+    if (diesel) { if (e <= 5 || (e === 6 && y2030)) return { ok: false }; if (e === 6 && y2028) return { ok: null, txt: 'diesel Euro 6 A, B e C non entrano dal 1° ottobre 2028: verifica la sottoclasse sul libretto' }; }
+    else if (e <= 3 || (e === 4 && y2028)) return { ok: false };
+    var futuro = !diesel && e === 4 ? 'benzina Euro 4: vietata dal 1° ottobre 2028' : diesel && e === 6 ? 'diesel Euro 6: limiti in arrivo dal 2028' : '';
+    return { ok: true, txt: futuro };
+  }
+  function nomeV(v) { return v.customName || ((v.marca || '') + ' ' + (v.modello || '')).trim(); }
+
+  /* coords: [{lat,lng}] · tSec(i): secondi dalla partenza al punto i · dep: partenza (ms) */
+  function milano(coords, tSec, dep, v) {
+    var out = [], iB = -1, iC = -1;
+    for (var i = 0; i < coords.length; i += 2) {
+      var p = coords[i];
+      if (p.lat < 45.38 || p.lat > 45.55 || p.lng < 9.04 || p.lng > 9.29) continue;
+      if (iC < 0 && dentro(POLY.C, p)) iC = i;
+      if (iB < 0 && dentro(POLY.B, p)) iB = i;
+      if (iB >= 0 && iC >= 0) break;
+    }
+    if (iB < 0) return out;
+    var tB = dep + tSec(iB) * 1000, D = divieto(v, tB), nome = v ? nomeV(v) : 'l\'auto';
+    if (!attiva(tB)) out.push(['info', '🏙 Attraversi Area B alle ' + hhmm(tB) + ', fuori orario (attiva lun-ven 7:30-19:30): nessun limite.']);
+    else if (D && D.ok === false) out.push(['bad', '🚫 Area B attiva alle ' + hhmm(tB) + ': ' + esc(nome) + ' (' + (v.alim || '') + ' Euro ' + v.euro + ') non può entrare. Multa circa 83 €; per entrare servono deroghe o Move-In.']);
+    else if (D && D.ok === null) out.push(['warn', '🏙 Area B attiva alle ' + hhmm(tB) + ': ' + esc(D.txt) + '.']);
+    else out.push(['ok', '🏙 Area B alle ' + hhmm(tB) + ': ' + esc(nome) + ' può entrare' + (D && D.txt ? ' (' + esc(D.txt) + ')' : '') + '.']);
+    if (iC >= 0) {
+      var tC = dep + tSec(iC) * 1000;
+      if (!attiva(tC)) out.push(['info', '🎟 Area C alle ' + hhmm(tC) + ': fuori orario, ingresso libero.']);
+      else if (D && D.ok === false) out.push(['bad', '🚫 Area C alle ' + hhmm(tC) + ': stesso divieto dell\'Area B, il ticket non basta.']);
+      else {
+        var a = v && v.alim || '', ibr = /ibrida|plugin/.test(a), co2 = v && v.co2;
+        if (a === 'elettrica') out.push(['ok', '🎟 Area C alle ' + hhmm(tC) + ': gratis per le elettriche (targa da registrare).']);
+        else if (ibr && co2 && co2 <= 100) out.push(['ok', '🎟 Area C alle ' + hhmm(tC) + ': gratis per le ibride fino a 100 g/km di CO₂ (la tua: ' + co2 + ' g/km, targa da registrare).']);
+        else out.push(['warn', '🎟 Area C attiva alle ' + hhmm(tC) + ': ticket 7,50 € da attivare entro la mezzanotte del giorno dopo' + (ibr && !co2 ? ' (le ibride fino a 100 g/km di CO₂ entrano gratis: inserisci la CO₂ nel Garage)' : '') + '.']);
+      }
+    }
+    return out;
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  /* ── Vignette (auto fino a 3,5 t, prezzi 2026) ─────────────────── */
+  var VIG = {
+    CH: { paese: 'Svizzera', prezzi: 'solo annuale: 40 CHF (valida 14 mesi)', url: 'https://via.admin.ch/shop/dashboard' },
+    AT: { paese: 'Austria', prezzi: '1 giorno 9,60 € · 10 giorni 12,80 € · 2 mesi 32,00 € · anno 106,80 €', url: 'https://shop.asfinag.at/it/' },
+    SI: { paese: 'Slovenia', prezzi: '7 giorni 16,00 € · 1 mese 32,00 € · anno 117,50 €', url: 'https://evinjeta.dars.si/it' }
+  };
+  // paesi attraversati: solo i punti vicini ai confini nord ed est vengono controllati (Photon reverse)
+  function vignette(coords) {
+    var cum = [0]; for (var i = 1; i < coords.length; i++) cum.push(cum[i - 1] + dist(coords[i - 1], coords[i]));
+    var smp = [], last = -99;
+    for (var k = 0; k < coords.length; k++) {
+      var p = coords[k];
+      if (cum[k] - last < 20) continue;
+      if (p.lat > 45.75 || p.lng > 13.25) { smp.push(p); last = cum[k]; }
+    }
+    smp = smp.slice(0, 18);
+    if (!smp.length) return Promise.resolve([]);
+    var trovati = {};
+    return Promise.all(smp.map(function(p) {
+      return fetch('https://photon.komoot.io/reverse?lat=' + p.lat.toFixed(4) + '&lon=' + p.lng.toFixed(4) + '&limit=1').then(function(r) { return r.json(); })
+        .then(function(d) { var c = d.features && d.features[0] && d.features[0].properties && d.features[0].properties.countrycode; if (c) trovati[String(c).toUpperCase()] = 1; }).catch(function() {});
+    })).then(function() { return Object.keys(trovati).filter(function(c) { return VIG[c]; }).map(function(c) { return Object.assign({ cc: c }, VIG[c]); }); });
+  }
+
+  /* ── Autovelox fissi (OpenStreetMap) ──────────────────────────── */
+  function autovelox(coords) {
+    var s = 90, w = 180, n = -90, e = -180;
+    coords.forEach(function(p) { s = Math.min(s, p.lat); n = Math.max(n, p.lat); w = Math.min(w, p.lng); e = Math.max(e, p.lng); });
+    s -= .01; w -= .01; n += .01; e += .01;
+    if ((n - s) * (e - w) > 6) return Promise.reject(new Error('percorso troppo lungo per gli autovelox'));
+    var base = typeof WORKER !== 'undefined' ? WORKER : 'https://osservaprezzi.gabrycois.workers.dev';
+    return fetch(base + '/api/autovelox?s=' + s.toFixed(3) + '&w=' + w.toFixed(3) + '&n=' + n.toFixed(3) + '&e=' + e.toFixed(3)).then(function(r) {
+      return r.json().then(function(j) { if (!r.ok || j.error) throw new Error(j.error || 'HTTP ' + r.status); return j; });
+    }).then(function(j) {
+      var pts = []; for (var i = 0; i < coords.length; i += Math.max(1, Math.floor(coords.length / 3000))) pts.push(coords[i]);
+      return (j.autovelox || []).filter(function(a) {
+        for (var i = 0; i < pts.length; i++) if (Math.abs(pts[i].lat - a.lat) < .002 && dist(pts[i], a) < .06) return true;
+        return false;
+      });
+    });
+  }
+
+  window.hubZone = { milano: milano, vignette: vignette, autovelox: autovelox, dentro: dentro, POLY: POLY, divieto: divieto };
+})();
+</script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB DOCUMENTI — libretto, polizza e altri documenti di ogni veicolo,
+   più la patente (con scadenza, ricordata nella pagina Oggi).
+   Le immagini restano sul dispositivo (IndexedDB, archivio "maintdocs").
+   Dati: hub_documenti_v1 { [vid|'patente']: { [slot]: {docId, mime, ts} } },
+         hub_patente_v1 { scadenza, categorie }
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function $(id) { return document.getElementById(id); }
+  function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var DK = 'hub_documenti_v1', PK = 'hub_patente_v1';
+  var SLOT_V = [['libretto-f', 'Libretto · fronte'], ['libretto-r', 'Libretto · retro'], ['polizza', 'Polizza RCA'], ['altro', 'Altro (garanzia, tagliandi…)']];
+  var SLOT_P = [['patente-f', 'Patente · fronte'], ['patente-r', 'Patente · retro']];
+  var thumbs = {};
+
+  function inject() {
+    if ($('doc-overlay')) return;
+    var slot = $('garage-launch-slot');
+    if (slot && !$('doc-launch-btn')) {
+      var b = document.createElement('button');
+      b.id = 'doc-launch-btn'; b.className = 'mt-launch'; b.type = 'button';
+      b.innerHTML = '<span class="mt-launch-icon">📄</span><span class="mt-launch-text">Documenti</span><span class="mt-launch-stat" id="doc-launch-stat">—</span>';
+      b.onclick = function() { window.openDocumenti(); };
+      slot.appendChild(b);
+    }
+    var ov = document.createElement('div');
+    ov.id = 'doc-overlay'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-labelledby', 'doc-title');
+    ov.innerHTML = '<div class="mt-hdr"><h2 id="doc-title">DOCUMENTI<small id="doc-veh">—</small></h2><button class="gar-close" onclick="closeDocumenti()">✕ Chiudi</button></div>' +
+      '<div class="mt-body" id="doc-body"></div><input type="file" id="doc-file" accept="image/*,application/pdf" hidden>' +
+      '<div class="doc-view" id="doc-view" onclick="if(event.target===this)this.classList.remove(\'visible\')"><button class="gar-close" onclick="document.getElementById(\'doc-view\').classList.remove(\'visible\')">✕ Chiudi</button><div id="doc-view-in"></div></div>';
+    document.body.appendChild(ov);
+    $('doc-file').addEventListener('change', carica);
+  }
+  function doc(owner, slot) { var d = jget(DK, {}); return d[owner] && d[owner][slot] || null; }
+  function cella(owner, s) {
+    var d = doc(owner, s[0]), k = owner + '|' + s[0];
+    return '<div class="doc-cell" data-k="' + esc(k) + '">' +
+      '<button type="button" class="doc-thumb" onclick="docApri(\'' + esc(owner) + '\',\'' + s[0] + '\')" aria-label="' + esc(s[1]) + '">' +
+        (d ? (thumbs[k] ? '<img src="' + thumbs[k] + '" alt="">' : d.mime === 'application/pdf' ? '<span>PDF</span>' : '<span>…</span>') : '<span>＋</span>') + '</button>' +
+      '<div class="doc-lbl">' + esc(s[1]) + (d ? '<button type="button" class="doc-x" onclick="docTogli(\'' + esc(owner) + '\',\'' + s[0] + '\')" aria-label="Elimina">🗑</button>' : '') + '</div></div>';
+  }
+  function render() {
+    var v = window.hubGarage && window.hubGarage.active(), P = jget(PK, {}), body = $('doc-body'); if (!body) return;
+    var g = P.scadenza ? Math.round((new Date(P.scadenza + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000) : null;
+    body.innerHTML = (v ? '<div class="doc-sec">🚗 ' + esc(v.customName || (v.marca + ' ' + v.modello)) + (v.targa ? ' · ' + esc(v.targa) : '') + '</div><div class="doc-grid">' + SLOT_V.map(function(s) { return cella(v.id, s); }).join('') + '</div>' : '') +
+      '<div class="doc-sec">🪪 Patente</div><div class="doc-grid">' + SLOT_P.map(function(s) { return cella('patente', s); }).join('') + '</div>' +
+      '<div class="gar-row2"><div class="gar-field"><label for="doc-pat-scad">Scadenza patente</label><input type="date" id="doc-pat-scad" value="' + esc(P.scadenza || '') + '" onchange="docPatente()"></div>' +
+      '<div class="gar-field"><label for="doc-pat-cat">Categorie</label><input id="doc-pat-cat" maxlength="20" placeholder="B" value="' + esc(P.categorie || '') + '" onchange="docPatente()"></div></div>' +
+      (g != null ? '<p class="mt-int-nota' + (g <= 90 ? ' doc-warn' : '') + '">' + (g < 0 ? 'La patente è scaduta da ' + (-g) + ' giorni.' : g <= 90 ? 'La patente scade tra ' + g + ' giorni: prenota la visita medica per il rinnovo.' : 'Scade il ' + P.scadenza.split('-').reverse().join('/') + '.') + '</p>' : '') +
+      '<p class="mt-int-nota">Foto e PDF restano solo su questo telefono. In Italia alla guida servono gli originali o le versioni digitali ufficiali: queste copie servono come promemoria, per esempio per la polizza in caso di incidente.</p>';
+    // miniature in background
+    body.querySelectorAll('.doc-cell').forEach(function(c) {
+      var k = c.dataset.k, p = k.split('|'), d = doc(p[0], p[1]);
+      if (d && d.mime !== 'application/pdf' && !thumbs[k] && window.hubDocs) window.hubDocs.get(d.docId).then(function(x) { if (x) { thumbs[k] = x.dataUrl; var im = c.querySelector('.doc-thumb'); if (im) im.innerHTML = '<img src="' + x.dataUrl + '" alt="">'; } });
+    });
+    badge();
+  }
+  var _target = null;
+  window.docApri = function(owner, slot) {
+    var d = doc(owner, slot);
+    if (!d) { _target = [owner, slot]; $('doc-file').click(); return; }
+    window.hubDocs.get(d.docId).then(function(x) {
+      if (!x) { alert('Documento non trovato.'); return; }
+      $('doc-view-in').innerHTML = x.mime === 'application/pdf' ? '<iframe src="' + x.dataUrl + '" title="Documento"></iframe>' : '<img src="' + x.dataUrl + '" alt="Documento">';
+      $('doc-view').classList.add('visible');
+    });
+  };
+  function carica(ev) {
+    var f = ev.target.files && ev.target.files[0], t = _target; ev.target.value = '';
+    if (!f || !t) return;
+    if (f.size > 8 * 1024 * 1024) { alert('File troppo grande (massimo 8 MB).'); return; }
+    var salva = function(dataUrl, mime) {
+      var id = 'doc-' + t[0] + '-' + t[1] + '-' + Date.now().toString(36), all = jget(DK, {}), old = all[t[0]] && all[t[0]][t[1]];
+      window.hubDocs.put(id, dataUrl, mime).then(function() {
+        if (old) window.hubDocs.del(old.docId);
+        all[t[0]] = all[t[0]] || {}; all[t[0]][t[1]] = { docId: id, mime: mime, ts: Date.now() }; jset(DK, all);
+        delete thumbs[t[0] + '|' + t[1]]; render();
+      }).catch(function(e) { alert('Salvataggio non riuscito: ' + e.message); });
+    };
+    if (f.type.indexOf('image/') === 0 && window._hubCompressImage) window._hubCompressImage(f, 1800).then(function(d) { salva(d, 'image/jpeg'); }, function() { leggi(f, salva); });
+    else leggi(f, salva);
+  }
+  function leggi(f, cb) { var r = new FileReader(); r.onload = function(e) { cb(e.target.result, f.type || 'application/octet-stream'); }; r.readAsDataURL(f); }
+  window.docTogli = function(owner, slot) {
+    if (!confirm('Eliminare questo documento dal telefono?')) return;
+    var all = jget(DK, {}), d = all[owner] && all[owner][slot];
+    if (d) { window.hubDocs.del(d.docId); delete all[owner][slot]; jset(DK, all); delete thumbs[owner + '|' + slot]; }
+    render();
+  };
+  window.docPatente = function() { jset(PK, { scadenza: $('doc-pat-scad').value, categorie: $('doc-pat-cat').value.trim() }); render(); };
+  function badge() {
+    var b = $('doc-launch-stat'); if (!b) return;
+    var v = window.hubGarage && window.hubGarage.active(), d = jget(DK, {}), n = 0;
+    [v ? v.id : '', 'patente'].forEach(function(o) { if (d[o]) n += Object.keys(d[o]).length; });
+    b.textContent = n ? n + ' salvat' + (n === 1 ? 'o' : 'i') : 'Nessuno';
+  }
+  // per la pagina Oggi: patente in scadenza entro 90 giorni
+  window.hubPatenteScad = function() {
+    var P = jget(PK, {}); if (!P.scadenza) return null;
+    var g = Math.round((new Date(P.scadenza + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000);
+    return g <= 90 ? { giorni: g, data: P.scadenza } : null;
+  };
+  window.openDocumenti = function() {
+    inject();
+    var v = window.hubGarage && window.hubGarage.active();
+    $('doc-veh').textContent = v ? (v.customName || (v.marca + ' ' + v.modello)) : 'Patente';
+    $('doc-overlay').classList.add('visible'); render();
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeDocumenti = function() { var o = $('doc-overlay'); if (o) o.classList.remove('visible'); if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility(); };
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(function() { inject(); badge(); }, 300); });
 })();
 </script>
 
@@ -24639,6 +24941,7 @@ async function runCmp() {
       ' · arrivo ' + hhmm(D.dep + rt.durS * 1000) + ' · <a href="' + gmaps + '" target="_blank" rel="noopener">Apri in Google Maps ↗</a></div></div>' +
       '<div class="wp-map" id="wp-map" aria-label="Mappa del percorso con il meteo"></div>';
     html += avvisi(A, R);
+    html += '<div id="wp-zone" class="wp-alerts"></div>';
     html += decisione(A.rows, rt);
     html += quando();
     html += '<div id="wp-pieno">' + pienoBox() + '</div>';
@@ -24649,6 +24952,30 @@ async function runCmp() {
     res.innerHTML = html;
     var bst = res.querySelector('.wp-hr.best'); if (bst) bst.parentNode.scrollLeft = bst.offsetLeft - bst.parentNode.offsetLeft - 60;
     mappa(A.rows);
+    zone();
+  }
+  // Area B/C, vignette e autovelox sul percorso (in background: il meteo è già visibile)
+  function zone() {
+    if (!window.hubZone || !S.data) return;
+    var D = S.data, rt = D.rt, v = window.hubGarage && window.hubGarage.active && window.hubGarage.active(), box = $('wp-zone');
+    var out = window.hubZone.milano(rt.coords, function(i) { return rt.cumT[i] || 0; }, D.dep, v);
+    var pinta = function() { var b = $('wp-zone'); if (b && S.data === D) b.innerHTML = out.map(function(a) { return '<div class="wp-al wp-al-' + (a[0] === 'ok' ? 'info' : a[0]) + '">' + a[1] + '</div>'; }).join(''); };
+    pinta();
+    window.hubZone.vignette(rt.coords).then(function(L) {
+      L.forEach(function(x) { out.push(['warn', '🛣 ' + x.paese + ': sulle autostrade serve la vignetta (' + x.prezzi + '). <a href="' + x.url + '" target="_blank" rel="noopener">Acquisto ufficiale ↗</a>' + (rt.nomw ? ' Non serve se resti fuori dalle autostrade.' : '')]); });
+      pinta();
+    });
+    if (D.velox) { out.push(D.velox.msg); pinta(); veloxMappa(D.velox.L); return; }
+    window.hubZone.autovelox(rt.coords).then(function(lista) {
+      var lim = {}; lista.forEach(function(a) { if (a.max) lim[a.max] = 1; });
+      var msg = ['info', lista.length ? '📷 ' + lista.length + ' autovelox fissi segnalati sul percorso' + (Object.keys(lim).length ? ' (limiti ' + Object.keys(lim).sort(function(a, b) { return a - b; }).join(', ') + ' km/h)' : '') + ': li trovi sulla mappa. Fonte OpenStreetMap, può non essere completa.' : '📷 Nessun autovelox fisso segnalato su OpenStreetMap lungo il percorso.'];
+      D.velox = { L: lista, msg: msg }; out.push(msg); pinta();
+      veloxMappa(lista);
+    }).catch(function(e) { out.push(['info', '📷 Autovelox non disponibili ora (' + esc(e.message) + ').']); pinta(); });
+  }
+  function veloxMappa(list) {
+    if (!S.map || typeof window.L === 'undefined') return;
+    list.forEach(function(a) { window.L.marker([a.lat, a.lng], { icon: window.L.divIcon({ className: 'wp-velox-pin', html: '📷' + (a.max ? '<b>' + esc(a.max) + '</b>' : ''), iconSize: [40, 20] }) }).addTo(S.map); });
   }
   function avvisi(A, R) {
     var D = S.data, moto = S.veh === 'moto', out = [];
