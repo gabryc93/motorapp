@@ -416,6 +416,15 @@
     return ev.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); })[0];
   }
 
+  // Interventi in scadenza o scaduti di un veicolo (per la pagina Oggi)
+  window.hubMaintScad = function(v) {
+    if (!v) return [];
+    return presetsFor(v).map(function(p) {
+      var st = statusFor(p, lastEventFor(v.id, p.type), v.kmTot || 0);
+      return { type: p.type, icon: p.icon, name: p.name, status: st.status, kmRem: st.kmRem, daysRem: st.daysRem };
+    }).filter(function(x) { return x.status === 'warn' || x.status === 'crit'; });
+  };
+
   function renderMaint() {
     var v = window.hubGarage && window.hubGarage.active();
     if (!v) return;

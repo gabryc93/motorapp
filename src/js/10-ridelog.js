@@ -228,14 +228,14 @@
           (r.altMax != null ? cellD('Quota max', r.altMax.toLocaleString('it-IT') + ' m') : '') +
           (r.vehicleType === 'moto' && (cv.leanSx || cv.leanDx) ? cellD('Piega max', '◀ ' + (cv.leanSx || 0) + '° · ' + (cv.leanDx || 0) + '° ▶') : '') +
           (r.vehicleType !== 'moto' && cv.gLat ? cellD('G laterale max', cv.gLat.toFixed(2) + ' g') : '') +
-          (costo ? cellD('Carburante', '≈ ' + costo.eur.toFixed(2).replace('.', ',') + ' € · ' + costo.litri.toFixed(1).replace('.', ',') + ' l') : '') +
+          (costo ? cellD(costo.litri != null ? 'Carburante' : 'Energia', '≈ ' + costo.eur.toFixed(2).replace('.', ',') + ' €' + (costo.litri != null ? ' · ' + costo.litri.toFixed(1).replace('.', ',') + ' l' : '')) : '') +
           (r.from || r.to ? cellD('Percorso', escSafe((r.from || '?') + ' → ' + (r.to || '?')), true) : '') +
           (r.passi && r.passi.length ? cellD('Passi', escSafe(r.passi.join(' · ')), true) : '') +
         '</div>' +
         (r.laps && r.laps.length ? '<div class="rdl-laps"><div class="rdl-detail-cell-lbl">Giri · migliore ' + RA.fmtLap(bst) + '</div>' +
           r.laps.map(function(l, i) { return '<span class="' + (l === bst ? 'best' : '') + '">' + (i + 1) + '. ' + RA.fmtLap(l) + (l !== bst ? ' <i>+' + ((l - bst) / 1000).toFixed(2) + '</i>' : '') + '</span>'; }).join('') + '</div>' : '') +
         ((cv.leanSx || cv.leanDx || cv.gLat) ? '<p class="rdl-note">' + (r.vehicleType === 'moto' ? 'Piega' : 'G laterale') + ' calcolata da velocità e raggio delle curve sulla traccia GPS: è un valore teorico, utile per confrontare le uscite tra loro.</p>' : '') +
-        (costo ? '<p class="rdl-note">Carburante stimato con ' + costo.cons.toFixed(1).replace('.', ',') + ' l/100 km a ' + costo.prezzo.toFixed(3).replace('.', ',') + ' €/l (' + escSafe(costo.src) + ').</p>' : '') +
+        (costo ? '<p class="rdl-note">' + (costo.cons != null ? 'Carburante stimato con ' + costo.cons.toFixed(1).replace('.', ',') + ' l/100 km a ' + costo.prezzo.toFixed(3).replace('.', ',') + ' €/l (' + escSafe(costo.src) + ').' : 'Stima con ' + (costo.eurKm * 100).toFixed(2).replace('.', ',') + ' € ogni 100 km: ' + escSafe(costo.src) + '.') + '</p>' : '') +
       '</div>' +
       '<div class="rdl-detail-actions">' +
         '<button class="rdl-act-close" onclick="closeRideLogDetail()">Chiudi</button>' +

@@ -1,3 +1,11 @@
+/* App del Play Store (Trusted Web Activity): si apre con ?src=play. Vale per la sessione,
+   così il sito nel browser (che condivide la memoria con l'app) resta completo. */
+(function() {
+  try {
+    if (new URLSearchParams(location.search).get('src') === 'play' || /^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('hub_store', 'play');
+    window.HUB_STORE = sessionStorage.getItem('hub_store') === 'play';
+  } catch (e) { window.HUB_STORE = false; }
+})();
 
 
 
@@ -155,15 +163,15 @@
   var fuelInitialized = false;
   var _cmpFuel = null;
   // Sezioni reali con DOM persistente
-  var SECTIONS = ['fuel', 'diag', 'garage', 'usato'];
+  var SECTIONS = ['oggi', 'fuel', 'diag', 'garage', 'usato'];
   // Tab "azione": aprono un overlay e tornano alla sezione precedente
   var ACTIONS  = ['passi', 'ride', 'meteo', 'ms'];
-  var _lastSection = 'fuel';
+  var _lastSection = 'oggi';
 
   function hubGo(name) {
     var isSection = SECTIONS.indexOf(name) >= 0;
     var isAction  = ACTIONS.indexOf(name) >= 0;
-    if (!isSection && !isAction) name = 'fuel';
+    if (!isSection && !isAction) name = 'oggi';
 
     hubMore(false);
     // La barra evidenzia solo le sezioni: gli strumenti (passi, ride, meteo, motorsport) sono overlay
@@ -179,7 +187,7 @@
       // Switch the visible section
       _lastSection = name;
       document.body.dataset.hub = name;
-      ['hub-diag', 'hub-fuel', 'hub-garage', 'hub-usato'].forEach(function(id) {
+      ['hub-oggi', 'hub-diag', 'hub-fuel', 'hub-garage', 'hub-usato'].forEach(function(id) {
         var sec = document.getElementById(id);
         if (sec) sec.classList.toggle('active', id === ('hub-' + name));
       });
@@ -193,6 +201,7 @@
       }
       if (name === 'fuel') { setTimeout(_hubAutoSelectFuel, 80); }
       if (name === 'usato' && typeof window.usatoInit === 'function') window.usatoInit();
+      if (name === 'oggi' && typeof window.oggiInit === 'function') window.oggiInit();
       if (name === 'diag' && typeof window.diagGarageChips === 'function') window.diagGarageChips();
       window.scrollTo(0, 0);
     } else if (isAction) {
@@ -324,7 +333,7 @@
     var initial = (location.hash || '').replace('#', '');
     if (SECTIONS.indexOf(initial) >= 0) { hubGo(initial); return; }
     // Hash di uno strumento (es. #passi): prima si inizializza la home, poi si apre l'overlay
-    hubGo('fuel');
+    hubGo('oggi');
     if (ACTIONS.indexOf(initial) >= 0) setTimeout(function() { hubGo(initial); }, 400);
   });
   window.addEventListener('hashchange', function() {

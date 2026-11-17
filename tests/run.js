@@ -77,6 +77,7 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
   await test('Avvio senza errori JavaScript', async () => { expect(!errors.length, errors.join(' | ')); });
 
   await test('Carburanti: ricerca comune mantiene il carburante scelto', async p => {
+    await p.evaluate(() => hubGo('fuel'));   // la prima schermata ora è Oggi
     await p.click('.fb[data-f="Diesel"]');
     const req = p.waitForRequest(r => r.url().includes('/api/cerca'));
     await p.fill('#qinput', 'Milano'); await p.click('#sbtn');
@@ -330,6 +331,178 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     expect(r2.when !== r.when && r2.wet === 0, 'partenza migliore non applicata o ancora pioggia: ' + JSON.stringify(r2));
     await p.evaluate(() => closeWeather());
     await p.unroute('**/photon.komoot.io/**'); await p.unroute('**/router.project-osrm.org/**'); await p.unroute('**/api.open-meteo.com/**');
+  }, page);
+
+  await test('Musica: collegamento Spotify (PKCE), brano nella Ride e nell\'HUD', async p => {
+    const H = { 'access-control-allow-origin': '*' };
+    let tokenBody = '', apiCalls = 0;
+    await p.route('**/accounts.spotify.com/api/token', r => { tokenBody = r.request().postData(); r.fulfill({ json: { access_token: 'AT' + (tokenBody.includes('refresh_token') ? '2' : '1'), refresh_token: 'RT', expires_in: 3600 }, headers: H }); });
+    await p.route('**/api.spotify.com/**', r => { apiCalls++;
+      r.fulfill({ json: { is_playing: true, progress_ms: 60000, item: { name: 'Highway Star', duration_ms: 370000, artists: [{ name: 'Deep Purple' }], album: { images: [] } } }, headers: H }); });
+    const ch = await p.evaluate(() => hubMusica._challenge('dBjftJeZ4CVP-mJ92Kx1i8CB8T4fFHf9vYMfH8sxTrc'));
+    const atteso = require('crypto').createHash('sha256').update('dBjftJeZ4CVP-mJ92Kx1i8CB8T4fFHf9vYMfH8sxTrc').digest('base64url');
+    expect(ch === atteso, 'PKCE S256 errato: ' + ch);
+    // ritorno da Spotify con il codice: scambio token e riapertura della Ride
+    const url = p.url().split(/[?#]/)[0];
+    await p.evaluate(() => { localStorage.removeItem('hub_spotify_v1'); localStorage.setItem('hub_spotify_pkce_v1', JSON.stringify({ v: 'VER', st: 'abc123', clientId: '0123456789abcdef0123456789abcdef', back: 'ride' })); });
+    await p.goto(url + '?code=CODE&state=abc123');
+    await p.waitForSelector('#rd-overlay.visible', { timeout: 8000 });
+    await p.waitForFunction(() => !document.getElementById('rd-np').hidden, null, { timeout: 8000 });
+    const r = await p.evaluate(() => ({ t: JSON.parse(localStorage.getItem('hub_spotify_v1')), np: document.getElementById('rd-np').textContent, url: location.search }));
+    expect(r.t && r.t.access === 'AT1' && /code_verifier=VER/.test(tokenBody) && /code=CODE/.test(tokenBody), 'scambio codice non riuscito: ' + tokenBody);
+    expect(/Highway Star/.test(r.np) && /Deep Purple/.test(r.np), 'brano non mostrato: ' + r.np);
+    expect(r.url === '', 'parametri non tolti dall\'indirizzo');
+    // token scaduto: si rinnova da solo
+    await p.evaluate(() => { const t = JSON.parse(localStorage.getItem('hub_spotify_v1')); t.exp = 0; localStorage.setItem('hub_spotify_v1', JSON.stringify(t)); });
+    await p.evaluate(() => hubMusica.poll(true));
+    expect(/grant_type=refresh_token/.test(tokenBody) && JSON.parse(await p.evaluate(() => localStorage.getItem('hub_spotify_v1'))).access === 'AT2', 'rinnovo token non riuscito');
+    await p.evaluate(() => rideHud());
+    const hud = await p.evaluate(() => { const e = document.getElementById('rd-np'); return getComputedStyle(e).display !== 'none' && getComputedStyle(e.querySelector('.rd-np-ctl')).display === 'none'; });
+    expect(hud, 'brano non visibile nell\'HUD o comandi visibili');
+    await p.evaluate(() => { rideHud(); closeRide(); localStorage.removeItem('hub_spotify_v1'); });
+    await p.unroute('**/accounts.spotify.com/api/token'); await p.unroute('**/api.spotify.com/**');
+  }, page);
+
+  await test('Radio: elenco stazioni, riproduzione e titolo in onda nell\'HUD', async p => {
+    const H = { 'access-control-allow-origin': '*' };
+    await p.route('**/*.api.radio-browser.info/json/stations/search**', r => r.fulfill({ json: [
+      { stationuuid: 'u1', name: 'Radio Uno Test', url_resolved: 'https://stream.example/uno.mp3', favicon: '', tags: 'pop,italia', bitrate: 128 },
+      { stationuuid: 'u2', name: 'Radio Http', url_resolved: 'http://stream.example/no.mp3', favicon: '', tags: '' },
+      { stationuuid: 'u3', name: 'Radio Uno Test', url_resolved: 'https://stream.example/doppia.mp3', favicon: '', tags: '' }], headers: H }));
+    await p.route('**/*.api.radio-browser.info/json/url/**', r => r.fulfill({ json: { ok: true }, headers: H }));
+    await p.route('**/stream.example/**', r => r.abort());
+    await p.route('**/api/icy?**', r => r.fulfill({ json: { title: 'Vasco Rossi - Albachiara' }, headers: H }));
+    await p.evaluate(() => { localStorage.removeItem('hub_radio_lista_v1'); localStorage.removeItem('hub_spotify_v1'); openRide(); hubMusica.setup('radio'); });
+    await p.waitForSelector('.rd-ra-st');
+    const n = await p.$$eval('.rd-ra-st', e => e.length);
+    expect(n === 1, 'stazioni http o doppie non filtrate: ' + n);
+    await p.click('.rd-ra-name');
+    await p.waitForFunction(() => /Albachiara/.test(document.getElementById('rd-np').textContent), null, { timeout: 5000 });
+    const r = await p.evaluate(() => { const e = document.getElementById('rd-np'); rideHud(); const vis = getComputedStyle(e).display !== 'none'; rideHud();
+      return { txt: e.textContent, vis, fav: !!localStorage.getItem('hub_radio_pref_v1') }; });
+    expect(/Albachiara/.test(r.txt) && /Vasco Rossi/.test(r.txt) && /Radio Uno Test/.test(r.txt) && /LIVE/.test(r.txt), 'titolo radio: ' + r.txt);
+    expect(r.vis, 'radio non visibile nell\'HUD');
+    await p.click('.rd-ra-fav');
+    const fav = await p.evaluate(() => (JSON.parse(localStorage.getItem('hub_radio_pref_v1')).fav || []).length);
+    expect(fav === 1, 'preferita non salvata');
+    await p.evaluate(() => { ridePerfClose(); closeRide(); });
+    const off = await p.evaluate(() => hubRadio.np());
+    expect(off === null, 'la radio resta accesa fuori dalla Ride');
+    for (const u of ['**/*.api.radio-browser.info/json/stations/search**', '**/*.api.radio-browser.info/json/url/**', '**/stream.example/**', '**/api/icy?**']) await p.unroute(u);
+  }, page);
+
+  await test('Play Store: Usato solo link ai portali', async p => {
+    let usato = 0;
+    await p.route('**/api/usato**', r => { usato++; r.abort(); });
+    await p.evaluate(() => { window.HUB_STORE = true; hubGo('usato'); });
+    await p.click('[data-act="view"][data-v="cerca"]');
+    await p.selectOption('#usato-root [data-q="marca"]', 'Fiat');
+    await p.selectOption('#usato-root [data-q="modello"]', 'Panda');
+    await p.click('[data-act="q-go"]'); await p.waitForSelector('.us-linkbtn');
+    const links = await p.$$eval('.us-linkbtn', e => e.map(a => a.href));
+    expect(usato === 0, 'nell\'app Play i portali non vanno letti');
+    expect(links.some(h => /autoscout24\.it\/lst\/fiat\/panda/.test(h)) && links.some(h => /automobile\.it\/fiat-panda/.test(h)) && links.some(h => /subito\.it/.test(h)), 'link ai portali: ' + links.join(' '));
+    await p.evaluate(() => { window.HUB_STORE = false; });
+    await p.unroute('**/api/usato**');
+  }, page);
+
+  await test('Plug-in: ricarica da form, quota elettrica e costo per 100 km', async p => {
+    await p.evaluate(() => {
+      const g = hubGarage.list().filter(v => v.id !== 'plug1');
+      g.push({ id: 'plug1', type: 'auto', marca: 'Peugeot', modello: '308', customName: '308 Plug-in', alim: 'plugin', kmTot: 10000 });
+      hubGarage.save(g); hubGarage.setActive('plug1');
+      localStorage.removeItem('hub_ricarica_pref_v1');
+      localStorage.setItem('hub_refuels_v1', JSON.stringify(JSON.parse(localStorage.getItem('hub_refuels_v1') || '[]').filter(r => r.vehicleId !== 'plug1').concat([
+        { id: 'pf1', vehicleId: 'plug1', date: '2026-10-01', km: 10000, litri: 30, prezzoPerLitro: 1.8, costoTotale: 54, carburante: 'Benzina', isFull: true },
+        { id: 'pr2', vehicleId: 'plug1', tipo: 'ricarica', date: '2026-10-10', km: 10200, kwh: 10, luogo: 'colonnina', prezzoKwh: 0.7, costoTotale: 7, carburante: 'Ricarica' },
+        { id: 'pf3', vehicleId: 'plug1', date: '2026-11-01', km: 11000, litri: 20, prezzoPerLitro: 1.8, costoTotale: 36, carburante: 'Benzina', isFull: true }])));
+      hubGo('garage'); openFuelLog(); openFuelLogEdit(null);
+    });
+    const vis = await p.evaluate(() => !document.getElementById('fl-tipobar').hidden);
+    expect(vis, 'scelta carburante/ricarica non mostrata per il plug-in');
+    await p.click('#fl-tipobar [data-tipo="ricarica"]');
+    await p.fill('#fl-r-km', '10100'); await p.fill('#fl-r-kwh', '10');
+    const tot = await p.inputValue('#fl-r-totale');
+    expect(tot === '2.00', 'totale a casa con 0,20 €/kWh: ' + tot);
+    await p.click('#fl-edit .gar-save');
+    const r = await p.evaluate(() => {
+      const v = hubGarage.active(), E = hubEnergia(v), rec = JSON.parse(localStorage.getItem('hub_refuels_v1')).filter(x => x.vehicleId === 'plug1' && x.km === 10100)[0];
+      return { rec, quota: Math.round(E.quotaEv * 100), eur100: +(E.eurKm * 100).toFixed(2), txt: document.getElementById('fl-body').textContent, cons: window.hubTripStats ? null : null };
+    });
+    expect(r.rec && r.rec.tipo === 'ricarica' && r.rec.luogo === 'casa' && r.rec.costoTotale === 2, 'ricarica salvata male: ' + JSON.stringify(r.rec));
+    expect(r.quota === 12 && r.eur100 === 4.5, 'quota elettrica o costo: ' + r.quota + '% ' + r.eur100);
+    expect(/In elettrico/.test(r.txt) && /Costo per 100 km/.test(r.txt) && /⛽ Benzina/.test(r.txt), 'pannello plug-in incompleto');
+    await p.evaluate(() => { closeFuelLog(); });
+  }, page);
+
+  await test('Oggi: scadenze, meteo per guidare ed energia del plug-in', async p => {
+    const day = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    await p.route('**/api.open-meteo.com/v1/forecast**', r => {
+      const days = [0, 1, 2, 3].map(day), hours = [];
+      days.forEach(d => { for (let h = 0; h < 24; h++) hours.push(d + 'T' + String(h).padStart(2, '0') + ':00'); });
+      r.fulfill({ json: { daily: { time: days, weather_code: [1, 73, 3, 61], temperature_2m_max: [12, 3, 8, 9], temperature_2m_min: [4, -2, 1, 5], precipitation_sum: [0, 6, 0, 8],
+        precipitation_probability_max: [5, 90, 10, 80], wind_gusts_10m_max: [20, 30, 20, 25], snowfall_sum: [0, 4, 0, 0], sunrise: days, sunset: days },
+        hourly: { time: hours, visibility: hours.map(() => 20000), temperature_2m: hours.map((h, i) => i >= 24 && i < 48 ? -1 : 6), precipitation: hours.map((h, i) => i >= 24 && i < 48 ? 0.3 : 0) } }, headers: { 'access-control-allow-origin': '*' } });
+    });
+    await p.evaluate((d) => {
+      hubGarage.update('plug1', { scadBollo: d.ieri, scadRev: d.tra3 });
+      localStorage.setItem('hub_oggi_pos_v1', JSON.stringify({ lat: 45.4, lng: 8.92, nome: 'Abbiategrasso' }));
+      localStorage.removeItem('hub_oggi_meteo_v1');
+      hubGo('oggi');
+    }, { ieri: day(-1), tra3: day(3) });
+    await p.waitForFunction(() => /Abbiategrasso/.test(document.getElementById('oggi-root').textContent), null, { timeout: 5000 });
+    const r = await p.evaluate(() => ({ txt: document.getElementById('oggi-root').textContent, crit: document.querySelectorAll('.og-todo.og-crit').length, active: document.getElementById('hub-oggi').classList.contains('active') }));
+    expect(r.active, 'Oggi non è la sezione attiva');
+    expect(/Bollo/.test(r.txt) && /scaduto da 1 giorno/.test(r.txt) && /Revisione/.test(r.txt) && /tra 3 giorni/.test(r.txt) && r.crit >= 1, 'scadenze: ' + r.txt.slice(0, 300));
+    expect(/neve/.test(r.txt) && /ghiaccio/.test(r.txt), 'avvisi meteo di domani mancanti');
+    expect(/In elettrico/.test(r.txt) && /12%/.test(r.txt), 'energia del plug-in mancante');
+    expect(/Giro della domenica/.test(r.txt), 'scorciatoia Giro mancante');
+    await p.unroute('**/api.open-meteo.com/v1/forecast**');
+  }, page);
+
+  await test('Giro della domenica: 3 anelli, direzione con colline, passi chiusi in inverno', async p => {
+    const H = { 'access-control-allow-origin': '*' };
+    const hav = (a, b) => { const R = Math.PI / 180, x = Math.sin((b[1] - a[1]) * R / 2) ** 2 + Math.cos(a[1] * R) * Math.cos(b[1] * R) * Math.sin((b[0] - a[0]) * R / 2) ** 2; return 2 * 6371000 * Math.asin(Math.sqrt(x)); };
+    let osrmCalls = 0;
+    await p.route('**/api.open-meteo.com/v1/elevation**', r => {
+      const u = new URL(r.request().url()), la = u.searchParams.get('latitude').split(',').map(Number);
+      r.fulfill({ json: { elevation: la.map(l => Math.max(0, Math.round((l - 45.3) * 3000))) }, headers: H });
+    });
+    await p.route('**/router.project-osrm.org/**', r => {
+      osrmCalls++;
+      const pts = new URL(r.request().url()).pathname.split('/').pop().split(';').map(s => s.split(',').map(Number)), coords = [];
+      for (let i = 0; i < pts.length - 1; i++) for (let k = 0; k < 60; k++) {
+        const f = k / 60, a = pts[i], b = pts[i + 1];
+        coords.push([a[0] + (b[0] - a[0]) * f + Math.sin(k / 3) * 0.002, a[1] + (b[1] - a[1]) * f]);
+      }
+      coords.push(pts[pts.length - 1]);
+      let m = 0; for (let i = 1; i < coords.length; i++) m += hav(coords[i - 1], coords[i]);
+      r.fulfill({ json: { routes: [{ distance: m, duration: m / 16, geometry: { coordinates: coords } }] }, headers: H });
+    });
+    await p.route('**/api.open-meteo.com/v1/forecast**', r => {
+      const n = new URL(r.request().url()).searchParams.get('latitude').split(',').length, t0 = Math.floor(Date.now() / 3600000) * 3600 - 3600, HH = 384, time = [];
+      for (let k = 0; k < HH; k++) time.push(t0 + k * 3600);
+      r.fulfill({ json: Array(n).fill({ hourly: { time, temperature_2m: Array(HH).fill(10), precipitation: Array(HH).fill(0), weather_code: Array(HH).fill(1), visibility: Array(HH).fill(20000) } }), headers: H });
+    });
+    await p.route('**/photon.komoot.io/reverse**', r => r.fulfill({ json: { features: [{ properties: { city: 'Lecco' } }] }, headers: H }));
+    await p.evaluate(() => { openGiro(); giroSet('ore', 3); giroSet('stile', 'curve'); giroSet('quando', 'domani'); });
+    await p.click('#gi-overlay .wp-go');
+    await p.waitForSelector('.gi-card', { timeout: 10000 });
+    const r = await p.evaluate(() => ({ n: document.querySelectorAll('.gi-card').length, txt: document.getElementById('gi-result').textContent,
+      links: [...document.querySelectorAll('.gi-card a')].map(a => a.href), brg: _giInternals.state().res.G.map(g => g.c.brg) }));
+    expect(r.n === 3, 'giri proposti: ' + r.n);
+    expect(r.brg.some(b => b === 0 || b === 45 || b === 315), 'la direzione con le colline (nord) non è tra le proposte: ' + r.brg);
+    expect(!r.brg.some(b => b === 180), 'proposta verso il "mare" (quota 0)');
+    expect(r.links.every(h => /waypoints=/.test(h) && /destination=45\.4,8\.92/.test(h)), 'link Google Maps: ' + r.links[0]);
+    expect(/asciutto/.test(r.txt) && /Curve/.test(r.txt) && /▲/.test(r.txt), 'dati del giro mancanti');
+    // a novembre i passi alpini sono chiusi: si avvisa e si propongono colline
+    await p.evaluate(() => giroSet('stile', 'passi'));
+    await p.click('#gi-overlay .wp-go');
+    await p.waitForFunction(() => /Nessun passo aperto/.test(document.getElementById('gi-result').textContent) || document.querySelector('.gi-card b') && /Via /.test(document.querySelector('.gi-card b').textContent), null, { timeout: 10000 });
+    const m = new Date().getMonth() + 1;
+    if (m >= 11 || m <= 3) expect(/Nessun passo aperto/.test(await p.$eval('#gi-result', e => e.textContent)), 'avviso passi chiusi mancante');
+    await p.evaluate(() => { giroSet('stile', 'curve'); closeGiro(); });
+    for (const u of ['**/api.open-meteo.com/v1/elevation**', '**/router.project-osrm.org/**', '**/api.open-meteo.com/v1/forecast**', '**/photon.komoot.io/reverse**']) await p.unroute(u);
   }, page);
 
   await test('Motorsport: risultati F1 e classifica', async p => {

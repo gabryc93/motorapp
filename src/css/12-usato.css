@@ -207,3 +207,8 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
 .us-pair-eq { grid-template-columns: 1fr 1fr; }
 .us-fcount { font: 400 .72rem 'DM Mono', monospace; color: var(--us-t2); margin: 0 0 8px; }
 .us-link { background: none; border: 0; padding: 0; color: var(--us); font: inherit; text-decoration: underline; cursor: pointer; }
+/* Play Store: solo link ai portali */
+.us-links { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.us-linkbtn { display: flex; justify-content: space-between; align-items: center; padding: 13px 14px; border-radius: 10px; border: 1px solid var(--us-line);
+  background: #121317; color: var(--us-t1); text-decoration: none; }
+.us-linkbtn span { font-family: 'DM Mono', monospace; font-size: .7rem; color: #8fbde6; }

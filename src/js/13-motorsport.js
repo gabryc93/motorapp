@@ -151,6 +151,8 @@
     });
   }
   function mgp(path, params, ttl) {
+    // nell'app del Play Store niente API non ufficiale: calendario inserito a mano e link a motogp.com
+    if (window.HUB_STORE) return Promise.reject(new Error('Risultati sul sito ufficiale motogp.com'));
     var q = 'path=' + encodeURIComponent(path) + (params ? '&' + params : '');
     return getJSON(workerBase() + '/api/motogp?' + q, ttl);
   }

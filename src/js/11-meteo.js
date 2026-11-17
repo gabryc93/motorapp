@@ -327,7 +327,7 @@
     var A = viaggio(D.dep, false), R = D.ret ? viaggio(D.ret, true) : null;
     var last = D.fc[0] && D.fc[0].hourly ? D.fc[0].hourly.time[D.fc[0].hourly.time.length - 1] * 1000 : 0;
     if (!A.rows.length) { res.innerHTML = '<div class="wp-error">Previsioni disponibili fino a ' + giorno(last) + ' ' + hhmm(last) + ': scegli una partenza più vicina.</div>'; return; }
-    var h = Math.floor(rt.durS / 3600), m = Math.round(rt.durS % 3600 / 60), pl = D.pl;
+    var mm = Math.round(rt.durS / 60), h = Math.floor(mm / 60), m = mm % 60, pl = D.pl;
     var gmaps = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + pl[0].lat + ',' + pl[0].lng + '&destination=' + pl[pl.length - 1].lat + ',' + pl[pl.length - 1].lng +
       (pl.length > 2 ? '&waypoints=' + pl[1].lat + ',' + pl[1].lng : '');
     var html = '<div class="wp-route-info"><div class="wp-route-row">' + pl.map(function(p) { return '<strong>' + esc(p.name.split(',')[0]) + '</strong>'; }).join(' → ') + '</div>' +

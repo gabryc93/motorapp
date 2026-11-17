@@ -25,15 +25,51 @@
       .sort(function(a, b) { return a.km - b.km; });
   }
 
+  // Ricariche (plug-in ed elettriche): stesso archivio, tipo 'ricarica', kWh al posto dei litri.
+  // I vecchi rifornimenti "Elettrico (kWh)" valgono come ricariche.
+  function isRic(r) { return r && (r.tipo === 'ricarica' || r.carburante === 'Elettrico'); }
+  function kwhDi(r) { return Number(r.kwh != null ? r.kwh : r.litri) || 0; }
+  var RP_KEY = 'hub_ricarica_pref_v1';
+  function ricPref() {
+    var p = {}; try { p = JSON.parse(localStorage.getItem(RP_KEY) || '{}'); } catch(e) {}
+    return { casa: p.casa != null ? p.casa : 0.20, colonnina: p.colonnina != null ? p.colonnina : 0.70, consEv: p.consEv != null ? p.consEv : 17 };
+  }
+  function isPlug(v) { return v && (v.alim === 'plugin' || v.alim === 'elettrica'); }
+
+  // Energia di un plug-in/elettrica nel tempo: km tra il primo e l'ultimo rifornimento o ricarica,
+  // kWh e litri totali, km fatti in elettrico stimati dal consumo elettrico tipico (kWh/100 km)
+  function energia(v, records) {
+    records = (records || loadForVehicle(v.id)).filter(function(r) { return typeof r.km === 'number'; }).sort(function(a, b) { return a.km - b.km; });
+    if (records.length < 2) return null;
+    var P = ricPref(), km = records[records.length - 1].km - records[0].km;
+    if (km <= 0) return null;
+    // ciò che si carica al primo record serve a percorrere i km successivi: si esclude il primo
+    var after = records.slice(1), ric = after.filter(isRic), fuel = after.filter(function(r) { return !isRic(r); });
+    var kwh = ric.reduce(function(a, r) { return a + kwhDi(r); }, 0), litri = fuel.reduce(function(a, r) { return a + (Number(r.litri) || 0); }, 0);
+    var eurE = ric.reduce(function(a, r) { return a + (Number(r.costoTotale) || kwhDi(r) * (r.luogo === 'colonnina' ? P.colonnina : P.casa)); }, 0);
+    var eurF = fuel.reduce(function(a, r) { return a + (Number(r.costoTotale) || 0); }, 0);
+    var kwhCasa = ric.filter(function(r) { return r.luogo !== 'colonnina'; }).reduce(function(a, r) { return a + kwhDi(r); }, 0);
+    var kmEv = v.alim === 'elettrica' ? km : Math.min(km, kwh / P.consEv * 100), kmTerm = km - kmEv;
+    return { km: km, kwh: kwh, litri: litri, eurE: eurE, eurF: eurF, eurKm: (eurE + eurF) / km, quotaCasa: kwh ? kwhCasa / kwh : null,
+      kmEv: kmEv, quotaEv: kmEv / km, kwh100: kwh / km * 100, l100: litri / km * 100,
+      l100Term: kmTerm > 200 && litri > 0 ? litri / kmTerm * 100 : null, ricariche: ric.length, pref: P };
+  }
+
   // Public API
   window.hubFuelLog = {
     list:    loadAll,
     listFor: loadForVehicle,
     save:    saveAll,
+    isRicarica: isRic,
+    energia: energia,
+    ricPref: ricPref
   };
+  // Costo dell'energia al km per qualsiasi veicolo (per Oggi, Ride e TCO)
+  window.hubEnergia = function(v) { return v && isPlug(v) ? energia(v) : null; };
 
   /* ── Compute stats ──────────────────────────────────────────── */
   function computeStats(refuels) {
+    refuels = (refuels || []).filter(function(r) { return !isRic(r); });
     if (!refuels || refuels.length === 0) {
       return { avgConsumption: null, avgCostPerKm: null, totalSpent: 0, totalKm: 0, totalLitres: 0,
                trendPct: null, intervals: [] };
@@ -140,6 +176,27 @@
     em.innerHTML =
       '<div class="gar-edit-card">' +
         '<h3 id="fl-edit-title">Nuovo rifornimento</h3>' +
+        '<div class="fl-fullbar fl-tipobar" id="fl-tipobar">' +
+          '<button type="button" data-tipo="fuel" onclick="_flSetTipo(\'fuel\')">⛽ Carburante</button>' +
+          '<button type="button" data-tipo="ricarica" onclick="_flSetTipo(\'ricarica\')">🔌 Ricarica</button>' +
+        '</div>' +
+        '<div id="fl-ric-box" hidden>' +
+          '<div class="fl-fullbar" id="fl-luogobar">' +
+            '<button type="button" data-luogo="casa" onclick="_flSetLuogo(\'casa\')">🏠 Casa</button>' +
+            '<button type="button" data-luogo="colonnina" onclick="_flSetLuogo(\'colonnina\')">⚡ Colonnina</button>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Data</label><input type="date" id="fl-r-date"></div>' +
+            '<div class="gar-field"><label>Km totali</label><input type="number" id="fl-r-km" min="0" step="1"></div>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>kWh caricati</label><input type="number" id="fl-r-kwh" min="0" step="0.1" placeholder="10.5"></div>' +
+            '<div class="gar-field"><label>€ per kWh</label><input type="number" id="fl-r-prezzo" min="0" step="0.01"></div>' +
+          '</div>' +
+          '<div class="gar-field"><label>Totale spesa €</label><input type="number" id="fl-r-totale" min="0" step="0.01"></div>' +
+          '<p class="fl-hint">I kWh li trovi nell\'app dell\'auto, della wallbox o della colonnina. A casa conta il prezzo finale in bolletta.</p>' +
+        '</div>' +
+        '<div id="fl-fuel-box">' +
         '<div class="fl-fullbar">' +
           '<button type="button" data-full="1" onclick="_flSetFull(true)">⛽ Pieno fatto</button>' +
           '<button type="button" data-full="0" onclick="_flSetFull(false)">Parziale</button>' +
@@ -173,6 +230,7 @@
           '<input type="text" id="fl-f-distrib" placeholder="Eni Cologno" maxlength="60"></div>' +
         '<div class="gar-field"><label>Note</label>' +
           '<textarea id="fl-f-note" rows="2" placeholder="Es. autostrada, viaggio Roma…" maxlength="200"></textarea></div>' +
+        '</div>' +
         '<div class="gar-edit-btns">' +
           '<button type="button" class="gar-cancel" onclick="closeFuelLogEdit()">Annulla</button>' +
           '<button type="button" class="gar-save" onclick="saveFuelLogEdit()" style="background:rgba(91,155,213,.85);border-color:rgba(91,155,213,.6);color:#08131c">Salva</button>' +
@@ -189,7 +247,28 @@
     }
     document.getElementById('fl-f-litri').addEventListener('input', autoTotale);
     document.getElementById('fl-f-prezzo').addEventListener('input', autoTotale);
+    function autoRic() {
+      var k = parseFloat(document.getElementById('fl-r-kwh').value), p = parseFloat(document.getElementById('fl-r-prezzo').value);
+      if (!isNaN(k) && !isNaN(p)) document.getElementById('fl-r-totale').value = (k * p).toFixed(2);
+    }
+    document.getElementById('fl-r-kwh').addEventListener('input', autoRic);
+    document.getElementById('fl-r-prezzo').addEventListener('input', autoRic);
   }
+  var _editingTipo = 'fuel', _editingLuogo = 'casa';
+  window._flSetTipo = function(t) {
+    _editingTipo = t;
+    document.querySelectorAll('#fl-tipobar button').forEach(function(b) { b.classList.toggle('on', b.dataset.tipo === t); });
+    document.getElementById('fl-ric-box').hidden = t !== 'ricarica';
+    document.getElementById('fl-fuel-box').hidden = t === 'ricarica';
+    document.getElementById('fl-edit-title').textContent = (_editingFlId ? 'Modifica ' : 'Nuova ') + (t === 'ricarica' ? 'ricarica' : 'rifornimento').replace(/^Nuova rif/, 'Nuovo rif');
+  };
+  window._flSetLuogo = function(l) {
+    var prev = _editingLuogo; _editingLuogo = l;
+    document.querySelectorAll('#fl-luogobar button').forEach(function(b) { b.classList.toggle('on', b.dataset.luogo === l); });
+    var P = ricPref(), pr = document.getElementById('fl-r-prezzo');
+    // cambia il prezzo solo se era quello predefinito dell'altro luogo (o vuoto)
+    if (!pr.value || parseFloat(pr.value) === P[prev]) { pr.value = P[l].toFixed(2); pr.dispatchEvent(new Event('input')); }
+  };
 
   /* ── Public functions ──────────────────────────────────────── */
   window.openFuelLog = function() {
@@ -236,6 +315,18 @@
     document.getElementById('fl-f-note').value = r ? (r.note || '') : '';
     _flSetFull(r ? !!r.isFull : true);
 
+    // plug-in ed elettriche: scelta carburante / ricarica
+    var plug = isPlug(v), ric = r ? isRic(r) : (v && v.alim === 'elettrica');
+    document.getElementById('fl-tipobar').hidden = !plug && !ric;
+    document.getElementById('fl-r-date').value = r ? (r.date || '') : window.hubToday();
+    document.getElementById('fl-r-km').value = defKm || '';
+    document.getElementById('fl-r-kwh').value = r && ric ? kwhDi(r) || '' : '';
+    _editingLuogo = r && ric ? (r.luogo || 'casa') : 'casa';   // quasi sempre si carica a casa
+    document.getElementById('fl-r-prezzo').value = r && ric ? (r.prezzoKwh || r.prezzoPerLitro || '') : ricPref()[_editingLuogo].toFixed(2);
+    document.getElementById('fl-r-totale').value = r && ric ? (r.costoTotale || '') : '';
+    document.querySelectorAll('#fl-luogobar button').forEach(function(b) { b.classList.toggle('on', b.dataset.luogo === _editingLuogo); });
+    _flSetTipo(ric ? 'ricarica' : 'fuel');
+
     document.getElementById('fl-edit').classList.add('visible');
   };
   window.closeFuelLogEdit = function() {
@@ -252,6 +343,7 @@
   window.saveFuelLogEdit = function() {
     var v = window.hubGarage && window.hubGarage.active();
     if (!v) { alert('Nessun veicolo attivo.'); return; }
+    if (_editingTipo === 'ricarica') return salvaRicarica(v);
 
     var date = document.getElementById('fl-f-date').value;
     var km = parseInt(document.getElementById('fl-f-km').value, 10);
@@ -300,6 +392,28 @@
     refreshFuelLogBadge();
   };
 
+  function salvaRicarica(v) {
+    var date = document.getElementById('fl-r-date').value, km = parseInt(document.getElementById('fl-r-km').value, 10);
+    var kwh = parseFloat(document.getElementById('fl-r-kwh').value), pr = parseFloat(document.getElementById('fl-r-prezzo').value), tot = parseFloat(document.getElementById('fl-r-totale').value);
+    if (!date || isNaN(km) || km < 0 || isNaN(kwh) || kwh <= 0) { alert('Compila almeno data, km e kWh.'); return; }
+    if (isNaN(tot) && !isNaN(pr)) tot = kwh * pr;
+    if (isNaN(pr) && !isNaN(tot)) pr = tot / kwh;
+    var rec = { vehicleId: v.id, tipo: 'ricarica', date: date, km: km, kwh: kwh, litri: null, luogo: _editingLuogo,
+      prezzoKwh: isNaN(pr) ? null : pr, costoTotale: isNaN(tot) ? null : Math.round(tot * 100) / 100, carburante: 'Ricarica', isFull: false };
+    var all = loadAll();
+    if (_editingFlId) { var i = all.findIndex(function(x) { return x.id === _editingFlId; }); if (i >= 0) all[i] = Object.assign({}, all[i], rec); }
+    else { rec.id = uid(); all.push(rec); }
+    saveAll(all);
+    if (window.hubGarage && km > (v.kmTot || 0)) { window.hubGarage.update(v.id, { kmTot: km }); if (typeof window._hubRefreshGarageBadge === 'function') window._hubRefreshGarageBadge(); }
+    closeFuelLogEdit(); renderFuelLog(); refreshFuelLogBadge();
+  }
+  window._flPref = function(k, val) {
+    var p = ricPref(), n = parseFloat(String(val).replace(',', '.'));
+    if (isNaN(n) || n <= 0) return;
+    p[k] = n; try { localStorage.setItem(RP_KEY, JSON.stringify(p)); } catch(e) {}
+    renderFuelLog();
+  };
+
   window.deleteRefuel = function(id) {
     if (!confirm('Eliminare questo rifornimento?')) return;
     var all = loadAll().filter(function(r) { return r.id !== id; });
@@ -332,7 +446,7 @@
       trendHtml = '<span class="' + cls + '">' + arrow + ' ' + sign + pct.toFixed(1) + '% ult. 3</span>';
     }
     html += '<div class="fl-stat">' +
-      '<div class="fl-stat-lbl">Consumo medio</div>' +
+      '<div class="fl-stat-lbl">' + (isPlug(v) ? 'Carburante sui km totali' : 'Consumo medio') + '</div>' +
       '<div class="fl-stat-val">' + consVal + '<span style="font-size:.6rem;color:var(--t2);margin-left:4px">L/100km</span></div>' +
       (trendHtml ? '<div class="fl-stat-sub">' + trendHtml + '</div>' : '') +
       '</div>';
@@ -342,7 +456,7 @@
         '<span style="font-size:.6rem;color:var(--t2);margin-left:4px">€/km</span></div>' +
       '</div>';
     html += '<div class="fl-stat">' +
-      '<div class="fl-stat-lbl">Totale speso</div>' +
+      '<div class="fl-stat-lbl">' + (isPlug(v) ? 'Speso in carburante' : 'Totale speso') + '</div>' +
       '<div class="fl-stat-val">' + (stats.totalSpent || 0).toFixed(2) + ' €</div>' +
       '<div class="fl-stat-sub">' + (stats.totalLitres || 0).toFixed(1) + ' L · ' + stats.count + ' rif.</div>' +
       '</div>';
@@ -352,6 +466,9 @@
       '<div class="fl-stat-sub">tracking</div>' +
       '</div>';
     html += '</div>';
+
+    // Plug-in ed elettriche: energia elettrica + carburante sugli stessi km
+    if (isPlug(v)) html += pannelloPlug(v, refuels);
 
     // Consumo dai viaggi importati (MyPeugeot & co.) nel Diario uscite
     var ts = window.hubTripStats ? window.hubTripStats(v.id) : null;
@@ -365,7 +482,7 @@
     }
 
     // Add button
-    html += '<button class="fl-add-btn" onclick="openFuelLogEdit(null)">+ Nuovo rifornimento</button>';
+    html += '<button class="fl-add-btn" onclick="openFuelLogEdit(null)">+ Nuovo ' + (isPlug(v) ? 'rifornimento o ricarica' : 'rifornimento') + '</button>';
 
     // List
     if (refuels.length === 0) {
@@ -382,6 +499,17 @@
 
       html += sorted.map(function(r) {
         var dateNice = r.date ? r.date.split('-').reverse().join('/') : '—';
+        if (isRic(r)) {
+          var rm = [kwhDi(r).toFixed(1) + ' kWh'];
+          if (r.costoTotale) rm.push((+r.costoTotale).toFixed(2) + ' €');
+          if (r.prezzoKwh) rm.push((+r.prezzoKwh).toFixed(2) + ' €/kWh');
+          rm.push((r.km || 0).toLocaleString('it-IT') + ' km');
+          return '<div class="fl-row fl-row-ric"><div class="fl-row-info">' +
+            '<div class="fl-row-date">' + escSafe(dateNice) + ' · 🔌 ' + (r.luogo === 'colonnina' ? 'Colonnina' : 'Casa') + '</div>' +
+            '<div class="fl-row-meta">' + rm.join(' · ') + '</div></div>' +
+            '<button class="fl-row-del" onclick="openFuelLogEdit(\'' + r.id + '\')" title="Modifica">✎</button>' +
+            '<button class="fl-row-del" onclick="deleteRefuel(\'' + r.id + '\')" title="Elimina">✕</button></div>';
+        }
         var meta = [];
         if (r.litri) meta.push((+r.litri).toFixed(2) + ' L');
         if (r.costoTotale) meta.push((+r.costoTotale).toFixed(2) + ' €');
@@ -410,14 +538,43 @@
     body.innerHTML = html;
   }
 
+  function pannelloPlug(v, refuels) {
+    var E = energia(v, refuels), P = ricPref(), f2 = function(n) { return n.toFixed(2).replace('.', ','); };
+    var prefs = '<div class="fl-plug-pref">' +
+      '<label>🏠 Casa <input type="number" step="0.01" min="0" value="' + P.casa + '" onchange="_flPref(\'casa\',this.value)"> €/kWh</label>' +
+      '<label>⚡ Colonnina <input type="number" step="0.01" min="0" value="' + P.colonnina + '" onchange="_flPref(\'colonnina\',this.value)"> €/kWh</label>' +
+      '<label>Consumo elettrico tipico <input type="number" step="0.5" min="5" value="' + P.consEv + '" onchange="_flPref(\'consEv\',this.value)"> kWh/100 km</label></div>';
+    if (!E) return '<div class="fl-plug"><div class="fl-plug-h">🔌 Plug-in</div><p class="fl-hint">Registra rifornimenti e ricariche con i km del contachilometri: con almeno due registrazioni calcolo quanta strada fai in elettrico e quanto ti costa ogni km.</p>' + prefs + '</div>';
+    var cell = function(l, val, sub) { return '<div class="fl-stat"><div class="fl-stat-lbl">' + l + '</div><div class="fl-stat-val">' + val + '</div>' + (sub ? '<div class="fl-stat-sub">' + sub + '</div>' : '') + '</div>'; };
+    var cmp = [['🏠 Ricarica a casa', P.consEv * P.casa], ['⚡ Colonnina', P.consEv * P.colonnina]];
+    var lastF = refuels.filter(function(r) { return !isRic(r) && Number(r.prezzoPerLitro) > 0; }).pop(), med = null;
+    try { med = window.hubMedie || JSON.parse(localStorage.getItem('hub_medie_v1') || 'null'); } catch(e) {}
+    var pBenz = lastF ? Number(lastF.prezzoPerLitro) : med && med.Benzina ? (med.Benzina.self || med.Benzina.serv) : null;
+    if (E.l100Term && pBenz) cmp.push(['⛽ Benzina', E.l100Term * pBenz]);
+    var max = Math.max.apply(null, cmp.map(function(c) { return c[1]; }));
+    return '<div class="fl-plug"><div class="fl-plug-h">🔌 Plug-in · ultimi ' + Math.round(E.km).toLocaleString('it-IT') + ' km</div>' +
+      '<div class="fl-stats">' +
+        cell('In elettrico', Math.round(E.quotaEv * 100) + '%', '≈ ' + Math.round(E.kmEv).toLocaleString('it-IT') + ' km stimati') +
+        cell('Costo energia', f2(E.eurKm * 100) + ' €', 'ogni 100 km, tutto compreso') +
+        cell('Elettricità', E.kwh100.toFixed(1).replace('.', ',') + ' kWh', 'per 100 km · ' + Math.round(E.kwh) + ' kWh, ' + (E.quotaCasa != null ? Math.round(E.quotaCasa * 100) + '% a casa' : '')) +
+        cell('Carburante', E.l100.toFixed(1).replace('.', ',') + ' l', 'per 100 km' + (E.l100Term ? ' · ' + E.l100Term.toFixed(1).replace('.', ',') + ' l col motore termico' : '')) +
+      '</div>' +
+      '<div class="fl-plug-cmp"><div class="fl-stat-lbl">Costo per 100 km</div>' + cmp.map(function(c) {
+        return '<div class="fl-plug-bar"><span>' + c[0] + '</span><i style="width:' + Math.max(6, c[1] / max * 100).toFixed(0) + '%"></i><b>' + f2(c[1]) + ' €</b></div>';
+      }).join('') + '</div>' +
+      '<p class="fl-hint">La quota in elettrico è stimata: kWh caricati diviso il consumo elettrico tipico. L\'auto non lo esporta, quindi regolalo se il tuo è diverso.</p>' + prefs + '</div>';
+  }
+
   /* ── Badge: show avg consumption next to launch button ─────── */
   function refreshFuelLogBadge() {
     var b = document.getElementById('fl-launch-stat');
     if (!b) return;
     var v = window.hubGarage && window.hubGarage.active();
     if (!v) { b.textContent = '—'; return; }
-    var stats = computeStats(loadForVehicle(v.id));
-    if (stats.avgConsumption != null) {
+    var stats = computeStats(loadForVehicle(v.id)), E = isPlug(v) ? energia(v) : null;
+    if (E) {
+      b.textContent = Math.round(E.quotaEv * 100) + '% elettrico · ' + (E.eurKm * 100).toFixed(1).replace('.', ',') + ' €/100 km';
+    } else if (stats.avgConsumption != null) {
       b.textContent = stats.avgConsumption.toFixed(1) + ' L/100km';
     } else if (window.hubTripStats && window.hubTripStats(v.id).consumo != null) {
       b.textContent = window.hubTripStats(v.id).consumo.toFixed(1) + ' L/100km';

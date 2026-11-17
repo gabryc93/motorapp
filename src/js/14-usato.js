@@ -238,7 +238,9 @@
     if (q.cambio === 'Manuale') p.push('gear=M');
     if (q.cambio === 'Automatico') p.push('gear=A');
     if (/^\d{5}$/.test(q.zip || '')) { p.push('zip=' + q.zip); p.push('zipr=' + (num(q.raggio) || 50)); }
-    out.push(['AutoScout24', 'https://www.autoscout24.it/lst' + (path ? '/' + path : '') + '?' + p.join('&')]);
+    out.push(['AutoScout24', 'https://www.autoscout24.it/' + (moto ? 'lst-moto' : 'lst') + (path ? '/' + path : '') + '?' + p.join('&')]);
+    if (!moto) { var ap = []; if (num(q.prezzoMax)) ap.push('prezzo_a=' + num(q.prezzoMax)); if (num(q.annoMin)) ap.push('immatricolazione=' + num(q.annoMin));
+      out.push(['Automobile.it', 'https://www.automobile.it/' + (q.marca ? slug(q.marca).replace(/-/g, '_') + (q.modello ? '-' + slug(modelloBase(q.modello)).replace(/-/g, '_') : '') : 'auto-usate') + (ap.length ? '?' + ap.join('&') : '')]); }
     var sp = [];
     if (nome) sp.push('q=' + encodeURIComponent(nome));
     if (num(q.prezzoMax)) sp.push('pe=' + num(q.prezzoMax));
@@ -249,7 +251,7 @@
     if (num(q.prezzoMax)) wp.push('max_sale_price=' + num(q.prezzoMax));
     out.push(['Wallapop', 'https://it.wallapop.com/app/search?' + wp.join('&')]);
     var g = encodeURIComponent((nome || 'usato') + ' usata' + (num(q.prezzoMax) ? ' ' + num(q.prezzoMax) + ' euro' : ''));
-    out.push([moto ? 'Moto.it (Google)' : 'Automobile.it (Google)', 'https://www.google.com/search?q=site:' + (moto ? 'moto.it' : 'automobile.it') + '+' + g]);
+    if (moto) out.push(['Moto.it (Google)', 'https://www.google.com/search?q=site:moto.it+' + g]);
     return out;
   }
 
@@ -319,6 +321,8 @@
   function cerca(q, fromId) {
     R = { q: q, fromId: fromId || null, st: {}, items: [], sort: R && R.sort || 'conv', solo: R && R.solo || 'tutti', f: {}, nuovi: {}, ribassi: {}, t: Date.now() };
     view = 'cerca';
+    // app del Play Store: niente lettura dei portali, solo le ricerche già filtrate da aprire sui siti
+    if (window.HUB_STORE) { R.linkOnly = true; render(); return; }
     PORTALI.forEach(function(p) {
       if (p[0] === 'automobile' && q.tipo === 'moto') { R.st[p[0]] = { stato: 'na', nome: p[1] }; return; }
       R.st[p[0]] = { stato: 'load', nome: p[1], pagina: 0 };
@@ -433,8 +437,12 @@
 
   function renderCerca() {
     var html = renderSearchBox();
+    if (!R && window.HUB_STORE) return html + '<div class="us-empty"><b>Cerca sui portali</b>Imposta marca, modello e budget: AutoHub prepara la ricerca già filtrata su AutoScout24, Automobile.it, Subito e Wallapop.</div>';
     if (!R) return html + '<div class="us-empty"><b>Cerca su tutti i portali insieme</b>Imposta marca, modello e budget: AutoHub cerca su AutoScout24, Automobile.it e Subito, unisce i doppioni e ti dice per ogni annuncio il costo vero, se entra in Area B e se il prezzo è in linea con quelli simili.</div>';
     var q = R.q;
+    if (R.linkOnly) return html + '<div class="us-links"><p class="us-fine">Apri la ricerca già filtrata sul portale che preferisci.</p>' +
+      portali(q).map(function(x) { return '<a class="us-linkbtn" href="' + h(x[1]) + '" target="_blank" rel="noopener noreferrer"><b>' + h(x[0]) + '</b><span>Apri ↗</span></a>'; }).join('') +
+      (R.fromId ? '' : '<div class="us-bar us-bar-sm"><button class="us-btn" data-act="q-save">☆ Salva ricerca</button></div>') + '</div>';
     html += '<div class="us-pstat">' + PORTALI.map(function(p) {
       var st = R.st[p[0]] || {};
       var txt = st.stato === 'load' ? 'cerco…' : st.stato === 'ok' ? (st.n || 0) + ' su ' + (st.totale || 0).toLocaleString('it-IT') : st.stato === 'na' ? 'solo auto' : 'non raggiungibile';

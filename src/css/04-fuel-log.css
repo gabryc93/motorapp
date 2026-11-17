@@ -236,3 +236,20 @@
 /* Consumo dai viaggi importati */
 .fl-trips { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surf); border: 1px solid rgba(91,155,213,.35); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
 .fl-trips-btn { appearance: none; -webkit-appearance: none; background: none; border: 1px solid var(--brd); color: var(--t2); border-radius: 8px; padding: 8px 10px; min-height: 36px; font: 500 .66rem 'DM Mono', monospace; cursor: pointer; flex-shrink: 0; }
+
+/* ── Plug-in: ricariche ───────────────────────────────────────── */
+.fl-tipobar { margin-bottom: 10px; }
+#fl-luogobar { margin-bottom: 10px; }
+.fl-hint { font-size: .7rem; color: var(--t3, #8a8f98); line-height: 1.5; margin: 6px 0 10px; }
+.fl-row-ric { border-left: 3px solid #3fbf7f; }
+.fl-plug { background: rgba(63,191,127,.06); border: 1px solid rgba(63,191,127,.25); border-radius: 12px; padding: 12px; margin-bottom: 14px; }
+.fl-plug-h { font-family: 'DM Mono', monospace; font-size: .62rem; text-transform: uppercase; letter-spacing: .12em; color: #6dd9a3; margin-bottom: 10px; }
+.fl-plug .fl-stats { margin-bottom: 10px; }
+.fl-plug-cmp { margin: 4px 0 6px; }
+.fl-plug-bar { display: grid; grid-template-columns: minmax(0, 1.4fr) 2fr auto; align-items: center; gap: 8px; font-size: .72rem; margin-top: 6px; }
+.fl-plug-bar span { color: var(--t2, #bbb); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fl-plug-bar i { display: block; height: 8px; border-radius: 4px; background: #3fbf7f; }
+.fl-plug-bar:last-child i { background: #e8a030; }
+.fl-plug-bar b { font-family: 'DM Mono', monospace; font-size: .7rem; }
+.fl-plug-pref { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .68rem; color: var(--t2, #bbb); }
+.fl-plug-pref input { width: 58px; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: inherit; border-radius: 6px; padding: 4px 6px; font: inherit; }

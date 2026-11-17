@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="AutoHub">
-<meta name="autohub-build" content="2026-11-17-2121">
+<meta name="autohub-build" content="2026-11-17-2213">
 <meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -898,7 +898,7 @@ select option{background:#1e1e28}
 
 /* Hide the diagnosis ::before grid when fuel section is active (it
    would bleed through fuel's transparent areas) */
-body[data-hub="fuel"]::before { display: none !important; }
+body[data-hub="fuel"]::before, body[data-hub="oggi"]::before { display: none !important; }
 
 /* Sections — only one visible at a time */
 .hub-section { display: none; }
@@ -2269,6 +2269,23 @@ body[data-hub="fuel"]::before { display: none !important; }
 /* Consumo dai viaggi importati */
 .fl-trips { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surf); border: 1px solid rgba(91,155,213,.35); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
 .fl-trips-btn { appearance: none; -webkit-appearance: none; background: none; border: 1px solid var(--brd); color: var(--t2); border-radius: 8px; padding: 8px 10px; min-height: 36px; font: 500 .66rem 'DM Mono', monospace; cursor: pointer; flex-shrink: 0; }
+
+/* ── Plug-in: ricariche ───────────────────────────────────────── */
+.fl-tipobar { margin-bottom: 10px; }
+#fl-luogobar { margin-bottom: 10px; }
+.fl-hint { font-size: .7rem; color: var(--t3, #8a8f98); line-height: 1.5; margin: 6px 0 10px; }
+.fl-row-ric { border-left: 3px solid #3fbf7f; }
+.fl-plug { background: rgba(63,191,127,.06); border: 1px solid rgba(63,191,127,.25); border-radius: 12px; padding: 12px; margin-bottom: 14px; }
+.fl-plug-h { font-family: 'DM Mono', monospace; font-size: .62rem; text-transform: uppercase; letter-spacing: .12em; color: #6dd9a3; margin-bottom: 10px; }
+.fl-plug .fl-stats { margin-bottom: 10px; }
+.fl-plug-cmp { margin: 4px 0 6px; }
+.fl-plug-bar { display: grid; grid-template-columns: minmax(0, 1.4fr) 2fr auto; align-items: center; gap: 8px; font-size: .72rem; margin-top: 6px; }
+.fl-plug-bar span { color: var(--t2, #bbb); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fl-plug-bar i { display: block; height: 8px; border-radius: 4px; background: #3fbf7f; }
+.fl-plug-bar:last-child i { background: #e8a030; }
+.fl-plug-bar b { font-family: 'DM Mono', monospace; font-size: .7rem; }
+.fl-plug-pref { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .68rem; color: var(--t2, #bbb); }
+.fl-plug-pref input { width: 58px; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: inherit; border-radius: 6px; padding: 4px 6px; font: inherit; }
 
 /* ═══════════════════════════════════════════════════════════════════
    GARAGE SECTION — top-level tab containing the 3 vehicle modules
@@ -6323,6 +6340,7 @@ html {scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
   transition: color .16s ease, background .16s ease;
   -webkit-tap-highlight-color: transparent;
 }
+.hub-tab-oggi   { --tab: #6dd9a3; }
 .hub-tab-garage { --tab: #b392f0; }
 .hub-tab-usato  { --tab: #3fc1b0; }
 .hub-tab-diag   { --tab: #f0655d; }
@@ -6633,12 +6651,106 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
 .us-pair-eq { grid-template-columns: 1fr 1fr; }
 .us-fcount { font: 400 .72rem 'DM Mono', monospace; color: var(--us-t2); margin: 0 0 8px; }
 .us-link { background: none; border: 0; padding: 0; color: var(--us); font: inherit; text-decoration: underline; cursor: pointer; }
+/* Play Store: solo link ai portali */
+.us-links { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.us-linkbtn { display: flex; justify-content: space-between; align-items: center; padding: 13px 14px; border-radius: 10px; border: 1px solid var(--us-line);
+  background: #121317; color: var(--us-t1); text-decoration: none; }
+.us-linkbtn span { font-family: 'DM Mono', monospace; font-size: .7rem; color: #8fbde6; }
+/* ════════════════════════════════════════════════════════════════════
+   OGGI — prima schermata
+   ════════════════════════════════════════════════════════════════════ */
+#hub-oggi .og-wrap { max-width: 640px; margin: 0 auto; padding: calc(18px + var(--hub-safe-top)) 14px 110px; }
+.og-hdr { display: block !important; margin-bottom: 14px; padding: 0 !important; border: 0 !important; }
+.og-hdr h1 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 2rem; letter-spacing: .04em; line-height: 1; color: var(--t1); margin: 0; }
+.og-hdr > small { font-family: 'DM Mono', monospace; font-size: .66rem; color: var(--t2); text-transform: capitalize; }
+.og-veh { display: flex; gap: 6px; overflow-x: auto; margin-top: 12px; scrollbar-width: none; }
+.og-veh button { flex-shrink: 0; appearance: none; background: var(--card); border: 1px solid var(--b1); color: var(--t2); border-radius: 999px; padding: 7px 12px;
+  font-family: 'DM Mono', monospace; font-size: .68rem; cursor: pointer; }
+.og-veh button.on { border-color: #6dd9a3; color: #fff; background: rgba(109,217,163,.12); }
+.og-card { background: var(--card); border: 1px solid var(--b1); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.og-c-crit { border-color: rgba(239,68,68,.45); }
+.og-c-ok { border-color: rgba(34,197,94,.3); }
+.og-h { font-family: 'DM Mono', monospace; font-size: .62rem; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: var(--t2); margin: 0 0 10px; }
+.og-h small { text-transform: none; letter-spacing: 0; color: var(--t3); font-size: .62rem; }
+.og-p { font-size: .8rem; color: var(--t2); line-height: 1.5; margin: 0 0 10px; }
+.og-p:last-child { margin-bottom: 0; }
+.og-small { font-size: .68rem; color: var(--t3); }
+.og-ok { color: #6dd9a3; margin: 0; }
+.og-err { color: #ff8a82; }
+.og-btn { appearance: none; background: #6dd9a3; color: #06140d; border: 0; border-radius: 10px; padding: 10px 14px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .8rem; cursor: pointer; }
+.og-ghost { background: transparent; color: var(--t1); border: 1px solid var(--b2); }
+.og-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.og-link { appearance: none; background: none; border: 0; padding: 0; color: #8fbde6; font: inherit; cursor: pointer; text-decoration: underline; }
+/* da fare */
+.og-todo { display: flex; align-items: center; gap: 10px; width: 100%; appearance: none; background: none; border: 0; border-top: 1px solid var(--b1); padding: 10px 2px; color: var(--t1); text-align: left; cursor: pointer; font: inherit; }
+.og-todo:first-of-type { border-top: 0; padding-top: 2px; }
+.og-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: #e8c547; }
+.og-crit .og-dot { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.2); }
+.og-warn .og-dot { background: #f59e0b; }
+.og-todo-t { flex: 1; min-width: 0; font-size: .86rem; }
+.og-todo-t small { display: block; font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--t3); }
+.og-todo-q { font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--t2); white-space: nowrap; }
+.og-crit .og-todo-q { color: #ff8a82; }
+/* meteo */
+.og-today { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; background: var(--card2); border-left: 4px solid #3fbf7f; }
+.og-today.og-lv-warn { border-left-color: #e8c547; } .og-today.og-lv-bad { border-left-color: #ef4444; }
+.og-big { font-size: 2.2rem; line-height: 1; }
+.og-today b { font-family: 'DM Mono', monospace; font-size: 1rem; }
+.og-today p { margin: 2px 0 0; font-size: .8rem; color: var(--t2); }
+.og-days { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0 10px; }
+.og-day { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; border-radius: 10px; background: var(--card2); border-top: 3px solid #3fbf7f; text-align: center; }
+.og-day.og-lv-warn { border-top-color: #e8c547; } .og-day.og-lv-bad { border-top-color: #ef4444; }
+.og-day small { font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--t2); text-transform: capitalize; }
+.og-day span { font-size: 1.3rem; }
+.og-day b { font-family: 'DM Mono', monospace; font-size: .7rem; }
+.og-day i { font-style: normal; font-size: .6rem; color: var(--t3); line-height: 1.3; }
+/* energia */
+.og-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.og-kpis > div { background: var(--card2); border-radius: 10px; padding: 9px 10px; }
+.og-kpis small { display: block; font-family: 'DM Mono', monospace; font-size: .58rem; color: var(--t3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.og-kpis b { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 1.5rem; letter-spacing: .02em; color: var(--t1); }
+/* uscita */
+.og-ride { display: flex; flex-direction: column; gap: 2px; width: 100%; appearance: none; background: var(--card2); border: 0; border-radius: 10px; padding: 10px 12px; color: var(--t1); text-align: left; cursor: pointer; font: inherit; margin-bottom: 8px; }
+.og-ride span { font-family: 'DM Mono', monospace; font-size: .66rem; color: var(--t2); }
+/* strumenti */
+.og-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.og-tools button { display: flex; align-items: center; gap: 8px; appearance: none; background: var(--card2); border: 1px solid var(--b1); border-radius: 10px; padding: 12px 10px;
+  color: var(--t1); font-family: 'DM Sans', sans-serif; font-size: .8rem; text-align: left; cursor: pointer; }
+.og-tools span { font-size: 1.1rem; }
+
+/* ── Giro della domenica ──────────────────────────────────────── */
+#gi-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 70; display: none; flex-direction: column; }
+#gi-overlay.visible { display: flex; }
+.gi-lbl { font-family: 'DM Mono', monospace; font-size: .58rem; text-transform: uppercase; letter-spacing: .1em; color: var(--t3); margin: 10px 0 6px; }
+.gi-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.gi-chips button { appearance: none; background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: var(--t2); border-radius: 999px; padding: 7px 12px;
+  font-family: 'DM Mono', monospace; font-size: .68rem; cursor: pointer; }
+.gi-chips button.on { background: rgba(255,122,69,.16); border-color: rgba(255,122,69,.6); color: #fff; }
+.gi-chips input[type="time"] { background: var(--surf2, #1a1c20); border: 1px solid var(--brd, #2a2d33); color: var(--t1); border-radius: 8px; padding: 6px 8px; font-family: 'DM Mono', monospace; font-size: .74rem; }
+#gi-overlay .wp-go { margin-top: 14px; }
+.gi-map { height: 260px; }
+.gi-card { background: var(--surf, #13131a); border: 1px solid var(--brd, #2a2d33); border-left: 4px solid var(--c); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+.gi-card-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.gi-card-h b { font-size: .92rem; color: var(--t1); }
+.gi-card-h span { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--t2); white-space: nowrap; }
+.gi-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--t2); margin-top: 8px; }
+.gi-dots { font-style: normal; color: var(--c); letter-spacing: 1px; }
+.gi-dots span { color: var(--b2, #303040); }
+.gi-passi { font-family: 'DM Mono', monospace; font-size: .66rem; color: #c97fd4; margin-top: 6px; }
+.gi-meteo { font-size: .74rem; color: var(--t2); margin-top: 6px; }
+.gi-good { color: #6dd9a3; } .gi-bad { color: #ffd699; }
+.gi-act { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.gi-btn { appearance: none; display: inline-block; text-decoration: none; background: var(--c); color: #0b0b0d; border: 0; border-radius: 8px; padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .76rem; cursor: pointer; }
+.gi-ghost { background: transparent; color: var(--t1); border: 1px solid var(--brd, #2a2d33); }
 </style>
 </head>
-<body data-hub="fuel">
+<body data-hub="oggi">
 
 <!-- ═══ BARRA DI NAVIGAZIONE: 4 sezioni + "Altro" (strumenti, tema, backup) ═══ -->
 <nav class="hub-tabs" role="tablist" aria-label="Sezioni AutoHub">
+  <button class="hub-tab hub-tab-oggi" id="hub-tab-oggi" data-hub="oggi" onclick="hubGo('oggi')" role="tab" aria-selected="false">
+    <svg class="hub-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="hub-lbl">Oggi</span>
+  </button>
   <button class="hub-tab hub-tab-fuel" id="hub-tab-fuel" data-hub="fuel" onclick="hubGo('fuel')" role="tab" aria-selected="false">
     <svg class="hub-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h12"/><path d="M4 11h10"/><path d="M14 8h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V9l-3-3"/></svg><span class="hub-lbl">Carburanti</span>
   </button>
@@ -6677,6 +6789,11 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
   </div>
 </div>
 
+
+<!-- ═══ SECTION: OGGI (prima schermata) ═══════════════════════════ -->
+<section id="hub-oggi" class="hub-section" role="tabpanel" aria-labelledby="hub-tab-oggi">
+<div class="og-wrap" id="oggi-root"></div>
+</section>
 
 <!-- ═══ SECTION: DIAGNOSI ═════════════════════════════════════════ -->
 <section id="hub-diag" class="hub-section" role="tabpanel" aria-labelledby="hub-tab-diag">
@@ -7052,7 +7169,7 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
 </div>
 
 <!-- ═══ SECTION: CARBURANTI ═══════════════════════════════════════ -->
-<section id="hub-fuel" class="hub-section active" role="tabpanel" aria-labelledby="hub-tab-fuel">
+<section id="hub-fuel" class="hub-section" role="tabpanel" aria-labelledby="hub-tab-fuel">
 <!-- LOADER -->
 <div id="loader">
   <div class="ld-logo">
@@ -7399,7 +7516,15 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
 </div>
 </section>
 
-<script>
+<script>/* App del Play Store (Trusted Web Activity): si apre con ?src=play. Vale per la sessione,
+   così il sito nel browser (che condivide la memoria con l'app) resta completo. */
+(function() {
+  try {
+    if (new URLSearchParams(location.search).get('src') === 'play' || /^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('hub_store', 'play');
+    window.HUB_STORE = sessionStorage.getItem('hub_store') === 'play';
+  } catch (e) { window.HUB_STORE = false; }
+})();
+
 
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -7556,15 +7681,15 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
   var fuelInitialized = false;
   var _cmpFuel = null;
   // Sezioni reali con DOM persistente
-  var SECTIONS = ['fuel', 'diag', 'garage', 'usato'];
+  var SECTIONS = ['oggi', 'fuel', 'diag', 'garage', 'usato'];
   // Tab "azione": aprono un overlay e tornano alla sezione precedente
   var ACTIONS  = ['passi', 'ride', 'meteo', 'ms'];
-  var _lastSection = 'fuel';
+  var _lastSection = 'oggi';
 
   function hubGo(name) {
     var isSection = SECTIONS.indexOf(name) >= 0;
     var isAction  = ACTIONS.indexOf(name) >= 0;
-    if (!isSection && !isAction) name = 'fuel';
+    if (!isSection && !isAction) name = 'oggi';
 
     hubMore(false);
     // La barra evidenzia solo le sezioni: gli strumenti (passi, ride, meteo, motorsport) sono overlay
@@ -7580,7 +7705,7 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
       // Switch the visible section
       _lastSection = name;
       document.body.dataset.hub = name;
-      ['hub-diag', 'hub-fuel', 'hub-garage', 'hub-usato'].forEach(function(id) {
+      ['hub-oggi', 'hub-diag', 'hub-fuel', 'hub-garage', 'hub-usato'].forEach(function(id) {
         var sec = document.getElementById(id);
         if (sec) sec.classList.toggle('active', id === ('hub-' + name));
       });
@@ -7594,6 +7719,7 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
       }
       if (name === 'fuel') { setTimeout(_hubAutoSelectFuel, 80); }
       if (name === 'usato' && typeof window.usatoInit === 'function') window.usatoInit();
+      if (name === 'oggi' && typeof window.oggiInit === 'function') window.oggiInit();
       if (name === 'diag' && typeof window.diagGarageChips === 'function') window.diagGarageChips();
       window.scrollTo(0, 0);
     } else if (isAction) {
@@ -7725,7 +7851,7 @@ body:has(.us-ov.visible) .hub-tabs { opacity: 0; transform: translateX(-50%) tra
     var initial = (location.hash || '').replace('#', '');
     if (SECTIONS.indexOf(initial) >= 0) { hubGo(initial); return; }
     // Hash di uno strumento (es. #passi): prima si inizializza la home, poi si apre l'overlay
-    hubGo('fuel');
+    hubGo('oggi');
     if (ACTIONS.indexOf(initial) >= 0) setTimeout(function() { hubGo(initial); }, 400);
   });
   window.addEventListener('hashchange', function() {
@@ -19488,15 +19614,51 @@ async function runCmp() {
       .sort(function(a, b) { return a.km - b.km; });
   }
 
+  // Ricariche (plug-in ed elettriche): stesso archivio, tipo 'ricarica', kWh al posto dei litri.
+  // I vecchi rifornimenti "Elettrico (kWh)" valgono come ricariche.
+  function isRic(r) { return r && (r.tipo === 'ricarica' || r.carburante === 'Elettrico'); }
+  function kwhDi(r) { return Number(r.kwh != null ? r.kwh : r.litri) || 0; }
+  var RP_KEY = 'hub_ricarica_pref_v1';
+  function ricPref() {
+    var p = {}; try { p = JSON.parse(localStorage.getItem(RP_KEY) || '{}'); } catch(e) {}
+    return { casa: p.casa != null ? p.casa : 0.20, colonnina: p.colonnina != null ? p.colonnina : 0.70, consEv: p.consEv != null ? p.consEv : 17 };
+  }
+  function isPlug(v) { return v && (v.alim === 'plugin' || v.alim === 'elettrica'); }
+
+  // Energia di un plug-in/elettrica nel tempo: km tra il primo e l'ultimo rifornimento o ricarica,
+  // kWh e litri totali, km fatti in elettrico stimati dal consumo elettrico tipico (kWh/100 km)
+  function energia(v, records) {
+    records = (records || loadForVehicle(v.id)).filter(function(r) { return typeof r.km === 'number'; }).sort(function(a, b) { return a.km - b.km; });
+    if (records.length < 2) return null;
+    var P = ricPref(), km = records[records.length - 1].km - records[0].km;
+    if (km <= 0) return null;
+    // ciò che si carica al primo record serve a percorrere i km successivi: si esclude il primo
+    var after = records.slice(1), ric = after.filter(isRic), fuel = after.filter(function(r) { return !isRic(r); });
+    var kwh = ric.reduce(function(a, r) { return a + kwhDi(r); }, 0), litri = fuel.reduce(function(a, r) { return a + (Number(r.litri) || 0); }, 0);
+    var eurE = ric.reduce(function(a, r) { return a + (Number(r.costoTotale) || kwhDi(r) * (r.luogo === 'colonnina' ? P.colonnina : P.casa)); }, 0);
+    var eurF = fuel.reduce(function(a, r) { return a + (Number(r.costoTotale) || 0); }, 0);
+    var kwhCasa = ric.filter(function(r) { return r.luogo !== 'colonnina'; }).reduce(function(a, r) { return a + kwhDi(r); }, 0);
+    var kmEv = v.alim === 'elettrica' ? km : Math.min(km, kwh / P.consEv * 100), kmTerm = km - kmEv;
+    return { km: km, kwh: kwh, litri: litri, eurE: eurE, eurF: eurF, eurKm: (eurE + eurF) / km, quotaCasa: kwh ? kwhCasa / kwh : null,
+      kmEv: kmEv, quotaEv: kmEv / km, kwh100: kwh / km * 100, l100: litri / km * 100,
+      l100Term: kmTerm > 200 && litri > 0 ? litri / kmTerm * 100 : null, ricariche: ric.length, pref: P };
+  }
+
   // Public API
   window.hubFuelLog = {
     list:    loadAll,
     listFor: loadForVehicle,
     save:    saveAll,
+    isRicarica: isRic,
+    energia: energia,
+    ricPref: ricPref
   };
+  // Costo dell'energia al km per qualsiasi veicolo (per Oggi, Ride e TCO)
+  window.hubEnergia = function(v) { return v && isPlug(v) ? energia(v) : null; };
 
   /* ── Compute stats ──────────────────────────────────────────── */
   function computeStats(refuels) {
+    refuels = (refuels || []).filter(function(r) { return !isRic(r); });
     if (!refuels || refuels.length === 0) {
       return { avgConsumption: null, avgCostPerKm: null, totalSpent: 0, totalKm: 0, totalLitres: 0,
                trendPct: null, intervals: [] };
@@ -19603,6 +19765,27 @@ async function runCmp() {
     em.innerHTML =
       '<div class="gar-edit-card">' +
         '<h3 id="fl-edit-title">Nuovo rifornimento</h3>' +
+        '<div class="fl-fullbar fl-tipobar" id="fl-tipobar">' +
+          '<button type="button" data-tipo="fuel" onclick="_flSetTipo(\'fuel\')">⛽ Carburante</button>' +
+          '<button type="button" data-tipo="ricarica" onclick="_flSetTipo(\'ricarica\')">🔌 Ricarica</button>' +
+        '</div>' +
+        '<div id="fl-ric-box" hidden>' +
+          '<div class="fl-fullbar" id="fl-luogobar">' +
+            '<button type="button" data-luogo="casa" onclick="_flSetLuogo(\'casa\')">🏠 Casa</button>' +
+            '<button type="button" data-luogo="colonnina" onclick="_flSetLuogo(\'colonnina\')">⚡ Colonnina</button>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>Data</label><input type="date" id="fl-r-date"></div>' +
+            '<div class="gar-field"><label>Km totali</label><input type="number" id="fl-r-km" min="0" step="1"></div>' +
+          '</div>' +
+          '<div class="gar-row2">' +
+            '<div class="gar-field"><label>kWh caricati</label><input type="number" id="fl-r-kwh" min="0" step="0.1" placeholder="10.5"></div>' +
+            '<div class="gar-field"><label>€ per kWh</label><input type="number" id="fl-r-prezzo" min="0" step="0.01"></div>' +
+          '</div>' +
+          '<div class="gar-field"><label>Totale spesa €</label><input type="number" id="fl-r-totale" min="0" step="0.01"></div>' +
+          '<p class="fl-hint">I kWh li trovi nell\'app dell\'auto, della wallbox o della colonnina. A casa conta il prezzo finale in bolletta.</p>' +
+        '</div>' +
+        '<div id="fl-fuel-box">' +
         '<div class="fl-fullbar">' +
           '<button type="button" data-full="1" onclick="_flSetFull(true)">⛽ Pieno fatto</button>' +
           '<button type="button" data-full="0" onclick="_flSetFull(false)">Parziale</button>' +
@@ -19636,6 +19819,7 @@ async function runCmp() {
           '<input type="text" id="fl-f-distrib" placeholder="Eni Cologno" maxlength="60"></div>' +
         '<div class="gar-field"><label>Note</label>' +
           '<textarea id="fl-f-note" rows="2" placeholder="Es. autostrada, viaggio Roma…" maxlength="200"></textarea></div>' +
+        '</div>' +
         '<div class="gar-edit-btns">' +
           '<button type="button" class="gar-cancel" onclick="closeFuelLogEdit()">Annulla</button>' +
           '<button type="button" class="gar-save" onclick="saveFuelLogEdit()" style="background:rgba(91,155,213,.85);border-color:rgba(91,155,213,.6);color:#08131c">Salva</button>' +
@@ -19652,7 +19836,28 @@ async function runCmp() {
     }
     document.getElementById('fl-f-litri').addEventListener('input', autoTotale);
     document.getElementById('fl-f-prezzo').addEventListener('input', autoTotale);
+    function autoRic() {
+      var k = parseFloat(document.getElementById('fl-r-kwh').value), p = parseFloat(document.getElementById('fl-r-prezzo').value);
+      if (!isNaN(k) && !isNaN(p)) document.getElementById('fl-r-totale').value = (k * p).toFixed(2);
+    }
+    document.getElementById('fl-r-kwh').addEventListener('input', autoRic);
+    document.getElementById('fl-r-prezzo').addEventListener('input', autoRic);
   }
+  var _editingTipo = 'fuel', _editingLuogo = 'casa';
+  window._flSetTipo = function(t) {
+    _editingTipo = t;
+    document.querySelectorAll('#fl-tipobar button').forEach(function(b) { b.classList.toggle('on', b.dataset.tipo === t); });
+    document.getElementById('fl-ric-box').hidden = t !== 'ricarica';
+    document.getElementById('fl-fuel-box').hidden = t === 'ricarica';
+    document.getElementById('fl-edit-title').textContent = (_editingFlId ? 'Modifica ' : 'Nuova ') + (t === 'ricarica' ? 'ricarica' : 'rifornimento').replace(/^Nuova rif/, 'Nuovo rif');
+  };
+  window._flSetLuogo = function(l) {
+    var prev = _editingLuogo; _editingLuogo = l;
+    document.querySelectorAll('#fl-luogobar button').forEach(function(b) { b.classList.toggle('on', b.dataset.luogo === l); });
+    var P = ricPref(), pr = document.getElementById('fl-r-prezzo');
+    // cambia il prezzo solo se era quello predefinito dell'altro luogo (o vuoto)
+    if (!pr.value || parseFloat(pr.value) === P[prev]) { pr.value = P[l].toFixed(2); pr.dispatchEvent(new Event('input')); }
+  };
 
   /* ── Public functions ──────────────────────────────────────── */
   window.openFuelLog = function() {
@@ -19699,6 +19904,18 @@ async function runCmp() {
     document.getElementById('fl-f-note').value = r ? (r.note || '') : '';
     _flSetFull(r ? !!r.isFull : true);
 
+    // plug-in ed elettriche: scelta carburante / ricarica
+    var plug = isPlug(v), ric = r ? isRic(r) : (v && v.alim === 'elettrica');
+    document.getElementById('fl-tipobar').hidden = !plug && !ric;
+    document.getElementById('fl-r-date').value = r ? (r.date || '') : window.hubToday();
+    document.getElementById('fl-r-km').value = defKm || '';
+    document.getElementById('fl-r-kwh').value = r && ric ? kwhDi(r) || '' : '';
+    _editingLuogo = r && ric ? (r.luogo || 'casa') : 'casa';   // quasi sempre si carica a casa
+    document.getElementById('fl-r-prezzo').value = r && ric ? (r.prezzoKwh || r.prezzoPerLitro || '') : ricPref()[_editingLuogo].toFixed(2);
+    document.getElementById('fl-r-totale').value = r && ric ? (r.costoTotale || '') : '';
+    document.querySelectorAll('#fl-luogobar button').forEach(function(b) { b.classList.toggle('on', b.dataset.luogo === _editingLuogo); });
+    _flSetTipo(ric ? 'ricarica' : 'fuel');
+
     document.getElementById('fl-edit').classList.add('visible');
   };
   window.closeFuelLogEdit = function() {
@@ -19715,6 +19932,7 @@ async function runCmp() {
   window.saveFuelLogEdit = function() {
     var v = window.hubGarage && window.hubGarage.active();
     if (!v) { alert('Nessun veicolo attivo.'); return; }
+    if (_editingTipo === 'ricarica') return salvaRicarica(v);
 
     var date = document.getElementById('fl-f-date').value;
     var km = parseInt(document.getElementById('fl-f-km').value, 10);
@@ -19763,6 +19981,28 @@ async function runCmp() {
     refreshFuelLogBadge();
   };
 
+  function salvaRicarica(v) {
+    var date = document.getElementById('fl-r-date').value, km = parseInt(document.getElementById('fl-r-km').value, 10);
+    var kwh = parseFloat(document.getElementById('fl-r-kwh').value), pr = parseFloat(document.getElementById('fl-r-prezzo').value), tot = parseFloat(document.getElementById('fl-r-totale').value);
+    if (!date || isNaN(km) || km < 0 || isNaN(kwh) || kwh <= 0) { alert('Compila almeno data, km e kWh.'); return; }
+    if (isNaN(tot) && !isNaN(pr)) tot = kwh * pr;
+    if (isNaN(pr) && !isNaN(tot)) pr = tot / kwh;
+    var rec = { vehicleId: v.id, tipo: 'ricarica', date: date, km: km, kwh: kwh, litri: null, luogo: _editingLuogo,
+      prezzoKwh: isNaN(pr) ? null : pr, costoTotale: isNaN(tot) ? null : Math.round(tot * 100) / 100, carburante: 'Ricarica', isFull: false };
+    var all = loadAll();
+    if (_editingFlId) { var i = all.findIndex(function(x) { return x.id === _editingFlId; }); if (i >= 0) all[i] = Object.assign({}, all[i], rec); }
+    else { rec.id = uid(); all.push(rec); }
+    saveAll(all);
+    if (window.hubGarage && km > (v.kmTot || 0)) { window.hubGarage.update(v.id, { kmTot: km }); if (typeof window._hubRefreshGarageBadge === 'function') window._hubRefreshGarageBadge(); }
+    closeFuelLogEdit(); renderFuelLog(); refreshFuelLogBadge();
+  }
+  window._flPref = function(k, val) {
+    var p = ricPref(), n = parseFloat(String(val).replace(',', '.'));
+    if (isNaN(n) || n <= 0) return;
+    p[k] = n; try { localStorage.setItem(RP_KEY, JSON.stringify(p)); } catch(e) {}
+    renderFuelLog();
+  };
+
   window.deleteRefuel = function(id) {
     if (!confirm('Eliminare questo rifornimento?')) return;
     var all = loadAll().filter(function(r) { return r.id !== id; });
@@ -19795,7 +20035,7 @@ async function runCmp() {
       trendHtml = '<span class="' + cls + '">' + arrow + ' ' + sign + pct.toFixed(1) + '% ult. 3</span>';
     }
     html += '<div class="fl-stat">' +
-      '<div class="fl-stat-lbl">Consumo medio</div>' +
+      '<div class="fl-stat-lbl">' + (isPlug(v) ? 'Carburante sui km totali' : 'Consumo medio') + '</div>' +
       '<div class="fl-stat-val">' + consVal + '<span style="font-size:.6rem;color:var(--t2);margin-left:4px">L/100km</span></div>' +
       (trendHtml ? '<div class="fl-stat-sub">' + trendHtml + '</div>' : '') +
       '</div>';
@@ -19805,7 +20045,7 @@ async function runCmp() {
         '<span style="font-size:.6rem;color:var(--t2);margin-left:4px">€/km</span></div>' +
       '</div>';
     html += '<div class="fl-stat">' +
-      '<div class="fl-stat-lbl">Totale speso</div>' +
+      '<div class="fl-stat-lbl">' + (isPlug(v) ? 'Speso in carburante' : 'Totale speso') + '</div>' +
       '<div class="fl-stat-val">' + (stats.totalSpent || 0).toFixed(2) + ' €</div>' +
       '<div class="fl-stat-sub">' + (stats.totalLitres || 0).toFixed(1) + ' L · ' + stats.count + ' rif.</div>' +
       '</div>';
@@ -19815,6 +20055,9 @@ async function runCmp() {
       '<div class="fl-stat-sub">tracking</div>' +
       '</div>';
     html += '</div>';
+
+    // Plug-in ed elettriche: energia elettrica + carburante sugli stessi km
+    if (isPlug(v)) html += pannelloPlug(v, refuels);
 
     // Consumo dai viaggi importati (MyPeugeot & co.) nel Diario uscite
     var ts = window.hubTripStats ? window.hubTripStats(v.id) : null;
@@ -19828,7 +20071,7 @@ async function runCmp() {
     }
 
     // Add button
-    html += '<button class="fl-add-btn" onclick="openFuelLogEdit(null)">+ Nuovo rifornimento</button>';
+    html += '<button class="fl-add-btn" onclick="openFuelLogEdit(null)">+ Nuovo ' + (isPlug(v) ? 'rifornimento o ricarica' : 'rifornimento') + '</button>';
 
     // List
     if (refuels.length === 0) {
@@ -19845,6 +20088,17 @@ async function runCmp() {
 
       html += sorted.map(function(r) {
         var dateNice = r.date ? r.date.split('-').reverse().join('/') : '—';
+        if (isRic(r)) {
+          var rm = [kwhDi(r).toFixed(1) + ' kWh'];
+          if (r.costoTotale) rm.push((+r.costoTotale).toFixed(2) + ' €');
+          if (r.prezzoKwh) rm.push((+r.prezzoKwh).toFixed(2) + ' €/kWh');
+          rm.push((r.km || 0).toLocaleString('it-IT') + ' km');
+          return '<div class="fl-row fl-row-ric"><div class="fl-row-info">' +
+            '<div class="fl-row-date">' + escSafe(dateNice) + ' · 🔌 ' + (r.luogo === 'colonnina' ? 'Colonnina' : 'Casa') + '</div>' +
+            '<div class="fl-row-meta">' + rm.join(' · ') + '</div></div>' +
+            '<button class="fl-row-del" onclick="openFuelLogEdit(\'' + r.id + '\')" title="Modifica">✎</button>' +
+            '<button class="fl-row-del" onclick="deleteRefuel(\'' + r.id + '\')" title="Elimina">✕</button></div>';
+        }
         var meta = [];
         if (r.litri) meta.push((+r.litri).toFixed(2) + ' L');
         if (r.costoTotale) meta.push((+r.costoTotale).toFixed(2) + ' €');
@@ -19873,14 +20127,43 @@ async function runCmp() {
     body.innerHTML = html;
   }
 
+  function pannelloPlug(v, refuels) {
+    var E = energia(v, refuels), P = ricPref(), f2 = function(n) { return n.toFixed(2).replace('.', ','); };
+    var prefs = '<div class="fl-plug-pref">' +
+      '<label>🏠 Casa <input type="number" step="0.01" min="0" value="' + P.casa + '" onchange="_flPref(\'casa\',this.value)"> €/kWh</label>' +
+      '<label>⚡ Colonnina <input type="number" step="0.01" min="0" value="' + P.colonnina + '" onchange="_flPref(\'colonnina\',this.value)"> €/kWh</label>' +
+      '<label>Consumo elettrico tipico <input type="number" step="0.5" min="5" value="' + P.consEv + '" onchange="_flPref(\'consEv\',this.value)"> kWh/100 km</label></div>';
+    if (!E) return '<div class="fl-plug"><div class="fl-plug-h">🔌 Plug-in</div><p class="fl-hint">Registra rifornimenti e ricariche con i km del contachilometri: con almeno due registrazioni calcolo quanta strada fai in elettrico e quanto ti costa ogni km.</p>' + prefs + '</div>';
+    var cell = function(l, val, sub) { return '<div class="fl-stat"><div class="fl-stat-lbl">' + l + '</div><div class="fl-stat-val">' + val + '</div>' + (sub ? '<div class="fl-stat-sub">' + sub + '</div>' : '') + '</div>'; };
+    var cmp = [['🏠 Ricarica a casa', P.consEv * P.casa], ['⚡ Colonnina', P.consEv * P.colonnina]];
+    var lastF = refuels.filter(function(r) { return !isRic(r) && Number(r.prezzoPerLitro) > 0; }).pop(), med = null;
+    try { med = window.hubMedie || JSON.parse(localStorage.getItem('hub_medie_v1') || 'null'); } catch(e) {}
+    var pBenz = lastF ? Number(lastF.prezzoPerLitro) : med && med.Benzina ? (med.Benzina.self || med.Benzina.serv) : null;
+    if (E.l100Term && pBenz) cmp.push(['⛽ Benzina', E.l100Term * pBenz]);
+    var max = Math.max.apply(null, cmp.map(function(c) { return c[1]; }));
+    return '<div class="fl-plug"><div class="fl-plug-h">🔌 Plug-in · ultimi ' + Math.round(E.km).toLocaleString('it-IT') + ' km</div>' +
+      '<div class="fl-stats">' +
+        cell('In elettrico', Math.round(E.quotaEv * 100) + '%', '≈ ' + Math.round(E.kmEv).toLocaleString('it-IT') + ' km stimati') +
+        cell('Costo energia', f2(E.eurKm * 100) + ' €', 'ogni 100 km, tutto compreso') +
+        cell('Elettricità', E.kwh100.toFixed(1).replace('.', ',') + ' kWh', 'per 100 km · ' + Math.round(E.kwh) + ' kWh, ' + (E.quotaCasa != null ? Math.round(E.quotaCasa * 100) + '% a casa' : '')) +
+        cell('Carburante', E.l100.toFixed(1).replace('.', ',') + ' l', 'per 100 km' + (E.l100Term ? ' · ' + E.l100Term.toFixed(1).replace('.', ',') + ' l col motore termico' : '')) +
+      '</div>' +
+      '<div class="fl-plug-cmp"><div class="fl-stat-lbl">Costo per 100 km</div>' + cmp.map(function(c) {
+        return '<div class="fl-plug-bar"><span>' + c[0] + '</span><i style="width:' + Math.max(6, c[1] / max * 100).toFixed(0) + '%"></i><b>' + f2(c[1]) + ' €</b></div>';
+      }).join('') + '</div>' +
+      '<p class="fl-hint">La quota in elettrico è stimata: kWh caricati diviso il consumo elettrico tipico. L\'auto non lo esporta, quindi regolalo se il tuo è diverso.</p>' + prefs + '</div>';
+  }
+
   /* ── Badge: show avg consumption next to launch button ─────── */
   function refreshFuelLogBadge() {
     var b = document.getElementById('fl-launch-stat');
     if (!b) return;
     var v = window.hubGarage && window.hubGarage.active();
     if (!v) { b.textContent = '—'; return; }
-    var stats = computeStats(loadForVehicle(v.id));
-    if (stats.avgConsumption != null) {
+    var stats = computeStats(loadForVehicle(v.id)), E = isPlug(v) ? energia(v) : null;
+    if (E) {
+      b.textContent = Math.round(E.quotaEv * 100) + '% elettrico · ' + (E.eurKm * 100).toFixed(1).replace('.', ',') + ' €/100 km';
+    } else if (stats.avgConsumption != null) {
       b.textContent = stats.avgConsumption.toFixed(1) + ' L/100km';
     } else if (window.hubTripStats && window.hubTripStats(v.id).consumo != null) {
       b.textContent = window.hubTripStats(v.id).consumo.toFixed(1) + ' L/100km';
@@ -20681,6 +20964,9 @@ async function runCmp() {
   function costo(vehicleId, km) {
     if (!vehicleId || !km || typeof window.hubConsumoPrezzo !== 'function') return null;
     var v = window.hubGarage && window.hubGarage.list().filter(function(x) { return x.id === vehicleId; })[0];
+    // plug-in ed elettriche: costo reale dell'energia al km (carburante + ricariche)
+    var E = v && window.hubEnergia && window.hubEnergia(v);
+    if (E) return { litri: null, eur: km * E.eurKm, cons: null, prezzo: null, eurKm: E.eurKm, src: 'costo medio dell\'energia (rifornimenti e ricariche)' };
     var cp = v && window.hubConsumoPrezzo(v);
     if (!cp) return null;
     var litri = km * cp.cons / 100;
@@ -22014,6 +22300,15 @@ async function runCmp() {
     return ev.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); })[0];
   }
 
+  // Interventi in scadenza o scaduti di un veicolo (per la pagina Oggi)
+  window.hubMaintScad = function(v) {
+    if (!v) return [];
+    return presetsFor(v).map(function(p) {
+      var st = statusFor(p, lastEventFor(v.id, p.type), v.kmTot || 0);
+      return { type: p.type, icon: p.icon, name: p.name, status: st.status, kmRem: st.kmRem, daysRem: st.daysRem };
+    }).filter(function(x) { return x.status === 'warn' || x.status === 'crit'; });
+  };
+
   function renderMaint() {
     var v = window.hubGarage && window.hubGarage.active();
     if (!v) return;
@@ -22384,14 +22679,14 @@ async function runCmp() {
           (r.altMax != null ? cellD('Quota max', r.altMax.toLocaleString('it-IT') + ' m') : '') +
           (r.vehicleType === 'moto' && (cv.leanSx || cv.leanDx) ? cellD('Piega max', '◀ ' + (cv.leanSx || 0) + '° · ' + (cv.leanDx || 0) + '° ▶') : '') +
           (r.vehicleType !== 'moto' && cv.gLat ? cellD('G laterale max', cv.gLat.toFixed(2) + ' g') : '') +
-          (costo ? cellD('Carburante', '≈ ' + costo.eur.toFixed(2).replace('.', ',') + ' € · ' + costo.litri.toFixed(1).replace('.', ',') + ' l') : '') +
+          (costo ? cellD(costo.litri != null ? 'Carburante' : 'Energia', '≈ ' + costo.eur.toFixed(2).replace('.', ',') + ' €' + (costo.litri != null ? ' · ' + costo.litri.toFixed(1).replace('.', ',') + ' l' : '')) : '') +
           (r.from || r.to ? cellD('Percorso', escSafe((r.from || '?') + ' → ' + (r.to || '?')), true) : '') +
           (r.passi && r.passi.length ? cellD('Passi', escSafe(r.passi.join(' · ')), true) : '') +
         '</div>' +
         (r.laps && r.laps.length ? '<div class="rdl-laps"><div class="rdl-detail-cell-lbl">Giri · migliore ' + RA.fmtLap(bst) + '</div>' +
           r.laps.map(function(l, i) { return '<span class="' + (l === bst ? 'best' : '') + '">' + (i + 1) + '. ' + RA.fmtLap(l) + (l !== bst ? ' <i>+' + ((l - bst) / 1000).toFixed(2) + '</i>' : '') + '</span>'; }).join('') + '</div>' : '') +
         ((cv.leanSx || cv.leanDx || cv.gLat) ? '<p class="rdl-note">' + (r.vehicleType === 'moto' ? 'Piega' : 'G laterale') + ' calcolata da velocità e raggio delle curve sulla traccia GPS: è un valore teorico, utile per confrontare le uscite tra loro.</p>' : '') +
-        (costo ? '<p class="rdl-note">Carburante stimato con ' + costo.cons.toFixed(1).replace('.', ',') + ' l/100 km a ' + costo.prezzo.toFixed(3).replace('.', ',') + ' €/l (' + escSafe(costo.src) + ').</p>' : '') +
+        (costo ? '<p class="rdl-note">' + (costo.cons != null ? 'Carburante stimato con ' + costo.cons.toFixed(1).replace('.', ',') + ' l/100 km a ' + costo.prezzo.toFixed(3).replace('.', ',') + ' €/l (' + escSafe(costo.src) + ').' : 'Stima con ' + (costo.eurKm * 100).toFixed(2).replace('.', ',') + ' € ogni 100 km: ' + escSafe(costo.src) + '.') + '</p>' : '') +
       '</div>' +
       '<div class="rdl-detail-actions">' +
         '<button class="rdl-act-close" onclick="closeRideLogDetail()">Chiudi</button>' +
@@ -22972,6 +23267,510 @@ async function runCmp() {
   window._viInternals = { csv: csv, toTable: toTable, guess: guess, rowsToTrips: rowsToTrips, timeline: timeline, jsonTable: jsonTable, num: num, date: date, durMin: durMin };
 })();
 </script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB OGGI — prima schermata: cosa serve sapere prima di prendere l'auto
+   • Da fare: scadenze (bollo, RCA, revisione, tagliando) e manutenzioni
+   • Meteo per guidare: oggi e i 3 giorni dopo (ghiaccio, neve, nebbia, raffiche)
+   • Pieno o ricarica del veicolo attivo · ultima uscita · scorciatoie
+   Posizione: hub_oggi_pos_v1 · meteo in cache 1 ora (hub_oggi_meteo_v1)
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function $(id) { return document.getElementById(id); }
+  var POS = 'hub_oggi_pos_v1', MET = 'hub_oggi_meteo_v1';
+  var GIORNI = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
+  var MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+  function vName(v) { return v.customName || ((v.marca || '') + ' ' + (v.modello || '')).trim(); }
+  function garage() { return window.hubGarage ? window.hubGarage.list() : []; }
+  function eur(n, d) { return n.toFixed(d == null ? 2 : d).replace('.', ','); }
+
+  /* ── Da fare ───────────────────────────────────────────────────── */
+  function daFare() {
+    var oggi = new Date(); oggi.setHours(0, 0, 0, 0);
+    var out = [];
+    garage().forEach(function(v) {
+      [['scadBollo', 'Bollo'], ['scadRca', 'Assicurazione'], ['scadRev', 'Revisione'], ['scadTagliando', 'Tagliando']].forEach(function(x) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(v[x[0]] || '')) return;
+        var g = Math.round((new Date(v[x[0]] + 'T00:00:00') - oggi) / 86400000);
+        if (g <= 30) out.push({ v: v, nome: x[1], giorni: g, data: v[x[0]], tipo: 'scad' });
+      });
+      (window.hubMaintScad ? window.hubMaintScad(v) : []).forEach(function(m) {
+        var g = m.daysRem != null ? m.daysRem : null, scad = m.status === 'crit';
+        var quando = m.kmRem != null && (g == null || m.kmRem / 40 < g) ? (m.kmRem < 0 ? 'superato di ' + Math.abs(m.kmRem).toLocaleString('it-IT') + ' km' : 'tra ' + m.kmRem.toLocaleString('it-IT') + ' km') : null;
+        out.push({ v: v, nome: m.name, giorni: scad ? -1 : g != null ? g : 30, quando: quando, tipo: 'mt', icon: m.icon });
+      });
+    });
+    return out.sort(function(a, b) { return a.giorni - b.giorni; });
+  }
+  function renderDaFare() {
+    var list = daFare(), molti = garage().length > 1;
+    if (!garage().length) return card('🚗 Il tuo garage', '<p class="og-p">Aggiungi la tua auto per vedere qui scadenze, manutenzioni e quanto ti costa il pieno.</p><button class="og-btn" onclick="hubGo(\'garage\')">Apri il Garage</button>');
+    if (!list.length) return card('✓ Da fare', '<p class="og-p og-ok">Nessuna scadenza nei prossimi 30 giorni.</p>', 'og-c-ok');
+    return card('Da fare', list.slice(0, 6).map(function(x) {
+      var cls = x.giorni < 0 ? 'crit' : x.giorni <= 7 ? 'warn' : 'soon';
+      var q = x.quando || (x.giorni < 0 ? 'scaduto da ' + Math.abs(x.giorni) + (Math.abs(x.giorni) === 1 ? ' giorno' : ' giorni') : x.giorni === 0 ? 'oggi' : x.giorni === 1 ? 'domani' : 'tra ' + x.giorni + ' giorni');
+      return '<button type="button" class="og-todo og-' + cls + '" onclick="ogApri(\'' + x.tipo + '\',\'' + esc(x.v.id) + '\')">' +
+        '<span class="og-dot" aria-hidden="true"></span><span class="og-todo-t">' + (x.icon ? x.icon + ' ' : '') + esc(x.nome) + (molti ? '<small>' + esc(vName(x.v)) + '</small>' : '') + '</span>' +
+        '<span class="og-todo-q">' + esc(q) + '</span></button>';
+    }).join('') + (list.length > 6 ? '<p class="og-p og-small">e altre ' + (list.length - 6) + '</p>' : ''), list.some(function(x) { return x.giorni < 0; }) ? 'og-c-crit' : '');
+  }
+  window.ogApri = function(tipo, vid) {
+    if (window.hubGarage) window.hubGarage.setActive(vid);
+    hubGo('garage');
+    setTimeout(function() { if (tipo === 'mt' && window.openMaint) window.openMaint(); else if (window.openGarageEdit) window.openGarageEdit(vid); }, 250);
+  };
+
+  /* ── Meteo per guidare ─────────────────────────────────────────── */
+  var meteoStato = '';
+  function meteo() {
+    var pos = jget(POS, null);
+    if (!pos) return Promise.resolve(null);
+    var c = jget(MET, null);
+    if (c && c.lat === pos.lat && c.lng === pos.lng && Date.now() - c.ts < 3600000) return Promise.resolve(c);
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + pos.lat + '&longitude=' + pos.lng +
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_gusts_10m_max,snowfall_sum,sunrise,sunset' +
+      '&hourly=visibility,temperature_2m,precipitation&forecast_days=4&timezone=auto';
+    return fetch(url).then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function(d) {
+      var out = { ts: Date.now(), lat: pos.lat, lng: pos.lng, d: d };
+      jset(MET, out); return out;
+    });
+  }
+  function giornoMeteo(d, i) {
+    var D = d.daily, H = d.hourly, day = D.time[i];
+    var tmin = D.temperature_2m_min[i], tmax = D.temperature_2m_max[i], mm = D.precipitation_sum[i] || 0, prob = D.precipitation_probability_max ? D.precipitation_probability_max[i] : null;
+    var gust = D.wind_gusts_10m_max ? D.wind_gusts_10m_max[i] || 0 : 0, neve = D.snowfall_sum ? D.snowfall_sum[i] || 0 : 0, code = D.weather_code[i];
+    // nebbia e ghiaccio nelle ore in cui si guida (6-22)
+    var visMin = null, gelo = false;
+    H.time.forEach(function(t, k) {
+      if (t.slice(0, 10) !== day) return;
+      var h = +t.slice(11, 13);
+      if (h < 6 || h > 22) return;
+      if (H.visibility && H.visibility[k] != null) visMin = visMin == null ? H.visibility[k] : Math.min(visMin, H.visibility[k]);
+      if (H.temperature_2m[k] <= 1 && ((H.precipitation && H.precipitation[k] > 0) || mm > 0)) gelo = true;
+    });
+    var av = [];
+    if (neve > 0 || (code >= 71 && code <= 77) || code === 85 || code === 86) av.push(['bad', '❄ neve']);
+    if (gelo) av.push(['bad', '🧊 ghiaccio']);
+    else if (tmin <= 0) av.push(['warn', '🧊 gelo al mattino']);
+    if (code >= 95) av.push(['bad', '⛈ temporali']);
+    if (mm >= 5) av.push(['warn', '🌧 ' + Math.round(mm) + ' mm']);
+    else if (mm >= 0.5 || (prob != null && prob >= 60)) av.push(['warn', '🌦 pioggia']);
+    if (visMin != null && visMin < 1000) av.push([visMin < 300 ? 'bad' : 'warn', '🌫 nebbia']);
+    if (gust >= 60) av.push(['bad', '💨 raffiche ' + Math.round(gust)]);
+    else if (gust >= 45) av.push(['warn', '💨 vento']);
+    var lv = av.some(function(a) { return a[0] === 'bad'; }) ? 'bad' : av.length ? 'warn' : 'ok';
+    var dt = new Date(day + 'T12:00:00');
+    return { lbl: i === 0 ? 'Oggi' : i === 1 ? 'Domani' : GIORNI[dt.getDay()].slice(0, 3) + ' ' + dt.getDate(), code: code, tmin: tmin, tmax: tmax, av: av, lv: lv };
+  }
+  var ICO = function(c) { return c === 0 ? '☀️' : c <= 2 ? '🌤' : c === 3 ? '☁️' : c <= 48 ? '🌫' : c <= 57 ? '🌦' : c <= 67 ? '🌧' : c <= 77 ? '🌨' : c <= 82 ? '🌧' : c <= 86 ? '🌨' : '⛈'; };
+  function renderMeteo(M) {
+    var pos = jget(POS, null);
+    if (!pos) return card('🌦 Meteo per guidare', '<p class="og-p">Mostro pioggia, ghiaccio, nebbia e vento di oggi e dei prossimi giorni dove ti trovi.</p><button class="og-btn" onclick="ogPosizione()">📍 Usa la mia posizione</button>' + (meteoStato ? '<p class="og-p og-err">' + esc(meteoStato) + '</p>' : ''));
+    if (!M) return card('🌦 Meteo per guidare', '<p class="og-p og-small">' + (meteoStato ? esc(meteoStato) : 'Carico il meteo…') + '</p>');
+    var g = [0, 1, 2, 3].map(function(i) { return giornoMeteo(M.d, i); }), o = g[0];
+    var frase = o.lv === 'ok' ? 'Strade asciutte, nessun avviso.' : o.av.map(function(a) { return a[1].replace(/^\S+ /, ''); }).join(', ').replace(/^./, function(c) { return c.toUpperCase(); }) + '.';
+    var mese = new Date().getMonth() + 1, giorno = new Date().getDate();
+    var inverno = (mese === 11 && giorno >= 15) || mese === 12 || mese <= 3 || (mese === 4 && giorno <= 15);
+    return card('🌦 Meteo per guidare <small>' + esc(pos.nome || 'qui') + ' · <button type="button" class="og-link" onclick="ogPosizione()">aggiorna</button></small>',
+      '<div class="og-today og-lv-' + o.lv + '"><span class="og-big">' + ICO(o.code) + '</span><div><b>' + Math.round(o.tmin) + '° / ' + Math.round(o.tmax) + '°</b><p>' + esc(frase) + '</p></div></div>' +
+      '<div class="og-days">' + g.slice(1).map(function(x) {
+        return '<div class="og-day og-lv-' + x.lv + '"><small>' + esc(x.lbl) + '</small><span>' + ICO(x.code) + '</span><b>' + Math.round(x.tmin) + '° / ' + Math.round(x.tmax) + '°</b>' +
+          '<i>' + (x.av.length ? esc(x.av.map(function(a) { return a[1]; }).slice(0, 2).join(' ')) : 'ok') + '</i></div>';
+      }).join('') + '</div>' +
+      (inverno ? '<p class="og-p og-small">Fino al 15 aprile su molte strade servono gomme invernali o catene a bordo.</p>' : ''));
+  }
+  window.ogPosizione = function() {
+    if (!navigator.geolocation) { meteoStato = 'Posizione non disponibile su questo dispositivo.'; render(); return; }
+    meteoStato = 'Cerco la posizione…'; render();
+    navigator.geolocation.getCurrentPosition(function(p) {
+      var pos = { lat: +p.coords.latitude.toFixed(2), lng: +p.coords.longitude.toFixed(2), nome: '' };   // ~1 km: basta per il meteo
+      jset(POS, pos); meteoStato = '';
+      fetch('https://photon.komoot.io/reverse?lat=' + pos.lat + '&lon=' + pos.lng + '&limit=1').then(function(r) { return r.json(); }).then(function(d) {
+        var pr = d.features && d.features[0] && d.features[0].properties;
+        if (pr) { pos.nome = pr.city || pr.town || pr.village || pr.name || ''; jset(POS, pos); render(); }
+      }).catch(function() {});
+      render();
+    }, function(e) { meteoStato = 'Posizione non concessa: ' + (e.message || e.code); render(); }, { timeout: 10000, maximumAge: 600000 });
+  };
+
+  /* ── Pieno o ricarica ──────────────────────────────────────────── */
+  function renderEnergia() {
+    var v = window.hubGarage && window.hubGarage.active();
+    if (!v) return '';
+    var E = window.hubEnergia ? window.hubEnergia(v) : null, P = window.hubFuelLog ? window.hubFuelLog.ricPref() : { casa: .2, colonnina: .7, consEv: 17 };
+    if (v.alim === 'plugin' || v.alim === 'elettrica') {
+      return card('🔌 Energia · ' + esc(vName(v)),
+        (E ? '<div class="og-kpis"><div><small>In elettrico</small><b>' + Math.round(E.quotaEv * 100) + '%</b></div><div><small>Ogni 100 km</small><b>' + eur(E.eurKm * 100) + ' €</b></div><div><small>Ricarica a casa</small><b>' + eur(P.consEv * P.casa) + ' €</b><small>per 100 km</small></div></div>'
+           : '<p class="og-p">Registra rifornimenti e ricariche con i km: ti dico quanta strada fai in elettrico e quanto ti costa. A casa 100 km costano circa ' + eur(P.consEv * P.casa) + ' €, in colonnina ' + eur(P.consEv * P.colonnina) + ' €.</p>') +
+        '<div class="og-row"><button class="og-btn" onclick="hubGo(\'garage\');setTimeout(function(){openFuelLogEdit(null)},250)">+ Ricarica o pieno</button><button class="og-btn og-ghost" onclick="hubGo(\'fuel\')">Distributori</button></div>');
+    }
+    var fuel = /diesel/.test(v.alim || '') ? 'Diesel' : v.alim === 'gpl' ? 'GPL' : v.alim === 'metano' ? 'Metano' : 'Benzina';
+    var m = window.hubMedie || jget('hub_medie_v1', null), d = m && m[fuel], prezzo = d ? (d.self || d.serv) : null;
+    var favs = typeof window.loadFavs === 'function' ? window.loadFavs() : [];
+    var fav = favs.filter(function(f) { return String(f.carburante || '').toLowerCase().indexOf(fuel.toLowerCase()) >= 0 && typeof f.prezzo === 'number'; })[0];
+    var serb = v.serbatoio || (v.specs && v.specs.serbatoio_l) || null;
+    var p = fav ? fav.prezzo : prezzo;
+    if (!p) return '';
+    return card('⛽ ' + fuel + ' · ' + esc(vName(v)),
+      '<div class="og-kpis"><div><small>' + (fav ? esc(fav.customName || fav.nome || 'Preferito') : 'Media nazionale self') + '</small><b>' + p.toFixed(3).replace('.', ',') + ' €/l</b></div>' +
+      (serb ? '<div><small>Pieno da ' + Math.round(serb) + ' l</small><b>≈ ' + Math.round(serb * p) + ' €</b></div>' : '') + '</div>' +
+      '<div class="og-row"><button class="og-btn" onclick="hubGo(\'fuel\')">Distributori vicini</button></div>');
+  }
+
+  /* ── Ultima uscita ─────────────────────────────────────────────── */
+  function renderUscita() {
+    var rides = jget('hub_rides_v1', []);
+    if (!rides.length) return '';
+    var r = rides.slice().sort(function(a, b) { return (b.startTs || 0) - (a.startTs || 0); })[0];
+    var m0 = new Date(); m0.setDate(1); m0.setHours(0, 0, 0, 0);
+    var mese = rides.filter(function(x) { return (x.startTs || 0) >= m0.getTime(); }).reduce(function(a, x) { return a + (x.distanceKm || 0); }, 0);
+    var d = new Date(r.startTs);
+    return card('🏁 Ultima uscita',
+      '<button type="button" class="og-ride" onclick="openRideLog();setTimeout(function(){hubRideLogOpen(\'' + esc(r.id) + '\')},150)"><b>' + esc(r.title || (d.getDate() + ' ' + MESI[d.getMonth()])) + '</b>' +
+      '<span>' + (r.distanceKm || 0).toFixed(0) + ' km' + (r.passi && r.passi.length ? ' · ⛰ ' + esc(r.passi.slice(0, 2).join(', ')) : '') + '</span></button>' +
+      '<p class="og-p og-small">Questo mese: ' + Math.round(mese).toLocaleString('it-IT') + ' km</p>');
+  }
+
+  function card(t, body, cls) { return '<section class="og-card ' + (cls || '') + '"><h2 class="og-h">' + t + '</h2>' + body + '</section>'; }
+
+  var _M = null;
+  function render() {
+    var root = $('oggi-root'); if (!root) return;
+    var now = new Date(), v = window.hubGarage && window.hubGarage.active(), g = garage();
+    var h = now.getHours(), saluto = h < 6 ? 'Buonanotte' : h < 13 ? 'Buongiorno' : h < 18 ? 'Buon pomeriggio' : 'Buonasera';
+    root.innerHTML =
+      '<header class="og-hdr"><h1>' + saluto + '</h1><small>' + GIORNI[now.getDay()] + ' ' + now.getDate() + ' ' + MESI[now.getMonth()] + '</small>' +
+        (g.length > 1 ? '<div class="og-veh" role="group" aria-label="Veicolo attivo">' + g.map(function(x) {
+          return '<button type="button" class="' + (v && v.id === x.id ? 'on' : '') + '" onclick="ogVeicolo(\'' + esc(x.id) + '\')">' + (x.type === 'moto' ? '🏍 ' : '🚗 ') + esc(vName(x)) + '</button>';
+        }).join('') + '</div>' : '') + '</header>' +
+      renderDaFare() + renderMeteo(_M) + renderEnergia() + renderUscita() +
+      card('Strumenti', '<div class="og-tools">' +
+        '<button onclick="openGiro()"><span>🗺</span>Giro della domenica</button>' +
+        '<button onclick="hubGo(\'meteo\')"><span>🌦</span>Meteo percorso</button>' +
+        '<button onclick="hubGo(\'ride\')"><span>🏁</span>Ride</button>' +
+        '<button onclick="hubGo(\'passi\')"><span>⛰</span>Passi e strade</button></div>');
+  }
+  window.ogVeicolo = function(id) { if (window.hubGarage) window.hubGarage.setActive(id); if (window._hubRefreshGarageBadge) window._hubRefreshGarageBadge(); render(); };
+  window.oggiInit = function() {
+    render();
+    // prezzi medi del giorno, se la sezione Carburanti non li ha ancora caricati
+    if (!window.hubMedie && !jget('hub_medie_v1', null) && typeof WORKER !== 'undefined') {
+      fetch(WORKER + '/api/medie').then(function(r) { return r.ok ? r.json() : null; }).then(function(d) { if (d && d.Benzina) { window.hubMedie = d; render(); } }).catch(function() {});
+    }
+    if (jget(POS, null)) meteo().then(function(M) { _M = M; meteoStato = ''; render(); }).catch(function(e) { meteoStato = 'Meteo non disponibile ora (' + e.message + ').'; render(); });
+  };
+  // dopo aver scelto la posizione, ricarica il meteo
+  var _origPos = window.ogPosizione;
+  window.ogPosizione = function() {
+    _origPos();
+    var t0 = Date.now(), iv = setInterval(function() {
+      var p = jget(POS, null);
+      if (p && (!_M || _M.lat !== p.lat || _M.lng !== p.lng)) { clearInterval(iv); window.oggiInit(); }
+      else if (Date.now() - t0 > 15000) clearInterval(iv);
+    }, 400);
+  };
+  window._oggiInternals = { daFare: daFare, giornoMeteo: giornoMeteo, render: render };
+})();
+</script>
+<script>/* ═══════════════════════════════════════════════════════════════════
+   HUB GIRO — "Giro della domenica": anelli in auto della durata scelta
+   1. 8 direzioni attorno alla partenza: quota e rilievo dei punti di ogni
+      triangolo (Open-Meteo elevation, una chiamata) → dove ci sono colline
+   2. Con "Passi": anelli che passano da un passo aperto raggiungibile
+   3. Percorso OSRM senza autostrade, ricalibrato sulla durata
+   4. Per ogni proposta: curve (°/km), dislivello, passi, meteo all'ora
+      di passaggio; mappa, Google Maps e GPX
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function $(id) { return document.getElementById(id); }
+  function jget(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function jset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var RAD = Math.PI / 180, PREF = 'hub_giro_pref_v1';
+  var DIR = ['Nord', 'Nord-Est', 'Est', 'Sud-Est', 'Sud', 'Sud-Ovest', 'Ovest', 'Nord-Ovest'];
+  var COL = ['#ff7a45', '#5b9bd5', '#c97fd4'];
+  function dist(a, b) {
+    var dLat = (b.lat - a.lat) * RAD, dLng = (b.lng - a.lng) * RAD;
+    var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(a.lat * RAD) * Math.cos(b.lat * RAD);
+    return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(x)));
+  }
+  function dest(p, brg, km) {   // punto a "km" in direzione "brg" (gradi)
+    var d = km / 6371, b = brg * RAD, la = p.lat * RAD, lo = p.lng * RAD;
+    var la2 = Math.asin(Math.sin(la) * Math.cos(d) + Math.cos(la) * Math.sin(d) * Math.cos(b));
+    var lo2 = lo + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(la), Math.cos(d) - Math.sin(la) * Math.sin(la2));
+    return { lat: +(la2 / RAD).toFixed(5), lng: +(lo2 / RAD).toFixed(5) };
+  }
+  function bearing(a, b) {
+    var y = Math.sin((b.lng - a.lng) * RAD) * Math.cos(b.lat * RAD);
+    var x = Math.cos(a.lat * RAD) * Math.sin(b.lat * RAD) - Math.sin(a.lat * RAD) * Math.cos(b.lat * RAD) * Math.cos((b.lng - a.lng) * RAD);
+    return (Math.atan2(y, x) / RAD + 360) % 360;
+  }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function hhmm(ms) { var d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+
+  var S = { ore: 3, stile: 'curve', quando: 'oggi', ora: '09:00', res: null, map: null };
+
+  /* ── Interfaccia ──────────────────────────────────────────────── */
+  function inject() {
+    if ($('gi-overlay')) return;
+    var p = jget(PREF, {}); if (p.ore) S.ore = p.ore; if (p.stile) S.stile = p.stile;
+    var ov = document.createElement('div');
+    ov.id = 'gi-overlay'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-labelledby', 'gi-title');
+    ov.innerHTML =
+      '<div class="wp-hdr"><h2 id="gi-title">GIRO DELLA DOMENICA<small>Anelli in auto su strade belle, senza autostrade</small></h2>' +
+        '<button class="gar-close" onclick="closeGiro()">✕ Chiudi</button></div>' +
+      '<div class="wp-body"><form class="wp-form" onsubmit="event.preventDefault();giroCalcola()" autocomplete="off">' +
+        '<div class="wp-field"><label for="gi-from">Partenza</label><input type="text" id="gi-from" placeholder="La mia posizione"><button type="button" class="wp-locate" onclick="giroQui()" aria-label="Usa la mia posizione">📍</button></div>' +
+        '<div class="gi-lbl">Quanto vuoi guidare</div><div class="gi-chips" id="gi-ore">' + [1.5, 2, 3, 4, 5].map(function(h) {
+          return '<button type="button" data-v="' + h + '" onclick="giroSet(\'ore\',' + h + ')">' + (h === 1.5 ? '1h30' : h + ' ore') + '</button>'; }).join('') + '</div>' +
+        '<div class="gi-lbl">Che strade</div><div class="gi-chips" id="gi-stile">' +
+          '<button type="button" data-v="curve" onclick="giroSet(\'stile\',\'curve\')">〰 Curve e colline</button>' +
+          '<button type="button" data-v="passi" onclick="giroSet(\'stile\',\'passi\')">⛰ Con un passo</button></div>' +
+        '<div class="gi-lbl">Quando</div><div class="gi-chips" id="gi-quando">' + [['oggi', 'Oggi'], ['domani', 'Domani'], ['sabato', 'Sabato'], ['domenica', 'Domenica']].map(function(q) {
+          return '<button type="button" data-v="' + q[0] + '" onclick="giroSet(\'quando\',\'' + q[0] + '\')">' + q[1] + '</button>'; }).join('') +
+          '<input type="time" id="gi-ora" value="09:00" aria-label="Ora di partenza"></div>' +
+        '<p class="wp-err" id="gi-err" role="alert"></p>' +
+        '<button class="wp-go" type="submit">Proponi 3 giri →</button>' +
+      '</form><div class="wp-result" id="gi-result" aria-live="polite"></div></div>';
+    document.body.appendChild(ov);
+    var pos = jget('hub_oggi_pos_v1', null); if (pos && pos.nome) $('gi-from').placeholder = pos.nome + ' (la tua posizione)';
+    ['ore', 'stile', 'quando'].forEach(function(k) { segna(k); });
+  }
+  function segna(k) { document.querySelectorAll('#gi-' + k + ' button').forEach(function(b) { b.classList.toggle('on', String(S[k]) === b.dataset.v); }); }
+  window.giroSet = function(k, v) {
+    S[k] = v; segna(k);
+    if (k !== 'quando') jset(PREF, { ore: S.ore, stile: S.stile });
+    if (k === 'quando' && v === 'oggi') { var d = new Date(Date.now() + 30 * 60000); d.setMinutes(d.getMinutes() < 30 ? 30 : 60, 0, 0); $('gi-ora').value = pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  };
+  window.openGiro = function() {
+    inject(); $('gi-overlay').classList.add('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  window.closeGiro = function() {
+    var o = $('gi-overlay'); if (o) o.classList.remove('visible');
+    if (typeof _hubUpdatePillVisibility === 'function') _hubUpdatePillVisibility();
+  };
+  function errore(t) { $('gi-err').textContent = t || ''; }
+  window.giroQui = function() {
+    if (!navigator.geolocation) { errore('Posizione non disponibile.'); return; }
+    navigator.geolocation.getCurrentPosition(function(p) {
+      var inp = $('gi-from'); inp.value = 'La mia posizione'; inp.dataset.lat = p.coords.latitude.toFixed(4); inp.dataset.lng = p.coords.longitude.toFixed(4);
+    }, function(e) { errore('Posizione non concessa: ' + (e.message || e.code)); }, { timeout: 10000, maximumAge: 300000 });
+  };
+  function partenza() {
+    var inp = $('gi-from'), t = inp.value.trim();
+    if (inp.dataset.lat && (t === '' || t === 'La mia posizione')) return Promise.resolve({ lat: +inp.dataset.lat, lng: +inp.dataset.lng, name: 'La mia posizione' });
+    if (!t) {
+      var pos = jget('hub_oggi_pos_v1', null);
+      if (pos) return Promise.resolve({ lat: pos.lat, lng: pos.lng, name: pos.nome || 'La mia posizione' });
+      return new Promise(function(ok, ko) {
+        if (!navigator.geolocation) return ko(new Error('Scrivi da dove parti.'));
+        navigator.geolocation.getCurrentPosition(function(p) { ok({ lat: p.coords.latitude, lng: p.coords.longitude, name: 'La mia posizione' }); }, function() { ko(new Error('Scrivi da dove parti o consenti la posizione.')); }, { timeout: 10000 });
+      });
+    }
+    return fetch('https://photon.komoot.io/api/?limit=1&lat=45.6&lon=10&q=' + encodeURIComponent(t)).then(function(r) { return r.json(); }).then(function(d) {
+      var f = d.features && d.features[0]; if (!f) throw new Error('Località non trovata: ' + t);
+      return { lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0], name: t };
+    });
+  }
+  function quandoMs() {
+    var d = new Date(), hm = ($('gi-ora').value || '09:00').split(':');
+    if (S.quando === 'domani') d.setDate(d.getDate() + 1);
+    if (S.quando === 'sabato') d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7));
+    if (S.quando === 'domenica') d.setDate(d.getDate() + ((7 - d.getDay()) % 7 || 7));
+    d.setHours(+hm[0], +hm[1] || 0, 0, 0);
+    return d.getTime();
+  }
+
+  /* ── Candidati ────────────────────────────────────────────────── */
+  // triangolo partenza → W1 → W2 → partenza; con fattore strada 1,3 il giro è ~3,7 volte d
+  function triangolo(s, brg, d) { return [dest(s, brg - 25, d), dest(s, brg + 25, d)]; }
+  function elevazioni(points) {
+    var url = 'https://api.open-meteo.com/v1/elevation?latitude=' + points.map(function(p) { return p.lat.toFixed(4); }).join(',') + '&longitude=' + points.map(function(p) { return p.lng.toFixed(4); }).join(',');
+    return fetch(url).then(function(r) { if (!r.ok) throw new Error('quote non disponibili'); return r.json(); }).then(function(d) { return d.elevation || []; });
+  }
+  function candidati(s, ore, when) {
+    var L = 55 * ore, d = L / 3.7, mese = new Date(when).getMonth() + 1, out = [];
+    // passi aperti nel mese, raggiungibili nell'anello
+    if (S.stile === 'passi') {
+      var P = (window._psInternals && window._psInternals.PASSES) || [];
+      P.filter(function(p) { var k = dist(s, p); return k > 15 && k <= L / 2.7 && !(p.closed && p.closed.indexOf(mese) >= 0); })
+        .sort(function(a, b) { return b.alt - a.alt; }).slice(0, 3).forEach(function(p) {
+          var b = bearing(s, p), k = dist(s, p);
+          out.push({ tipo: 'passo', passo: p, brg: b, wp: [{ lat: p.lat, lng: p.lng }, dest(s, b + 40, k * 0.75)], score: 100 + p.alt / 100 });
+        });
+    }
+    // 8 direzioni: 4 punti per triangolo (2 vertici + 2 punti a metà lato), quota e rilievo
+    var pts = [];
+    for (var i = 0; i < 8; i++) {
+      var w = triangolo(s, i * 45, d);
+      pts.push(w[0], w[1], dest(s, i * 45 - 25, d / 2), dest(s, i * 45 + 25, d / 2));
+    }
+    return elevazioni(pts).then(function(el) {
+      for (var i = 0; i < 8; i++) {
+        var e = el.slice(i * 4, i * 4 + 4);
+        if (e.length < 4) continue;
+        var mare = e.filter(function(x) { return x <= 1; }).length;   // punti in mare: direzione da scartare
+        var rilievo = Math.max.apply(null, e) - Math.min.apply(null, e), media = e.reduce(function(a, b) { return a + b; }, 0) / 4;
+        out.push({ tipo: 'dir', brg: i * 45, wp: triangolo(s, i * 45, d), score: rilievo * 0.06 + media * 0.02 - mare * 40, quota: Math.round(media) });
+      }
+      // le 3 migliori, non troppo simili tra loro (almeno 70° di differenza)
+      out.sort(function(a, b) { return b.score - a.score; });
+      var scelti = [];
+      out.forEach(function(c) { if (scelti.length < 3 && scelti.every(function(x) { var db = Math.abs(((x.brg - c.brg) + 540) % 360 - 180); return db >= 70; })) scelti.push(c); });
+      return { lista: scelti, L: L, nessunPasso: S.stile === 'passi' && !out.some(function(c) { return c.tipo === 'passo'; }) };
+    });
+  }
+
+  /* ── Percorso ─────────────────────────────────────────────────── */
+  function osrm(pts) {
+    var url = 'https://router.project-osrm.org/route/v1/driving/' + pts.map(function(p) { return p.lng.toFixed(5) + ',' + p.lat.toFixed(5); }).join(';') + '?overview=full&geometries=geojson&exclude=motorway';
+    return fetch(url).then(function(r) {
+      if (!r.ok) return fetch(url.replace('&exclude=motorway', '')).then(function(r2) { if (!r2.ok) throw new Error('percorso non disponibile'); return r2.json(); });
+      return r.json();
+    }).then(function(d) {
+      if (!d.routes || !d.routes[0]) throw new Error('nessun percorso');
+      var r = d.routes[0];
+      return { coords: r.geometry.coordinates.map(function(c) { return { lat: c[1], lng: c[0] }; }), km: r.distance / 1000, s: r.duration };
+    });
+  }
+  function giro(s, c, target) {
+    return osrm([s].concat(c.wp, [s])).then(function(r) {
+      if (c.tipo === 'passo' || Math.abs(r.s - target) / target < 0.25) return r;
+      // troppo lungo o troppo corto: si scala la distanza dei vertici e si riprova una volta
+      var k = Math.max(0.5, Math.min(1.6, target / r.s));
+      c.wp = triangolo(s, c.brg, dist(s, c.wp[0]) * k);
+      return osrm([s].concat(c.wp, [s]));
+    });
+  }
+  // curve: somma dei cambi di direzione ogni 25 m, in gradi per km
+  function curve(coords) {
+    var pts = [coords[0]], acc = 0;
+    for (var i = 1; i < coords.length; i++) { acc += dist(coords[i - 1], coords[i]); if (acc >= 0.025) { pts.push(coords[i]); acc = 0; } }
+    var tot = 0, km = 0;
+    for (var j = 2; j < pts.length; j++) {
+      var a = bearing(pts[j - 2], pts[j - 1]), b = bearing(pts[j - 1], pts[j]), dd = Math.abs(((b - a) + 540) % 360 - 180);
+      if (dd > 3 && dd < 150) tot += dd;
+      km += dist(pts[j - 1], pts[j]);
+    }
+    return km ? tot / km : 0;
+  }
+  function campiona(coords, n) {
+    var cum = [0]; for (var i = 1; i < coords.length; i++) cum.push(cum[i - 1] + dist(coords[i - 1], coords[i]));
+    var L = cum[cum.length - 1], out = [], j = 0;
+    for (var k = 0; k < n; k++) { var t = L * k / (n - 1); while (j < cum.length - 2 && cum[j + 1] < t) j++; out.push({ lat: coords[j].lat, lng: coords[j].lng, f: L ? t / L : 0 }); }
+    return out;
+  }
+  function meteo(punti, when, durS) {
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + punti.map(function(p) { return p.lat.toFixed(3); }).join(',') + '&longitude=' + punti.map(function(p) { return p.lng.toFixed(3); }).join(',') +
+      '&hourly=temperature_2m,precipitation,weather_code,visibility&forecast_days=16&timeformat=unixtime&timezone=auto';
+    return fetch(url).then(function(r) { if (!r.ok) throw new Error('meteo'); return r.json(); }).then(function(d) {
+      d = Array.isArray(d) ? d : [d];
+      var av = {}, tmin = 99, tmax = -99, ok = 0;
+      punti.forEach(function(p, i) {
+        var h = d[i] && d[i].hourly; if (!h) return;
+        var k = Math.round(((when + p.f * durS * 1000) / 1000 - h.time[0]) / 3600); if (k < 0 || k >= h.time.length) return;
+        ok++;
+        var t = h.temperature_2m[k], mm = h.precipitation[k] || 0, c = h.weather_code[k], vis = h.visibility ? h.visibility[k] : null;
+        tmin = Math.min(tmin, t); tmax = Math.max(tmax, t);
+        if ((c >= 71 && c <= 77) || c === 85 || c === 86) av['❄ neve'] = 1;
+        if (t <= 1 && mm > 0) av['🧊 ghiaccio'] = 1;
+        if (c >= 95) av['⛈ temporali'] = 1;
+        if (mm >= 0.3) av['🌧 pioggia'] = 1;
+        if (vis != null && vis < 1000) av['🌫 nebbia'] = 1;
+      });
+      return ok ? { av: Object.keys(av), tmin: tmin, tmax: tmax } : null;
+    }).catch(function() { return null; });
+  }
+  function nome(p) {
+    return fetch('https://photon.komoot.io/reverse?lat=' + p.lat + '&lon=' + p.lng + '&limit=1').then(function(r) { return r.json(); }).then(function(d) {
+      var pr = d.features && d.features[0] && d.features[0].properties; return pr ? (pr.city || pr.town || pr.village || pr.name || '') : '';
+    }).catch(function() { return ''; });
+  }
+
+  window.giroCalcola = function() {
+    errore('');
+    var res = $('gi-result'), when = quandoMs(), target = S.ore * 3600;
+    if (when < Date.now() - 30 * 60000) { errore('L\'orario di partenza è già passato.'); return; }
+    res.innerHTML = '<div class="wp-loading">Cerco le direzioni con più colline e curve…</div>';
+    partenza().then(function(s) {
+      return candidati(s, S.ore, when).then(function(C) {
+        if (!C.lista.length) throw new Error('Nessuna direzione utile intorno alla partenza.');
+        res.innerHTML = '<div class="wp-loading">Calcolo i percorsi…</div>';
+        return Promise.all(C.lista.map(function(c) {
+          return giro(s, c, target).then(function(r) {
+            var smp = campiona(r.coords, 30);
+            return Promise.all([elevazioni(smp).catch(function() { return []; }), meteo(campiona(r.coords, 5), when, r.s), nome(c.wp[0])]).then(function(x) {
+              var el = x[0], su = 0, ref = el[0];
+              el.forEach(function(e) { if (e - ref >= 10) { su += e - ref; ref = e; } else if (ref - e >= 10) ref = e; });
+              var P = (window._psInternals && window._psInternals.PASSES) || [];
+              var passi = P.filter(function(p) { return r.coords.some(function(q, i) { return i % 5 === 0 && dist(p, q) < 1; }); });
+              return { c: c, r: r, curve: curve(r.coords), salita: Math.round(su), qMax: el.length ? Math.round(Math.max.apply(null, el)) : null, meteo: x[1], verso: x[2], passi: passi };
+            });
+          }).catch(function(e) { return { c: c, err: e.message }; });
+        })).then(function(G) {
+          G = G.filter(function(g) { return g.r; });
+          if (!G.length) throw new Error('Il servizio dei percorsi non risponde: riprova tra poco.');
+          G.sort(function(a, b) { return (b.c.tipo === 'passo') - (a.c.tipo === 'passo') || b.curve - a.curve; });
+          S.res = { s: s, G: G, when: when, nessunPasso: C.nessunPasso };
+          render();
+        });
+      });
+    }).catch(function(e) { res.innerHTML = '<div class="wp-error">' + esc(e.message || String(e)) + '</div>'; });
+  };
+
+  /* ── Risultato ────────────────────────────────────────────────── */
+  function pallini(c) { var n = c < 40 ? 1 : c < 70 ? 2 : c < 110 ? 3 : c < 160 ? 4 : 5; return '●●●●●'.slice(0, n) + '<span>' + '●●●●●'.slice(n) + '</span>'; }
+  function render() {
+    var R = S.res, res = $('gi-result');
+    var html = (R.nessunPasso ? '<div class="wp-al wp-al-info">⛰ Nessun passo aperto raggiungibile in ' + (S.ore === 1.5 ? '1h30' : S.ore + ' ore') + ' da qui in questo periodo: ti propongo i giri con più colline.</div>' : '') +
+      '<div class="wp-map gi-map" id="gi-map" aria-label="Mappa dei giri proposti"></div>';
+    html += R.G.map(function(g, i) {
+      var mm = Math.round(g.r.s / 60), h = Math.floor(mm / 60), m = mm % 60;
+      var titolo = g.c.tipo === 'passo' ? 'Via ' + g.c.passo.name : 'Verso ' + DIR[Math.round(g.c.brg / 45) % 8] + (g.verso ? ' · ' + g.verso : '');
+      var mt = g.meteo ? (g.meteo.av.length ? '<span class="gi-bad">' + esc(g.meteo.av.join(' · ')) + '</span>' : '<span class="gi-good">asciutto</span>') + ' · ' + Math.round(g.meteo.tmin) + '–' + Math.round(g.meteo.tmax) + '°' : 'meteo non disponibile';
+      return '<div class="gi-card" style="--c:' + COL[i] + '"><div class="gi-card-h"><b>' + esc(titolo) + '</b><span>' + Math.round(g.r.km) + ' km · ' + (h ? h + 'h ' : '') + m + 'm</span></div>' +
+        '<div class="gi-meta"><span>Curve <i class="gi-dots">' + pallini(g.curve) + '</i></span><span>▲ ' + g.salita.toLocaleString('it-IT') + ' m' + (g.qMax ? ' · max ' + g.qMax.toLocaleString('it-IT') + ' m' : '') + '</span></div>' +
+        (g.passi.length ? '<div class="gi-passi">⛰ ' + esc(g.passi.map(function(p) { return p.name; }).join(' · ')) + '</div>' : '') +
+        '<div class="gi-meteo">' + hhmm(R.when) + ' → ' + hhmm(R.when + g.r.s * 1000) + ' · ' + mt + '</div>' +
+        '<div class="gi-act"><a class="gi-btn" href="' + gmaps(R.s, g) + '" target="_blank" rel="noopener">Apri in Google Maps ↗</a><button type="button" class="gi-btn gi-ghost" onclick="giroGpx(' + i + ')">⬇ GPX</button></div></div>';
+    }).join('');
+    html += '<p class="wp-fine">Giri calcolati senza autostrade su OpenStreetMap (OSRM); le curve si misurano sul tracciato, i tempi non contano traffico e soste. Controlla sempre chiusure e meteo prima di partire.</p>';
+    res.innerHTML = html;
+    mappa();
+  }
+  function gmaps(s, g) {
+    return 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + s.lat + ',' + s.lng + '&destination=' + s.lat + ',' + s.lng +
+      '&waypoints=' + g.c.wp.map(function(w) { return w.lat + ',' + w.lng; }).join('%7C');
+  }
+  window.giroGpx = function(i) {
+    var g = S.res.G[i], name = 'AutoHub giro ' + (i + 1);
+    var gpx = '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="AutoHub" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>' + esc(name) + '</name><trkseg>\n' +
+      g.r.coords.map(function(p) { return '<trkpt lat="' + p.lat.toFixed(6) + '" lon="' + p.lng.toFixed(6) + '"/>'; }).join('\n') + '\n</trkseg></trk></gpx>';
+    var url = URL.createObjectURL(new Blob([gpx], { type: 'application/gpx+xml' })), a = document.createElement('a');
+    a.href = url; a.download = 'autohub-giro-' + (i + 1) + '.gpx'; document.body.appendChild(a); a.click();
+    setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 100);
+  };
+  function mappa() {
+    if (S.map) { try { S.map.remove(); } catch (e) {} S.map = null; }
+    var el = $('gi-map'); if (typeof L === 'undefined' || !el) { if (el) el.remove(); return; }
+    var m = L.map(el, { zoomControl: false });
+    if (typeof addBasemap === 'function') addBasemap(m); else L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(m);
+    var all = [];
+    S.res.G.forEach(function(g, i) {
+      var ll = g.r.coords.map(function(p) { return [p.lat, p.lng]; }); all = all.concat(ll);
+      L.polyline(ll, { color: COL[i], weight: 4, opacity: .9 }).addTo(m);
+    });
+    L.circleMarker([S.res.s.lat, S.res.s.lng], { radius: 6, color: '#111', weight: 2, fillColor: '#fff', fillOpacity: 1 }).addTo(m);
+    m.fitBounds(L.latLngBounds(all), { padding: [14, 14] });
+    S.map = m;
+  }
+
+  window._giInternals = { curve: curve, dest: dest, candidati: candidati, state: function() { return S; } };
+})();
+</script>
 
 <!-- HUB WEATHER: meteo lungo il percorso (geocoding+OSRM+Open-Meteo) -->
 <script>/* ═══════════════════════════════════════════════════════════════════
@@ -23303,7 +24102,7 @@ async function runCmp() {
     var A = viaggio(D.dep, false), R = D.ret ? viaggio(D.ret, true) : null;
     var last = D.fc[0] && D.fc[0].hourly ? D.fc[0].hourly.time[D.fc[0].hourly.time.length - 1] * 1000 : 0;
     if (!A.rows.length) { res.innerHTML = '<div class="wp-error">Previsioni disponibili fino a ' + giorno(last) + ' ' + hhmm(last) + ': scegli una partenza più vicina.</div>'; return; }
-    var h = Math.floor(rt.durS / 3600), m = Math.round(rt.durS % 3600 / 60), pl = D.pl;
+    var mm = Math.round(rt.durS / 60), h = Math.floor(mm / 60), m = mm % 60, pl = D.pl;
     var gmaps = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=' + pl[0].lat + ',' + pl[0].lng + '&destination=' + pl[pl.length - 1].lat + ',' + pl[pl.length - 1].lng +
       (pl.length > 2 ? '&waypoints=' + pl[1].lat + ',' + pl[1].lng : '');
     var html = '<div class="wp-route-info"><div class="wp-route-row">' + pl.map(function(p) { return '<strong>' + esc(p.name.split(',')[0]) + '</strong>'; }).join(' → ') + '</div>' +
@@ -23496,8 +24295,9 @@ async function runCmp() {
 
   /* ── Compute TCO breakdown for a vehicle/period ─────────────── */
   // Consumo medio dai rifornimenti a pieno (litri tra due pieni / km)
+  function isRic(r) { return r.tipo === 'ricarica' || r.carburante === 'Elettrico'; }
   function refuelAvgCons(refuels) {
-    var s = refuels.slice().sort(function(a, b) { return a.km - b.km; }), prev = null, l = 0, L = 0, K = 0;
+    var s = refuels.filter(function(r) { return !isRic(r); }).sort(function(a, b) { return a.km - b.km; }), prev = null, l = 0, L = 0, K = 0;
     s.forEach(function(r) {
       if (prev) { l += Number(r.litri) || 0; if (r.isFull && r.km > prev.km) { L += l; K += r.km - prev.km; prev = r; l = 0; } }
       else if (r.isFull) prev = r;
@@ -23506,7 +24306,7 @@ async function runCmp() {
   }
   // Prezzo al litro: ultimo rifornimento del veicolo → media nazionale del giorno (Carburanti) → valore indicativo
   function fuelPrice(vehicle, refuels) {
-    var last = refuels.filter(function(r) { return Number(r.prezzoPerLitro) > 0; }).sort(function(a, b) { return (b.date || '').localeCompare(a.date || ''); })[0];
+    var last = refuels.filter(function(r) { return !isRic(r) && Number(r.prezzoPerLitro) > 0; }).sort(function(a, b) { return (b.date || '').localeCompare(a.date || ''); })[0];
     if (last) return { eur: Number(last.prezzoPerLitro), src: 'il tuo ultimo rifornimento' };
     var a = vehicle.alim || '', fuel = /diesel/.test(a) ? 'Diesel' : a === 'gpl' ? 'GPL' : a === 'metano' ? 'Metano' : 'Benzina';
     var m = null;
@@ -23625,7 +24425,7 @@ async function runCmp() {
 
     return {
       total: total,
-      fuel: fuelCost,
+      fuel: fuelCost, plug: vehicle.alim === 'plugin' || vehicle.alim === 'elettrica',
       maint: maintCost,
       bollo: bolloCost,
       rca: rcaCost,
@@ -23778,7 +24578,7 @@ async function runCmp() {
 
     // Breakdown
     var rows = [
-      { lbl: 'Carburante' + (tco.fuelSrc === 'viaggi' ? ' (stima dai viaggi)' : ''), val: tco.fuel, color: '#5b9bd5' },
+      { lbl: (tco.plug ? 'Energia (carburante e ricariche)' : 'Carburante') + (tco.fuelSrc === 'viaggi' ? ' (stima dai viaggi)' : ''), val: tco.fuel, color: '#5b9bd5' },
       { lbl: 'Manutenzione', val: tco.maint,     color: '#4caf7d' },
       { lbl: 'Bollo' + (tco.bolloSrc === 'tuo' ? '' : ' (stima)'),val: tco.bollo,     color: '#e8a030' },
       { lbl: 'Assicurazione' + (tco.rcaSrc === 'tuo' ? '' : ' (stima)'),  val: tco.rca,       color: '#c97fd4' },
@@ -24052,6 +24852,8 @@ async function runCmp() {
     });
   }
   function mgp(path, params, ttl) {
+    // nell'app del Play Store niente API non ufficiale: calendario inserito a mano e link a motogp.com
+    if (window.HUB_STORE) return Promise.reject(new Error('Risultati sul sito ufficiale motogp.com'));
     var q = 'path=' + encodeURIComponent(path) + (params ? '&' + params : '');
     return getJSON(workerBase() + '/api/motogp?' + q, ttl);
   }
@@ -24819,7 +25621,9 @@ async function runCmp() {
     if (q.cambio === 'Manuale') p.push('gear=M');
     if (q.cambio === 'Automatico') p.push('gear=A');
     if (/^\d{5}$/.test(q.zip || '')) { p.push('zip=' + q.zip); p.push('zipr=' + (num(q.raggio) || 50)); }
-    out.push(['AutoScout24', 'https://www.autoscout24.it/lst' + (path ? '/' + path : '') + '?' + p.join('&')]);
+    out.push(['AutoScout24', 'https://www.autoscout24.it/' + (moto ? 'lst-moto' : 'lst') + (path ? '/' + path : '') + '?' + p.join('&')]);
+    if (!moto) { var ap = []; if (num(q.prezzoMax)) ap.push('prezzo_a=' + num(q.prezzoMax)); if (num(q.annoMin)) ap.push('immatricolazione=' + num(q.annoMin));
+      out.push(['Automobile.it', 'https://www.automobile.it/' + (q.marca ? slug(q.marca).replace(/-/g, '_') + (q.modello ? '-' + slug(modelloBase(q.modello)).replace(/-/g, '_') : '') : 'auto-usate') + (ap.length ? '?' + ap.join('&') : '')]); }
     var sp = [];
     if (nome) sp.push('q=' + encodeURIComponent(nome));
     if (num(q.prezzoMax)) sp.push('pe=' + num(q.prezzoMax));
@@ -24830,7 +25634,7 @@ async function runCmp() {
     if (num(q.prezzoMax)) wp.push('max_sale_price=' + num(q.prezzoMax));
     out.push(['Wallapop', 'https://it.wallapop.com/app/search?' + wp.join('&')]);
     var g = encodeURIComponent((nome || 'usato') + ' usata' + (num(q.prezzoMax) ? ' ' + num(q.prezzoMax) + ' euro' : ''));
-    out.push([moto ? 'Moto.it (Google)' : 'Automobile.it (Google)', 'https://www.google.com/search?q=site:' + (moto ? 'moto.it' : 'automobile.it') + '+' + g]);
+    if (moto) out.push(['Moto.it (Google)', 'https://www.google.com/search?q=site:moto.it+' + g]);
     return out;
   }
 
@@ -24900,6 +25704,8 @@ async function runCmp() {
   function cerca(q, fromId) {
     R = { q: q, fromId: fromId || null, st: {}, items: [], sort: R && R.sort || 'conv', solo: R && R.solo || 'tutti', f: {}, nuovi: {}, ribassi: {}, t: Date.now() };
     view = 'cerca';
+    // app del Play Store: niente lettura dei portali, solo le ricerche già filtrate da aprire sui siti
+    if (window.HUB_STORE) { R.linkOnly = true; render(); return; }
     PORTALI.forEach(function(p) {
       if (p[0] === 'automobile' && q.tipo === 'moto') { R.st[p[0]] = { stato: 'na', nome: p[1] }; return; }
       R.st[p[0]] = { stato: 'load', nome: p[1], pagina: 0 };
@@ -25014,8 +25820,12 @@ async function runCmp() {
 
   function renderCerca() {
     var html = renderSearchBox();
+    if (!R && window.HUB_STORE) return html + '<div class="us-empty"><b>Cerca sui portali</b>Imposta marca, modello e budget: AutoHub prepara la ricerca già filtrata su AutoScout24, Automobile.it, Subito e Wallapop.</div>';
     if (!R) return html + '<div class="us-empty"><b>Cerca su tutti i portali insieme</b>Imposta marca, modello e budget: AutoHub cerca su AutoScout24, Automobile.it e Subito, unisce i doppioni e ti dice per ogni annuncio il costo vero, se entra in Area B e se il prezzo è in linea con quelli simili.</div>';
     var q = R.q;
+    if (R.linkOnly) return html + '<div class="us-links"><p class="us-fine">Apri la ricerca già filtrata sul portale che preferisci.</p>' +
+      portali(q).map(function(x) { return '<a class="us-linkbtn" href="' + h(x[1]) + '" target="_blank" rel="noopener noreferrer"><b>' + h(x[0]) + '</b><span>Apri ↗</span></a>'; }).join('') +
+      (R.fromId ? '' : '<div class="us-bar us-bar-sm"><button class="us-btn" data-act="q-save">☆ Salva ricerca</button></div>') + '</div>';
     html += '<div class="us-pstat">' + PORTALI.map(function(p) {
       var st = R.st[p[0]] || {};
       var txt = st.stato === 'load' ? 'cerco…' : st.stato === 'ok' ? (st.n || 0) + ' su ' + (st.totale || 0).toLocaleString('it-IT') : st.stato === 'na' ? 'solo auto' : 'non raggiungibile';
@@ -25711,7 +26521,7 @@ async function runCmp() {
 
   // Dati dell'utente (le cache rigenerabili sono escluse apposta)
   var KEYS = ['hub_garage_v1', 'hub_garage_prefs_v1', 'hub_passi_fav_v1', 'hub_active_vehicle_v1', 'hub_refuels_v1', 'hub_maint_v1', 'hub_rides_v1',
-              'hub_perf_best_v1', 'hub_perf_runs_v1', 'hub_ride_lines_v1', 'hub_ride_pref_v1', 'hub_usato_v1', 'hub_ms_prefs_v1', 'hub_price_alerts_v1',
+              'hub_perf_best_v1', 'hub_perf_runs_v1', 'hub_ricarica_pref_v1', 'hub_giro_pref_v1', 'hub_oggi_pos_v1', 'hub_ride_lines_v1', 'hub_ride_pref_v1', 'hub_usato_v1', 'hub_ms_prefs_v1', 'hub_price_alerts_v1',
               'opf_favs', 'opf_hidden_cards', 'opf_cmp_liters', 'ad_rem', 'autodiagnosi_diary', 'ad_theme'];
   var STORES = ['photos', 'maintdocs'];
   var CLOUD = 'hub_cloud_v1';   // { code, lastHash, lastAt }

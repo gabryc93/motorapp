@@ -47,7 +47,7 @@
 
 /* Hide the diagnosis ::before grid when fuel section is active (it
    would bleed through fuel's transparent areas) */
-body[data-hub="fuel"]::before { display: none !important; }
+body[data-hub="fuel"]::before, body[data-hub="oggi"]::before { display: none !important; }
 
 /* Sections — only one visible at a time */
 .hub-section { display: none; }

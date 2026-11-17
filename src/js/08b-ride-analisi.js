@@ -123,6 +123,9 @@
   function costo(vehicleId, km) {
     if (!vehicleId || !km || typeof window.hubConsumoPrezzo !== 'function') return null;
     var v = window.hubGarage && window.hubGarage.list().filter(function(x) { return x.id === vehicleId; })[0];
+    // plug-in ed elettriche: costo reale dell'energia al km (carburante + ricariche)
+    var E = v && window.hubEnergia && window.hubEnergia(v);
+    if (E) return { litri: null, eur: km * E.eurKm, cons: null, prezzo: null, eurKm: E.eurKm, src: 'costo medio dell\'energia (rifornimenti e ricariche)' };
     var cp = v && window.hubConsumoPrezzo(v);
     if (!cp) return null;
     var litri = km * cp.cons / 100;

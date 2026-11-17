@@ -48,8 +48,9 @@
 
   /* ── Compute TCO breakdown for a vehicle/period ─────────────── */
   // Consumo medio dai rifornimenti a pieno (litri tra due pieni / km)
+  function isRic(r) { return r.tipo === 'ricarica' || r.carburante === 'Elettrico'; }
   function refuelAvgCons(refuels) {
-    var s = refuels.slice().sort(function(a, b) { return a.km - b.km; }), prev = null, l = 0, L = 0, K = 0;
+    var s = refuels.filter(function(r) { return !isRic(r); }).sort(function(a, b) { return a.km - b.km; }), prev = null, l = 0, L = 0, K = 0;
     s.forEach(function(r) {
       if (prev) { l += Number(r.litri) || 0; if (r.isFull && r.km > prev.km) { L += l; K += r.km - prev.km; prev = r; l = 0; } }
       else if (r.isFull) prev = r;
@@ -58,7 +59,7 @@
   }
   // Prezzo al litro: ultimo rifornimento del veicolo → media nazionale del giorno (Carburanti) → valore indicativo
   function fuelPrice(vehicle, refuels) {
-    var last = refuels.filter(function(r) { return Number(r.prezzoPerLitro) > 0; }).sort(function(a, b) { return (b.date || '').localeCompare(a.date || ''); })[0];
+    var last = refuels.filter(function(r) { return !isRic(r) && Number(r.prezzoPerLitro) > 0; }).sort(function(a, b) { return (b.date || '').localeCompare(a.date || ''); })[0];
     if (last) return { eur: Number(last.prezzoPerLitro), src: 'il tuo ultimo rifornimento' };
     var a = vehicle.alim || '', fuel = /diesel/.test(a) ? 'Diesel' : a === 'gpl' ? 'GPL' : a === 'metano' ? 'Metano' : 'Benzina';
     var m = null;
@@ -177,7 +178,7 @@
 
     return {
       total: total,
-      fuel: fuelCost,
+      fuel: fuelCost, plug: vehicle.alim === 'plugin' || vehicle.alim === 'elettrica',
       maint: maintCost,
       bollo: bolloCost,
       rca: rcaCost,
@@ -330,7 +331,7 @@
 
     // Breakdown
     var rows = [
-      { lbl: 'Carburante' + (tco.fuelSrc === 'viaggi' ? ' (stima dai viaggi)' : ''), val: tco.fuel, color: '#5b9bd5' },
+      { lbl: (tco.plug ? 'Energia (carburante e ricariche)' : 'Carburante') + (tco.fuelSrc === 'viaggi' ? ' (stima dai viaggi)' : ''), val: tco.fuel, color: '#5b9bd5' },
       { lbl: 'Manutenzione', val: tco.maint,     color: '#4caf7d' },
       { lbl: 'Bollo' + (tco.bolloSrc === 'tuo' ? '' : ' (stima)'),val: tco.bollo,     color: '#e8a030' },
       { lbl: 'Assicurazione' + (tco.rcaSrc === 'tuo' ? '' : ' (stima)'),  val: tco.rca,       color: '#c97fd4' },
