@@ -712,7 +712,17 @@ function expect(cond, msg) { if (!cond) throw new Error(msg); }
     await p.fill('#ric-vin', 'vr3f4dgxtpy510000'); await p.click('.ric-vinrow button');
     b = await p.$eval('#ric-body', e => e.textContent);
     expect(/Riguarda la tua auto/.test(b), 'telaio nell\'intervallo non riconosciuto');
+    // salvataggio automatico appena il telaio è completo, con O→0 e spazi tolti
+    await p.fill('#ric-vin', ''); await p.click('.ric-vinrow button');
+    await p.focus('#ric-vin'); await p.keyboard.type('vr3f4dgxtpy51 OOOO');
+    expect(await p.evaluate(() => hubGarage.active().vin) === 'VR3F4DGXTPY510000', 'telaio non salvato da solo: ' + await p.evaluate(() => hubGarage.active().vin));
+    expect(/Telaio salvato/.test(await p.$eval('#ric-body', e => e.textContent)), 'conferma salvataggio telaio');
+    expect(await p.evaluate(() => document.activeElement && document.activeElement.id) === 'ric-vin', 'il campo perde il fuoco mentre scrivi');
     expect(/per la tua auto/.test(await p.$eval('#ric-launch-stat', e => e.textContent)), 'contatore nel Garage');
+    // il telaio compare (e si modifica) anche nella scheda del veicolo
+    await p.evaluate(() => { closeRichiami(); openGarageEdit(hubGarage.active().id); });
+    expect(await p.$eval('#gar-f-vin', e => e.value) === 'VR3F4DGXTPY510000', 'telaio non mostrato nella scheda');
+    await p.evaluate(() => { closeGarageEdit(); });
     await p.evaluate(() => { closeRichiami(); hubGo('oggi'); });
     expect(/Richiamo ufficiale da fare/.test(await p.$eval('#oggi-root', e => e.textContent)), 'richiamo non in Oggi');
     await p.evaluate(() => { hubGo('garage'); openRichiami(); });

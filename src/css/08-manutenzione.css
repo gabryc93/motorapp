@@ -533,3 +533,5 @@ body[data-pill-hidden="1"] .hub-tabs {
 .ev-t-fiera, .ev-t-mostra { background: rgba(91,155,213,.2) !important; color: #8fc0ec; }
 .ev-t-raduno { background: rgba(76,175,125,.2) !important; color: #7fd49a; }
 .ev-t-pista { background: rgba(224,90,74,.2) !important; color: #ff8a7a; }
+.ric-vinmsg { font-size: 12px; margin-top: 6px; color: #f0b85a; }
+.ric-vinmsg.ok { color: #7fd49a; }

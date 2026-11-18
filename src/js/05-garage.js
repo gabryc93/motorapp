@@ -623,6 +623,8 @@
           '<div class="gar-field"><label>Km totali</label>' +
             '<input type="number" id="gar-f-km" placeholder="0" min="0"></div>' +
         '</div>' +
+        '<div class="gar-field"><label>Numero di telaio (VIN, libretto campo E) · per i richiami</label>' +
+          '<input type="text" id="gar-f-vin" placeholder="17 caratteri" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" style="text-transform:uppercase;font-family:ui-monospace,monospace"></div>' +
         '<div class="gar-row2">' +
           '<div class="gar-field"><label>Alimentazione</label>' +
             '<select id="gar-f-alim" onchange="_garCostiUpdate()">' +
@@ -841,6 +843,7 @@
     var afResult = document.getElementById('gar-autofill-result');
     if (afResult) { afResult.style.display = 'none'; afResult.innerHTML = ''; }
     document.getElementById('gar-f-targa').value   = v ? (v.targa || '') : '';
+    document.getElementById('gar-f-vin').value     = v ? (v.vin || '') : '';
     document.getElementById('gar-f-km').value      = v ? (v.kmTot || '') : '';
     document.getElementById('gar-f-bollo').value   = v ? (v.scadBollo || '') : '';
     document.getElementById('gar-f-rca').value     = v ? (v.scadRca || '') : '';
@@ -1384,6 +1387,7 @@
       motore: motore,
       annoImm: parseInt(window._garPickAnnoImm(), 10) || null,
       targa: document.getElementById('gar-f-targa').value.trim().toUpperCase(),
+      vin: window.hubVin ? window.hubVin.pulisci(document.getElementById('gar-f-vin').value) : document.getElementById('gar-f-vin').value.trim().toUpperCase(),
       kmTot: parseInt(document.getElementById('gar-f-km').value, 10) || 0,
       scadBollo: document.getElementById('gar-f-bollo').value || '',
       scadRca: document.getElementById('gar-f-rca').value || '',
